@@ -1,11 +1,11 @@
 import { ProtectedRoute } from './ProtectedRoute';
-import { Authenticator } from '@aws-amplify/ui-react';
-
 import { AdminRoutes } from './AdminRoutes';
+import Auth from '../components/Auth';
 
 /* All */
 import Home from "../pages/viewer/Home";
 import Layout from "../pages/viewer/Layout";
+import Profile from "../pages/viewer/Profile";
 
 export const routes = [
   {
@@ -19,11 +19,27 @@ export const routes = [
     ]
   },
   {
+    path: 'profile',
+    element: <Auth />,
+    children: [
+      {
+        path: '',
+        element: <Layout/>,
+        children: [
+          {
+            path: '',
+            element: <Profile/>
+          }
+        ]
+      }
+    ]
+  },
+  {
     path: "/admin",
     element: (
-      <Authenticator>
+      <Auth>
         <ProtectedRoute allowedGroups={['Admin']} />
-      </Authenticator>
+      </Auth>
     ),
     children: AdminRoutes
   }

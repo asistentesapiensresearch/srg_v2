@@ -9,13 +9,48 @@ import { AnnouncementBar } from '../widgets/AnnouncementBar';
 import Sidebar from './Sidebar';
 
 import { SignInIcon, SignOutIcon, MenuIcon } from './icons';
+import { UserIcon } from 'lucide-react';
+
+import Drawer from '@mui/material/Drawer';
 
 export default function Navigation() {
-  const { groups, hasGroup, isAuthenticated } = useAuthGroups();
+  const { hasGroup, isAuthenticated } = useAuthGroups();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
+  const isHome = location.pathname === '/';
+
+  const Menu = [
+    {
+      path: '/',
+      label: 'Inicio',
+      allow: true
+    },
+    {
+      path: '/about',
+      label: 'Nosotros',
+      allow: true
+    },
+    {
+      path: '/allies',
+      label: 'Aliados',
+      group: 'Allies',
+      allow: true
+    },
+    {
+      path: '/admin',
+      label: 'Admin',
+      group: 'Admin',
+      allow: true
+    },
+    {
+      path: '/profile',
+      label: 'Perfil',
+      icon: <UserIcon className='me-2' />,
+      allow: isAuthenticated
+    },
+  ]
 
   const handleSignOut = async () => {
     try {
@@ -28,11 +63,13 @@ export default function Navigation() {
 
   return (
     <>
-      <div className="fixed w-full">
+      <div className={`${isHome && 'fixed'} w-full z-50`}>
         <AnnouncementBar />
-        <nav className={`${styles.nav} p-4 flex gap-4 items-center bg-red-900 shadow-sm relative z-50`}>
+        <nav className={`${isHome && styles.nav} py-2 px-5 flex gap-4 items-center bg-red-700 shadow-sm relative z-50`}>
           <div className="font-bold text-xl text-gray-800">
-            <img src={logo} width={120} alt="Logo" />
+            <Link to="/">
+              <img src={logo} width={120} alt="Logo" />
+            </Link>
           </div>
 
           {/* Botón hamburguesa - Solo visible en móvil */}
@@ -47,73 +84,35 @@ export default function Navigation() {
 
           {/* Enlaces de navegación - Ocultos en móvil, visibles en desktop */}
           <div className="hidden md:flex gap-4 ml-auto">
-            <Link
-              to="/"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`no-underline px-4 py-2 rounded transition-colors ${isActive('/')
-                ? `text-white ${styles.linkActive}`
-                : 'bg-transparent text-blue-500 hover:bg-blue-50'
-                }`}
-            >
-              Inicio
-            </Link>
-
-            <Link
-              to="/about"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`no-underline px-4 py-2 rounded transition-colors ${isActive('/about')
-                ? `text-white ${styles.linkActive}`
-                : 'bg-transparent text-white hover:underline'
-                }`}
-            >
-              Nosotros
-            </Link>
-
-            {hasGroup('Allies') && (
+            {Menu.map(item => (
+              item.allow && (!item.group || hasGroup(item.group)) &&
               <Link
-                to="/allies"
+                key={item.path}
+                to={item.path}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`no-underline px-4 py-2 rounded transition-colors ${isActive('/allies')
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-transparent text-blue-500 hover:bg-blue-50'
+                className={`flex no-underline px-4 py-2 rounded transition-colors text-white ${isActive(item.path)
+                  ? `${styles.linkActive}`
+                  : 'hover:underline'
                   }`}
               >
-                Aliados
+                {item.icon}
+                {item.label}
               </Link>
-            )}
-
-            {hasGroup('Admin') && (
-              <Link
-                to="/admin"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`no-underline px-4 py-2 rounded transition-colors ${isActive('/admin')
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-transparent text-blue-500 hover:bg-blue-50'
-                  }`}
-              >
-                Admin
-              </Link>
-            )}
+            ))}
           </div>
 
           {/* Información de usuario y acciones - Desktop */}
           <div className="hidden md:flex items-center">
             {isAuthenticated ? (
-              <>
-                <div className="text-sm text-gray-300 pl-4 border-l border-gray-400">
-                  Grupos: <span className="font-medium">{groups.join(', ').replace('Viewer', 'Invitado') || 'Ninguno'}</span>
-                </div>
-
-                <button
-                  onClick={handleSignOut}
-                  className="ml-4 p-2 text-white hover:text-red-200 hover:bg-red-800 rounded transition-colors flex items-center gap-2"
-                  title="Cerrar sesión"
-                  aria-label="Cerrar sesión"
-                >
-                  <SignOutIcon />
-                  <span className="text-sm font-medium">Cerrar sesión</span>
-                </button>
-              </>
+              <button
+                onClick={handleSignOut}
+                className="p-2 text-white hover:text-red-200 hover:bg-red-800 rounded transition-colors flex items-center gap-2 cursor-pointer"
+                title="Cerrar sesión"
+                aria-label="Cerrar sesión"
+              >
+                <SignOutIcon />
+                <span className="text-sm font-medium">Salir</span>
+              </button>
             ) : (
               <Link
                 to="/admin"
@@ -130,7 +129,14 @@ export default function Navigation() {
         </nav>
 
         {/* Menú móvil desplegable */}
-        {isMobileMenuOpen && (<Sidebar setIsMobileMenuOpen={setIsMobileMenuOpen}/>)}
+        <Drawer open={isMobileMenuOpen}>
+          <Sidebar
+            setIsMobileMenuOpen={setIsMobileMenuOpen}
+            Menu={Menu}
+            hasGroup={hasGroup}
+            isAuthenticated={isAuthenticated}
+          />
+        </Drawer>
       </div>
     </>
   );

@@ -11,13 +11,14 @@ export enum InstitutionType {
  * Defines subtypes, especially for the main categories.
  * You can nest as many as you need.
  */
-export type InstitutionSubtype =
-    | 'university'
-    | 'school'
-    | 'ngo'
-    | 'governmental'
-    | 'private'
-    | 'public';
+export enum InstitutionSubtype {
+    University = 'university',
+    School = 'school',
+    NGO = 'ngo',
+    Governmental = 'governmental',
+    Private = 'private',
+    Public = 'public'
+}
 
 // /core/domain/types/ChartData.ts
 /**

@@ -9,7 +9,11 @@ export const AdminRoutes = [
             {
                 index: true,
                 element: <Home />
+            },
+            {
+                path: '*',
+                element: <>Error 404</>
             }
         ]
-    }
+    },
 ]
