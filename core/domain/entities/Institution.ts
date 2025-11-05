@@ -8,7 +8,6 @@ export class Institution {
   public subtype?: InstitutionSubtype; // Optional, for more detail
 
   public landingData: Record<string, any>;
-  public researchIds: string[];
 
   constructor(props: {
     id: string;
@@ -23,6 +22,5 @@ export class Institution {
     this.type = props.type;
     this.subtype = props.subtype;
     this.landingData = props.landingData;
-    this.researchIds = props.researchIds || [];
   }
 }
