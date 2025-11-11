@@ -1,6 +1,8 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
 import { Section } from './schemas/Section';
+import { Institution } from './schemas/Institution';
+import { Research } from './schemas/Research';
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -10,6 +12,8 @@ and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
   Section,
+  Institution,
+  Research
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -17,7 +21,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'identityPool',
+    defaultAuthorizationMode: 'userPool',
   },
 });
 

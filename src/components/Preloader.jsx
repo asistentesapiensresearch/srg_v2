@@ -5,7 +5,11 @@ export const Preloader = ({
 
 }) => {
     return (
-        <div class="flex justify-center relative">
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            position: 'relative'
+        }}>
             <img className='absolute' src={SRG_circle} width="60" alt="Logo" style={{
                 top: '10px'
             }} />

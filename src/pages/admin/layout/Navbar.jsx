@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { AppBar, Avatar, Box, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Toolbar, Tooltip } from "@mui/material"
 import { Bell, LogOut, MenuIcon, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import logo from '../../../assets/images/logo-black.png'
+import { signOut } from "aws-amplify/auth";
 
 export const Navbar = ({
     theme,
@@ -11,6 +12,7 @@ export const Navbar = ({
     setOpen
 }) => {
     const [anchorElUser, setAnchorElUser] = useState(null); // Estado para el menú de usuario
+    const navigate = useNavigate();
 
     // Abre/Cierra el sidebar
     const handleDrawerToggle = () => {
@@ -23,7 +25,11 @@ export const Navbar = ({
     };
 
     // Cierra el menú de usuario
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (logout = false) => {
+        if(logout){
+            signOut();
+            window.location.reload();
+        }
         setAnchorElUser(null);
     };
 
@@ -94,7 +100,7 @@ export const Navbar = ({
                     open={Boolean(anchorElUser)}
                     onClose={handleCloseUserMenu}
                 >
-                    <MenuItem onClick={handleCloseUserMenu}>
+                    <MenuItem onClick={() => handleCloseUserMenu(true)}>
                         <ListItemIcon>
                             <LogOut size={18} style={{ marginRight: 8 }} />
                         </ListItemIcon>

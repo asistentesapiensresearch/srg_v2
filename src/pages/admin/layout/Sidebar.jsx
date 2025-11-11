@@ -128,7 +128,7 @@ export const Sidebar = ({
                                 {item.icon}
                             </Tooltip>
                         </ListItemIcon>
-                        <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.2s' }} />
+                        { open && <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.2s' }} /> }
                     </Link>
 
                     {/* Ícono de flecha (solo visible si el drawer está abierto) */}

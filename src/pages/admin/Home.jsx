@@ -1,11 +1,7 @@
-const Home = ({
-
-}) => {
+export default function Home(){
     return (
         <>
             Home Admin Works!
         </>
     )
 }
-
-export default Home;

@@ -71,5 +71,6 @@ export function useAuthGroups() {
     hasGroup,
     hasAnyGroup,
     hasAllGroups,
+    setIsAuthenticated
   };
 }

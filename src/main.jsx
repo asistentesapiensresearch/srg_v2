@@ -15,24 +15,7 @@ const amplifyConfig = parseAmplifyConfig(outputs);
 I18n.putVocabularies(translations);
 I18n.setLanguage('es');
 
-Amplify.configure(
-  {
-    ...amplifyConfig,
-    API: {
-      ...amplifyConfig.API,
-      REST: outputs.custom.API,
-    },
-  },
-  {
-    API: {
-      REST: {
-        retryStrategy: {
-          strategy: 'no-retry', // Overrides default retry strategy
-        },
-      }
-    }
-  }
-);
+Amplify.configure(amplifyConfig);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

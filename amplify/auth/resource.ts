@@ -1,5 +1,5 @@
 import { defineAuth } from '@aws-amplify/backend';
-import { addUserToViewer } from '../functions/addUserToViewer/resource';
+import { addUserToGroup } from '../functions/addUserToGroup/resource';
 
 /**
  * Define and configure your auth resource
@@ -11,6 +11,9 @@ export const auth = defineAuth({
   },
   groups: ['Admin','Allies','Viewer'],
   triggers: {
-    postConfirmation: addUserToViewer
-  }
+    postConfirmation: addUserToGroup
+  },
+  access: (allow) => [
+    allow.resource(addUserToGroup).to(["addUserToGroup"])
+  ]
 });

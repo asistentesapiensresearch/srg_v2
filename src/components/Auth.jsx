@@ -24,7 +24,7 @@ const Auth = ({
 }) => {
     return (
         <Authenticator components={components}>
-            <Outlet />
+            {children}
         </Authenticator>
     )
 }

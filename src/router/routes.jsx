@@ -1,34 +1,50 @@
+import { lazy, Suspense } from 'react';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminRoutes } from './AdminRoutes';
-import Auth from '../components/Auth';
+import { Preloader } from '@src/components/Preloader';
 
 /* All */
-import Home from "../pages/viewer/Home";
-import Layout from "../pages/viewer/Layout";
-import Profile from "../pages/viewer/Profile";
+const Home = lazy(() => import("../pages/viewer/Home"));
+const Layout = lazy(() => import("../pages/viewer/Layout"));
+const Profile = lazy(() => import("../pages/viewer/Profile"));
+const Auth = lazy(() => import("../components/Auth"));
 
 export const routes = [
   {
-    path: '',
+    path: '/',
     element: <Layout />,
     children: [
-      {
-        path: '',
-        element: <Home />
-      }
+      { index: true, element: <Home /> }
     ]
   },
   {
     path: 'profile',
-    element: <Auth />,
+    element: (
+      <Auth>
+        <ProtectedRoute allowedGroups={['Admin', 'viewer', 'Allies']} />
+      </Auth>
+    ),
     children: [
       {
-        path: '',
-        element: <Layout/>,
+        idex: true,
+        element: (
+            <Suspense fallback={
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh'
+                }}>
+                    <Preloader />
+                </div>
+            }>
+                <Layout />
+            </Suspense>
+        ),
         children: [
           {
             path: '',
-            element: <Profile/>
+            element: <Profile />
           }
         ]
       }

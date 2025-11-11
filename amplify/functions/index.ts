@@ -1,1 +1,1 @@
-export * from './addUserToViewer/resource';
+export * from './addUserToGroup/resource';

@@ -13,7 +13,7 @@ import { Outlet } from 'react-router-dom';
 /**
  * Componente principal del Layout Administrativo
  */
-const Layout = () => {
+export const Layout = () => {
     const theme = useTheme();
     const [open, setOpen] = useState(true); // Estado para controlar el sidebar
 

@@ -10,7 +10,16 @@ function AppRoutes() {
 export function RouterProvider() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<Preloader/>}>
+      <Suspense fallback={
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}>
+          <Preloader />
+        </div>
+      }>
         <AppRoutes />
       </Suspense>
     </BrowserRouter>

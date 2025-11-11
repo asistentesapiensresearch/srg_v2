@@ -46,8 +46,13 @@ export function ProtectedRoute({ allowedGroups = [], requireAuth = true }) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Preloader/>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+      }}>
+        <Preloader />
       </div>
     );
   }

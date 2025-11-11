@@ -9,52 +9,22 @@ import { AnnouncementBar } from '../widgets/AnnouncementBar';
 import Sidebar from './Sidebar';
 
 import { SignInIcon, SignOutIcon, MenuIcon } from './icons';
-import { UserIcon } from 'lucide-react';
 
 import Drawer from '@mui/material/Drawer';
+import { Menu } from './Menu';
 
 export default function Navigation() {
-  const { hasGroup, isAuthenticated } = useAuthGroups();
+  const { hasGroup, isAuthenticated, setIsAuthenticated } = useAuthGroups();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
   const isHome = location.pathname === '/';
 
-  const Menu = [
-    {
-      path: '/',
-      label: 'Inicio',
-      allow: true
-    },
-    {
-      path: '/about',
-      label: 'Nosotros',
-      allow: true
-    },
-    {
-      path: '/allies',
-      label: 'Aliados',
-      group: 'Allies',
-      allow: true
-    },
-    {
-      path: '/admin',
-      label: 'Admin',
-      group: 'Admin',
-      allow: true
-    },
-    {
-      path: '/profile',
-      label: 'Perfil',
-      icon: <UserIcon className='me-2' />,
-      allow: isAuthenticated
-    },
-  ]
-
   const handleSignOut = async () => {
     try {
       await signOut();
+      setIsAuthenticated(false);
       setIsMobileMenuOpen(false);
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
@@ -85,7 +55,7 @@ export default function Navigation() {
           {/* Enlaces de navegación - Ocultos en móvil, visibles en desktop */}
           <div className="hidden md:flex gap-4 ml-auto">
             {Menu.map(item => (
-              item.allow && (!item.group || hasGroup(item.group)) &&
+              (!item.auth || isAuthenticated) && (!item.group || hasGroup(item.group)) &&
               <Link
                 key={item.path}
                 to={item.path}
@@ -115,7 +85,7 @@ export default function Navigation() {
               </button>
             ) : (
               <Link
-                to="/admin"
+                to="/profile"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="ml-4 px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 rounded transition-colors flex items-center gap-2"
                 title="Iniciar sesión"
