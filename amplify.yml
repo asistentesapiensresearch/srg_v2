@@ -1,0 +1,31 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - echo "⚙️ Construyendo backend con Amplify Gen 2..."
+        # Amplify genera los outputs automáticamente en /amplify_outputs.json
+        - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "📦 Instalando dependencias..."
+        - npm ci
+        # Aseguramos que los outputs estén generados (por si el backend no cambió)
+        - npx ampx generate outputs
+    build:
+      commands:
+        - echo "🏗️ Compilando frontend con Vite..."
+        - npm run build
+
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+
+  cache:
+    paths:
+      - node_modules/**/*
+      - ~/.npm
