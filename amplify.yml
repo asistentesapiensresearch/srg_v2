@@ -3,29 +3,18 @@ backend:
   phases:
     build:
       commands:
-        - echo "⚙️ Construyendo backend con Amplify Gen 2..."
-        # Amplify genera los outputs automáticamente en /amplify_outputs.json
+        - npm ci --cache .npm --prefer-offline
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
-
 frontend:
   phases:
-    preBuild:
-      commands:
-        - echo "📦 Instalando dependencias..."
-        - npm ci
-        # Aseguramos que los outputs estén generados (por si el backend no cambió)
-        - npx ampx generate outputs
     build:
       commands:
-        - echo "🏗️ Compilando frontend con Vite..."
-        - npm run build
-
+        - mkdir ./dist && touch ./dist/index.html
+        - curl -X POST -d {} "https://webhooks.amplify.ca-central-1.amazonaws.com/prod/webhooks?id=WEBHOOK-ID&token=TOKEN&operation=startbuild" -H "Content-Type:application/json"
   artifacts:
     baseDirectory: dist
     files:
       - '**/*'
-
   cache:
     paths:
       - node_modules/**/*
-      - ~/.npm
