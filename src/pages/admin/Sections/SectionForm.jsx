@@ -92,7 +92,7 @@ export function SectionForm({ onClose, section, open }) {
     };
 
     return (
-        <Dialog open={open} onClose={handleCancel} maxWidth="sm" fullWidth>
+        <Dialog open={true} onClose={handleCancel} maxWidth="sm" fullWidth>
             <DialogTitle>{section ? "Editar sección" : "Crear nueva sección"}</DialogTitle>
 
             <div className="p-4 flex flex-col gap-4">
@@ -145,7 +145,7 @@ export function SectionForm({ onClose, section, open }) {
                     showThumbnails
                     processFile={({ file }) => ({
                         file,
-                        key: `${tempFolder}${Date.now()}-${file.name}`,
+                        key: `${Date.now()}-${file.name}`,
                     })}
                 />
 

@@ -15,9 +15,9 @@ const Sections = () => {
     const [selectedSection, setSelectedSection] = useState(false);
 
     const handleClose = (section) => {
+        setSelectedSection(false);
         setOpenForm(false);
-        console.log(section)
-        if(section)
+        if (section)
             setSections((values) => {
                 return [
                     ...values.filter(v => v.id !== section.id),
@@ -35,10 +35,10 @@ const Sections = () => {
         setOpenForm(true);
     }
 
-    const handleClickDelete = async(section) => {
-        if(confirm(`Estas seguro de eliminar la sección ${section.name}?`)){
+    const handleClickDelete = async (section) => {
+        if (confirm(`Estas seguro de eliminar la sección ${section.name}?`)) {
             const researchs = await section.Researchs();
-            if(researchs.length > 0){
+            if (researchs.length > 0) {
                 alert('La sección tiene investigaciones asociadas, para eliminar debe cambiarlas o eliminarlas.')
             } else {
                 await apiSyncService.delete('Section', section.id);
@@ -49,11 +49,10 @@ const Sections = () => {
 
     return (
         <>
-            <SectionForm
+            {openForm && <SectionForm
                 section={selectedSection}
-                open={openForm}
                 onClose={handleClose}
-            />
+            />}
             <div className="flex items-center">
                 <div className="me-2">
                     <Typography component="div" variant="h5">
@@ -71,7 +70,7 @@ const Sections = () => {
                             isAdmin={true}
                             section={section}
                             handleClickEdit={handleClickEdit}
-                            handleClickDelete={handleClickDelete}/>
+                            handleClickDelete={handleClickDelete} />
                     </div>
                 ))}
             </div>

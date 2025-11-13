@@ -61,6 +61,7 @@ const Button = ({
       border border-[var(--color-button-outline-text)]
       hover:bg-[var(--color-button-outline-hover)] focus:ring-[var(--color-focus-ring)]
     `,
+    dark: `bg-[#0000008a] border border-white rounded-lg text-white`
   };
 
   // Size styles

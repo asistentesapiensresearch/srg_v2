@@ -1,10 +1,16 @@
 import styles from "./Home.module.css"
 import Input from "../../components/forms/Input";
 import { SearchIcon } from "lucide-react";
+import { useSections } from "@src/hooks/useSections";
+import Button from "@src/components/forms/Button";
 
 const Home = ({
 
 }) => {
+
+    const { sections } = useSections();
+    console.log(sections);
+
     return (
         <>
             <section className={`flex items-center justify-center ${styles.banner} px-5`}>
@@ -18,7 +24,15 @@ const Home = ({
                             iconPosition="right"
                         />
                     </div>
-                    asd
+                    <div className="mt-5 flex justify-center gap-4">
+                        {sections.map((section, j) => (
+                            <Button
+                                key={j}
+                                variant="dark"
+                                className="hover:bg-red-600"
+                            >{section.name}</Button>
+                        ))}
+                    </div>
                 </div>
             </section>
         </>

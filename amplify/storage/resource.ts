@@ -1,7 +1,7 @@
 import { defineStorage } from "@aws-amplify/backend";
 
 const authorizations = (allow: any) => [
-    allow.groups(["Admin"]).to(["read", "write", "delete"]),
+    allow.groups(["Admin"]).to(["read", "write", "delete", "list"]),
     allow.groups(["Allies"]).to(["read", "write"]),
     allow.groups(["Viewer"]).to(["read"]),
     allow.guest.to(["read"]),
