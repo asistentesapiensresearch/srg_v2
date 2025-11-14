@@ -24,7 +24,10 @@ export const apiSyncService = {
             if (limit) params.limit = limit;
             if (filter) params.filter = filter;
 
-            const { data, errors } = await getClient(type).list(params);
+            const { data, errors } = await getClient(type).list({
+                ...params,
+                authMode: 'apiKey'
+            });
             handleErrors(errors, type, 'fetching');
             return data;
         } catch (error) {

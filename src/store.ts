@@ -1,5 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
+import sectionsReducer from "./store/sectionsSlice";
 
-export default configureStore({
-    reducer: {}
+const store = configureStore({
+    reducer: {
+        sections: sectionsReducer,
+    },
 });
+
+export default store;

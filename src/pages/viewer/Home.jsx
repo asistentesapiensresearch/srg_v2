@@ -25,7 +25,7 @@ const Home = ({
                             iconPosition="right"
                         />
                     </div>
-                    <div className="mt-5 flex justify-center gap-4">
+                    <div className="mt-5 flex justify-center gap-4 flex-wrap">
                         {sections.map((section, j) => (
                             <Button
                                 key={j}
@@ -34,10 +34,14 @@ const Home = ({
                             >
                                 {section.icon && (
                                     <div className="w-5 flex">
-                                        <StorageImage alt="sleepy-cat" path={section.icon} className="rounded-[50%!important]"/>
+                                        <StorageImage alt="sleepy-cat" path={section.icon} className="rounded-[50%!important]" style={{
+                                            mixBlendMode: 'difference'
+                                        }} />
                                     </div>
                                 )}
-                                {section.name}
+                                <span className="font-medium" style={{
+                                    mixBlendMode: 'difference'
+                                }}>{section.name}</span>
                             </Button>
                         ))}
                     </div>

@@ -15,7 +15,7 @@ export function SectionForm({ onClose, section, open }) {
 
     const [name, setName] = useState(section?.name || "");
     const [description, setDescription] = useState(section?.description || "");
-    const [color, setColor] = useState(section?.color || "#3f51b5");
+    const [color, setColor] = useState(section?.color || "#CF4040");
     const [iconKey, setIconKey] = useState(section?.icon || "");
     const [iconPreview, setIconPreview] = useState("");
     const [uploading, setUploading] = useState(false);
@@ -155,7 +155,7 @@ export function SectionForm({ onClose, section, open }) {
                         <img
                             src={iconPreview}
                             alt="Icono actual"
-                            className="w-20 h-20 object-cover rounded border"
+                            className="w-20 h-20 object-cover rounded border mix-blend-difference"
                         />
                         <small className="text-gray-500">Puedes subir uno nuevo para reemplazarlo</small>
                     </div>

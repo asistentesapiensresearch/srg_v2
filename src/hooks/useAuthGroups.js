@@ -26,7 +26,6 @@ export function useAuthGroups() {
           setGroups([]);
         }
       } catch (error) {
-        console.log('Usuario no autenticado:', error);
         setIsAuthenticated(false);
         setGroups([]);
       } finally {

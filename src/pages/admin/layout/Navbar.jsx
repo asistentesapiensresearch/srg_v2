@@ -27,8 +27,10 @@ export const Navbar = ({
     // Cierra el menú de usuario
     const handleCloseUserMenu = (logout = false) => {
         if(logout){
-            signOut();
-            window.location.reload();
+            signOut().then(() => {
+                window.location.href = window.location.origin;
+            });
+            // window.location.reload();
         }
         setAnchorElUser(null);
     };

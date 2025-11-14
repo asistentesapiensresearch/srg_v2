@@ -10,7 +10,7 @@ export function useSections() {
         const init = async () => {
             try {
                 const sectionsDB = await apiSyncService.get('Section');
-                setSections(sectionsDB);
+                setSections(sectionsDB.sort((a, b) => a.index - b.index));
             } catch (error) {
                 console.error("Error fetching sections:", error);
             }

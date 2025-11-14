@@ -12,7 +12,7 @@ export const SectionCard = ({
 }) => {
 
     return (
-        <div className="flex gap-2 text-white font-medium p-1 px-4 rounded-lg text-md" style={{ backgroundColor: section.color }}>
+        <div className="flex gap-2 text-white font-medium p-1 px-4 rounded-lg text-md items-center" style={{ backgroundColor: section.color }}>
             {section.icon && (
                 <div className="w-5 flex">
                     <StorageImage alt="sleepy-cat" path={section.icon} className="rounded-[50%!important]" />
