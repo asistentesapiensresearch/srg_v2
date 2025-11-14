@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileUploader } from "@aws-amplify/ui-react-storage";
-import { remove, copy } from "aws-amplify/storage";
+import { remove, copy, getUrl } from "aws-amplify/storage";
 import {
     Button,
     Dialog,
@@ -17,18 +17,24 @@ export function SectionForm({ onClose, section, open }) {
     const [description, setDescription] = useState(section?.description || "");
     const [color, setColor] = useState(section?.color || "#3f51b5");
     const [iconKey, setIconKey] = useState(section?.icon || "");
+    const [iconPreview, setIconPreview] = useState("");
     const [uploading, setUploading] = useState(false);
     const [tempKeys, setTempKeys] = useState([]);
 
     const tempFolder = "sections/temp/";
 
     useEffect(() => {
-        if(section){
+        if (section) {
             setName(section.name);
             setDescription(section.description);
             setColor(section.color);
+            if (section.icon) {
+                getUrl({ path: section.icon }).then((res) => {
+                    setIconPreview(res.url.toString());
+                });
+            }
         }
-    }, [section])
+    }, [section]);
 
     const handleUploadStart = () => setUploading(true);
     const handleUploadError = (err) => {
@@ -39,6 +45,8 @@ export function SectionForm({ onClose, section, open }) {
     const handleUploadSuccess = async ({ key }) => {
         setIconKey(key);
         setTempKeys((prev) => [...prev, key]);
+        const result = await getUrl({ path: key });
+        setIconPreview(result.url.toString());
         setUploading(false);
     };
 
@@ -49,17 +57,23 @@ export function SectionForm({ onClose, section, open }) {
 
             // Mover icono a carpeta definitiva
             if (iconKey.startsWith(tempFolder)) {
-                const newKey = iconKey.replace(
-                    "temp/",
-                    `${name.toLowerCase().replace(/\s+/g, "_")}/`
-                );
-                await copy({ source: { key: iconKey }, destination: { key: newKey } });
-                await remove({ key: iconKey });
+                const sanitized = name.toLowerCase().replace(/\s+/g, "_");
+                const newKey = iconKey.replace("temp/", `${sanitized}/`);
+                await copy({
+                    source: { path: iconKey },
+                    destination: { path: newKey }
+                });
+                await remove({ path: iconKey });
                 finalKey = newKey;
             }
 
+            console.log('finalKey', finalKey, section)
+
             // Guardar en tu backend o DataStore
             if (section.id) {
+                if(section.icon){
+                    await remove({ path: section.icon });
+                }
                 const sectionDB = await apiSyncService.update('Section', section.id, {
                     name,
                     description,
@@ -86,7 +100,7 @@ export function SectionForm({ onClose, section, open }) {
 
     const handleCancel = async () => {
         for (const key of tempKeys) {
-            await remove({ key });
+            await remove({ path: key });
         }
         onClose(null);
     };
@@ -135,6 +149,17 @@ export function SectionForm({ onClose, section, open }) {
                 </div>
 
                 {/* Uploader de icono */}
+                {iconPreview && (
+                    <div className="flex flex-col items-start gap-2">
+                        <InputLabel>Ícono actual</InputLabel>
+                        <img
+                            src={iconPreview}
+                            alt="Icono actual"
+                            className="w-20 h-20 object-cover rounded border"
+                        />
+                        <small className="text-gray-500">Puedes subir uno nuevo para reemplazarlo</small>
+                    </div>
+                )}
                 <FileUploader
                     acceptedFileTypes={["image/*"]}
                     path={tempFolder}

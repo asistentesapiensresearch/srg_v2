@@ -3,6 +3,7 @@ import Input from "../../components/forms/Input";
 import { SearchIcon } from "lucide-react";
 import { useSections } from "@src/hooks/useSections";
 import Button from "@src/components/forms/Button";
+import { StorageImage } from "@aws-amplify/ui-react-storage";
 
 const Home = ({
 
@@ -30,7 +31,14 @@ const Home = ({
                                 key={j}
                                 variant="dark"
                                 className="hover:bg-red-600"
-                            >{section.name}</Button>
+                            >
+                                {section.icon && (
+                                    <div className="w-5 flex">
+                                        <StorageImage alt="sleepy-cat" path={section.icon} className="rounded-[50%!important]"/>
+                                    </div>
+                                )}
+                                {section.name}
+                            </Button>
                         ))}
                     </div>
                 </div>

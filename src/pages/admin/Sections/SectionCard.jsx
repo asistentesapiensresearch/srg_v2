@@ -2,6 +2,7 @@ import { Box, Card, CardContent, CardMedia, Chip, IconButton, Tooltip, Typograph
 import { EditIcon, DeleteIcon } from "lucide-react";
 import { apiSyncService } from '@core/infrastructure/api/apiSync.service'
 import { InfoIcon } from "../../../components/icons";
+import { StorageImage } from "@aws-amplify/ui-react-storage";
 
 export const SectionCard = ({
     isAdmin = false,
@@ -12,7 +13,11 @@ export const SectionCard = ({
 
     return (
         <div className="flex gap-2 text-white font-medium p-1 px-4 rounded-lg text-md" style={{ backgroundColor: section.color }}>
-            {section.icon && <img src={section.icon} />}
+            {section.icon && (
+                <div className="w-5 flex">
+                    <StorageImage alt="sleepy-cat" path={section.icon} className="rounded-[50%!important]" />
+                </div>
+            )}
             <span>{section.name}</span>
             <div className="flex gap-2 items-center">
                 <Tooltip title={section.description}>
