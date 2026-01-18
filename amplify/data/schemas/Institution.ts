@@ -12,6 +12,7 @@ export const Institution = a.model({
     updatedAt: a.string(),
 })
     .authorization((allow) => [
+        allow.publicApiKey().to(['read']),
         // CAMBIO AQUÍ: Agrega 'read'
         allow.groups(['Admin']).to(['create', 'update', 'delete', 'read']),
 

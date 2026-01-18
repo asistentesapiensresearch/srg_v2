@@ -1,4 +1,4 @@
 export * from './Delete';
 export * from './FindById';
-export * from './FindByInstitutionId';
-export * from './Save';
+export * from './Get';
+export * from './Store';

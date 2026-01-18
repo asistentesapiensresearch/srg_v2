@@ -1,4 +1,4 @@
-import { Institution } from "@core/domain/entities";
+import { Institution } from "@core/domain/repositories/entities";
 import { IInstitutionRepository } from "@core/domain/repositories";
 
 export class Save {

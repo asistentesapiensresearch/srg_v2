@@ -1,7 +1,7 @@
+// src/router/ProtectedRoute.jsx
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
-import SRG_circle from '../assets/images/SRG_circle.png'
 import { Preloader } from '../components/Preloader';
 
 /**

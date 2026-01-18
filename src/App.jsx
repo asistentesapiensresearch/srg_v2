@@ -1,4 +1,3 @@
-import './App.css'
 import { RouterProvider } from './router'
 
 import { Provider } from 'react-redux'

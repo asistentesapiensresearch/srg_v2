@@ -1,0 +1,11 @@
+.nav {
+    background-color: #0000006b;
+}
+
+.linkActive {
+    background: #ffffff38;
+}
+
+.bgSidebar {
+    background-color: rgba(0, 0, 0, 0.601);
+}

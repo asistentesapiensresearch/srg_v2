@@ -1,7 +1,8 @@
+// src/router/index.jsx
 import { Suspense } from "react";
 import { BrowserRouter, useRoutes } from "react-router-dom";
 import { routes } from "./routes";
-import { Preloader } from "../components/Preloader";
+import { Preloader } from "../components/preloader";
 
 function AppRoutes() {
   return useRoutes(routes);

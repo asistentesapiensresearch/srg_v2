@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { useSections } from "@src/hooks/useSections";
+import { useSections } from "@src/pages/admin/Sections/hooks/useSections";
 
-import { Button, Typography } from "@mui/material";
+import { Button, Skeleton, Typography } from "@mui/material";
 import { PlusIcon } from "lucide-react";
 
-import { SectionForm } from "./SectionForm";
-import { SectionCard } from "./SectionCard";
+import { SectionForm } from "./components/SectionForm";
+import { SectionCard } from "./components/SectionCard";
 import { apiSyncService } from "@core/infrastructure/api/apiSync.service";
 
-import { SortableItem } from "../../../components/SortableItem";
+import { SortableItem } from "@src/components/SortableItem";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import { useSortableList } from "@src/hooks/useSortableList";
 
 const Sections = () => {
 
-    const { sections, setSections } = useSections();
+    const { loading, sections, setSections } = useSections();
     const [openForm, setOpenForm] = useState(false);
     const [selectedSection, setSelectedSection] = useState(null);
 
@@ -90,6 +90,13 @@ const Sections = () => {
                 <SortableContext {...sortableContextProps}>
 
                     <div className="flex flex-wrap gap-4">
+                        {loading && (
+                            <>
+                                <Skeleton variant="rectangular" width={210} height={36} className="rounded-lg"/>
+                                <Skeleton variant="rectangular" width={210} height={36} className="rounded-lg"/>
+                                <Skeleton variant="rectangular" width={210} height={36} className="rounded-lg"/>
+                            </>
+                        )}
                         {sections
                             .sort((a, b) => a.index - b.index)
                             .map(section => (

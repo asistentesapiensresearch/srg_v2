@@ -1,0 +1,28 @@
+.banner {
+    background: url('../../assets/images/banner_m.png');
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+}
+
+.searchContainer {
+    flex-direction: initial !important;
+}
+
+.inputClassContainer {
+    background-color: #ffffff26;
+    max-width: 768px;
+}
+
+
+.inputClassContainer:hover {
+    background-color: #ffffff96;
+}
+
+@media (min-width: 992px) {
+    .banner {
+        background: url('../../assets/images/banner.png');
+        background-size: cover;
+        background-attachment: fixed;
+    }
+}

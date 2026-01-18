@@ -1,20 +1,26 @@
+// src/router/routes.jsx
 import { lazy, Suspense } from 'react';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminRoutes } from './AdminRoutes';
 import { Preloader } from '@src/components/Preloader';
+import { Navigate } from 'react-router-dom';
 
-/* All */
-const Home = lazy(() => import("../pages/viewer/Home"));
+/* Viewer Pages */
+const Home = lazy(() => import("../pages/viewer/home/Home"));
 const Layout = lazy(() => import("../pages/viewer/Layout"));
 const Profile = lazy(() => import("../pages/viewer/Profile"));
-const Auth = lazy(() => import("../components/Auth"));
+const ResearchDetail = lazy(() => import("../pages/viewer/ResearchDetail"));
+const Auth = lazy(() => import("../components/auth"));
 
 export const routes = [
   {
     path: '/',
     element: <Layout />,
     children: [
-      { index: true, element: <Home /> }
+      {
+        index: true,
+        element: <Home />
+      }
     ]
   },
   {
@@ -26,27 +32,21 @@ export const routes = [
     ),
     children: [
       {
-        idex: true,
+        index: true,
         element: (
-            <Suspense fallback={
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh'
-                }}>
-                    <Preloader />
-                </div>
-            }>
-                <Layout />
-            </Suspense>
+          <Suspense fallback={
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100vh'
+            }}>
+              <Preloader />
+            </div>
+          }>
+            <Profile />
+          </Suspense>
         ),
-        children: [
-          {
-            path: '',
-            element: <Profile />
-          }
-        ]
       }
     ]
   },
@@ -58,69 +58,33 @@ export const routes = [
       </Auth>
     ),
     children: AdminRoutes
-  }
-  /*
-  
-  {
-    path: "/unauthorized",
-    element: <UnauthorizedPage />
   },
-  // Ruta protegida para Admin
+  // Ruta dinámica para investigaciones (debe ir al final antes del wildcard)
   {
-    path: "/admin",
-    element: <ProtectedRoute allowedGroups={['Admin']} />,
+    path: "/:path",
+    element: (
+      <Suspense fallback={
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}>
+          <Preloader />
+        </div>
+      }>
+        <Layout />
+      </Suspense>
+    ),
     children: [
       {
-        element: <ProtectedLayout />,
-        children: [
-          {
-            index: true,
-            element: <AdminPage />
-          }
-        ]
+        index: true,
+        element: <ResearchDetail />
       }
     ]
-  },
-  // Ruta protegida para Allies
-  {
-    path: "/allies",
-    element: <ProtectedRoute allowedGroups={['Allies']} />,
-    children: [
-      {
-        element: <ProtectedLayout />,
-        children: [
-          {
-            index: true,
-            element: <AlliesPage />
-          }
-        ]
-      }
-    ]
-  },
-  // Ruta protegida para Viewer (acceso por defecto)
-  {
-    path: "/viewer",
-    element: <ProtectedRoute allowedGroups={['Viewer', 'Admin', 'Allies']} />,
-    children: [
-      {
-        element: <ProtectedLayout />,
-        children: [
-          {
-            index: true,
-            element: <ViewerPage />
-          }
-        ]
-      }
-    ]
-  },
-  // Redirección por defecto - los usuarios autenticados van a viewer
-  {
-    path: "/",
-    element: <Navigate to="/viewer" replace />,
   },
   {
     path: "*",
-    element: <Navigate to="/login" replace />,
-  },
-  */
+    element: <Navigate to="/" replace />,
+  }
 ];

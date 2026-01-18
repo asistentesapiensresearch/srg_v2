@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography, Button, Paper, useTheme } from '@mui/material';
 import { AlertCircle, Home } from 'lucide-react'; // Importa los íconos necesarios
 import { Link } from 'react-router-dom'; // Para navegar (asumiendo que usas react-router-dom)

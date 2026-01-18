@@ -1,7 +1,7 @@
 import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
 
-type IModels = 'Institution' | 'Research' | 'Section';
+export type IModels = keyof typeof client.models;
 
 const client = generateClient<Schema>();
 
@@ -9,7 +9,6 @@ const getClient = (type: IModels) => {
     return client.models[type];
 };
 
-// Helper para manejar errores de Amplify
 const handleErrors = (errors: any, type: IModels, action: string) => {
     if (errors && errors.length) {
         console.error(`Error ${action} ${type}:`, errors);
@@ -32,6 +31,17 @@ export const apiSyncService = {
             return data;
         } catch (error) {
             console.error(`[apiSyncService] Unhandled exception in get(${type}):`, error);
+            throw error;
+        }
+    },
+
+    async getById(type: IModels, id: string) {
+        try {
+            const { data, errors } = await getClient(type).get({ id });
+            handleErrors(errors, type, 'fetching by ID');
+            return data;
+        } catch (error) {
+            console.error(`[apiSyncService] Unhandled exception in getById(${type}):`, error);
             throw error;
         }
     },
@@ -68,4 +78,14 @@ export const apiSyncService = {
             throw error;
         }
     },
+
+    async query(type: IModels, query: string, variables: any) {
+        try {
+            const result = await getClient(type)[query](variables);
+            return result;
+        } catch (error) {
+            console.error(`Error executing query ${query} on ${type}:`, error);
+            throw error;
+        }
+    }
 };

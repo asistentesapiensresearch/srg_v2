@@ -1,4 +1,3 @@
 export * from './Delete';
-export * from './GetByResearch';
-export * from './GetSection';
-export * from './Save';
+export * from './Get';
+export * from './Store';
