@@ -5,36 +5,34 @@ import MainRankings from "./components/MainRankings";
 import AcademicOffer from "./components/AcademicOffer";
 import SecondarySections from "./components/SecondarySections";
 import ScientificEcosystem from "./components/ScientificEcosystem";
+import { useResearchs } from "@src/hooks/useResearchs";
 
 const Home = () => {
     const { sections } = useSections();
+    const { researchs } = useResearchs();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    // Handler para filtrar por sección
-    const handleSectionClick = (sectionName = null) => {
-        const params = new URLSearchParams(searchParams);
+    const groupedData = researchs.reduce((acc, item) => {
+        // Definimos nombres por defecto en caso de que sean null
+        const category = item.category || "Sin Categoría";
+        const subCategory = item.subCategory || "General";
 
-        if (sectionName) {
-            // Si hay sección, la establecemos
-            params.set("section", sectionName);
-        } else {
-            // Si no hay sección (TODOS), removemos el filtro
-            params.delete("section");
+        // Si la categoría no existe en el acumulador, la creamos
+        if (!acc[category]) {
+            acc[category] = {};
         }
 
-        // Actualizar la URL y hacer scroll a la sección de investigaciones
-        const queryString = params.toString();
-        navigate(queryString ? `?${queryString}` : '', { replace: true });
+        // Si la subcategoría no existe dentro de esa categoría, la creamos
+        if (!acc[category][subCategory]) {
+            acc[category][subCategory] = [];
+        }
 
-        // Scroll suave hacia la sección de investigaciones
-        setTimeout(() => {
-            const researchSection = document.getElementById("research-section");
-            if (researchSection) {
-                researchSection.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-        }, 100);
-    };
+        // Agregamos el objeto al grupo correspondiente
+        acc[category][subCategory].push(item);
+
+        return acc;
+    }, {});
 
     // Handler para búsqueda
     const handleSearch = (searchValue) => {
@@ -58,8 +56,8 @@ const Home = () => {
         <>
             <main className="max-w-6xl mx-auto px-4 py-30 space-y-12">
                 <Hero />
-                <MainRankings />
-                <SecondarySections />
+                <MainRankings rankings={groupedData['Ranking General']} />
+                <SecondarySections indicators={researchs.filter(r => r.category == 'Indicadores Específicos')} />
                 <ScientificEcosystem />
                 <AcademicOffer />
             </main>

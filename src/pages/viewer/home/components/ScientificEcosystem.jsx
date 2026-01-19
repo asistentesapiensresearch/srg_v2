@@ -1,5 +1,5 @@
 // components/ScientificEcosystem.jsx
-import { Microscope, BookOpen, Building2 } from 'lucide-react';
+import { Newspaper, BookOpen, Building2 } from 'lucide-react';
 
 const EcosystemCard = ({ icon: Icon, title, description, links }) => (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-50 flex flex-col items-center text-center space-y-3">
@@ -25,19 +25,14 @@ export default function ScientificEcosystem() {
             <h2 className="text-2xl font-bold text-slate-800">Ecosistema Científico</h2>
             <div className="grid md:grid-cols-3 gap-6">
                 <EcosystemCard
-                    icon={Microscope}
-                    title="Mejores Grupos de Investigación"
-                    description="Inaliciores is neesiostcatontis mosenrio prota. Indidibone ist a polas e plastes."
-                />
-                <EcosystemCard
                     icon={BookOpen}
                     title="Publicaciones y Revistas"
                     links="Revistas-Sapiens"
                 />
                 <EcosystemCard
-                    icon={Building2}
-                    title="Organizaciones"
-                    links="Org-Sapiens"
+                    icon={Newspaper}
+                    title="Noticias"
+                    description="Inaliciores is neesiostcatontis mosenrio prota. Indidibone ist a polas e plastes."
                 />
             </div>
         </section>

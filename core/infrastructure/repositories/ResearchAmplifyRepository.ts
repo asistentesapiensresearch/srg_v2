@@ -12,12 +12,12 @@ const toPlainResearch = (amplifyData: any): Research | null => {
         index,
         title,
         path,
-        shortDescription,
         description,
-        alert,
         dateRange,
         icon,
         sectionId,
+        category,
+        subCategory,
         version,
     } = amplifyData;
     
@@ -27,12 +27,12 @@ const toPlainResearch = (amplifyData: any): Research | null => {
         index,
         title,
         path,
-        shortDescription,
         description,
-        alert,
         dateRange,
         icon,
         sectionId,
+        category,
+        subCategory,
         version: version || 1,
         
         // Métodos de la entidad (si existen)
@@ -45,11 +45,11 @@ const toPlainResearch = (amplifyData: any): Research | null => {
             return !!(
                 this.title?.trim() &&
                 this.path?.trim() &&
-                this.shortDescription?.trim() &&
                 this.description?.trim() &&
-                this.alert?.trim() &&
                 this.dateRange?.trim() &&
                 this.icon?.trim() &&
+                this.category?.trim() &&
+                this.subCategory?.trim() &&
                 this.sectionId
             );
         }

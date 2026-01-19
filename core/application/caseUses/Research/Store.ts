@@ -10,51 +10,39 @@ export class Store {
 
     async execute(research: Research, id?: string) {
         // Validar campos obligatorios
-        console.log('research', research)
-        if (!research.title?.trim()) {
-            throw new Error("El título es obligatorio");
-        }
+        const newErrors: any = {};
 
-        if (!research.path?.trim()) {
-            throw new Error("El path es obligatorio");
+        if (!research.title.trim()) newErrors.title = "El título es obligatorio.";
+        if (!research.path.trim()) {
+            newErrors.path = "El path es obligatorio.";
+        } else if (!/^[a-z0-9-]+$/.test(research.path)) {
+            newErrors.path = "El path solo puede contener letras minúsculas, números y guiones.";
         }
-
-        if (!research.shortDescription?.trim() || research.shortDescription === '<p></p>') {
-            throw new Error("La descripción corta es obligatoria");
-        }
-
         if (!research.description?.trim() || research.description === '<p></p>') {
-            throw new Error("La descripción es obligatoria");
+            newErrors.description = "La descripción es obligatoria.";
         }
-
-        if (!research.alert?.trim() || research.alert === '<p></p>') {
-            throw new Error("La alerta es obligatoria");
-        }
-
-        if (!research.dateRange?.trim()) {
-            throw new Error("El rango de fechas es obligatorio");
-        }
-
-        if (!research.sectionId) {
-            throw new Error("La sección es obligatoria");
-        }
-
-        if (!research.icon?.trim()) {
-            throw new Error("El ícono es obligatorio");
-        }
+        if (!research.dateRange.trim()) newErrors.dateRange = "El rango de fechas es obligatorio.";
+        if (!research.sectionId) newErrors.sectionId = "Debe seleccionar una sección.";
+        if (!research.category) newErrors.category = "Debe seleccionar una categoría.";
+        if (!research.subCategory) newErrors.subCategory = "Debe seleccionar una subcategoría.";
+        if (!research.icon) newErrors.icon = "Debe subir un ícono.";
 
         // Validar formato del path
         const pathRegex = /^[a-z0-9-]+$/;
         if (!pathRegex.test(research.path)) {
-            throw new Error("El path solo puede contener letras minúsculas, números y guiones");
+            newErrors.path = "El path solo puede contener letras minúsculas, números y guiones";
         }
 
         // Verificar que el path no esté duplicado (solo en creación o si cambió en edición)
         if (!id || (id && research.path !== (await this.researchRepo.findById(id))?.path)) {
             const existingResearch = await this.researchRepo.findByPath?.(research.path);
             if (existingResearch) {
-                throw new Error(`El path "${research.path}" ya está en uso por otra investigación`);
+                newErrors.path = `El path "${research.path}" ya está en uso por otra investigación`;
             }
+        }
+
+        if(Object.keys(newErrors).length > 0){
+            return { error: newErrors };
         }
 
         // Si se proporciona un ID, es una actualización
@@ -74,7 +62,7 @@ export class Store {
         if (research.logos.length > 0) {
             await this.saveLogos(research, researchDB.id);
         }
-        return research;
+        return { research };
     }
 
     private async saveLogos(research, id) {

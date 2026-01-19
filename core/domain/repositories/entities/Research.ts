@@ -6,9 +6,9 @@ export class Research {
 
     public index: number;
     public title: string;
-    public shortDescription: string;
     public description: string;
-    public alert?: string;
+    public category: string;
+    public subCategory: string;
     public dateRange?: string; // En Amplify es string, no DateRange
     public path?: string;
     public icon?: string;
@@ -21,10 +21,10 @@ export class Research {
     constructor(props: {
         id?: string;
         sectionId: string;
+        category: string;
+        subCategory: string;
         title: string;
-        shortDescription: string;
         description: string;
-        alert?: string;
         dateRange?: string;
         path?: string;
         icon?: string;
@@ -34,10 +34,10 @@ export class Research {
     }) {
         this.id = props.id;
         this.sectionId = props.sectionId;
+        this.category = props.category;
+        this.subCategory = props.subCategory;
         this.title = props.title;
-        this.shortDescription = props.shortDescription;
         this.description = props.description;
-        this.alert = props.alert;
         this.dateRange = props.dateRange;
         this.path = props.path;
         this.icon = props.icon;
@@ -54,7 +54,7 @@ export class Research {
     public isValid(): boolean {
         return !!(
             this.title &&
-            this.shortDescription &&
+            this.description &&
             this.sectionId &&
             this.index !== undefined &&
             this.index !== null

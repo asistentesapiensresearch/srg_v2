@@ -57,7 +57,7 @@ export function useResearchs() {
 
     const storeResearch = async (research: Research, id?: string) => {
         const command = new Store(researchRepository, logosRepository);
-        await command.execute(research, id);
+        return await command.execute(research, id);
     }
 
     const deleteResearch = async (id: string) => {

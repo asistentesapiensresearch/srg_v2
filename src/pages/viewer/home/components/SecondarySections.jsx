@@ -1,5 +1,7 @@
 // components/SecondarySections.jsx
+import { Box, Divider } from '@mui/material';
 import { FlaskConical, Globe, Database, Users, BarChart3, Microscope, FileText, BookOpen } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const IndicatorButton = ({ icon: Icon, label }) => (
     <button className="flex items-center gap-3 bg-white p-3 rounded-md shadow-sm border border-gray-100 hover:shadow-md transition w-full">
@@ -10,46 +12,51 @@ const IndicatorButton = ({ icon: Icon, label }) => (
     </button>
 );
 
-export default function SecondarySections() {
+export default function SecondarySections({
+    indicators = [],
+    groups = []
+}) {
     return (
         <div className="grid lg:grid-cols-2 gap-8">
             {/* Indicadores Específicos */}
-            <div className="space-y-4">
+            {indicators.length > 0 && <div className="space-y-4">
                 <h3 className="text-gray-500 font-bold text-sm mb-4">Indicadores Específicos</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <IndicatorButton icon={FlaskConical} label="ART-Sapiens" />
-                    <IndicatorButton icon={Globe} label="ART-Sapiens" />
-                    <IndicatorButton icon={Database} label="DTI-Sapiens" />
-                    <IndicatorButton icon={BarChart3} label="GNC-Sapiens" />
-                    <IndicatorButton icon={Users} label="GNC-Sapiens" />
-                    <IndicatorButton icon={Microscope} label="FRH-Sapiens" />
+                    {indicators.map(item => (
+                        <Link to={item.path}>
+                            <IndicatorButton icon={Microscope} label={item.name} />
+                        </Link>
+                    ))}
                 </div>
-            </div>
+            </div>}
 
             {/* 100 Mejores por Materia */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            {groups.length > 0 && <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 border-b border-gray-50">
-                    <h3 className="font-bold text-slate-800">100 Mejores por Materia</h3>
+                    <h3 className="font-bold text-slate-800">Mejores Grupos</h3>
                 </div>
-                <div className="p-6 bg-gray-50/30 flex items-start gap-4">
-                    <div className="bg-white p-4 rounded-lg shadow-sm">
-                        <BookOpen className="text-slate-700" size={32} />
-                    </div>
-                    <div className="flex-1 space-y-2">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h4 className="font-bold text-slate-800">100 Mejores por Materia</h4>
-                                <p className="text-xs text-gray-400">per Materia</p>
+                {groups.map(m => (
+                <Link className="my-2" to={m.path}>
+                    <Divider />
+                    <div className="p-4 md:p-6 bg-gray-50/30 flex items-start gap-4">
+                        <div className="bg-white p-4 rounded-lg shadow-sm">
+                            <BookOpen className="text-slate-700" size={32} />
+                        </div>
+                        <div className="flex-1 space-y-2">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h4 className="font-bold text-slate-800">{m.name}</h4>
+                                    <p className="text-xs text-gray-400">{m.subCategory}</p>
+                                </div>
+                                <FileText className="text-gray-300" size={20} />
                             </div>
-                            <FileText className="text-gray-300" size={20} />
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 pt-2">
-                            <div className="text-[10px] text-gray-400 uppercase tracking-wider">Oupitata Poinises</div>
-                            <div className="text-[10px] text-gray-400 uppercase tracking-wider text-right italic">Cotiottrts Pesisda</div>
+                            {item.description && <div dangerouslySetInnerHTML={{ __html: item.description }} />}
                         </div>
                     </div>
-                </div>
-            </div>
+                    <Divider />
+                </Link>
+                ))}
+            </div>}
         </div>
     );
 }
