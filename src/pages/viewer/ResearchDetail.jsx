@@ -14,7 +14,7 @@ import {
 import { ArrowBack } from '@mui/icons-material';
 import { useResearchs } from '@src/pages/admin/Research/hooks/useResearchs';
 import PageRenderer from '@src/pages/admin/components/builder/Renderer';
-import { Preloader } from '@src/components/Preloader';
+import { Preloader } from '@src/components/preloader';
 
 const ResearchDetail = () => {
     const { path } = useParams();
