@@ -24,7 +24,7 @@ export default function SecondarySections({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {indicators.map(item => (
                         <Link to={item.path}>
-                            <IndicatorButton icon={Microscope} label={item.name} />
+                            <IndicatorButton icon={Microscope} label={item.title} />
                         </Link>
                     ))}
                 </div>
@@ -45,7 +45,7 @@ export default function SecondarySections({
                         <div className="flex-1 space-y-2">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h4 className="font-bold text-slate-800">{m.name}</h4>
+                                    <h4 className="font-bold text-slate-800">{m.title}</h4>
                                     <p className="text-xs text-gray-400">{m.subCategory}</p>
                                 </div>
                                 <FileText className="text-gray-300" size={20} />
