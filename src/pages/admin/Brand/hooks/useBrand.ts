@@ -2,37 +2,39 @@ import { useEffect, useState } from "react";
 
 import { apiSyncService } from "@core/infrastructure/api/apiSync.service";
 import { copy, remove } from "aws-amplify/storage";
+import { BrandAmplifyRepository } from "@core/infrastructure/repositories/BrandAmplifyRepository";
+import { Store } from "@core/application/caseUses/Brand";
 
-export function useSections() {
+export function useBrand() {
 
-    const [sections, setSections] = useState([]);
+    const [refresh, setRefresh] = useState(0);
+    const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const init = async () => {
             try {
                 setLoading(true)
-                const sectionsDB = await apiSyncService.get('Section');
-                setSections(sectionsDB.sort((a, b) => a.index - b.index));
+                const brandsDB = await apiSyncService.get('Brand');
+                setBrands(brandsDB.sort((a, b) => a.index - b.index));
             } catch (error) {
-                console.error("Error fetching sections:", error);
+                console.error("Error fetching brands:", error);
             } finally {
                 setLoading(false)
             }
         };
         if (!loading)
             init();
-    }, []);
+    }, [refresh]);
 
-    const saveSection = async (data: {
+    const saveBrand = async (data: {
         iconKey: string,
         tempFolder: string,
         name: string,
-        description: string,
-        color: string,
-        section: any
+        link: string,
+        brand: any
     }) => {
-        const { tempFolder, name, description, color, iconKey, section } = data;
+        const { iconKey, tempFolder, name, link, brand } = data;
         let finalKey = iconKey;
 
         // Mover icono a carpeta definitiva
@@ -48,33 +50,26 @@ export function useSections() {
         }
 
         // Si estamos editando y el ícono cambió (y no es el temporal), borramos el anterior
-        if (section?.id && section.icon && section.icon !== finalKey) {
-            await remove({ path: section.icon });
+        if (brand?.id && brand.key && brand.key !== finalKey) {
+            await remove({ path: brand.key });
         }
 
         // Guardar en tu backend o DataStore
         const newData = {
-            name,
-            description,
-            color,
-            icon: iconKey,
+            name: name,
+            link: link,
+            key: finalKey,
         };
 
-        const repository = new SectionAmplifyRepository();
-
-        if (section?.id) {
-            const command = new Update(repository);
-            return await command.execute(section.id, newData);
-        }
-
-        const command = new Create(repository);
-        return await command.execute(newData);
+        const repository = new BrandAmplifyRepository();
+        const command = new Store(repository);
+        return await command.execute(newData, brand?.id);
     }
-
     return {
         loading,
-        sections,
-        saveSection,
-        setSections
+        brands,
+        saveBrand,
+        setBrands,
+        setRefresh
     };
 }

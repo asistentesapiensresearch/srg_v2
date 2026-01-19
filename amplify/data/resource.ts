@@ -1,18 +1,16 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-import { Section } from './schemas/Section';
 import { Institution } from './schemas/Institution';
 import { Research } from './schemas/Research';
-import { Logo } from './schemas/Logo';
-import { ResearchLogo } from './schemas/ResearchLogo';
+import { Brand } from './schemas/Brand';
+import { ResearchBrand } from './schemas/ResearchBrand';
 import { Template } from './schemas/Template';
 
 const schema = a.schema({
-  Section,
   Institution,
   Research,
-  Logo,
-  ResearchLogo,
+  Brand,
+  ResearchBrand,
   Template
 });
 

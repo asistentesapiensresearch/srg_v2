@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileUploader } from "@aws-amplify/ui-react-storage";
-import { remove, copy, getUrl } from "aws-amplify/storage";
+import { remove, getUrl } from "aws-amplify/storage";
 import {
     Button,
     Dialog,
@@ -12,14 +12,12 @@ import {
     FormControl, // Importado
     FormHelperText, // Importado
 } from "@mui/material";
-import { apiSyncService } from '@core/infrastructure/api/apiSync.service'
 
-export function SectionForm({ onClose, section, open }) {
+export function BrandForm({ onClose, brand, store }) {
 
-    const [name, setName] = useState(section?.name || "");
-    const [description, setDescription] = useState(section?.description || "");
-    const [color, setColor] = useState(section?.color || "#CF4040");
-    const [iconKey, setIconKey] = useState(section?.icon || "");
+    const [name, setName] = useState(brand?.name || "");
+    const [link, setLink] = useState(brand?.link || "");
+    const [iconKey, setIconKey] = useState(brand?.icon || "");
     const [iconPreview, setIconPreview] = useState("");
     const [uploading, setUploading] = useState(false);
     const [tempKeys, setTempKeys] = useState([]);
@@ -27,41 +25,20 @@ export function SectionForm({ onClose, section, open }) {
     // 1. Estado para manejar los errores de validación
     const [errors, setErrors] = useState({});
 
-    const tempFolder = "sections/temp/";
+    const tempFolder = "brands/temp/";
 
     useEffect(() => {
-        if (section) {
-            setName(section.name);
-            setDescription(section.description);
-            setColor(section.color);
-            if (section.icon) {
-                setIconKey(section.icon); // Aseguramos que iconKey tenga el valor existente
-                getUrl({ path: section.icon }).then((res) => {
+        if (brand) {
+            setName(brand.name);
+            setLink(brand.link);
+            if (brand.key) {
+                setIconKey(brand.key); // Aseguramos que iconKey tenga el valor existente
+                getUrl({ path: brand.key }).then((res) => {
                     setIconPreview(res.url.toString());
                 });
             }
         }
-    }, [section]);
-
-    // 2. Función de validación
-    const validateForm = () => {
-        const newErrors = {};
-
-        if (!name.trim()) {
-            newErrors.name = "El nombre es obligatorio.";
-        }
-        if (!description.trim()) {
-            newErrors.description = "La descripción es obligatoria.";
-        }
-        // Validamos que haya un ícono (ya sea uno existente o uno nuevo)
-        if (!iconKey) {
-            newErrors.icon = "Debe subir un ícono.";
-        }
-
-        setErrors(newErrors);
-        // Retorna true si no hay errores
-        return Object.keys(newErrors).length === 0;
-    };
+    }, [brand]);
 
     const handleUploadStart = () => setUploading(true);
     const handleUploadError = (err) => {
@@ -82,58 +59,22 @@ export function SectionForm({ onClose, section, open }) {
     };
 
     const handleSave = async () => {
-        // 3. Validar antes de guardar
-        if (!validateForm()) return;
-
         try {
             setUploading(true);
-            const logoDB = await saveLogo({
+            const { brand: brandDB, errors } = await store({
                 iconKey,
                 tempFolder,
                 name,
                 link,
-                logo
+                brand
             })
-            onClose(logoDB);
-        } catch (error) {
-            console.error("Error saving logo:", error);
-        } finally {
-            setUploading(false);
-        }
-    };
-
-    const handleSave = async () => {
-        // 3. Validar antes de guardar
-        if (!validateForm()) {
-            return; // Detiene la ejecución si el formulario no es válido
-        }
-
-        try {
-            setUploading(true);
-            let finalKey = iconKey;
-
-            
-
-            // Guardar en tu backend o DataStore
-            if (section?.id) {
-                const sectionDB = await apiSyncService.update('Section', section.id, {
-                    name,
-                    description,
-                    color,
-                    icon: finalKey,
-                })
-                onClose(sectionDB);
-            } else {
-                const newSection = await apiSyncService.create('Section', {
-                    name,
-                    description,
-                    color,
-                    icon: finalKey,
-                });
-                onClose(newSection);
+            if (errors) {
+                setErrors(errors)
+            } else if (brandDB) {
+                onClose(brandDB);
             }
         } catch (error) {
-            console.error("Error saving section:", error);
+            console.error("Error saving brand:", error);
         } finally {
             setUploading(false);
         }
@@ -148,7 +89,7 @@ export function SectionForm({ onClose, section, open }) {
 
     return (
         <Dialog open={true} onClose={handleCancel} maxWidth="sm" fullWidth>
-            <DialogTitle>{section?.id ? "Editar sección" : "Crear nueva sección"}</DialogTitle>
+            <DialogTitle>{brand?.id ? "Editar sección" : "Crear nueva sección"}</DialogTitle>
 
             {/* 4. FormGroup agrupa los controles del formulario */}
             <FormGroup className="p-4 flex flex-col gap-4">
@@ -163,28 +104,15 @@ export function SectionForm({ onClose, section, open }) {
                     helperText={errors.name}
                 />
 
-                {/* Descripción */}
+                {/* Link */}
                 <TextField
-                    label="Descripción"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    multiline
-                    rows={3}
+                    label="Link"
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
                     fullWidth
                     required
-                    error={!!errors.description}
-                    helperText={errors.description}
-                />
-
-                {/* Selector de color (Reemplazado por TextField tipo color para mejor integración con MUI) */}
-                <TextField
-                    label="Color de la sección"
-                    type="color"
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    fullWidth
-                    InputLabelProps={{ shrink: true }} // Mantiene la etiqueta arriba
-                    className="max-w-[200px]" // Limita el ancho
+                    error={!!errors.link}
+                    helperText={errors.link}
                 />
 
                 {/* 5. FormControl para el Uploader de icono */}
@@ -195,11 +123,13 @@ export function SectionForm({ onClose, section, open }) {
                                 position: 'relative',
                                 transform: 'none'
                             }}>Ícono actual</InputLabel>
-                            <img
-                                src={iconPreview}
-                                alt="Icono actual"
-                                className="w-20 h-20 object-cover rounded border mix-blend-difference"
-                            />
+                            <div className="max-w-20">
+                                <img
+                                    src={iconPreview}
+                                    alt="Icono actual"
+                                    className="w-100 object-cover rounded border"
+                                />
+                            </div>
                             <small className="text-gray-500">Puedes subir uno nuevo para reemplazarlo</small>
                         </div>
                     )}

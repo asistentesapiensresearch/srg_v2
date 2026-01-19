@@ -15,7 +15,6 @@ import RichTextEditorInpt from "@src/components/forms/RichTextEditor";
 import LogoComponent from "@src/components/forms/LogoComponent";
 import UploadInputForm from "@src/components/forms/UploadInputForm";
 import useWhyDidYouUpdate from "@src/hooks/useWhyDidYouUpdate";
-import { useSections } from "@src/pages/admin/Sections/hooks/useSections";
 
 const TEMP_FOLDER = "research/temp/";
 const ACCEPTED_FILE_TYPES = ["image/*"];
@@ -28,14 +27,12 @@ const INITIAL_FORM_STATE = {
     description: "",
     dateRange: "",
     logos: [],
-    sectionId: "",
     category: "",
     subCategory: "",
     icon: "",
 };
 
 export function ResearchForm({ research, onClose, store }) {
-    const { sections } = useSections();
     const rteRefDesc = useRef(null);
 
     const [form, setForm] = useState(INITIAL_FORM_STATE);
@@ -68,7 +65,6 @@ export function ResearchForm({ research, onClose, store }) {
             description: research?.description || "",
             dateRange: research?.dateRange || "",
             logos: research?.logos || [],
-            sectionId: research?.sectionId || "",
             category: research?.category || "",
             subCategory: research?.subCategory || "",
             icon: research?.icon || "",
@@ -143,10 +139,6 @@ export function ResearchForm({ research, onClose, store }) {
             newErrors.dateRange = "El rango de fechas es obligatorio.";
         }
 
-        if (!form.sectionId) {
-            newErrors.sectionId = "Debe seleccionar una sección.";
-        }
-
         if (!form.category) {
             newErrors.category = "Debe seleccionar una categoría.";
         }
@@ -172,7 +164,6 @@ export function ResearchForm({ research, onClose, store }) {
             /^[a-z0-9-]+$/.test(form.path) &&
             description && description !== '<p></p>' &&
             form.dateRange.trim() &&
-            form.sectionId &&
             form.category &&
             form.subCategory &&
             form.icon
@@ -221,22 +212,10 @@ export function ResearchForm({ research, onClose, store }) {
         }
     }, [form, validateForm, research, store, onClose, getCurrentDescription]);
 
-    // -------------- MEMOIZED OPTIONS -----------------
-    const sectionOptions = useMemo(
-        () => sections.map(s => ({ label: s.name, id: s.id })),
-        [sections]
-    );
-
-    const selectedSection = useMemo(
-        () => sectionOptions.find(s => s.id === form.sectionId) || null,
-        [sectionOptions, form.sectionId]
-    );
-
     // -------------- DEBUG -----------------
     if (import.meta.env.MODE === "development") {
         useWhyDidYouUpdate("ResearchForm", {
             research,
-            sections,
             onClose,
             form
         });
@@ -299,27 +278,6 @@ export function ResearchForm({ research, onClose, store }) {
                             error={!!errors.dateRange}
                             helperText={errors.dateRange}
                         />
-
-                        <div>
-                            <Autocomplete
-                                disablePortal
-                                options={sectionOptions}
-                                value={selectedSection}
-                                onChange={handleAutocompleteChange("sectionId")}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Sección"
-                                        required
-                                        error={!!errors.sectionId}
-                                    />
-                                )}
-                                fullWidth
-                            />
-                            {errors.sectionId && (
-                                <FormHelperText error>{errors.sectionId}</FormHelperText>
-                            )}
-                        </div>
                     </div>
 
                     {/* CATEGORÍA Y SUBCATEGORÍA */}

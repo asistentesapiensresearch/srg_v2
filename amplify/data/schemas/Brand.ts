@@ -1,14 +1,14 @@
 import { a } from "@aws-amplify/backend";
 
-export const Logo = a.model({
-    index: a.integer(),
+export const Brand = a.model({
+    index: a.integer().default(0),
     name: a.string(),
     link: a.string(),
     key: a.string(),
-    research: a.hasMany("ResearchLogo", "logoId")
+    research: a.hasMany("ResearchBrand", "brandId")
 })
     .secondaryIndexes(index => [
-        index('name').queryField('listLogoByName')
+        index('name').queryField('listBrandByName')
     ])
     .authorization((allow) => [
         allow.publicApiKey().to(["read"]),

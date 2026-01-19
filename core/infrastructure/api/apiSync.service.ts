@@ -17,7 +17,7 @@ const handleErrors = (errors: any, type: IModels, action: string) => {
 };
 
 export const apiSyncService = {
-    async get(type: IModels, limit?: number, filter?: any) {
+    async get(type: IModels, limit?: number, filter?: any): any {
         try {
             const params: Record<string, any> = {};
             if (limit) params.limit = limit;
@@ -35,7 +35,7 @@ export const apiSyncService = {
         }
     },
 
-    async getById(type: IModels, id: string) {
+    async getById(type: IModels, id: string): any {
         try {
             const { data, errors } = await getClient(type).get({ id });
             handleErrors(errors, type, 'fetching by ID');
@@ -46,7 +46,7 @@ export const apiSyncService = {
         }
     },
 
-    async create(type: IModels, body: any) {
+    async create(type: IModels, body: any): any {
         try {
             const { data, errors } = await getClient(type).create(body);
             handleErrors(errors, type, 'creating');
@@ -57,7 +57,7 @@ export const apiSyncService = {
         }
     },
 
-    async update(type: IModels, id: string, info: any) {
+    async update(type: IModels, id: string, info: any): any {
         try {
             const { data, errors } = await getClient(type).update({ id, ...info });
             handleErrors(errors, type, 'updating');
@@ -68,7 +68,7 @@ export const apiSyncService = {
         }
     },
 
-    async delete(type: IModels, id: string) {
+    async delete(type: IModels, id: string): any {
         try {
             const { data, errors } = await getClient(type).delete({ id });
             handleErrors(errors, type, 'deleting');
@@ -79,7 +79,7 @@ export const apiSyncService = {
         }
     },
 
-    async query(type: IModels, query: string, variables: any) {
+    async query(type: IModels, query: string, variables: any): any {
         try {
             const result = await getClient(type)[query](variables);
             return result;

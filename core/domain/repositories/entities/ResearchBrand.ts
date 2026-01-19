@@ -1,14 +1,14 @@
-export class ResearchLogo {
+export class ResearchBrand {
   public readonly id?: string;
 
   public researchId: string;
-  public logoId: string;
+  public brandId: string;
 
   constructor(props: {
     researchId: string;
-    logoId: string;
+    brandId: string;
   }) {
     this.researchId = props.researchId;
-    this.logoId = props.logoId;
+    this.brandId = props.brandId;
   }
 }

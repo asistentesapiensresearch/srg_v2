@@ -1,4 +1,4 @@
-export class Logo {
+export class Brand {
   public readonly id?: string;
 
   public index?: string;

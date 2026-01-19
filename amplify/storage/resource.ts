@@ -13,7 +13,7 @@ export const storage = defineStorage({
         'institutions/*': authorizations(allow),
         'research/*': authorizations(allow),
         'sections/*': authorizations(allow),
-        'logos/*': authorizations(allow),
+        'brands/*': authorizations(allow),
         'shared/*': authorizations(allow),
     })
 });

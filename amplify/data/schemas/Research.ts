@@ -9,10 +9,8 @@ export const Research = a.model({
     icon: a.string(),
     category: a.string(),
     subCategory: a.string(),
-    sectionId: a.id(),
-    section: a.belongsTo("Section", "sectionId"),
     template: a.hasOne("Template", "researchId"),
-    logos: a.hasMany("ResearchLogo", "researchId"),
+    brands: a.hasMany("ResearchBrand", "researchId"),
     version: a.integer().default(1)
 })
     .secondaryIndexes(index => [

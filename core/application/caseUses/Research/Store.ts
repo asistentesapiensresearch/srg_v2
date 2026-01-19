@@ -1,6 +1,6 @@
 import { Research } from "@core/domain/repositories/entities";
 import { LogosRepository, ResearchRepository } from "@core/domain/repositories";
-import { DeleteResearchLogo, CreateResearchLogo, FindByResearchId } from "../Logo";
+import { DeleteResearchLogo, CreateResearchLogo, FindByResearchId } from "../Brand";
 
 export class Store {
     constructor(
@@ -22,7 +22,6 @@ export class Store {
             newErrors.description = "La descripción es obligatoria.";
         }
         if (!research.dateRange.trim()) newErrors.dateRange = "El rango de fechas es obligatorio.";
-        if (!research.sectionId) newErrors.sectionId = "Debe seleccionar una sección.";
         if (!research.category) newErrors.category = "Debe seleccionar una categoría.";
         if (!research.subCategory) newErrors.subCategory = "Debe seleccionar una subcategoría.";
         if (!research.icon) newErrors.icon = "Debe subir un ícono.";

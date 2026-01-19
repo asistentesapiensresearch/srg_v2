@@ -1,14 +1,13 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useSections } from "@src/pages/admin/Sections/hooks/useSections";
 import Hero from "./components/Hero";
 import MainRankings from "./components/MainRankings";
 import AcademicOffer from "./components/AcademicOffer";
 import SecondarySections from "./components/SecondarySections";
 import ScientificEcosystem from "./components/ScientificEcosystem";
 import { useResearchs } from "@src/hooks/useResearchs";
+import Footer from "./components/Footer";
 
 const Home = () => {
-    const { sections } = useSections();
     const { researchs } = useResearchs();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -54,13 +53,14 @@ const Home = () => {
 
     return (
         <>
-            <main className="max-w-6xl mx-auto px-4 py-30 space-y-12">
+            <main className="max-w-6xl mx-auto px-4 pt-30 space-y-12">
                 <Hero />
                 <MainRankings rankings={groupedData['Ranking General']} />
                 <SecondarySections indicators={researchs.filter(r => r.category == 'Indicadores Específicos')} />
                 <ScientificEcosystem />
                 <AcademicOffer />
             </main>
+            <Footer/>
         </>
     );
 }

@@ -5,7 +5,7 @@ import useAutocomplete, {
 import { XIcon } from 'lucide-react';
 import { styled } from '@mui/material/styles';
 import { StorageImage } from '@aws-amplify/ui-react-storage';
-import { useLogo } from '@src/hooks/useLogo';
+import { useLogo } from '@src/pages/admin/Brand/hooks/useBrand';
 import { useState } from 'react';
 
 // ---------- STYLES ----------

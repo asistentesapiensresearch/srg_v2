@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 
 import { apiSyncService } from "@core/infrastructure/api/apiSync.service";
 import { copy, remove } from "aws-amplify/storage";
-import { LogoAmplifyRepository } from "@core/infrastructure/repositories/LogoAmplifyRepository";
-import { Create, Update } from "@core/application/caseUses/Logo";
+import { LogoAmplifyRepository } from "@core/infrastructure/repositories/BrandAmplifyRepository";
+import { Create, Update } from "@core/application/caseUses/Brand";
 
 export function useInstitutions() {
 

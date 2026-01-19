@@ -1,8 +1,5 @@
-import { DateRange } from '../../types';
-
 export class Research {
     public readonly id?: string; // UUID - opcional para creación
-    public readonly sectionId: string; // ID of the parent Section
 
     public index: number;
     public title: string;
@@ -20,7 +17,6 @@ export class Research {
 
     constructor(props: {
         id?: string;
-        sectionId: string;
         category: string;
         subCategory: string;
         title: string;
@@ -33,7 +29,6 @@ export class Research {
         logos?: any[];
     }) {
         this.id = props.id;
-        this.sectionId = props.sectionId;
         this.category = props.category;
         this.subCategory = props.subCategory;
         this.title = props.title;
@@ -55,7 +50,6 @@ export class Research {
         return !!(
             this.title &&
             this.description &&
-            this.sectionId &&
             this.index !== undefined &&
             this.index !== null
         );

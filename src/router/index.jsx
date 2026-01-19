@@ -2,7 +2,7 @@
 import { Suspense } from "react";
 import { BrowserRouter, useRoutes } from "react-router-dom";
 import { routes } from "./routes";
-import { Preloader } from "../components/preloader";
+import { Preloader } from "@src/components/preloader";
 
 function AppRoutes() {
   return useRoutes(routes);

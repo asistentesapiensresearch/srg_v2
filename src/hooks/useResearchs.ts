@@ -4,9 +4,9 @@ import { ResearchAmplifyRepository } from "@core/infrastructure/repositories/Res
 import { TemplateAmplifyRepository } from "@core/infrastructure/repositories/TemplateAmplifyRepository";
 import { Delete, Get, Store } from "@core/application/caseUses/Research";
 import { Create as CreateTemplate, FindByResearchId, Update as UpdateTemplate } from "@core/application/caseUses/Template";
-import { FindByResearchId as FindLogoByResearchId } from "@core/application/caseUses/Logo";
+import { FindByResearchId as FindLogoByResearchId } from "@core/application/caseUses/Brand";
 import { Logo, Research, Template } from "@core/domain/repositories/entities";
-import { LogoAmplifyRepository } from "@core/infrastructure/repositories/LogoAmplifyRepository";
+import { LogoAmplifyRepository } from "@core/infrastructure/repositories/BrandAmplifyRepository";
 
 export function useResearchs() {
     const researchRepository = new ResearchAmplifyRepository();

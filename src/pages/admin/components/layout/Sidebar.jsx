@@ -23,21 +23,16 @@ export const Sidebar = ({
     const [itemsOpen, setItemsOpen] = useState([]);
     const Menu = [
         {
-            label: 'Secciones',
+            label: 'Investigaciones',
             items: [
-                {
-                    path: 'sections',
-                    label: 'Lista secciones',
-                    icon: <LayoutDashboard size={20} />,
-                },
                 {
                     path: 'research',
                     label: 'Investigación',
                     icon: <LayoutDashboard size={20} />,
                 },
                 {
-                    path: 'logos',
-                    label: 'Logos',
+                    path: 'brands',
+                    label: 'Marcas',
                     icon: <LayoutDashboard size={20} />,
                 }
             ]

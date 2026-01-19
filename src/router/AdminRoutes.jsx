@@ -5,9 +5,8 @@ import { Preloader } from "../components/Preloader";
 const ErrorContentNotAvailable = lazy(() => import("../pages/admin/ErrorContentNotAvailable"));
 const Layout = lazy(() => import("../pages/admin/Layout"));
 const Home = lazy(() => import('../pages/admin/Home'));
-const Sections = lazy(() => import("../pages/admin/Sections/Sections"));
 const Research = lazy(() => import("../pages/admin/Research/Research"));
-const Logos = lazy(() => import("../pages/admin/Logo/Logos"));
+const Brands = lazy(() => import("../pages/admin/Brand/Brands"));
 const Builder = lazy(() => import("../pages/admin/components/builder/Editor"));
 
 export const AdminRoutes = [
@@ -48,10 +47,6 @@ export const AdminRoutes = [
                 element: <Home />
             },
             {
-                path: 'sections',
-                element: <Sections />
-            },
-            {
                 path: 'research',
                 children: [
                     {
@@ -61,8 +56,8 @@ export const AdminRoutes = [
                 ]
             },
             {
-                path: 'logos',
-                element: <Logos />
+                path: 'brands',
+                element: <Brands />
             },
             {
                 path: '*',

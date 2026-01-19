@@ -15,7 +15,6 @@ const toPlainResearch = (amplifyData: any): Research | null => {
         description,
         dateRange,
         icon,
-        sectionId,
         category,
         subCategory,
         version,
@@ -30,7 +29,6 @@ const toPlainResearch = (amplifyData: any): Research | null => {
         description,
         dateRange,
         icon,
-        sectionId,
         category,
         subCategory,
         version: version || 1,
@@ -49,8 +47,7 @@ const toPlainResearch = (amplifyData: any): Research | null => {
                 this.dateRange?.trim() &&
                 this.icon?.trim() &&
                 this.category?.trim() &&
-                this.subCategory?.trim() &&
-                this.sectionId
+                this.subCategory?.trim()
             );
         }
     };
