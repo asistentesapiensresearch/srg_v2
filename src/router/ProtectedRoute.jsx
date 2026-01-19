@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
-import { Preloader } from '../components/Preloader';
+import { Preloader } from '../components/preloader';
 
 /**
  * Componente que protege rutas basándose en grupos de Cognito

@@ -2,7 +2,7 @@
 import { lazy, Suspense } from 'react';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminRoutes } from './AdminRoutes';
-import { Preloader } from '@src/components/Preloader';
+import { Preloader } from '@src/components/preloader';
 import { Navigate } from 'react-router-dom';
 
 /* Viewer Pages */

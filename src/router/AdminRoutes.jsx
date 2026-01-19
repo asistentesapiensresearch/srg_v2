@@ -1,6 +1,6 @@
 // src/router/AdminRoutes.jsx
 import { lazy, Suspense } from "react";
-import { Preloader } from "../components/Preloader";
+import { Preloader } from "../components/preloader";
 
 const ErrorContentNotAvailable = lazy(() => import("../pages/admin/ErrorContentNotAvailable"));
 const Layout = lazy(() => import("../pages/admin/Layout"));
