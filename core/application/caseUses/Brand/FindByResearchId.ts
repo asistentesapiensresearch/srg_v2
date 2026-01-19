@@ -1,9 +1,9 @@
-import { LogosRepository } from "@core/domain/repositories";
+import { BrandRepository } from "@core/domain/repositories";
 
 export class FindByResearchId {
-    constructor(private logosRepo: LogosRepository){}
+    constructor(private brandRepo: BrandRepository){}
 
     async execute(researchId:string){
-        return await this.logosRepo.findByResearchId(researchId);
+        return await this.brandRepo.findByResearchId(researchId);
     }
 }

@@ -12,6 +12,7 @@ import {
     FormControl, // Importado
     FormHelperText, // Importado
 } from "@mui/material";
+import { moveIconToDefinitiveFolder } from "../../helpers/moveIconToDefinitiveFolder";
 
 export function BrandForm({ onClose, brand, store }) {
 
@@ -25,7 +26,7 @@ export function BrandForm({ onClose, brand, store }) {
     // 1. Estado para manejar los errores de validación
     const [errors, setErrors] = useState({});
 
-    const tempFolder = "brands/temp/";
+    const TEMP_FOLDER = "brands/temp/";
 
     useEffect(() => {
         if (brand) {
@@ -61,9 +62,14 @@ export function BrandForm({ onClose, brand, store }) {
     const handleSave = async () => {
         try {
             setUploading(true);
+            const finalKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, iconKey, name);
+            // Si estamos editando y el ícono cambió (y no es el temporal), borramos el anterior
+            if (brand?.id && brand.key && brand.key !== finalKey) {
+                await remove({ path: brand.key });
+            }
+            setIconKey(finalKey);
             const { brand: brandDB, errors } = await store({
-                iconKey,
-                tempFolder,
+                iconKey: finalKey,
                 name,
                 link,
                 brand
@@ -135,7 +141,7 @@ export function BrandForm({ onClose, brand, store }) {
                     )}
                     <FileUploader
                         acceptedFileTypes={["image/*"]}
-                        path={tempFolder}
+                        path={TEMP_FOLDER}
                         maxFileCount={1}
                         onUploadStart={handleUploadStart}
                         onUploadSuccess={handleUploadSuccess}

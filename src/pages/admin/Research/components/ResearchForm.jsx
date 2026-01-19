@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { remove, copy } from "aws-amplify/storage";
+import { remove } from "aws-amplify/storage";
 import {
     Button,
     TextField,
@@ -12,10 +12,12 @@ import {
     FormHelperText,
 } from "@mui/material";
 import RichTextEditorInpt from "@src/components/forms/RichTextEditor";
-import LogoComponent from "@src/components/forms/LogoComponent";
+import BrandComponent from "@src/components/forms/BrandComponent";
 import UploadInputForm from "@src/components/forms/UploadInputForm";
 import useWhyDidYouUpdate from "@src/hooks/useWhyDidYouUpdate";
+import { moveIconToDefinitiveFolder } from "../../helpers/moveIconToDefinitiveFolder";
 
+// ==================== CONSTANTS ====================
 const TEMP_FOLDER = "research/temp/";
 const ACCEPTED_FILE_TYPES = ["image/*"];
 const CATEGORIES = ['Ranking General', 'Indicadores Específicos', 'Mejores Grupos'];
@@ -26,12 +28,24 @@ const INITIAL_FORM_STATE = {
     path: "",
     description: "",
     dateRange: "",
-    logos: [],
+    brands: [],
     category: "",
     subCategory: "",
     icon: "",
 };
 
+// ==================== UTILITIES ====================
+const generatePath = (title) => {
+    return title
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-");
+};
+
+// ==================== MAIN COMPONENT ====================
 export function ResearchForm({ research, onClose, store }) {
     const rteRefDesc = useRef(null);
 
@@ -42,46 +56,16 @@ export function ResearchForm({ research, onClose, store }) {
     const [isInitialized, setIsInitialized] = useState(false);
     const [initialForm, setInitialForm] = useState(null);
 
-    // -------------- UTILITIES -----------------
-    const generatePath = useCallback((title) => {
-        return title
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9\s-]/g, "")
-            .trim()
-            .replace(/\s+/g, "-");
-    }, []);
-
+    // ==================== COMPUTED VALUES ====================
     const getCurrentDescription = useCallback(() => {
         return rteRefDesc.current?.editor?.getHTML() || "";
     }, []);
 
-    // -------------- INITIAL LOAD -----------------
-    useEffect(() => {
-        const initialData = {
-            title: research?.title || "",
-            path: research?.path || "",
-            description: research?.description || "",
-            dateRange: research?.dateRange || "",
-            logos: research?.logos || [],
-            category: research?.category || "",
-            subCategory: research?.subCategory || "",
-            icon: research?.icon || "",
-        };
-
-        setForm(initialData);
-        setInitialForm(initialData);
-        setIconPreview(research?.icon || "");
-        setIsInitialized(true);
-    }, [research]);
-
-    // -------------- CHANGE DETECTION -----------------
     const hasChanges = useMemo(() => {
         if (!isInitialized || !initialForm) return false;
 
         const formChanged = Object.keys(form).some(key => {
-            if (key === 'logos') {
+            if (key === 'brands') {
                 return JSON.stringify(form[key]) !== JSON.stringify(initialForm[key]);
             }
             return form[key] !== initialForm[key];
@@ -93,15 +77,46 @@ export function ResearchForm({ research, onClose, store }) {
         return formChanged || descChanged;
     }, [form, isInitialized, initialForm, getCurrentDescription]);
 
-    // -------------- HANDLERS -----------------
-    const handleChange = useCallback((field) => (e) => {
-        const value = field === 'logos' ? e.map(item => item.id) : e.target?.value;
+    // ==================== INITIALIZATION ====================
+    useEffect(() => {
+        const initialData = {
+            title: research?.title || "",
+            path: research?.path || "",
+            description: research?.description || "",
+            dateRange: research?.dateRange || "",
+            brands: research?.brands || [],
+            category: research?.category || "",
+            subCategory: research?.subCategory || "",
+            icon: research?.icon || "",
+        };
+
+        setForm(initialData);
+        setInitialForm(initialData);
+        setIconPreview(research?.icon || "");
+        setIsInitialized(true);
+    }, [research]);
+
+    // ==================== VALIDATION ====================
+    const validateForm = useCallback(() => {
+        const newErrors = {};
+        const description = getCurrentDescription();
+
+        if (!description?.trim() || description === '<p></p>') {
+            newErrors.description = "La descripción es obligatoria.";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }, [getCurrentDescription]);
+
+    // ==================== EVENT HANDLERS ====================
+    const handleFieldChange = useCallback((field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
     }, []);
 
-    const handleIconChange = useCallback((value) => {
-        setForm(prev => ({ ...prev, icon: value }));
-    }, []);
+    const handleInputChange = useCallback((field) => (e) => {
+        handleFieldChange(field, e.target.value);
+    }, [handleFieldChange]);
 
     const handleTitleChange = useCallback((e) => {
         const newTitle = e.target.value;
@@ -110,93 +125,52 @@ export function ResearchForm({ research, onClose, store }) {
             title: newTitle,
             path: generatePath(newTitle)
         }));
-    }, [generatePath]);
-
-    const handleAutocompleteChange = useCallback((field) => (_, value) => {
-        setForm(prev => ({ ...prev, [field]: value?.id || value || "" }));
     }, []);
 
-    // -------------- VALIDATION -----------------
-    const validateForm = useCallback(() => {
-        const newErrors = {};
-        const description = getCurrentDescription();
+    const handleAutocompleteChange = useCallback((field) => (_, value) => {
+        handleFieldChange(field, value || "");
+    }, [handleFieldChange]);
 
-        if (!form.title.trim()) {
-            newErrors.title = "El título es obligatorio.";
-        }
+    const handleBrandsChange = useCallback((brands) => {
+        const brandIds = brands.map(item => item.id);
+        handleFieldChange("brands", brandIds);
+    }, [handleFieldChange]);
 
-        if (!form.path.trim()) {
-            newErrors.path = "El path es obligatorio.";
-        } else if (!/^[a-z0-9-]+$/.test(form.path)) {
-            newErrors.path = "El path solo puede contener letras minúsculas, números y guiones.";
-        }
+    const handleIconChange = useCallback((value) => {
+        handleFieldChange("icon", value);
+    }, [handleFieldChange]);
 
-        if (!description?.trim() || description === '<p></p>') {
-            newErrors.description = "La descripción es obligatoria.";
-        }
-
-        if (!form.dateRange.trim()) {
-            newErrors.dateRange = "El rango de fechas es obligatorio.";
-        }
-
-        if (!form.category) {
-            newErrors.category = "Debe seleccionar una categoría.";
-        }
-
-        if (!form.subCategory) {
-            newErrors.subCategory = "Debe seleccionar una subcategoría.";
-        }
-
-        if (!form.icon) {
-            newErrors.icon = "Debe subir un ícono.";
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }, [form, getCurrentDescription]);
-
-    const isFormValid = useMemo(() => {
-        const description = getCurrentDescription();
-
-        return Boolean(
-            form.title.trim() &&
-            form.path.trim() &&
-            /^[a-z0-9-]+$/.test(form.path) &&
-            description && description !== '<p></p>' &&
-            form.dateRange.trim() &&
-            form.category &&
-            form.subCategory &&
-            form.icon
-        );
-    }, [form, getCurrentDescription]);
-
-    // -------------- SAVE -----------------
+    // ==================== SAVE LOGIC ====================
     const handleSave = useCallback(async () => {
-        if (!validateForm()) return;
+        if (!validateForm()) {
+            return;
+        }
 
         try {
             setUploading(true);
-            let finalKey = form.icon;
 
-            // Move icon from temp to final location if needed
-            if (form.icon.startsWith(TEMP_FOLDER)) {
-                const newKey = form.icon.replace("temp/", `${form.path}/`);
-                await copy({
-                    source: { path: form.icon },
-                    destination: { path: newKey }
-                });
-                await remove({ path: form.icon });
-                finalKey = newKey;
+            // Mover icono a carpeta definitiva si es necesario
+            const finalIcon = await moveIconToDefinitiveFolder(TEMP_FOLDER, form.icon, form.title);
+            // Si estamos editando y el ícono cambió (y no es el temporal), borramos el anterior
+            if (research?.id && research.icon && research.icon !== finalIcon) {
+                await remove({ path: research.icon });
             }
+            setForm({
+                ...form,
+                icon: finalIcon
+            });
 
             const researchData = {
                 ...form,
+                icon: finalIcon,
                 description: getCurrentDescription(),
-                icon: finalKey,
                 version: (research?.version || 0) + 1
             };
 
-            const { errors: saveErrors, research: researchDB } = await store(researchData, research?.id);
+            const { errors: saveErrors, research: researchDB } = await store(
+                researchData,
+                research?.id
+            );
 
             if (saveErrors && Object.keys(saveErrors).length > 0) {
                 setErrors(saveErrors);
@@ -212,16 +186,12 @@ export function ResearchForm({ research, onClose, store }) {
         }
     }, [form, validateForm, research, store, onClose, getCurrentDescription]);
 
-    // -------------- DEBUG -----------------
+    // ==================== DEBUG ====================
     if (import.meta.env.MODE === "development") {
-        useWhyDidYouUpdate("ResearchForm", {
-            research,
-            onClose,
-            form
-        });
+        useWhyDidYouUpdate("ResearchForm", { research, onClose, form });
     }
 
-    // -------------- LOADING STATE -----------------
+    // ==================== LOADING STATE ====================
     if (!isInitialized) {
         return (
             <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
@@ -232,7 +202,7 @@ export function ResearchForm({ research, onClose, store }) {
         );
     }
 
-    // -------------- RENDER -----------------
+    // ==================== RENDER ====================
     return (
         <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle>
@@ -256,7 +226,7 @@ export function ResearchForm({ research, onClose, store }) {
                     <TextField
                         label="Path (URL)"
                         value={form.path}
-                        onChange={handleChange("path")}
+                        onChange={handleInputChange("path")}
                         fullWidth
                         required
                         error={!!errors.path}
@@ -267,18 +237,16 @@ export function ResearchForm({ research, onClose, store }) {
                         placeholder="ejemplo-de-path"
                     />
 
-                    {/* RANGO DE FECHAS Y SECCIÓN */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <TextField
-                            label="Rango de Fechas"
-                            value={form.dateRange}
-                            onChange={handleChange("dateRange")}
-                            fullWidth
-                            required
-                            error={!!errors.dateRange}
-                            helperText={errors.dateRange}
-                        />
-                    </div>
+                    {/* RANGO DE FECHAS */}
+                    <TextField
+                        label="Rango de Fechas"
+                        value={form.dateRange}
+                        onChange={handleInputChange("dateRange")}
+                        fullWidth
+                        required
+                        error={!!errors.dateRange}
+                        helperText={errors.dateRange}
+                    />
 
                     {/* CATEGORÍA Y SUBCATEGORÍA */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -352,8 +320,8 @@ export function ResearchForm({ research, onClose, store }) {
                         )}
                     </div>
 
-                    {/* LOGOS */}
-                    <LogoComponent onChange={handleChange("logos")} />
+                    {/* Marcas */}
+                    <BrandComponent onChange={handleBrandsChange} />
 
                     {/* ERROR GENERAL */}
                     {errors.submit && (
@@ -365,14 +333,14 @@ export function ResearchForm({ research, onClose, store }) {
                         <Button
                             variant="outlined"
                             color="error"
-                            onClick={onClose}
+                            onClick={() => onClose()}
                             disabled={uploading}
                         >
                             Cancelar
                         </Button>
                         <Button
                             variant="contained"
-                            disabled={uploading || !isFormValid || !hasChanges}
+                            disabled={uploading || !hasChanges}
                             onClick={handleSave}
                             startIcon={uploading && <CircularProgress size={16} />}
                         >

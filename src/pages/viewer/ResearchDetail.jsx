@@ -12,7 +12,7 @@ import {
     Avatar
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-import { useResearchs } from '@src/hooks/useResearchs';
+import { useResearchs } from '@src/pages/admin/Research/hooks/useResearchs';
 import PageRenderer from '@src/pages/admin/components/builder/Renderer';
 import { Preloader } from '@src/components/Preloader';
 

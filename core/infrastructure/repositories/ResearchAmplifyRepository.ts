@@ -5,7 +5,7 @@ import { Research } from "@core/domain/repositories/entities";
 // Helper para convertir el modelo de Amplify a entidad Research
 const toPlainResearch = (amplifyData: any): Research | null => {
     if (!amplifyData) return null;
-    
+
     // Extraer solo las propiedades de datos
     const {
         id,
@@ -19,7 +19,7 @@ const toPlainResearch = (amplifyData: any): Research | null => {
         subCategory,
         version,
     } = amplifyData;
-    
+
     // Crear objeto con métodos de Research si la entidad los requiere
     const research: Research = {
         id,
@@ -32,14 +32,14 @@ const toPlainResearch = (amplifyData: any): Research | null => {
         category,
         subCategory,
         version: version || 1,
-        
+
         // Métodos de la entidad (si existen)
-        updateVersion: function() {
+        updateVersion: function () {
             this.version = (this.version || 1) + 1;
             return this;
         },
-        
-        isValid: function() {
+
+        isValid: function () {
             return !!(
                 this.title?.trim() &&
                 this.path?.trim() &&
@@ -51,7 +51,7 @@ const toPlainResearch = (amplifyData: any): Research | null => {
             );
         }
     };
-    
+
     return research;
 };
 
@@ -79,15 +79,15 @@ export class ResearchAmplifyRepository implements ResearchRepository {
     async findByPath(path: string): Promise<Research | null> {
         try {
             const { data, errors } = await apiSyncService.query(
-                'Research', 
-                'listResearchByPath', 
+                'Research',
+                'listResearchByPath',
                 { path }
             );
-            
+
             if (errors && errors.length) {
                 return null;
             }
-            
+
             return data?.[0] ? toPlainResearch(data[0]) : null;
         } catch (error: any) {
             console.error('Error al buscar investigación por path:', error);
@@ -98,7 +98,42 @@ export class ResearchAmplifyRepository implements ResearchRepository {
     async store(research: Research, id?: string): Promise<Research> {
         try {
             let data;
-            
+            let errors: any = {};
+
+            if (!research.title.trim()) {
+                errors.title = "El título es obligatorio.";
+            }
+
+            if (!research.path.trim()) {
+                errors.path = "El path es obligatorio.";
+            } else if (!/^[a-z0-9-]+$/.test(research.path)) {
+                errors.path = "El path solo puede contener letras minúsculas, números y guiones.";
+            }
+
+            if (!research.description?.trim() || research.description === '<p></p>') {
+                errors.description = "La descripción es obligatoria.";
+            }
+
+            if (!research.dateRange.trim()) {
+                errors.dateRange = "El rango de fechas es obligatorio.";
+            }
+
+            if (!research.category) {
+                errors.category = "Debe seleccionar una categoría.";
+            }
+
+            if (!research.subCategory) {
+                errors.subCategory = "Debe seleccionar una subcategoría.";
+            }
+
+            if (!research.icon) {
+                errors.icon = "Debe subir un ícono.";
+            }
+
+            if (Object.keys(errors).length > 0) {
+                return { errors } as any;
+            }
+
             if (id) {
                 // Para update, no enviar campos read-only ni métodos
                 const { createdAt, updatedAt, updateVersion, isValid, ...updateData } = research as any;
@@ -108,12 +143,12 @@ export class ResearchAmplifyRepository implements ResearchRepository {
                 const { id: _, createdAt, updatedAt, updateVersion, isValid, ...createData } = research as any;
                 data = await apiSyncService.create('Research', createData);
             }
-            
+
             const plainData = toPlainResearch(data);
             if (!plainData) {
                 throw new Error('No se pudo procesar la respuesta del servidor');
             }
-            
+
             return plainData;
         } catch (error: any) {
             console.error(`Error al ${id ? 'actualizar' : 'crear'} investigación:`, error);

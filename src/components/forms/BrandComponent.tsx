@@ -5,7 +5,7 @@ import useAutocomplete, {
 import { XIcon } from 'lucide-react';
 import { styled } from '@mui/material/styles';
 import { StorageImage } from '@aws-amplify/ui-react-storage';
-import { useLogo } from '@src/pages/admin/Brand/hooks/useBrand';
+import { useBrand } from '@src/pages/admin/Brand/hooks/useBrand';
 import { useState } from 'react';
 
 // ---------- STYLES ----------
@@ -42,7 +42,7 @@ const InputWrapper = styled('div')(({ theme }) => ({
 
 // ---------- ITEM ----------
 interface ItemProps extends ReturnType<AutocompleteGetItemProps<true>> {
-    option: LogoOptionType;
+    option: BrandOptionType;
     onDelete: () => void;
 }
 
@@ -94,7 +94,7 @@ const Listbox = styled('ul')(({ theme }) => ({
 }));
 
 // ---------- MAIN COMPONENT ----------
-function LogoComponentFN<Value extends LogoOptionType>(
+function BrandComponentFN<Value extends BrandOptionType>(
     props: UseAutocompleteProps<Value, true, false, false>,
 ) {
     const {
@@ -165,19 +165,19 @@ function LogoComponentFN<Value extends LogoOptionType>(
 }
 
 // ---------- EXPORT ----------
-export default function LogoComponent({
+export default function BrandComponent({
     onChange
 }) {
-    const { logos } = useLogo();
+    const { brands } = useBrand();
 
-    const [selectedLogos, setSelectedLogos] = useState<LogoOptionType[]>([]);
+    const [selectedBrands, setSelectedBrands] = useState<BrandOptionType[]>([]);
 
     return (
-        <LogoComponentFN<LogoOptionType>
-            options={logos}
-            value={selectedLogos}
+        <BrandComponentFN<BrandOptionType>
+            options={brands}
+            value={selectedBrands}
             onChange={(_, newValue) => {
-                setSelectedLogos(newValue)
+                setSelectedBrands(newValue)
                 if(onChange) onChange(newValue)
             }}
             getOptionLabel={(option) => option.name}
@@ -185,7 +185,7 @@ export default function LogoComponent({
     );
 }
 
-interface LogoOptionType {
+interface BrandOptionType {
     id: string;
     name: string;
     key: string; // path en Storage

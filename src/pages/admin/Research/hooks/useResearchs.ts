@@ -4,14 +4,14 @@ import { ResearchAmplifyRepository } from "@core/infrastructure/repositories/Res
 import { TemplateAmplifyRepository } from "@core/infrastructure/repositories/TemplateAmplifyRepository";
 import { Delete, Get, Store } from "@core/application/caseUses/Research";
 import { Create as CreateTemplate, FindByResearchId, Update as UpdateTemplate } from "@core/application/caseUses/Template";
-import { FindByResearchId as FindLogoByResearchId } from "@core/application/caseUses/Brand";
-import { Logo, Research, Template } from "@core/domain/repositories/entities";
-import { LogoAmplifyRepository } from "@core/infrastructure/repositories/BrandAmplifyRepository";
+import { FindByResearchId as FindBrandByResearchId } from "@core/application/caseUses/Brand";
+import { Brand, Research, Template } from "@core/domain/repositories/entities";
+import { BrandAmplifyRepository } from "@core/infrastructure/repositories/BrandAmplifyRepository";
 
 export function useResearchs() {
     const researchRepository = new ResearchAmplifyRepository();
     const templateRepository = new TemplateAmplifyRepository();
-    const logosRepository = new LogoAmplifyRepository();
+    const brandRepository = new BrandAmplifyRepository();
     const [loading, setLoading] = useState(false);
     const [researchs, setResearchs] = useState([]);
     const [refresh, setRefresh] = useState(0);
@@ -23,16 +23,16 @@ export function useResearchs() {
                 const command = new Get(researchRepository);
                 const researchsDB = (await command.execute() as any[]);
                 if (researchsDB.length > 0) {
-                    const getLogos = new FindLogoByResearchId(logosRepository);
+                    const getBrandsCommand = new FindBrandByResearchId(brandRepository);
                     const newResearch = await Promise.all(
                         researchsDB.map(async (r) => {
-                            const logos = await getLogos.execute(r.id);
+                            const brands = await getBrandsCommand.execute(r.id);
                             return {
                                 ...r,
-                                logosResearch: await Promise.all(
-                                    logos.map(async (l:any) => ({
+                                brandsResearch: await Promise.all(
+                                    brands.map(async (l:any) => ({
                                         ...l,
-                                        logo: (await l.logo()).data
+                                        brand: (await l.brand()).data
                                     }))
                                 )
                             }
@@ -56,7 +56,7 @@ export function useResearchs() {
     }
 
     const storeResearch = async (research: Research, id?: string) => {
-        const command = new Store(researchRepository, logosRepository);
+        const command = new Store(researchRepository, brandRepository);
         return await command.execute(research, id);
     }
 

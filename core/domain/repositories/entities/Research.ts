@@ -13,7 +13,7 @@ export class Research {
 
     // Relaciones
     public template?: any; // hasOne Template
-    public logos?: any[]; // hasMany ResearchLogo
+    public brands?: any[]; // hasMany ResearchLogo
 
     constructor(props: {
         id?: string;
@@ -26,7 +26,7 @@ export class Research {
         icon?: string;
         version?: number;
         template?: any;
-        logos?: any[];
+        brands?: any[];
     }) {
         this.id = props.id;
         this.category = props.category;
@@ -38,7 +38,7 @@ export class Research {
         this.icon = props.icon;
         this.version = props.version || 1;
         this.template = props.template;
-        this.logos = props.logos;
+        this.brands = props.brands;
     }
 
     // Métodos útiles

@@ -81,7 +81,7 @@ export const ResearchCard = ({
                 {loading ? (
                     <Skeleton variant="rounded" height={100} className="w-full mt-1" />
                 ) : (
-                    <div dangerouslySetInnerHTML={{ __html: research?.shortDescription || "" }} />
+                    <div dangerouslySetInnerHTML={{ __html: research?.description || "" }} />
                 )}
             </CardContent>
         </Card>

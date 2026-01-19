@@ -1,6 +1,6 @@
 export * from './Delete';
 export * from './Store';
+export * from './Get';
 export * from './FindByResearchId';
-export * from './FindByBrandId';
 export * from './CreateResearchBrand';
 export * from './DeleteResearchBrand';

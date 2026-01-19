@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useResearchs } from "@src/hooks/useResearchs";
+import { useResearchs } from "@src/pages/admin/Research/hooks/useResearchs";
 import { useSections } from "@src/pages/admin/Section/hooks/useSections";
 import {
     Table,

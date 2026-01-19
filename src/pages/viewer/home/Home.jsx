@@ -4,7 +4,7 @@ import MainRankings from "./components/MainRankings";
 import AcademicOffer from "./components/AcademicOffer";
 import SecondarySections from "./components/SecondarySections";
 import ScientificEcosystem from "./components/ScientificEcosystem";
-import { useResearchs } from "@src/hooks/useResearchs";
+import { useResearchs } from "@src/pages/admin/Research/hooks/useResearchs";
 import Footer from "./components/Footer";
 
 const Home = () => {

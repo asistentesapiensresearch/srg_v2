@@ -20,7 +20,7 @@ import { useEditor } from '@src/hooks/builder/useEditor';
 import { useSortableList } from '@src/hooks/useSortableList';
 import { useParams } from 'react-router-dom';
 import { TemplateAmplifyRepository } from '@core/infrastructure/repositories/TemplateAmplifyRepository';
-import { useResearchs } from '@src/hooks/useResearchs';
+import { useResearchs } from '@src/pages/admin/Research/hooks/useResearchs';
 import { Create, Update, FindByResearchId } from '@core/application/caseUses/Template';
 
 // ==========================================

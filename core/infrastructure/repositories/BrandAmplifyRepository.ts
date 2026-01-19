@@ -7,7 +7,7 @@ export class BrandAmplifyRepository implements BrandRepository {
     async store(brand: Brand, id?: string) {
         try {
             let newBrand;
-            let errors:any = {}
+            let errors: any = {}
 
             if (!brand.name.trim()) {
                 errors.name = "El nombre es obligatorio.";
@@ -79,8 +79,14 @@ export class BrandAmplifyRepository implements BrandRepository {
         const { data: brands } = await apiSyncService.query('ResearchBrand', 'listBrandByResearchId', { researchId });
         return brands;
     }
-    async findByBrandId(brandId: string) {
-        const { data: brands } = await apiSyncService.query('ResearchBrand', 'listBrandByBrandId', { brandId });
-        return brands;
+
+    async get(filters?: any): Promise<Brand[]> {
+        try {
+            const data = await apiSyncService.get('Brand', undefined, filters);
+            return (data || []) as Brand[];
+        } catch (error: any) {
+            console.error('Error al obtener marcas:', error);
+            throw error;
+        }
     }
 }

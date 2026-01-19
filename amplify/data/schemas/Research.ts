@@ -1,7 +1,7 @@
 import { a } from "@aws-amplify/backend";
 
 export const Research = a.model({
-    index: a.integer(),
+    index: a.integer().default(0),
     title: a.string(),
     description: a.string(),
     dateRange: a.string(),

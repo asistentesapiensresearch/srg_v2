@@ -1,13 +1,13 @@
 import { Button, Typography } from "@mui/material";
-import { useResearchs } from "@src/hooks/useResearchs";
+import { useResearchs } from "@src/pages/admin/Research/hooks/useResearchs";
 import { PlusIcon } from "lucide-react";
 import { useCallback, useState } from "react";
-import { ResearchForm } from "./ResearchForm";
+import { ResearchForm } from "./components/ResearchForm";
 import useWhyDidYouUpdate from "../../../hooks/useWhyDidYouUpdate"
 import { useSortableList } from "@src/hooks/useSortableList";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { ResearchCard } from "./ResearchCard";
+import { ResearchCard } from "./components/ResearchCard";
 import { SortableItem } from "@src/components/SortableItem";
 
 const Research = () => {
@@ -28,10 +28,10 @@ const Research = () => {
 
     const handleClickOpen = useCallback(() => setOpenForm(true), []);
 
-    const handleClose = useCallback(() => {
+    const handleClose = useCallback((research) => {
         setSelectedResearch(undefined);
-        setRefresh(r => r+1);
         setOpenForm(false);
+        if(research) setRefresh(r => r+1);
     }, []);
 
     const { dndContextProps, sortableContextProps } = useSortableList(

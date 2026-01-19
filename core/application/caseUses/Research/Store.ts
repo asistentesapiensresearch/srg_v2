@@ -1,11 +1,11 @@
 import { Research } from "@core/domain/repositories/entities";
-import { LogosRepository, ResearchRepository } from "@core/domain/repositories";
-import { DeleteResearchLogo, CreateResearchLogo, FindByResearchId } from "../Brand";
+import { BrandRepository, ResearchRepository } from "@core/domain/repositories";
+import { DeleteResearchBrand, CreateResearchBrand, FindByResearchId } from "../Brand";
 
 export class Store {
     constructor(
         private researchRepo: ResearchRepository,
-        private logoRepo: LogosRepository
+        private brandRepo: BrandRepository
     ) { }
 
     async execute(research: Research, id?: string) {
@@ -46,8 +46,8 @@ export class Store {
 
         // Si se proporciona un ID, es una actualización
         if (id) {
-            if (research.logos.length > 0) {
-                await this.saveLogos(research, id);
+            if (research.brands.length > 0) {
+                await this.saveBrand(research, id);
             }
             return await this.researchRepo.store(research, id);
         }
@@ -58,32 +58,32 @@ export class Store {
         }
 
         const researchDB = await this.researchRepo.store(research);
-        if (research.logos.length > 0) {
-            await this.saveLogos(research, researchDB.id);
+        if (research.brands.length > 0) {
+            await this.saveBrand(research, researchDB.id);
         }
         return { research };
     }
 
-    private async saveLogos(research, id) {
-        if (research.logos.length > 0) {
-            const getCommand = new FindByResearchId(this.logoRepo);
-            const logosDB = await getCommand.execute(id);
+    private async saveBrand(research, id) {
+        if (research.brands.length > 0) {
+            const getCommand = new FindByResearchId(this.brandRepo);
+            const brandDB = await getCommand.execute(id);
 
-            const newLogos = research.logos.filter(b => !logosDB.some(a => a.id === b.id));
-            if (newLogos.length > 0) {
-                const addCommand = new CreateResearchLogo(this.logoRepo);
+            const newBrand = research.brands.filter(b => !brandDB.some(a => a.id === b.id));
+            if (newBrand.length > 0) {
+                const addCommand = new CreateResearchBrand(this.brandRepo);
                 await Promise.all(
-                    newLogos.map(logo =>
-                        addCommand.execute(id, logo)
+                    newBrand.map(brand =>
+                        addCommand.execute(id, brand)
                     )
                 )
             }
 
-            const removeLogos = logosDB.filter(b => !research.logos.some(a => a.id === b.id));
-            if (removeLogos.length > 0) {
-                const removeCommand = new DeleteResearchLogo(this.logoRepo);
-                await Promise.all(removeLogos.map(logo => {
-                    removeCommand.execute(logo.id);
+            const removeBrand = brandDB.filter(b => !research.brands.some(a => a.id === b.id));
+            if (removeBrand.length > 0) {
+                const removeCommand = new DeleteResearchBrand(this.brandRepo);
+                await Promise.all(removeBrand.map(brand => {
+                    removeCommand.execute(brand.id);
                 }))
             }
         }
