@@ -1,7 +1,0 @@
-export * from './SignInIcon'
-export * from './SignOutIcon'
-export * from './MenuIcon'
-export * from './CloseIcon'
-export * from './InfoIcon'
-export * from './ScrollIcon'
-export * from './DriveIcon'
