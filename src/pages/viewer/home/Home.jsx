@@ -6,9 +6,10 @@ import SecondarySections from "./components/SecondarySections";
 import ScientificEcosystem from "./components/ScientificEcosystem";
 import { useResearchs } from "@src/pages/admin/Research/hooks/useResearchs";
 import Footer from "./components/Footer";
+import { Box, Skeleton } from "@mui/material";
 
 const Home = () => {
-    const { researchs } = useResearchs();
+    const { loading, researchs } = useResearchs();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
@@ -54,13 +55,33 @@ const Home = () => {
     return (
         <>
             <main className="max-w-6xl mx-auto px-4 pt-30 space-y-12">
-                <Hero />
-                <MainRankings rankings={groupedData['Ranking General']} />
-                <SecondarySections indicators={researchs.filter(r => r.category == 'Indicadores Específicos')} />
-                <ScientificEcosystem />
-                <AcademicOffer />
+                {
+                    loading ? <>
+                        <Box className="grid md:grid-cols-2 gap-2 m-0">
+                            <Skeleton className="min-h-100"></Skeleton>
+                            <Skeleton className="min-h-100"></Skeleton>
+                        </Box>
+                        <Box className="grid md:grid-cols-2 gap-2 m-0">
+                            <div className="grid md:grid-cols-2 gap-2 m-0">
+                                <Skeleton ></Skeleton>
+                                <Skeleton ></Skeleton>
+                                <Skeleton ></Skeleton>
+                                <Skeleton ></Skeleton>
+                                <Skeleton ></Skeleton>
+                                <Skeleton ></Skeleton>
+                            </div>
+                            <Skeleton></Skeleton>
+                        </Box>
+                    </> : <>
+                        <Hero />
+                        <MainRankings rankings={groupedData['Ranking General']} />
+                        <SecondarySections indicators={researchs.filter(r => r.category == 'Indicadores Específicos')} />
+                        <ScientificEcosystem />
+                        <AcademicOffer />
+                    </>
+                }
             </main>
-            <Footer/>
+            <Footer />
         </>
     );
 }

@@ -38,7 +38,6 @@ export function useResearchs() {
                             }
                         })
                     )
-                    console.log('newResearch',newResearch)
                     setResearchs(newResearch.sort((a, b) => a.index - b.index));
                 }
             } catch (error) {

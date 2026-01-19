@@ -12,7 +12,7 @@ const RankingCard = ({ title, lists = [], tag, color, icon, rankingName }) => (
         <div className="p-5 space-y-4">
             <div className="flex justify-center">{icon}</div>
             {lists.map((item, idx) => (
-                <Link to={item.path} className="curosr-pointer">
+                <Link to={item.path} className="curosr-pointer" key={idx}>
                     <Card className="p-5">
                         <Box>
                             <Box className="flex items-center">
@@ -38,8 +38,9 @@ export default function MainRankings({
 }) {
     return (
         <div className="grid md:grid-cols-2 gap-8">
-            {Object.keys(rankings).map(ranking => (
+            {Object.keys(rankings).map((ranking, idx) => (
                 <RankingCard
+                    key={idx}
                     title={ranking}
                     lists={rankings[ranking]}
                     tag="Ranking general"
