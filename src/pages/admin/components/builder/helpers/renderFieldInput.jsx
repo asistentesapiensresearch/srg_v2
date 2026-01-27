@@ -1,142 +1,310 @@
+// src/components/builder/helpers/renderFieldInput.jsx
 import {
   TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Typography,
+  Box,
+  Divider,
   Switch,
   FormControlLabel,
-  MenuItem,
-  Checkbox,
-  Box,
-  Typography
+  Slider
 } from '@mui/material';
-import RichTextEditorInpt from '@components/forms/RichTextEditor'; // Ajusta la ruta a tu WYSIWYG
-import DataSourceInput from '../inputs/DataSourceInput';
+import ImageUploaderField from './ImageUploaderField';
+import { ResearchEditorInptSection } from './ResearchEditorInptSection';
 import CssCodeInput from '../inputs/CssCodeInput';
-import ColorInput from '../inputs/ColorInput';
+import BrandsListInput from '../inputs/BrandsListInput';
 
-/**
- * @param {Object} field - El objeto field del schema.js
- * @param {any} value - El valor actual contenido en activeSection.props[field.name]
- * @param {Function} onChange - El callback (value) => handleFieldChange(field.name, value)
- */
-export default function renderFieldInput(field, value, onChange, rteRef) {
-  const safeValue = value ?? (field.default || '');
-
-  // Props base para los inputs de MUI
-  const commonProps = {
-    fullWidth: true,
-    size: "small",
-    label: field.label,
-    value: safeValue,
-    variant: "outlined",
-    margin: "dense", // Más compacto para el sidebar
-    onChange: (e) => onChange(e.target.value),
-  };
-
-  switch (field.type) {
-    case 'text':
-    case 'email':
-    case 'password':
-      return <TextField {...commonProps} type={field.type} />;
-
-    case 'number':
-      return (
-        <TextField
-          {...commonProps}
-          type="number"
-          onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))}
-        />
-      );
-
-    case 'textarea':
-      return <TextField {...commonProps} multiline rows={field.rows || 4} />;
-
-    case 'select':
-      return (
-        <TextField {...commonProps} select>
-          {field.options?.map((opt) => (
-            <MenuItem key={opt.value} value={opt.value}>
-              {opt.label || opt.value}
-            </MenuItem>
-          ))}
-        </TextField>
-      );
-
-    case 'color':
-      return (
-        <Box sx={{ mt: 1, mb: 1 }}>
-          <ColorInput field={field} value={value} onChange={onChange}></ColorInput>
-        </Box>
-      );
-
-    case 'cssCode':
-      return (
-        <Box sx={{ mt: 2, mb: 2 }}>
-          <CssCodeInput field={field} value={value} onChange={onChange}></CssCodeInput>
-        </Box>
-      );
-
-    case 'wysiwyg':
-      return (
-        <Box sx={{ mt: 2, mb: 1 }}>
-          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 'bold' }}>
+const renderFieldInput = (field, activeSection, onChange) => {
+  const value = activeSection.props[field.name];
+  // ========== SEPARATOR ==========
+  if (field.type === 'separator') {
+    return (
+      <Box sx={{ mt: 3 }}>
+        <Divider>
+          <Typography
+            variant="caption"
+            sx={{
+              fontWeight: 700,
+              color: 'primary.main',
+              letterSpacing: '0.5px'
+            }}
+          >
             {field.label}
           </Typography>
-          <RichTextEditorInpt
-            content={safeValue}
-            placeholder={field.default}
-            rteRef={rteRef}
-            onChange={(html) => onChange(html)}
-          // Importante: Si tu RichTextEditorInpt no tiene un onUpdate, 
-          // asegúrate de que use la ref para capturar el contenido antes de guardar.
+        </Divider>
+      </Box>
+    );
+  }
+
+  // ========== TEXT ==========
+  if (field.type === 'text') {
+    return (
+      <Box>
+        <Typography variant="caption" fontWeight={600} color="text.secondary" mb={0.5} display="block">
+          {field.label}
+        </Typography>
+        <TextField
+          fullWidth
+          size="small"
+          value={value || field.default || ''}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={field.placeholder || field.default}
+          helperText={field.help}
+        />
+      </Box>
+    );
+  }
+
+  // 
+  if (field.type === 'wysiwyg') {
+    return (
+      <ResearchEditorInptSection
+        placeholder="Descripción"
+        content={value || field.default || ''}
+        onChange={(e) => onChange(e)}
+      />
+    )
+  }
+
+  if (field.type == 'brandsList') {
+    return (
+      <BrandsListInput
+        value={value || field.default || ''}
+        onChange={(e) => onChange(e)}
+      />
+    )
+  }
+
+  if (field.type === 'cssCode') {
+    return (
+      <CssCodeInput
+        field={field}
+        value={value}
+        onChange={onChange}
+      />
+    );
+  }
+
+  // ========== TEXTAREA ==========
+  if (field.type === 'textarea') {
+    return (
+      <Box>
+        <Typography variant="caption" fontWeight={600} color="text.secondary" mb={0.5} display="block">
+          {field.label}
+        </Typography>
+        <TextField
+          fullWidth
+          multiline
+          rows={4}
+          size="small"
+          value={value || field.default || ''}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={field.placeholder || field.default}
+          helperText={field.help}
+        />
+      </Box>
+    );
+  }
+
+  // ========== NUMBER ==========
+  if (field.type === 'number') {
+    return (
+      <Box>
+        <Typography variant="caption" fontWeight={600} color="text.secondary" mb={0.5} display="block">
+          {field.label}
+        </Typography>
+        <TextField
+          fullWidth
+          type="number"
+          size="small"
+          value={value ?? field.default ?? 0}
+          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+          inputProps={{
+            min: field.min,
+            max: field.max,
+            step: field.step || 1
+          }}
+          helperText={field.help}
+        />
+      </Box>
+    );
+  }
+
+  // ========== SLIDER (alternativa para números) ==========
+  if (field.type === 'slider') {
+    return (
+      <Box>
+        <Typography variant="caption" fontWeight={600} color="text.secondary" mb={0.5} display="block">
+          {field.label}: {value ?? field.default}
+        </Typography>
+        <Slider
+          value={value ?? field.default ?? 0}
+          onChange={(e, newValue) => onChange(newValue)}
+          min={field.min || 0}
+          max={field.max || 100}
+          step={field.step || 1}
+          marks
+          valueLabelDisplay="auto"
+        />
+        {field.help && (
+          <Typography variant="caption" color="text.secondary">
+            {field.help}
+          </Typography>
+        )}
+      </Box>
+    );
+  }
+
+  // ========== SELECT ==========
+  if (field.type === 'select') {
+    return (
+      <FormControl fullWidth size="small">
+        <Typography variant="caption" fontWeight={600} color="text.secondary" mb={0.5} display="block">
+          {field.label}
+        </Typography>
+        <Select
+          value={value ?? field.default}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          {field.options.map((opt) => (
+            <MenuItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </MenuItem>
+          ))}
+        </Select>
+        {field.help && (
+          <Typography variant="caption" color="text.secondary" mt={0.5}>
+            {field.help}
+          </Typography>
+        )}
+      </FormControl>
+    );
+  }
+
+  // ========== COLOR ==========
+  if (field.type === 'color') {
+    return (
+      <Box>
+        <Typography variant="caption" fontWeight={600} color="text.secondary" mb={0.5} display="block">
+          {field.label}
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <input
+            type="color"
+            value={value || field.default || '#000000'}
+            onChange={(e) => onChange(e.target.value)}
+            style={{
+              width: '50px',
+              height: '38px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          />
+          <TextField
+            size="small"
+            fullWidth
+            value={value || field.default || '#000000'}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="#000000"
           />
         </Box>
-      );
+        {field.help && (
+          <Typography variant="caption" color="text.secondary" mt={0.5}>
+            {field.help}
+          </Typography>
+        )}
+      </Box>
+    );
+  }
 
-    case 'switch':
-      return (
+  // ========== SWITCH / BOOLEAN ==========
+  if (field.type === 'switch' || field.type === 'boolean') {
+    return (
+      <Box>
         <FormControlLabel
-          sx={{ my: 0.5 }}
           control={
             <Switch
-              size="small"
-              checked={Boolean(value)}
+              checked={value ?? field.default ?? false}
               onChange={(e) => onChange(e.target.checked)}
             />
           }
-          label={<Typography variant="body2">{field.label}</Typography>}
-        />
-      );
-
-    case 'checkbox':
-      return (
-        <FormControlLabel
-          sx={{ my: 0.5 }}
-          control={
-            <Checkbox
-              size="small"
-              checked={Boolean(value)}
-              onChange={(e) => onChange(e.target.checked)}
-            />
+          label={
+            <Typography variant="body2" fontWeight={600}>
+              {field.label}
+            </Typography>
           }
-          label={<Typography variant="body2">{field.label}</Typography>}
         />
-      );
-
-    case 'data_source_manager':
-      return (
-        <Box sx={{ my: 2 }}>
-          <Typography variant="caption" fontWeight="bold">{field.label}</Typography>
-          <DataSourceInput
-            value={safeValue}
-            onChange={(newValue) => onChange(newValue)}
-          />
-        </Box>
-      );
-
-    default:
-      return (
-        <Typography variant="caption" color="error">
-          Tipo "{field.type}" no soportado
-        </Typography>
-      );
+        {field.help && (
+          <Typography variant="caption" color="text.secondary" display="block" ml={4}>
+            {field.help}
+          </Typography>
+        )}
+      </Box>
+    );
   }
-}
+
+  // ========== IMAGE URL ==========
+  if (field.type === 'image') {
+    return (
+      <Box>
+        <Typography variant="caption" fontWeight={600} color="text.secondary" mb={0.5} display="block">
+          {field.label}
+        </Typography>
+        <TextField
+          fullWidth
+          size="small"
+          value={value || field.default || ''}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="https://..."
+          helperText={field.help}
+        />
+        {value && (
+          <Box
+            sx={{
+              mt: 1,
+              border: '1px solid #e0e0e0',
+              borderRadius: 1,
+              overflow: 'hidden',
+              maxHeight: '150px'
+            }}
+          >
+            <img
+              src={value}
+              alt="Preview"
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+          </Box>
+        )}
+      </Box>
+    );
+  }
+
+  // ========== IMAGE UPLOADER (AWS S3) ==========
+  if (field.type === 'image_uploader') {
+    return (
+      <ImageUploaderField
+        key={field.name}
+        field={field}
+        value={activeSection.props[field.name]}
+        onChange={onChange}
+        sectionId={activeSection.id}
+      />
+    );
+  }
+
+  // ========== FALLBACK ==========
+  return (
+    <Box>
+      <Typography variant="caption" color="error">
+        Tipo de campo no soportado: {field.type}
+      </Typography>
+    </Box>
+  );
+};
+
+export default renderFieldInput;

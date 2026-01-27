@@ -6,13 +6,13 @@ import {
     Dialog,
     DialogTitle,
     TextField,
-    CircularProgress,
     InputLabel,
     FormGroup, // Importado
     FormControl, // Importado
     FormHelperText, // Importado
 } from "@mui/material";
 import { moveIconToDefinitiveFolder } from "../../helpers/moveIconToDefinitiveFolder";
+import { Preloader } from "@src/components/preloader";
 
 export function BrandForm({ onClose, brand, store }) {
 
@@ -165,7 +165,7 @@ export function BrandForm({ onClose, brand, store }) {
                         variant="contained"
                         disabled={uploading}
                         onClick={handleSave}
-                        startIcon={uploading && <CircularProgress size={16} />}
+                        startIcon={uploading && <Preloader />}
                     >
                         Guardar
                     </Button>

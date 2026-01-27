@@ -75,7 +75,10 @@ const Home = () => {
                     </> : <>
                         <Hero />
                         <MainRankings rankings={groupedData['Ranking General']} />
-                        <SecondarySections indicators={researchs.filter(r => r.category == 'Indicadores Específicos')} />
+                        <SecondarySections
+                            indicators={researchs.filter(r => r.category == 'Indicadores Específicos')}
+                            groups={researchs.filter(r => r.category == 'Mejores Grupos')}
+                        />
                         <ScientificEcosystem />
                         <AcademicOffer />
                     </>

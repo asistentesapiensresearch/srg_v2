@@ -5,6 +5,7 @@ export const Template = a.model({
     themeSettings: a.json(),
     researchId: a.id(),
     research: a.belongsTo("Research", "researchId"),
+    brands: a.hasMany("TemplateBrand", "templateId"),
 })
     .secondaryIndexes(index => [
         index('researchId').queryField('listTemplateByResearchId')

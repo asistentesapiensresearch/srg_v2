@@ -1,35 +1,43 @@
 // src/view/sections/FeaturesGrid/schema.js
 export default {
-    label: "Grid",
+    label: "Grid Responsivo",
     isContainer: true,
     fields: [
-        { name: "columns", label: "Número de Columnas (1-12)", type: "number", default: "3", min: 0, max: 12 },
-        { name: "title", label: "Título Principal", type: "text", default: "Bienvenido" },
+        { name: "layout_settings", label: "📐 ESTRUCTURA DE COLUMNAS", type: "separator" },
         {
-            name: "align_title",
-            label: "Alineación del título",
-            type: "select",
-            default: "left",
-            options: [
-                { label: "Izquierda", value: "left" },
-                { label: "Centro", value: "center" },
-                { label: "Derecha", value: "end" }
-            ]
+            name: "columns_desktop",
+            label: "Columnas en PC (Desktop)",
+            type: "number",
+            default: 3,
+            min: 1,
+            max: 12
         },
-        { name: "desc", label: "Descripción", type: "textarea", default: "Descripción aquí" },
         {
-            name: "align_desc",
-            label: "Alineación de la descripción",
-            type: "select",
-            default: "left",
-            options: [
-                { label: "Izquierda", value: "left" },
-                { label: "Centro", value: "center" },
-                { label: "Derecha", value: "end" }
-            ]
+            name: "columns_tablet",
+            label: "Columnas en Tablet",
+            type: "number",
+            default: 2,
+            min: 1,
+            max: 12
         },
-        { name: "title_color", label: "Color título", type: "color", default: "#000000" },
-        { name: "desc_color", label: "Color descripción ", type: "color", default: "#000000" },
-        { name: "background_color", label: "Color de Fondo", type: "color", default: "#f5f5f5" }
+        {
+            name: "columns_mobile",
+            label: "Columnas en Móvil",
+            type: "number",
+            default: 1,
+            min: 1,
+            max: 12
+        },
+        {
+            name: "gap",
+            label: "Espaciado (Gap)",
+            type: "number",
+            default: 3,
+            help: "Espacio entre celdas"
+        },
+        { name: "style_settings", label: "🎨 ESTILO Y DISEÑO", type: "separator" },
+        { name: "title", label: "Título de la Sección", type: "text", default: "" },
+        { name: "background_color", label: "Color de Fondo", type: "color", default: "#ffffff" },
+        { name: "padding_y", label: "Padding Vertical", type: "number", default: 8 }
     ]
 };

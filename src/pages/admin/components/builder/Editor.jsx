@@ -1,8 +1,8 @@
 // src/components/builder/Editor.jsx
 import React, { useState, useEffect } from 'react';
-import { Box, Drawer, List, Button, Typography, IconButton, Grid, Divider, CircularProgress, Chip } from '@mui/material';
+import { Box, Drawer, List, Button, Typography, IconButton, Grid, Divider, Chip } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-import { DndContext } from '@dnd-kit/core';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
 import { CopyPlusIcon, X as CloseIcon, LayoutTemplate } from 'lucide-react';
 
@@ -22,6 +22,7 @@ import { useParams } from 'react-router-dom';
 import { TemplateAmplifyRepository } from '@core/infrastructure/repositories/TemplateAmplifyRepository';
 import { useResearchs } from '@src/pages/admin/Research/hooks/useResearchs';
 import { Create, Update, FindByResearchId } from '@core/application/caseUses/Template';
+import { Preloader } from '@src/components/preloader';
 
 // ==========================================
 // HELPERS RECURSIVOS
@@ -101,9 +102,10 @@ export default function Builder() {
     const activeSection = findNodeById(sections, selectedSectionId);
     const activeSchema = activeSection ? SECTION_SCHEMAS[activeSection.type] : null;
 
-    const { dndContextProps, sortableContextProps } = useSortableList(
+    const { dndContextProps, sortableContextProps, activeId, overId } = useSortableList(
         sections,
-        setSections
+        setSections,
+        SECTION_SCHEMAS
     );
 
     // ========== CARGAR INVESTIGACIÓN Y TEMPLATE ==========
@@ -115,7 +117,7 @@ export default function Builder() {
             try {
                 // 1. Buscar la investigación
                 const research = researchs.find(r => r.id === researchId);
-                
+
                 if (!research) {
                     console.error('❌ Investigación no encontrada');
                     console.log('researchId buscado:', researchId);
@@ -134,11 +136,11 @@ export default function Builder() {
                 if (template) {
                     console.log('✅ Template encontrado:', template);
                     setCurrentTemplate(template);
-                    
+
                     // 3. Parsear y cargar las secciones
                     try {
                         const savedSections = JSON.parse(template.themeSettings);
-                        
+
                         if (Array.isArray(savedSections)) {
                             setSections(savedSections);
                             console.log('✅ Secciones cargadas:', savedSections.length);
@@ -218,7 +220,9 @@ export default function Builder() {
                     section={sect}
                     label={SECTION_SCHEMAS[sect.type]?.label || sect.type}
                     isSelected={selectedSectionId === sect.id}
-                    isActive={false}
+                    isActive={activeId === sect.id} // 🔥 Detectar si está siendo arrastrado
+                    isDragging={activeId === sect.id} // 🔥 Nuevo prop
+                    isOver={overId === sect.id} // 🔥 Nuevo prop
                     onClick={() => handleSelectSection(sect.id)}
                     onDelete={handleDeleteSection}
                     onAddChild={handlePrepareAddChild}
@@ -269,7 +273,7 @@ export default function Builder() {
                     themeSettings,
                     researchId
                 });
-                
+
                 setCurrentTemplate(newTemplate);
                 console.log('✅ Template creado:', newTemplate);
                 alert('Template creado correctamente');
@@ -285,15 +289,15 @@ export default function Builder() {
     // Mostrar loader
     if (loadingResearchs || isLoadingTemplate) {
         return (
-            <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
                 height: '100vh',
                 flexDirection: 'column',
                 gap: 2
             }}>
-                <CircularProgress size={60} />
+                <Preloader />
                 <Typography>Cargando editor...</Typography>
             </Box>
         );
@@ -302,10 +306,10 @@ export default function Builder() {
     // Validar investigación
     if (!currentResearch) {
         return (
-            <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
                 height: '100vh',
                 flexDirection: 'column',
                 gap: 2
@@ -326,9 +330,9 @@ export default function Builder() {
             <Navigation />
 
             {/* Barra de información */}
-            <Box sx={{ 
-                p: 2, 
-                bgcolor: 'primary.main', 
+            <Box sx={{
+                p: 2,
+                bgcolor: 'primary.main',
                 color: 'white',
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -337,7 +341,7 @@ export default function Builder() {
                 <Typography variant="subtitle1" fontWeight="bold">
                     📝 Editando: {currentResearch.title}
                 </Typography>
-                <Chip 
+                <Chip
                     label={currentTemplate ? '✅ Template existente' : '🆕 Nuevo template'}
                     size="small"
                     sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}
@@ -372,11 +376,34 @@ export default function Builder() {
                                         {renderLayerTree(sections)}
                                     </List>
                                 </SortableContext>
+
+                                {/* 🔥 DragOverlay para preview durante el arrastre */}
+                                <DragOverlay>
+                                    {activeId ? (
+                                        <Box
+                                            sx={{
+                                                bgcolor: 'white',
+                                                border: '2px solid #1976d2',
+                                                borderRadius: 1,
+                                                p: 1,
+                                                boxShadow: 3,
+                                                opacity: 0.9
+                                            }}
+                                        >
+                                            <Typography variant="body2" fontWeight={600}>
+                                                {(() => {
+                                                    const activeNode = findNodeById(sections, activeId);
+                                                    return SECTION_SCHEMAS[activeNode?.type]?.label || 'Elemento';
+                                                })()}
+                                            </Typography>
+                                        </Box>
+                                    ) : null}
+                                </DragOverlay>
                             </DndContext>
 
                             {sections.length === 0 && (
                                 <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 4, color: 'text.secondary' }}>
-                                    No hay secciones.<br/>Añade una para comenzar.
+                                    No hay secciones.<br />Añade una para comenzar.
                                 </Typography>
                             )}
 
@@ -420,12 +447,12 @@ export default function Builder() {
                                 </IconButton>
                             </Box>
 
-                            <Box display="flex" flexDirection="column" gap={2} mt={2}>
+                            <Box display="flex" flexDirection="column" gap={1} mt={2}>
                                 {activeSchema.fields.map((field) => (
                                     <Box key={field.name}>
                                         {renderFieldInput(
                                             field,
-                                            activeSection.props[field.name],
+                                            activeSection,
                                             (value) => handleFieldChange(field.name, value)
                                         )}
                                     </Box>

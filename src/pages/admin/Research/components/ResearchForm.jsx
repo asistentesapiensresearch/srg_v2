@@ -3,7 +3,6 @@ import { remove } from "aws-amplify/storage";
 import {
     Button,
     TextField,
-    CircularProgress,
     FormGroup,
     Box,
     Dialog,
@@ -15,6 +14,7 @@ import RichTextEditorInpt from "@src/components/forms/RichTextEditor";
 import BrandComponent from "@src/components/forms/BrandComponent";
 import UploadInputForm from "@src/components/forms/UploadInputForm";
 import useWhyDidYouUpdate from "@src/hooks/useWhyDidYouUpdate";
+import { Preloader } from "@src/components/preloader";
 import { moveIconToDefinitiveFolder } from "../../helpers/moveIconToDefinitiveFolder";
 
 // ==================== CONSTANTS ====================
@@ -196,7 +196,7 @@ export function ResearchForm({ research, onClose, store }) {
         return (
             <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
                 <Box className="flex justify-center items-center p-8">
-                    <CircularProgress />
+                    <Preloader/>
                 </Box>
             </Dialog>
         );
@@ -342,7 +342,7 @@ export function ResearchForm({ research, onClose, store }) {
                             variant="contained"
                             disabled={uploading || !hasChanges}
                             onClick={handleSave}
-                            startIcon={uploading && <CircularProgress size={16} />}
+                            startIcon={uploading && <Preloader/>}
                         >
                             {uploading ? "Guardando..." : "Guardar"}
                         </Button>

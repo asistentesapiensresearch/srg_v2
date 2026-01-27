@@ -59,7 +59,7 @@ export class ResearchAmplifyRepository implements ResearchRepository {
     async get(filters?: any): Promise<Research[]> {
         try {
             const data = await apiSyncService.get('Research', undefined, filters);
-            return (data || []).map(toPlainResearch).filter(Boolean) as Research[];
+            return (data || []).filter(Boolean) as Research[];
         } catch (error: any) {
             console.error('Error al obtener investigaciones:', error);
             throw error;

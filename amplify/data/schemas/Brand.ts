@@ -5,7 +5,8 @@ export const Brand = a.model({
     name: a.string(),
     link: a.string(),
     key: a.string(),
-    research: a.hasMany("ResearchBrand", "brandId")
+    research: a.hasMany("ResearchBrand", "brandId"),
+    template: a.hasMany("TemplateBrand", "brandId"),
 })
     .secondaryIndexes(index => [
         index('name').queryField('listBrandByName')

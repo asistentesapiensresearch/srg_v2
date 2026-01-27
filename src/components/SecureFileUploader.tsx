@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { FileUploader } from "@aws-amplify/ui-react-storage";
 import { getUrl } from "aws-amplify/storage";
-import { Alert, CircularProgress } from "@mui/material";
+import { Alert } from "@mui/material";
+import { Preloader } from "./preloader";
 
 export const SecureFileUploader = ({
     folder = "shared",
@@ -73,7 +74,7 @@ export const SecureFileUploader = ({
 
             {uploading && (
                 <div className="flex items-center gap-2 text-gray-600">
-                    <CircularProgress size={20} />
+                    <Preloader/>
                     <span>Subiendo imagen...</span>
                 </div>
             )}

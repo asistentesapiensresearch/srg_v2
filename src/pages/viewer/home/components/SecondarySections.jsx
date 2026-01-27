@@ -35,8 +35,8 @@ export default function SecondarySections({
                 <div className="p-4 border-b border-gray-50">
                     <h3 className="font-bold text-slate-800">Mejores Grupos</h3>
                 </div>
-                {groups.map(m => (
-                <Link className="my-2" to={m.path}>
+                {groups.map((m, idx) => (
+                <Link className="my-2" to={m.path} key={idx}>
                     <Divider />
                     <div className="p-4 md:p-6 bg-gray-50/30 flex items-start gap-4">
                         <div className="bg-white p-4 rounded-lg shadow-sm">
@@ -50,7 +50,7 @@ export default function SecondarySections({
                                 </div>
                                 <FileText className="text-gray-300" size={20} />
                             </div>
-                            {item.description && <div dangerouslySetInnerHTML={{ __html: item.description }} />}
+                            {m.description && <div dangerouslySetInnerHTML={{ __html: m.description }} />}
                         </div>
                     </div>
                     <Divider />

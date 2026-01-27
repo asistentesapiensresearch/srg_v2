@@ -16,7 +16,7 @@ const WysiwygSection = ({
 
     return (
         // 3. Asignamos el ID al contenedor padre
-        <Container maxWidth={maxWidth} id={uniqueId}>
+        <Container className="px-[0!important]" maxWidth={maxWidth} id={uniqueId}>
 
             {/* 4. Envolvemos el CSS del usuario dentro del ID generado */}
             {customCss && (

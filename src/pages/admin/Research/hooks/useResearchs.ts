@@ -22,24 +22,11 @@ export function useResearchs() {
             try {
                 const command = new Get(researchRepository);
                 const researchsDB = (await command.execute() as any[]);
-                if (researchsDB.length > 0) {
-                    const getBrandsCommand = new FindBrandByResearchId(brandRepository);
-                    const newResearch = await Promise.all(
-                        researchsDB.map(async (r) => {
-                            const brands = await getBrandsCommand.execute(r.id);
-                            return {
-                                ...r,
-                                brandsResearch: await Promise.all(
-                                    brands.map(async (l:any) => ({
-                                        ...l,
-                                        brand: (await l.brand()).data
-                                    }))
-                                )
-                            }
-                        })
-                    )
-                    setResearchs(newResearch.sort((a, b) => a.index - b.index));
-                }
+                await Promise.all(researchsDB.map(async (r) => {
+                    r.brands = (await r.brands()).data;
+                    r.template = (await r.template()).data;
+                }))
+                setResearchs(researchsDB.sort((a, b) => a.index - b.index));
             } catch (error) {
                 console.error("Error fetching researchs:", error);
             } finally {

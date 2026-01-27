@@ -111,75 +111,37 @@ const ResearchDetail = () => {
         );
     }
 
+    console.log(research)
+
     /* ================= RENDER ================= */
     return (
         <Container maxWidth="xl" className="py-8">
             {/* ===== HEADER ===== */}
-            <Box>
-                <Box className="md:flex items-center gap-6 mb-4">
+            <Box className="md:flex items-center gap-6 mb-4">
+                <Box className="flex items-center gap-2">
                     <Typography variant="h4" className="font-bold text-red-700">
                         {research.title}
                     </Typography>
 
-                    <Box className="p-2 px-4 bg-gray-50 rounded-lg mt-2 md:m-0">
-                        <Typography variant="caption" className="text-gray-600">
-                            Última actualización:{' '}
-                            {research.updatedAt
-                                ? new Date(research.updatedAt).toLocaleDateString('es-ES')
-                                : 'No disponible'}
-                        </Typography>
-                    </Box>
-                </Box>
-
-                <Box className="mb-4">
-                    {research.alert && research.alert !== '<p></p>' && (
-                        <Alert severity="warning">
-                            <div dangerouslySetInnerHTML={{ __html: research.alert }} />
-                        </Alert>
+                    {research.dateRange && (
+                        <Chip label={research.dateRange} color="primary" />
                     )}
                 </Box>
 
-                <Box className="flex items-start gap-6 mb-6">
-                    <div className="text-center">
-                        {research.icon && (
-                            <Avatar sx={{ width: 100, height: 100 }} className="mb-3">
-                                <StorageImage
-                                    alt={research.title}
-                                    path={research.icon}
-                                    className="w-full h-full object-contain"
-                                />
-                            </Avatar>
-                        )}
-
-                        {research.dateRange && (
-                            <Chip label={research.dateRange} color="primary" />
-                        )}
-                    </div>
-
-                    <Box>
-                        {research.description && research.description !== '<p></p>' && (
-                            <Box className="mt-4">
-                                <div
-                                    className="prose max-w-none"
-                                    dangerouslySetInnerHTML={{ __html: research.description }}
-                                />
-                            </Box>
-                        )}
-                        {/* ===== LOGOS ===== */}
-                        {Array.isArray(research.logosResearch) && research.logosResearch.length > 0 && (
-                            <Box className="flex flex-wrap gap-4 mt-4">
-                                {research.logosResearch.map((logoResearch, idx) => (
-                                    <Link to={logoResearch.logo.link} key={idx} target='blank'>
-                                        <StorageImage
-                                            alt="Logo"
-                                            path={logoResearch.logo.key}
-                                            className="w-full h-full object-contain"
-                                        />
-                                    </Link>
-                                ))}
-                            </Box>
-                        )}
-                    </Box>
+                <Box className="p-2 px-4 bg-gray-50 rounded-lg mt-2 md:m-0">
+                    <Typography variant="caption" className="text-gray-600">
+                        Última actualización:{' '}
+                        {research.updatedAt
+                            ? new Date(research.updatedAt).toLocaleString('es-ES', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                            })
+                            : 'No disponible'}
+                    </Typography>
                 </Box>
             </Box>
 
@@ -190,9 +152,7 @@ const ResearchDetail = () => {
                 </Box>
             )}
             {!templateLoading && templateSections.length > 0 && (
-                <Paper elevation={3} className="mb-6">
-                    <PageRenderer sections={templateSections} research={research} />
-                </Paper>
+                <PageRenderer sections={templateSections} research={research} />
             )}
 
             <Box className="mt-6 flex justify-center">

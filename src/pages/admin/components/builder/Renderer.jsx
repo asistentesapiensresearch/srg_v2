@@ -26,6 +26,7 @@ const PageRenderer = ({ sections, research }) => {
                 return (
                     <Component
                         key={section.id}
+                        id={section.id}
                         research={research}
                         {...section.props}
                         children={section.children}
