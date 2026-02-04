@@ -1,6 +1,7 @@
 // src/view/sections/FeaturesGrid/schema.js
 export default {
     label: "Grid Responsivo",
+    icon: "LayoutGrid",
     isContainer: true,
     fields: [
         { name: "layout_settings", label: "📐 ESTRUCTURA DE COLUMNAS", type: "separator" },

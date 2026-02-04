@@ -2,78 +2,95 @@
 import {
     Drawer, Box, Typography, IconButton, Accordion,
     AccordionSummary, AccordionDetails, FormGroup,
-    FormControlLabel, Checkbox, Button, Divider,
-    TextField
+    FormControlLabel, Checkbox, Button, TextField, Stack
 } from "@mui/material";
 import { X, ChevronDown, FilterX } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const FilterDrawer = ({
     open,
     onClose,
-    availableFilters, // Objeto: { "Ciudad": ["Bogota", "Cali"], "Categoria": [...] }
-    activeFilters,    // Objeto: { "Ciudad": ["Bogota"] }
-    onFilterChange,   // Función para actualizar
-    onClearAll
+    availableFilters, // Estructura: { tech_name: { label: "Alias", values: [] } }
+    activeFilters,    
+    onFilterChange,   
+    onClearAll,
+    quickFilters
 }) => {
+    // Estado local para manejar los resultados filtrados por la caja de búsqueda interna
+    const [localFilters, setLocalFilters] = useState({});
 
-    const [availableFiltersFiltered, setAvailableFiltersFiltered] = useState(availableFilters);
+    // Sincronizar estado local cuando cambian los filtros disponibles
+    useEffect(() => {
+        setLocalFilters(availableFilters);
+    }, [availableFilters]);
 
-    // Maneja el cambio de un checkbox individual
-    const handleCheckboxChange = (column, value) => {
-        const currentSelected = activeFilters[column] || [];
-        let newSelected;
-
-        if (currentSelected.includes(value)) {
-            // Si ya está, lo quitamos
-            newSelected = currentSelected.filter(item => item !== value);
-        } else {
-            // Si no está, lo agregamos
-            newSelected = [...currentSelected, value];
+    useEffect(() => {
+        if(!quickFilters || Object.keys(quickFilters).length == 0){
+            onClearAll();
         }
+        Object.keys(quickFilters || {}).map(filter => {
+            if(typeof quickFilters[filter] === 'object'){
+                quickFilters[filter].map(value => {
+                    handleCheckboxChange(filter, value)
+                })
+            } else {
+                handleCheckboxChange(filter, quickFilters[filter])
+            }
+        })
+    },[quickFilters]);
+
+    const handleCheckboxChange = (column, value) => {
+        console.log(column,value)
+        const currentSelected = activeFilters[column] || [];
+        const newSelected = currentSelected.includes(value)
+            ? currentSelected.filter(item => item !== value)
+            : [...currentSelected, value];
 
         onFilterChange(column, newSelected);
     };
 
-    const changeFilter = ({ target },columnName) => {
+    // Lógica de búsqueda interna por cada acordeón
+    const changeFilter = ({ target }, columnName) => {
         const { value } = target;
-        const newValues = availableFilters[columnName].filter(i => {
-            const normalized = i.normalize('NFD').replace(/[\u0300-\u036f]/g,"").toLowerCase();
+        
+        // Buscamos en los valores originales (availableFilters)
+        const originalValues = availableFilters[columnName]?.values || [];
+        
+        const filteredValues = originalValues.filter(i => {
+            const normalized = String(i).normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
             return normalized.includes(value.toLowerCase());
-        })
-        setAvailableFiltersFiltered(filters => ({
-            ...filters,
-            [columnName]: newValues
-        }))
-    }
+        });
+
+        // Actualizamos solo los valores de esa columna en el estado local
+        setLocalFilters(prev => ({
+            ...prev,
+            [columnName]: {
+                ...prev[columnName],
+                values: filteredValues
+            }
+        }));
+    };
 
     return (
         <Drawer
             anchor="left"
             open={open}
             onClose={onClose}
-            // keepMounted: false ayuda a liberar memoria al cerrar, 
-            // pero true ayuda a que abra rápido la SEGUNDA vez. 
-            // Para tu caso, mejor optimizamos el contenido interno.
-            PaperProps={{
-                sx: { width: { xs: '100%', sm: 320 }, p: 0 }
-            }}
+            PaperProps={{ sx: { width: { xs: '100%', sm: 320 }, p: 0 } }}
         >
-            {/* CABECERA DEL DRAWER */}
+            {/* CABECERA */}
             <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #eee' }}>
                 <Typography variant="h6" fontWeight="bold">Filtros</Typography>
                 <IconButton onClick={onClose}><X size={20} /></IconButton>
             </Box>
 
+            {/* CUERPO DE FILTROS */}
             <Box sx={{ p: 2, overflowY: 'auto', flexGrow: 1 }}>
-
-                {Object.keys(availableFiltersFiltered).map((columnName) => (
+                {Object.entries(localFilters).map(([techName, data]) => (
                     <Accordion
-                        key={columnName}
+                        key={techName}
                         disableGutters
                         elevation={0}
-                        // ⭐ TRUCO DE ORO: Esto evita que se rendericen los 500 checkboxes
-                        // al abrir el drawer. Solo se crean cuando das click en el acordeón.
                         TransitionProps={{ unmountOnExit: true }}
                         sx={{
                             border: '1px solid #eee',
@@ -83,62 +100,74 @@ export const FilterDrawer = ({
                         }}
                     >
                         <AccordionSummary expandIcon={<ChevronDown size={20} />}>
-                            <Typography variant="subtitle2" fontWeight="bold">
-                                {columnName}
-                            </Typography>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <Typography variant="subtitle2" fontWeight="bold">
+                                    {data.label} {/* 🔥 AQUÍ SE MUESTRA EL ALIAS */}
+                                </Typography>
+                                {activeFilters[techName]?.length > 0 && (
+                                    <Typography variant="caption" sx={{ bgcolor: 'primary.main', color: 'white', px: 0.8, borderRadius: 10 }}>
+                                        {activeFilters[techName].length}
+                                    </Typography>
+                                )}
+                            </Stack>
                         </AccordionSummary>
 
-                        <AccordionDetails sx={{ maxHeight: 300, overflowY: 'auto' }}>
+                        <AccordionDetails sx={{ maxHeight: 350, overflowY: 'auto' }}>
                             <FormGroup>
-                                {/* OPTIMIZACIÓN OPCIONAL: 
-                                   Si una lista tiene más de 100 items, renderizarlos todos bloquea.
-                                   Podrías poner un .slice(0, 50) si son demasiados.
-                                */}
+                                {/* Buscador interno para listas largas */}
                                 <TextField
-                                    label="Buscar..."
-                                    id={`search-${columnName}`}
-                                    onChange={(event) => changeFilter(event, columnName)}
+                                    fullWidth
+                                    placeholder={`Buscar en ${data.label.toLowerCase()}...`}
+                                    onChange={(e) => changeFilter(e, techName)}
                                     size="small"
+                                    variant="filled"
+                                    sx={{ mb: 1, '& .MuiInputBase-root': { bgcolor: '#f5f5f5', borderRadius: 1 } }}
                                 />
-                                {availableFiltersFiltered[columnName].map((option) => (
+                                
+                                {data.values.map((option) => (
                                     <FormControlLabel
                                         key={option}
                                         control={
                                             <Checkbox
-                                                checked={activeFilters[columnName]?.includes(option) || false}
-                                                onChange={() => handleCheckboxChange(columnName, option)}
+                                                checked={activeFilters[techName]?.includes(option) || false}
+                                                onChange={() => handleCheckboxChange(techName, option)}
                                                 size="small"
                                             />
                                         }
-                                        label={
-                                            <Typography variant="body2">{option}</Typography>
-                                        }
+                                        label={<Typography variant="body2">{option}</Typography>}
                                     />
                                 ))}
+                                
+                                {data.values.length === 0 && (
+                                    <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+                                        No hay coincidencias
+                                    </Typography>
+                                )}
                             </FormGroup>
                         </AccordionDetails>
                     </Accordion>
                 ))}
             </Box>
 
-            {/* FOOTER DEL DRAWER */}
-            <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
+            {/* FOOTER */}
+            <Box sx={{ p: 2, borderTop: '1px solid #eee', bgcolor: 'white' }}>
                 <Button
                     variant="outlined"
                     color="error"
                     fullWidth
                     startIcon={<FilterX size={16} />}
                     onClick={onClearAll}
+                    sx={{ borderRadius: 2, textTransform: 'none' }}
                 >
                     Limpiar todos los filtros
                 </Button>
                 <Button
                     variant="contained"
                     fullWidth
-                    sx={{ mt: 1 }}
+                    sx={{ mt: 1, borderRadius: 2, textTransform: 'none' }}
                     onClick={onClose}
                 >
-                    Ver resultados
+                    Aplicar filtros
                 </Button>
             </Box>
         </Drawer>

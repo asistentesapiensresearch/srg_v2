@@ -12,7 +12,5 @@ export const fetchSheet = async (sheetId, selectedSheet = 0) => {
         header: true, skipEmptyLines: true,
         complete: (results) => { rawData = results.data.filter(r => Object.values(r).some(v => v)); }
     });
-
-    console.log('rawData', rawData)
     return rawData;
 }

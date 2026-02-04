@@ -1,6 +1,7 @@
 // src/view/sections/CssCode/schema.js
 export default {
     label: "Bloque de Estilos CSS",
+    icon: "Code2",
     isContainer: true, // Para que puedas meter hijos dentro y estilizarlos
     fields: [
         {

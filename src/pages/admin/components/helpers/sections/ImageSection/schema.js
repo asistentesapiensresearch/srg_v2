@@ -1,6 +1,7 @@
 // src/components/builder/sections/ImageSection/schema.js
 export default {
     label: "Imagen",
+    icon: "Image",
     fields: [
         // ========== IMAGEN ==========
         {

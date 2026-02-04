@@ -1,11 +1,25 @@
-// src/view/sections/ChartSection/schema.js
+// src/pages/admin/components/helpers/sections/ChartSection/schema.js
 export default {
-    label: "Grafico",
+    label: "Galería de Gráficos (Highcharts)",
+    isContainer: false,
+    icon: "BarChart2",
     fields: [
-        { name: "src", label: "URL de la imagen", type: "text", default: "" },
-        { name: "alt", label: "Texto Alternativo", type: "text", default: "Descripción de la imagen" },
-        { name: "height", label: "Altura (px)", type: "text", default: "400px" },
-        { name: "objectFit", label: "Ajuste (cover/contain)", type: "text", default: "cover" },
-        { name: "borderRadius", label: "Bordes Redondeados (px)", type: "text", default: "8px" },
+        {
+            name: "chartManager", // Campo maestro
+            label: "Gestión de Gráficos",
+            type: "chart_manager_input", // Nuevo tipo de input
+            default: {
+                fileId: "",
+                fileName: "",
+                token: "",
+                charts: [] // Array de configuraciones { sheetName, alias, type, axis... }
+            }
+        },
+        {
+            name: "height",
+            label: "Altura del Gráfico Principal (px)",
+            type: "number",
+            default: 500
+        }
     ]
 };

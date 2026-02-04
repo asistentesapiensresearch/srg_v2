@@ -1,6 +1,7 @@
 // src/view/sections/TabsSection/schema.js
 export default {
     label: "Contenedor de Pestañas (Tabs)",
+    icon: "AppWindow",
     isContainer: true,
     fields: [
         {

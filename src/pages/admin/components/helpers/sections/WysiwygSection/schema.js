@@ -1,6 +1,7 @@
 // src/view/sections/WysiwygSection/schema.js
 export default {
     label: "Editor Enriquecido",
+    icon: "FileEdit",
     fields: [
         { 
             name: "content", 

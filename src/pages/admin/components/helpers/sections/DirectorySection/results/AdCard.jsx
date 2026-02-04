@@ -1,7 +1,7 @@
 // src/view/sections/DirectorySection/results/AdCard.jsx
-import { Card, Box, Chip, Typography, Button } from "@mui/material";
+import { Card, Box, Chip } from "@mui/material";
 
-export const AdCard = ({ item, primaryColor }) => {
+export const AdCard = ({ primaryColor }) => {
     return (
         <Card style={{
             background: primaryColor,

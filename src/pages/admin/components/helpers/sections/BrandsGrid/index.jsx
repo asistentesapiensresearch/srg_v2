@@ -16,7 +16,6 @@ export default function BrandsGrid({
     // Nota: Si research.brands son IDs, necesitarás que los datos vengan poblados
     // o tener un hook que los busque. Aquí asumimos que research.brands trae los objetos.
     const brands = brands_list || [];
-    console.log(brands)
 
     // Lógica de columnas de Material UI (12 unidades)
     const calculateGrid = (cols) => Math.max(1, Math.floor(12 / Number(cols)));
@@ -39,11 +38,12 @@ export default function BrandsGrid({
                     {brands.length > 0 ? (
                         brands.map((brand, index) => (
                             <Grid
-                                item
                                 key={brand.id || index}
-                                xs={6}
-                                sm={4}
-                                md={calculateGrid(columns)}
+                                size={{
+                                    xs:6,
+                                    sm:4,
+                                    md:calculateGrid(columns)
+                                }}
                             >
                                 <Tooltip title={brand.name || "Marca"}>
                                     <Box

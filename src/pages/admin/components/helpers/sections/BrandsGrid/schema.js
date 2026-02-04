@@ -1,6 +1,7 @@
 // src/view/sections/BrandsGrid/schema.js
 export default {
     label: "Grilla de Marcas (Brands)",
+    icon: "Briefcase",
     isContainer: false,
     fields: [
         {

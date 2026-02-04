@@ -1,6 +1,7 @@
 // src/view/sections/GroupSection/schema.js
 export default {
     label: "Grupo / Contenedor",
+    icon: "BoxSelect",
     isContainer: true, // Permite que tenga hijos en el editor
     fields: [
         {

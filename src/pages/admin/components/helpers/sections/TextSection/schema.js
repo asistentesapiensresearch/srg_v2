@@ -1,6 +1,7 @@
 // src/view/sections/TextSection/schema.js
 export default {
     label: "Bloque de Texto",
+    icon: "Type",
     fields: [
         { name: "content", label: "Contenido", type: "textarea", default: "Escribe tu texto aquí..." },
         {

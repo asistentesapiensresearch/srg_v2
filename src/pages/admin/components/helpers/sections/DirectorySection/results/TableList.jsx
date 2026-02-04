@@ -14,7 +14,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { visuallyHidden } from '@mui/utils';
@@ -86,7 +85,6 @@ function Row(props) {
                             <Table size="small" aria-label="history">
                                 <TableHead>
                                     <TableRow>
-                                        {/* Usamos los mismos encabezados (Aliases) para consistencia */}
                                         {columns.map((colKey) => (
                                             <TableCell key={colKey} sx={{ fontWeight: 'bold', fontSize: '0.75rem', color: '#666' }}>
                                                 {aliases[colKey] || colKey}
@@ -124,44 +122,71 @@ Row.propTypes = {
 
 // --- TABLELIST COMPONENT ---
 export default function TableList({ data = [], columns = [], aliases = {} }) {
+    console.log('data',data)
+    // ========================================================================
+    // 1. TODOS LOS ESTADOS (HOOKS) PRIMERO
+    // ========================================================================
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-    const displayColumns = columns.length > 0
-        ? columns
-        : (data.length > 0 ? Object.keys(data[0]).slice(0, 5) : []);
+    // ========================================================================
+    // 2. TODOS LOS MEMOS (DESPUÉS DE ESTADOS, ANTES DE HANDLERS)
+    // ========================================================================
+    
+    // Memo: Columnas a mostrar
+    const displayColumns = React.useMemo(() => {
+        if (columns.length > 0) return columns;
+        if (data.length > 0) return Object.keys(data[0]).slice(0, 5);
+        return [];
+    }, [columns, data]);
 
-    const handleRequestSort = (event, property) => {
+    // Memo: Filas visibles (ordenadas y paginadas)
+    const visibleRows = React.useMemo(() => {
+        if (data.length === 0) return [];
+        
+        return stableSort(data, getComparator(order, orderBy))
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    }, [data, order, orderBy, page, rowsPerPage]);
+
+    // ========================================================================
+    // 3. HANDLERS (DESPUÉS DE MEMOS, ANTES DE RENDER)
+    // ========================================================================
+    
+    const handleRequestSort = React.useCallback((event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
-    };
+    }, [order, orderBy]);
 
-    const createSortHandler = (property) => (event) => {
+    const createSortHandler = React.useCallback((property) => (event) => {
         handleRequestSort(event, property);
-    };
+    }, [handleRequestSort]);
 
-    const handleChangePage = (event, newPage) => {
+    const handleChangePage = React.useCallback((event, newPage) => {
         setPage(newPage);
-    };
+    }, []);
 
-    const handleChangeRowsPerPage = (event) => {
+    const handleChangeRowsPerPage = React.useCallback((event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-    };
+    }, []);
 
+    // ========================================================================
+    // 4. RENDER (AL FINAL, CON CONDICIONAL SI ES NECESARIO)
+    // ========================================================================
+    
+    // Return condicional para data vacía
     if (data.length === 0) {
-        return <Typography p={4} textAlign="center">No hay datos para mostrar en la tabla.</Typography>;
+        return (
+            <Paper elevation={0} variant="outlined" sx={{ borderRadius: 4, p: 4 }}>
+                <Typography textAlign="center" color="text.secondary">
+                    No hay datos para mostrar en la tabla.
+                </Typography>
+            </Paper>
+        );
     }
-
-    const visibleRows = React.useMemo(
-        () =>
-            stableSort(data, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-        [data, order, orderBy, page, rowsPerPage],
-    );
 
     return (
         <Paper elevation={0} variant="outlined" sx={{ borderRadius: 4, overflow: 'hidden' }}>

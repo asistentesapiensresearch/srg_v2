@@ -258,17 +258,6 @@ export const LayerItem = ({
                     {children}
                 </Collapse>
             )}
-
-            <style jsx global>{`
-                @keyframes pulse {
-                    0%, 100% {
-                        opacity: 1;
-                    }
-                    50% {
-                        opacity: 0.5;
-                    }
-                }
-            `}</style>
         </>
     );
 };

@@ -1,32 +1,25 @@
 // src/components/builder/Editor.jsx
-import React, { useState, useEffect } from 'react';
-import { Box, Drawer, List, Button, Typography, IconButton, Grid, Divider, Chip } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
-import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { SortableContext } from '@dnd-kit/sortable';
-import { CopyPlusIcon, X as CloseIcon, LayoutTemplate } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Box, Typography, Chip, Button } from '@mui/material';
+import { Code } from 'lucide-react';
 
 // Componentes Internos
 import Navigation from '@src/components/navigation';
-import { SortableItem } from '@src/components/SortableItem';
 import PageRenderer from './Renderer';
-import { SECTION_SCHEMAS } from './sectionRegistry';
-import { TEMPLATE_REGISTRY } from './templateRegistry';
-import { LayerItem } from './LayerItem';
-import renderFieldInput from './helpers/renderFieldInput';
 
 // Hooks
 import { useEditor } from '@src/hooks/builder/useEditor';
-import { useSortableList } from '@src/hooks/useSortableList';
 import { useParams } from 'react-router-dom';
 import { TemplateAmplifyRepository } from '@core/infrastructure/repositories/TemplateAmplifyRepository';
 import { useResearchs } from '@src/pages/admin/Research/hooks/useResearchs';
-import { Create, Update, FindByResearchId } from '@core/application/caseUses/Template';
+import { FindByResearchId } from '@core/application/caseUses/Template';
 import { Preloader } from '@src/components/preloader';
 
-// ==========================================
-// HELPERS RECURSIVOS
-// ==========================================
+// Modales y Paneles
+import AddSections from './AddSections';
+import ListSections from './ListSections';
+import EditSection from './EditSection';
+import ExportModal from './ExportTemplate'; // <-- 1. Importamos el nuevo modal
 
 const findNodeById = (nodes, id) => {
     for (const node of nodes) {
@@ -37,41 +30,6 @@ const findNodeById = (nodes, id) => {
         }
     }
     return null;
-};
-
-const addNodeToTree = (nodes, parentId, newNode) => {
-    if (!parentId) return [...nodes, newNode];
-
-    return nodes.map(node => {
-        if (node.id === parentId) {
-            return { ...node, children: [...(node.children || []), newNode] };
-        }
-        if (node.children) {
-            return { ...node, children: addNodeToTree(node.children, parentId, newNode) };
-        }
-        return node;
-    });
-};
-
-const deleteNodeFromTree = (nodes, idToDelete) => {
-    return nodes
-        .filter(node => node.id !== idToDelete)
-        .map(node => ({
-            ...node,
-            children: node.children ? deleteNodeFromTree(node.children, idToDelete) : []
-        }));
-};
-
-const updateNodeProps = (nodes, id, fieldName, value) => {
-    return nodes.map(node => {
-        if (node.id === id) {
-            return { ...node, props: { ...node.props, [fieldName]: value } };
-        }
-        if (node.children) {
-            return { ...node, children: updateNodeProps(node.children, id, fieldName, value) };
-        }
-        return node;
-    });
 };
 
 // ==========================================
@@ -94,19 +52,12 @@ export default function Builder() {
     } = useEditor();
 
     const [targetParentId, setTargetParentId] = useState(null);
-    const [isSaving, setIsSaving] = useState(false);
     const [isLoadingTemplate, setIsLoadingTemplate] = useState(true);
     const [currentResearch, setCurrentResearch] = useState(null);
     const [currentTemplate, setCurrentTemplate] = useState(null);
 
-    const activeSection = findNodeById(sections, selectedSectionId);
-    const activeSchema = activeSection ? SECTION_SCHEMAS[activeSection.type] : null;
-
-    const { dndContextProps, sortableContextProps, activeId, overId } = useSortableList(
-        sections,
-        setSections,
-        SECTION_SCHEMAS
-    );
+    // 2. NUEVO ESTADO PARA EL MODAL DE EXPORTACIÓN
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
     // ========== CARGAR INVESTIGACIÓN Y TEMPLATE ==========
     useEffect(() => {
@@ -119,14 +70,10 @@ export default function Builder() {
                 const research = researchs.find(r => r.id === researchId);
 
                 if (!research) {
-                    console.error('❌ Investigación no encontrada');
-                    console.log('researchId buscado:', researchId);
-                    console.log('IDs disponibles:', researchs.map(r => r.id));
                     setIsLoadingTemplate(false);
                     return;
                 }
 
-                console.log('✅ Investigación encontrada:', research.title);
                 setCurrentResearch(research);
 
                 // 2. Buscar el template asociado
@@ -134,7 +81,6 @@ export default function Builder() {
                 const template = await templateCommand.execute(researchId);
 
                 if (template) {
-                    console.log('✅ Template encontrado:', template);
                     setCurrentTemplate(template);
 
                     // 3. Parsear y cargar las secciones
@@ -143,7 +89,6 @@ export default function Builder() {
 
                         if (Array.isArray(savedSections)) {
                             setSections(savedSections);
-                            console.log('✅ Secciones cargadas:', savedSections.length);
                         } else {
                             console.warn('⚠️ El template no es un array válido');
                         }
@@ -163,128 +108,6 @@ export default function Builder() {
 
         loadResearchAndTemplate();
     }, [researchId, researchs, loadingResearchs]);
-
-    // --- ACCIONES ---
-
-    const handleAddSection = (type) => {
-        const schema = SECTION_SCHEMAS[type];
-
-        const initialProps = schema.fields.reduce((acc, field) => ({
-            ...acc, [field.name]: field.default
-        }), {});
-
-        const newSection = {
-            id: uuidv4(),
-            type: type,
-            props: initialProps,
-            children: []
-        };
-
-        setSections(prev => addNodeToTree(prev, targetParentId, newSection));
-        setSelectedSectionId(newSection.id);
-        setOpenSections(false);
-        setTargetParentId(null);
-    };
-
-    const handlePrepareAddChild = (e, parentId) => {
-        e.stopPropagation();
-        setTargetParentId(parentId);
-        setOpenSections(true);
-    };
-
-    const handlePrepareAddRoot = () => {
-        setTargetParentId(null);
-        setOpenSections(true);
-    };
-
-    const handleSelectSection = (id) => {
-        setSelectedSectionId(id);
-    };
-
-    const handleDeleteSection = (e, id) => {
-        e.stopPropagation();
-        if (window.confirm("¿Eliminar esta sección?")) {
-            setSections(prev => deleteNodeFromTree(prev, id));
-            if (selectedSectionId === id) setSelectedSectionId(null);
-        }
-    };
-
-    const handleFieldChange = (field, value) => {
-        setSections(prev => updateNodeProps(prev, activeSection.id, field, value));
-    };
-
-    const renderLayerTree = (items, depth = 0) => {
-        return items.map((sect) => (
-            <SortableItem key={sect.id} id={sect.id}>
-                <LayerItem
-                    section={sect}
-                    label={SECTION_SCHEMAS[sect.type]?.label || sect.type}
-                    isSelected={selectedSectionId === sect.id}
-                    isActive={activeId === sect.id} // 🔥 Detectar si está siendo arrastrado
-                    isDragging={activeId === sect.id} // 🔥 Nuevo prop
-                    isOver={overId === sect.id} // 🔥 Nuevo prop
-                    onClick={() => handleSelectSection(sect.id)}
-                    onDelete={handleDeleteSection}
-                    onAddChild={handlePrepareAddChild}
-                    depth={depth}
-                >
-                    {sect.children?.length > 0 && (
-                        <List disablePadding>
-                            {renderLayerTree(sect.children, depth + 1)}
-                        </List>
-                    )}
-                </LayerItem>
-            </SortableItem>
-        ));
-    };
-
-    const handleAddTemplate = (templateKey) => {
-        const template = TEMPLATE_REGISTRY[templateKey];
-        if (!template) return;
-
-        const newSections = template.getSections();
-        setSections(prev => [...prev, ...newSections]);
-        setOpenSections(false);
-    };
-
-    const handleSave = async () => {
-        if (!researchId) {
-            alert('No se encontró el ID de la investigación');
-            return;
-        }
-
-        setIsSaving(true);
-        try {
-            const themeSettings = JSON.stringify(sections);
-
-            if (currentTemplate?.id) {
-                // Actualizar template existente
-                const updateCommand = new Update(templateRepository);
-                await updateCommand.execute(currentTemplate.id, {
-                    themeSettings,
-                    researchId
-                });
-                console.log('✅ Template actualizado');
-                alert('Template actualizado correctamente');
-            } else {
-                // Crear nuevo template
-                const createCommand = new Create(templateRepository);
-                const newTemplate = await createCommand.execute({
-                    themeSettings,
-                    researchId
-                });
-
-                setCurrentTemplate(newTemplate);
-                console.log('✅ Template creado:', newTemplate);
-                alert('Template creado correctamente');
-            }
-        } catch (error) {
-            console.error("❌ Error al guardar:", error);
-            alert('Error al guardar el template: ' + error.message);
-        } finally {
-            setIsSaving(false);
-        }
-    };
 
     // Mostrar loader
     if (loadingResearchs || isLoadingTemplate) {
@@ -338,91 +161,47 @@ export default function Builder() {
                 justifyContent: 'space-between',
                 alignItems: 'center'
             }}>
-                <Typography variant="subtitle1" fontWeight="bold">
-                    📝 Editando: {currentResearch.title}
-                </Typography>
-                <Chip
-                    label={currentTemplate ? '✅ Template existente' : '🆕 Nuevo template'}
+                <Box display="flex" alignItems="center" gap={2}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                        📝 Editando: {currentResearch.title}
+                    </Typography>
+                    <Chip
+                        label={currentTemplate ? '✅ Template existente' : '🆕 Nuevo template'}
+                        size="small"
+                        sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}
+                    />
+                </Box>
+
+                {/* 3. BOTÓN PARA ABRIR EL MODAL DE EXPORTACIÓN */}
+                <Button
+                    variant="contained"
                     size="small"
-                    sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}
-                />
+                    startIcon={<Code size={16} />}
+                    onClick={() => setIsExportModalOpen(true)}
+                    sx={{
+                        bgcolor: 'rgba(0,0,0,0.3)',
+                        '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' },
+                        boxShadow: 'none'
+                    }}
+                >
+                    Exportar Template
+                </Button>
             </Box>
 
             <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
 
                 {/* SIDEBAR IZQUIERDO */}
-                <Drawer
-                    variant="permanent"
-                    sx={{ width: 240, flexShrink: 0, '& .MuiDrawer-paper': { width: 240, boxSizing: 'border-box', position: 'relative' } }}
-                >
-                    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column', gap: 1 }}>
-                            <Typography variant="subtitle2" fontWeight="bold" color="text.secondary">CAPAS</Typography>
-                            <Button
-                                onClick={handlePrepareAddRoot}
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                                startIcon={<CopyPlusIcon size={14} />}
-                            >
-                                Añadir a raíz
-                            </Button>
-                        </Box>
-
-                        <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 1 }}>
-                            <DndContext {...dndContextProps}>
-                                <SortableContext {...sortableContextProps}>
-                                    <List disablePadding>
-                                        {renderLayerTree(sections)}
-                                    </List>
-                                </SortableContext>
-
-                                {/* 🔥 DragOverlay para preview durante el arrastre */}
-                                <DragOverlay>
-                                    {activeId ? (
-                                        <Box
-                                            sx={{
-                                                bgcolor: 'white',
-                                                border: '2px solid #1976d2',
-                                                borderRadius: 1,
-                                                p: 1,
-                                                boxShadow: 3,
-                                                opacity: 0.9
-                                            }}
-                                        >
-                                            <Typography variant="body2" fontWeight={600}>
-                                                {(() => {
-                                                    const activeNode = findNodeById(sections, activeId);
-                                                    return SECTION_SCHEMAS[activeNode?.type]?.label || 'Elemento';
-                                                })()}
-                                            </Typography>
-                                        </Box>
-                                    ) : null}
-                                </DragOverlay>
-                            </DndContext>
-
-                            {sections.length === 0 && (
-                                <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 4, color: 'text.secondary' }}>
-                                    No hay secciones.<br />Añade una para comenzar.
-                                </Typography>
-                            )}
-
-                            {sections.length > 0 && (
-                                <Button
-                                    onClick={handleSave}
-                                    variant="contained"
-                                    size="small"
-                                    fullWidth
-                                    disabled={isSaving}
-                                    color='primary'
-                                    style={{ marginTop: 15 }}
-                                >
-                                    {isSaving ? 'Guardando...' : '💾 Guardar'}
-                                </Button>
-                            )}
-                        </Box>
-                    </Box>
-                </Drawer>
+                <ListSections
+                    researchId={researchId}
+                    sections={sections}
+                    setSections={setSections}
+                    findNodeById={findNodeById}
+                    selectedSectionId={selectedSectionId}
+                    setSelectedSectionId={setSelectedSectionId}
+                    targetParentId={targetParentId}
+                    setTargetParentId={setTargetParentId}
+                    setOpenSections={setOpenSections}
+                    currentTemplate={currentTemplate} />
 
                 {/* CANVAS CENTRAL */}
                 <Box sx={{ flexGrow: 1, bgcolor: '#f0f2f5', p: 4, overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
@@ -432,93 +211,30 @@ export default function Builder() {
                 </Box>
 
                 {/* SIDEBAR DERECHO */}
-                {activeSection && activeSchema && (
-                    <Drawer
-                        variant="permanent"
-                        sx={{ width: 400, flexShrink: 0, '& .MuiDrawer-paper': { width: 400, boxSizing: 'border-box', position: 'relative' } }}
-                    >
-                        <Box p={3}>
-                            <Box display="flex" justifyContent="space-between" alignItems="center" borderBottom="1px solid #eee" pb={2}>
-                                <Typography variant="h6" fontSize={16} fontWeight="bold">
-                                    {activeSchema.label}
-                                </Typography>
-                                <IconButton size="small" onClick={() => setSelectedSectionId(null)}>
-                                    <CloseIcon size={16} />
-                                </IconButton>
-                            </Box>
-
-                            <Box display="flex" flexDirection="column" gap={1} mt={2}>
-                                {activeSchema.fields.map((field) => (
-                                    <Box key={field.name}>
-                                        {renderFieldInput(
-                                            field,
-                                            activeSection,
-                                            (value) => handleFieldChange(field.name, value)
-                                        )}
-                                    </Box>
-                                ))}
-                            </Box>
-                        </Box>
-                    </Drawer>
-                )}
+                <EditSection
+                    sections={sections}
+                    setSections={setSections}
+                    findNodeById={findNodeById}
+                    selectedSectionId={selectedSectionId}
+                    setSelectedSectionId={setSelectedSectionId} />
 
             </Box>
 
             {/* DRAWER INFERIOR */}
-            <Drawer
-                anchor="bottom"
-                open={openSections}
-                onClose={() => setOpenSections(false)}
-                PaperProps={{ sx: { borderTopLeftRadius: 16, borderTopRightRadius: 16 } }}
-            >
-                <Box p={4}>
-                    <Typography variant="h5" gutterBottom fontWeight="bold">Plantillas Predefinidas</Typography>
-                    <Grid container spacing={2} sx={{ mb: 4 }}>
-                        {Object.entries(TEMPLATE_REGISTRY).map(([key, temp]) => (
-                            <Grid item xs={12} sm={6} md={3} key={key}>
-                                <Button
-                                    fullWidth
-                                    variant="outlined"
-                                    onClick={() => handleAddTemplate(key)}
-                                    sx={{ height: '100px', display: 'flex', flexDirection: 'column', bgcolor: 'primary.50' }}
-                                >
-                                    <LayoutTemplate size={24} />
-                                    <Typography variant="subtitle2" mt={1}>{temp.label}</Typography>
-                                    <Typography variant="caption" color="textSecondary">{temp.description}</Typography>
-                                </Button>
-                            </Grid>
-                        ))}
-                    </Grid>
+            <AddSections
+                setSections={setSections}
+                openSections={openSections}
+                setOpenSections={setOpenSections}
+                targetParentId={targetParentId}
+                setTargetParentId={setTargetParentId}
+                setSelectedSectionId={setSelectedSectionId} />
 
-                    <Divider sx={{ my: 4 }} />
-
-                    <Typography variant="h6" gutterBottom textAlign="center">
-                        {targetParentId ? 'Añadir elemento dentro del contenedor' : 'Añadir nueva sección'}
-                    </Typography>
-
-                    <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(140px, 1fr))" gap={2} mt={2}>
-                        {Object.keys(SECTION_SCHEMAS).map(type => (
-                            <Button
-                                key={type}
-                                variant="outlined"
-                                onClick={() => handleAddSection(type)}
-                                sx={{
-                                    height: 100,
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 1,
-                                    borderColor: '#e0e0e0',
-                                    color: '#555',
-                                    '&:hover': { borderColor: 'primary.main', bgcolor: 'primary.50' }
-                                }}
-                            >
-                                <CopyPlusIcon size={24} />
-                                <Typography variant="caption" fontWeight="bold">{SECTION_SCHEMAS[type].label}</Typography>
-                            </Button>
-                        ))}
-                    </Box>
-                </Box>
-            </Drawer>
+            {/* 4. MODAL DE EXPORTACIÓN */}
+            <ExportModal
+                open={isExportModalOpen}
+                onClose={() => setIsExportModalOpen(false)}
+                value={sections}
+            />
 
         </Box>
     );

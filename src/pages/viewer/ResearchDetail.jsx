@@ -111,8 +111,6 @@ const ResearchDetail = () => {
         );
     }
 
-    console.log(research)
-
     /* ================= RENDER ================= */
     return (
         <Container maxWidth="xl" className="py-8">

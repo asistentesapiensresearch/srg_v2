@@ -61,7 +61,6 @@ const FeaturesGrid = ({
                     {children && children.length > 0 ? (
                         children.map((child) => (
                             <Grid
-                                item
                                 key={child.id}
                                 // Aquí está el corazón de la responsividad
                                 size={{ xs: gridSpans.xs, sm: gridSpans.sm, md: gridSpans.md }}
@@ -76,7 +75,7 @@ const FeaturesGrid = ({
                         ))
                     ) : (
                         /* Estado vacío para el editor */
-                        <Grid item xs={12}>
+                        <Grid size={{ xs:12 }}>
                             <Box className="w-full p-12 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50/50">
                                 <Typography className="text-gray-400 font-medium">
                                     Grid Vacío: Agregue elementos desde el panel de capas (+)

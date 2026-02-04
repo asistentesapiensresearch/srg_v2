@@ -16,6 +16,9 @@ import ImageUploaderField from './ImageUploaderField';
 import { ResearchEditorInptSection } from './ResearchEditorInptSection';
 import CssCodeInput from '../inputs/CssCodeInput';
 import BrandsListInput from '../inputs/BrandsListInput';
+import DataSourceInput from '../inputs/DataSourceInput';
+import JSONCodeInput from '../inputs/JSONCodeInput';
+import ChartManagerInput from '../inputs/ChartManagerInput';
 
 const renderFieldInput = (field, activeSection, onChange) => {
   const value = activeSection.props[field.name];
@@ -78,6 +81,14 @@ const renderFieldInput = (field, activeSection, onChange) => {
     )
   }
 
+  if (field.type == 'data_source_manager') {
+    return (
+      <DataSourceInput
+        value={value || field.default || ''}
+        onChange={(e) => onChange(e)} />
+    )
+  }
+
   if (field.type === 'cssCode') {
     return (
       <CssCodeInput
@@ -85,6 +96,15 @@ const renderFieldInput = (field, activeSection, onChange) => {
         value={value}
         onChange={onChange}
       />
+    );
+  }
+
+  if (field.type === 'jsonCode') {
+    return (
+      <JSONCodeInput
+        field={field}
+        value={value}
+        onChange={onChange} />
     );
   }
 
@@ -293,6 +313,16 @@ const renderFieldInput = (field, activeSection, onChange) => {
         value={activeSection.props[field.name]}
         onChange={onChange}
         sectionId={activeSection.id}
+      />
+    );
+  }
+
+  // ========== Chart Manager ==========
+  if (field.type === 'chart_manager_input') {
+    return (
+      <ChartManagerInput
+        value={value || field.default || ''}
+        onChange={(e) => onChange(e)}
       />
     );
   }

@@ -16,7 +16,7 @@ export function useEditor() {
             };
 
     useEffect(() => {
-        console.log('newSections:',sections);
+        //console.log('newSections:', sections);
     }, [sections]);
 
     return {

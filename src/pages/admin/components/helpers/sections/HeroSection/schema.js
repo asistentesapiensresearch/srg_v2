@@ -1,6 +1,8 @@
 // Esto le dice a tu editor qué inputs mostrar en la barra lateral
 export default {
     label: "Hero Banner",
+    icon: "Image",
+    icon: "PanelTop",
     fields: [
         { name: "title", label: "Título Principal", type: "text", default: "Bienvenido" },
         { name: "subtitle", label: "Subtítulo", type: "textarea", default: "Descripción aquí" },
