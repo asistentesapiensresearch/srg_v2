@@ -159,7 +159,6 @@ export default {
                                         "Cal_1",
                                         "Gén",
                                         "Departamento",
-                                        "Ciudad",
                                         "Star",
                                         "Siglas acreditación",
                                         "Siglas certificación",

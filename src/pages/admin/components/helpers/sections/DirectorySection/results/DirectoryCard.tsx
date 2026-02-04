@@ -256,12 +256,13 @@ const CardItem = ({ item, primaryColor }) => {
 };
 
 export const DirectoryCard = ({ item, primaryColor = '#337ab7' }) => {
+    const Vinculada = item.Vinculada?.toLowerCase() == 'si' || item.Vinculada?.toLowerCase() == 'sí';
     return (
         <>
             <CardItem item={item} primaryColor={primaryColor} />
 
             {/* Sección de Historial (Accordion) */}
-            {item.Vinculada && item.history?.length > 0 && (
+            {Vinculada && item.history?.length > 0 && (
                 <Accordion
                     elevation={0}
                     sx={{
