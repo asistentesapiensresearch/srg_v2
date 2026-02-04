@@ -16,6 +16,11 @@ import { fetchSheet } from './fetchSheet';
 import { getValue } from './results/utils';
 import TableList from './results/TableList';
 
+// 🔥 IMPORTS DE COMPARACIÓN
+import { ComparisonProvider } from './comparison/ComparisonContext';
+import ComparisonWidget from './comparison/ComparisonWidget';
+import ComparisonModal from './comparison/ComparisonModal';
+
 // ========================================================================
 // HELPER PURO
 // ========================================================================
@@ -50,7 +55,7 @@ const getInitialConfig = (jsonString) => {
     };
 };
 
-const DirectorySection = ({
+const DirectorySectionContent = ({
     sourceConfig,
     viewType = 'grid',
     itemsPerAds = 3,
@@ -322,7 +327,7 @@ const DirectorySection = ({
     // ========================================================================
 
     return (
-        <Container maxWidth="xl" sx={{ py: 6, bgcolor: '#f9fafb', minHeight: '100vh' }}>
+        <Container maxWidth="xl" sx={{ py: 6, bgcolor: '#f9fafb', minHeight: '100vh', position: 'relative' }}>
             {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
 
             <Box sx={{
@@ -478,18 +483,18 @@ const DirectorySection = ({
                                                     acc[alias] = item[key];
                                                     acc.history = (acc.history || []).map(i => ({
                                                         ...Object.keys(item).reduce((acc, key) => {
-                                                        const alias = sourceConfig?.columnAliases?.[key] || key;
-                                                        acc[alias] = item[key];
-                                                        return acc;
-                                                    }, {})
+                                                            const alias = sourceConfig?.columnAliases?.[key] || key;
+                                                            acc[alias] = item[key];
+                                                            return acc;
+                                                        }, {})
                                                     }))
                                                     return acc;
-                                            }, {})
+                                                }, {})
                                             }}
-                                        viewType={viewListType}
-                                        primaryColor={primaryColor}
-                                        sourceConfig={sourceConfig}
-                                        research={research}
+                                            viewType={viewListType}
+                                            primaryColor={primaryColor}
+                                            sourceConfig={sourceConfig}
+                                            research={research}
                                         />
                                     </Grid>
                                 );
@@ -511,7 +516,21 @@ const DirectorySection = ({
                     )}
                 </Box>
             )}
+
+            <ComparisonWidget />
+            <ComparisonModal sourceConfig={sourceConfig} />
         </Container>
+    );
+};
+
+// =========================================================
+// COMPONENTE EXPORTADO (WRAPPER)
+// =========================================================
+const DirectorySection = (props) => {
+    return (
+        <ComparisonProvider>
+            <DirectorySectionContent {...props} />
+        </ComparisonProvider>
     );
 };
 

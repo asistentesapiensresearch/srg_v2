@@ -122,7 +122,6 @@ Row.propTypes = {
 
 // --- TABLELIST COMPONENT ---
 export default function TableList({ data = [], columns = [], aliases = {} }) {
-    console.log('data',data)
     // ========================================================================
     // 1. TODOS LOS ESTADOS (HOOKS) PRIMERO
     // ========================================================================

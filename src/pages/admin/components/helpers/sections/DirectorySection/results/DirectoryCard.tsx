@@ -11,11 +11,13 @@ import {
     MapPin, CalendarDays, GraduationCap, Plane,
     Facebook, Twitter, Youtube, Instagram,
     Flag, ArrowLeftRight,
-    ArrowDown as ArrowDownIcon // Corregido nombre común en lucide
+    ArrowDown as ArrowDownIcon, // Corregido nombre común en lucide
+    Check
 } from "lucide-react";
 import { getValue } from './utils';
 import FemaleIcon from "../icons/female";
 import MaleIcon from "../icons/male";
+import { useComparison } from '../comparison/ComparisonContext';
 
 const pillButtonStyle = {
     borderRadius: 50,
@@ -27,6 +29,10 @@ const pillButtonStyle = {
 
 // Componente interno para renderizar la tarjeta individual
 const CardItem = ({ item, primaryColor }) => {
+    const { toggleItem, selectedItems } = useComparison();
+
+    const itemId = item.id || item._id || JSON.stringify(item);
+    const isSelected = selectedItems.some(i => (i.id || i._id || JSON.stringify(i)) === itemId);
 
     const getAlias = (column) => {
         // Validación segura: si existe y no es null/undefined
@@ -67,7 +73,8 @@ const CardItem = ({ item, primaryColor }) => {
             mb: 2,
             borderRadius: 2,
             overflow: 'hidden',
-            border: '1px solid #e0e0e0',
+            border: isSelected ? `2px solid ${primaryColor}` : '1px solid #e0e0e0',
+            position: 'relative',
             transition: 'all 0.2s',
             '&:hover': { boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }
         }}>
@@ -175,11 +182,23 @@ const CardItem = ({ item, primaryColor }) => {
                         </Stack>
 
                         <Button
-                            variant="outlined"
-                            startIcon={<ArrowLeftRight size={14} />}
-                            sx={{ ...pillButtonStyle, borderColor: '#ccc', color: '#555' }}
+                            variant={isSelected ? "contained" : "outlined"}
+                            onClick={() => toggleItem(item)}
+                            startIcon={isSelected ? <Check size={14} /> : <ArrowLeftRight size={14} />}
+                            sx={{
+                                ...pillButtonStyle,
+                                borderColor: isSelected ? primaryColor : '#ccc',
+                                color: isSelected ? 'white' : '#555',
+                                bgcolor: isSelected ? primaryColor : 'transparent',
+                                transition: 'all 0.2s',
+                                '&:hover': {
+                                    bgcolor: isSelected ? primaryColor : '#f5f5f5',
+                                    borderColor: primaryColor,
+                                    transform: 'scale(1.05)'
+                                }
+                            }}
                         >
-                            Comparar
+                            {isSelected ? 'Añadido' : 'Comparar'}
                         </Button>
                     </Stack>
                 )}
