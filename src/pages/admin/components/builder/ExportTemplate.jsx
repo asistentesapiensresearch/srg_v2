@@ -10,9 +10,10 @@ import JSONCodeInput from "./inputs/JSONCodeInput";
 export default function ExportTemplate({
     open: openExport,
     onClose: setOpenExport,
-    sections = [] // 🔥 CORRECCIÓN 1: Valor por defecto para evitar undefined
+    value: sections = [] // 🔥 CORRECCIÓN 1: Valor por defecto para evitar undefined
 }) {
     const [copied, setCopied] = useState(false);
+
 
     const templateCode = useMemo(() => {
         // 🔥 CORRECCIÓN 2: Validación de seguridad
@@ -23,7 +24,6 @@ export default function ExportTemplate({
         try {
             // 1. Hacemos copia profunda segura
             const cleanSections = JSON.parse(JSON.stringify(sections));
-
             // 2. Función recursiva para marcar los IDs
             const markIds = (nodes) => {
                 if (!Array.isArray(nodes)) return;
