@@ -167,7 +167,7 @@ export function ResearchForm({ research, onClose, store }) {
                 version: (research?.version || 0) + 1
             };
 
-            const { errors: saveErrors, research: researchDB } = await store(
+            const { error: saveErrors, research: researchDB } = await store(
                 researchData,
                 research?.id
             );

@@ -8,8 +8,8 @@ import { Copy, Check, X } from "lucide-react";
 import JSONCodeInput from "./inputs/JSONCodeInput";
 
 export default function ExportTemplate({
-    openExport,
-    setOpenExport,
+    open: openExport,
+    onClose: setOpenExport,
     sections = [] // 🔥 CORRECCIÓN 1: Valor por defecto para evitar undefined
 }) {
     const [copied, setCopied] = useState(false);
