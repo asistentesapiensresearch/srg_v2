@@ -28,12 +28,14 @@ export const ComparisonProvider = ({ children }) => {
 
     // 3. Toggle: Añadir o Quitar
     const toggleItem = (item) => {
-        // Usamos item.id o item._id o generamos una firma única
-        const itemId = item.id || item._id || JSON.stringify(item);
-        const exists = selectedItems.find(i => (i.id || i._id || JSON.stringify(i)) === itemId);
+        // Intentamos obtener un ID único estable
+        const getItemId = (i) => i.id || i._id || i.slug || i.Nombre || JSON.stringify(i);
+
+        const targetId = getItemId(item);
+        const exists = selectedItems.find(i => getItemId(i) === targetId);
 
         if (exists) {
-            setSelectedItems(prev => prev.filter(i => (i.id || i._id || JSON.stringify(i)) !== itemId));
+            setSelectedItems(prev => prev.filter(i => getItemId(i) !== targetId));
             setNotification({ open: true, message: 'Eliminado de la comparación', severity: 'info' });
         } else {
             if (selectedItems.length >= 4) {

@@ -3,7 +3,7 @@ import { SortableContext } from "@dnd-kit/sortable";
 import { Box, Button, Drawer, List, Typography } from "@mui/material";
 import { useSortableList } from "@src/hooks/useSortableList";
 import { CopyPlusIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { SECTION_SCHEMAS } from './sectionRegistry';
 import { SortableItem } from "@src/components/SortableItem";

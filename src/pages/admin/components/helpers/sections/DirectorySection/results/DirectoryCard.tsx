@@ -179,6 +179,12 @@ const CardItem = ({ item, primaryColor }) => {
                             <IconButton size="small"><Twitter size={16} color="#1DA1F2" /></IconButton>
                             <IconButton size="small"><Youtube size={16} color="#CD201F" /></IconButton>
                             <IconButton size="small"><Instagram size={16} color="#E4405F" /></IconButton>
+                            <Tooltip title="Admisiones" data-id='admisiones'>
+                                <Stack direction="row" alignItems="center" spacing={0.5} sx={{ bgcolor: '#eee', px: 1, borderRadius: 1 }}
+                                 className='cursor-pointer'>
+                                    <Typography variant="caption" fontWeight="bold">Admisiones</Typography>
+                                </Stack>
+                            </Tooltip>
                         </Stack>
 
                         <Button

@@ -17,8 +17,14 @@ export default {
             default: "transparent"
         },
         {
-            name: "padding",
-            label: "Espaciado (Padding)",
+            name: "padding_y",
+            label: "Espaciado Vertical (Padding)",
+            type: "number",
+            default: 20
+        },
+        {
+            name: "padding_x",
+            label: "Espaciado Horizontal (Padding)",
             type: "number",
             default: 20
         }

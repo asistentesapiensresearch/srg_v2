@@ -16,7 +16,8 @@ const CHART_TYPES = [
     { value: 'bar', label: 'Barras Horizontales' },
     { value: 'line', label: 'Línea' },
     { value: 'area', label: 'Área' },
-    { value: 'spline', label: 'Curva Suave' }
+    { value: 'spline', label: 'Curva Suave' },
+    { value: 'map', label: 'Mapa (Colombia)' }
 ];
 
 export default function ChartManagerInput({ value, onChange }) {

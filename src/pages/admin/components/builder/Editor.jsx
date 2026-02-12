@@ -1,5 +1,5 @@
 // src/components/builder/Editor.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, memo, lazy, Suspense } from 'react'; // 1. Importar memo, lazy, Suspense
 import { Box, Typography, Chip, Button } from '@mui/material';
 import { Code } from 'lucide-react';
 
@@ -19,8 +19,18 @@ import { Preloader } from '@src/components/preloader';
 import AddSections from './AddSections';
 import ListSections from './ListSections';
 import EditSection from './EditSection';
-import ExportModal from './ExportTemplate'; // <-- 1. Importamos el nuevo modal
 
+// 2. Carga perezosa del ExportTemplate (Mejora carga inicial)
+const ExportTemplate = lazy(() => import('./ExportTemplate'));
+
+// 3. Memorización de componentes pesados
+// Esto evita que se re-rendericen si sus props (sections) no cambian
+const MemoizedPageRenderer = memo(PageRenderer);
+const MemoizedListSections = memo(ListSections);
+const MemoizedEditSection = memo(EditSection);
+const MemoizedAddSections = memo(AddSections);
+
+// Función pura fuera del componente (no causa re-renders)
 const findNodeById = (nodes, id) => {
     for (const node of nodes) {
         if (node.id === id) return node;
@@ -40,7 +50,8 @@ export default function Builder() {
 
     const { researchs, loading: loadingResearchs } = useResearchs();
     const { id: researchId } = useParams();
-    const templateRepository = new TemplateAmplifyRepository();
+    // useMemo para evitar instanciar el repositorio en cada render (micro-optimización)
+    const templateRepository = useMemo(() => new TemplateAmplifyRepository(), []);
 
     const {
         openSections,
@@ -55,8 +66,6 @@ export default function Builder() {
     const [isLoadingTemplate, setIsLoadingTemplate] = useState(true);
     const [currentResearch, setCurrentResearch] = useState(null);
     const [currentTemplate, setCurrentTemplate] = useState(null);
-
-    // 2. NUEVO ESTADO PARA EL MODAL DE EXPORTACIÓN
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
     // ========== CARGAR INVESTIGACIÓN Y TEMPLATE ==========
@@ -66,7 +75,6 @@ export default function Builder() {
 
             setIsLoadingTemplate(true);
             try {
-                // 1. Buscar la investigación
                 const research = researchs.find(r => r.id === researchId);
 
                 if (!research) {
@@ -76,17 +84,13 @@ export default function Builder() {
 
                 setCurrentResearch(research);
 
-                // 2. Buscar el template asociado
                 const templateCommand = new FindByResearchId(templateRepository);
                 const template = await templateCommand.execute(researchId);
 
                 if (template) {
                     setCurrentTemplate(template);
-
-                    // 3. Parsear y cargar las secciones
                     try {
                         const savedSections = JSON.parse(template.themeSettings);
-
                         if (Array.isArray(savedSections)) {
                             setSections(savedSections);
                         } else {
@@ -96,7 +100,6 @@ export default function Builder() {
                         console.error('❌ Error al parsear el template:', parseError);
                     }
                 } else {
-                    console.log('ℹ️ Esta investigación no tiene template aún');
                     setCurrentTemplate(null);
                 }
             } catch (error) {
@@ -107,42 +110,23 @@ export default function Builder() {
         };
 
         loadResearchAndTemplate();
-    }, [researchId, researchs, loadingResearchs]);
+    }, [researchId, researchs, loadingResearchs, setSections, templateRepository]); // Dependencias correctas
 
     // Mostrar loader
     if (loadingResearchs || isLoadingTemplate) {
         return (
-            <Box sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                flexDirection: 'column',
-                gap: 2
-            }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 2 }}>
                 <Preloader />
                 <Typography>Cargando editor...</Typography>
             </Box>
         );
     }
 
-    // Validar investigación
     if (!currentResearch) {
         return (
-            <Box sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                flexDirection: 'column',
-                gap: 2
-            }}>
-                <Typography variant="h6" color="error">
-                    ❌ Investigación no encontrada
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    ID: {researchId}
-                </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 2 }}>
+                <Typography variant="h6" color="error">❌ Investigación no encontrada</Typography>
+                <Typography variant="body2" color="text.secondary">ID: {researchId}</Typography>
             </Box>
         );
     }
@@ -172,7 +156,6 @@ export default function Builder() {
                     />
                 </Box>
 
-                {/* 3. BOTÓN PARA ABRIR EL MODAL DE EXPORTACIÓN */}
                 <Button
                     variant="contained"
                     size="small"
@@ -190,8 +173,8 @@ export default function Builder() {
 
             <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
 
-                {/* SIDEBAR IZQUIERDO */}
-                <ListSections
+                {/* 4. USAR LOS COMPONENTES MEMORIZADOS */}
+                <MemoizedListSections
                     researchId={researchId}
                     sections={sections}
                     setSections={setSections}
@@ -201,40 +184,47 @@ export default function Builder() {
                     targetParentId={targetParentId}
                     setTargetParentId={setTargetParentId}
                     setOpenSections={setOpenSections}
-                    currentTemplate={currentTemplate} />
+                    currentTemplate={currentTemplate}
+                />
 
-                {/* CANVAS CENTRAL */}
+                {/* CANVAS CENTRAL (El más pesado) */}
                 <Box sx={{ flexGrow: 1, bgcolor: '#f0f2f5', p: 4, overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
                     <Box sx={{ width: '100%', maxWidth: '1200px', bgcolor: 'white', minHeight: '80vh', boxShadow: 3, borderRadius: 1 }}>
-                        <PageRenderer sections={sections} />
+                        <MemoizedPageRenderer sections={sections} />
                     </Box>
                 </Box>
 
                 {/* SIDEBAR DERECHO */}
-                <EditSection
+                <MemoizedEditSection
                     sections={sections}
                     setSections={setSections}
                     findNodeById={findNodeById}
                     selectedSectionId={selectedSectionId}
-                    setSelectedSectionId={setSelectedSectionId} />
+                    setSelectedSectionId={setSelectedSectionId}
+                />
 
             </Box>
 
             {/* DRAWER INFERIOR */}
-            <AddSections
+            <MemoizedAddSections
                 setSections={setSections}
                 openSections={openSections}
                 setOpenSections={setOpenSections}
                 targetParentId={targetParentId}
                 setTargetParentId={setTargetParentId}
-                setSelectedSectionId={setSelectedSectionId} />
-
-            {/* 4. MODAL DE EXPORTACIÓN */}
-            <ExportModal
-                open={isExportModalOpen}
-                onClose={() => setIsExportModalOpen(false)}
-                value={sections}
+                setSelectedSectionId={setSelectedSectionId}
             />
+
+            {/* 5. SUSPENSE PARA CARGA PEREZOSA DEL MODAL */}
+            {isExportModalOpen && (
+                <Suspense fallback={null}>
+                    <ExportTemplate
+                        sections={sections}
+                        openExport={isExportModalOpen}
+                        setOpenExport={setIsExportModalOpen}
+                    />
+                </Suspense>
+            )}
 
         </Box>
     );
