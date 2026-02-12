@@ -2,9 +2,9 @@
 import { Box } from '@mui/material';
 import PageRenderer from '../../../builder/Renderer';
 
-export default function GroupSection({ background_color, padding, children = [] }) {
+export default function GroupSection({ background_color, padding_y, padding_x, children = [] }) {
     return (
-        <Box sx={{ bgcolor: background_color, p: `${padding}px`, width: '100%' }}>
+        <Box sx={{ bgcolor: background_color, py: `${padding_y}px`, px: `${padding_x}px`, width: '100%' }} >
             {children.length > 0 ? (
                 // 🔥 RECURSIVIDAD: Pinta los hijos del grupo
                 <PageRenderer sections={children} />

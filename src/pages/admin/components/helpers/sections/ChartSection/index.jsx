@@ -1,162 +1,198 @@
-// src/pages/admin/components/helpers/sections/ChartSection/index.jsx
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Box, Container, Typography, Grid, Paper, IconButton, CircularProgress } from '@mui/material';
-import { ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BarChart2, Map as MapIcon, Scaling } from 'lucide-react'; // 🔥 Icono Scaling
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import highchartsMore from 'highcharts/highcharts-more';
-
-// Inicialización segura de módulos
-const initHighchartsModule = (module, H) => {
-    if (typeof module === 'function') {
-        module(H);
-    } else if (module && typeof module.default === 'function') {
-        module.default(H);
-    }
-};
-initHighchartsModule(highchartsMore, Highcharts);
+import highchartsMap from 'highcharts/modules/map';
 
 import { fetchSheet } from '@src/pages/admin/components/helpers/sections/DirectorySection/fetchSheet';
 
-export default function ChartSection({ sectionTitle, chartManager, height = 500 }) {
+const initHighchartsModule = (module, H) => {
+    if (typeof module === 'function') module(H);
+    else if (module && typeof module.default === 'function') module.default(H);
+};
+initHighchartsModule(highchartsMore, Highcharts);
+initHighchartsModule(highchartsMap, Highcharts);
+
+// 🔥 HOOK DE RESIZE (Funciona para Alto y Ancho)
+const useChartResize = (chartRef, wrapperRef) => {
+    useEffect(() => {
+        if (!wrapperRef.current || !chartRef.current) return;
+
+        const resizeObserver = new ResizeObserver(() => {
+            requestAnimationFrame(() => {
+                // reflow() ajusta tanto el ancho como el alto
+                if (chartRef.current?.chart) {
+                    chartRef.current.chart.reflow();
+                }
+            });
+        });
+
+        resizeObserver.observe(wrapperRef.current);
+        return () => resizeObserver.disconnect();
+    }, [chartRef, wrapperRef]);
+};
+
+export default function ChartSection({
+    sectionTitle,
+    chartManager,
+    height = 500,
+    width = 500,
+    thumbnailsMode = 'auto'
+}) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [allChartsData, setAllChartsData] = useState({});
     const [loading, setLoading] = useState(false);
+    const [mapTopologies, setMapTopologies] = useState({});
+
+    const scrollRef = useRef(null);
+    const chartComponentRef = useRef(null);
+    const resizablePaperRef = useRef(null);
+
+    useChartResize(chartComponentRef, resizablePaperRef);
 
     const config = chartManager || {};
-    // Necesitamos el token también si tu fetchSheet lo requiere (asegurate de pasarlo)
-    const { fileId, charts, token } = config;
+    const { fileId, charts } = config;
 
-    // 1. EFECTO: CARGAR DATOS
+    const showThumbnails = useMemo(() => {
+        if (!charts) return false;
+        if (thumbnailsMode === 'never') return false;
+        if (thumbnailsMode === 'always') return true;
+        return charts.length > 2;
+    }, [thumbnailsMode, charts]);
+
+    // 1. CARGAR DATOS
     useEffect(() => {
-        if (!fileId || !charts || charts.length === 0) return;
-
+        if (!fileId || !charts) return;
         const loadAllData = async () => {
             setLoading(true);
             const newDataCache = {};
-
             try {
                 const promises = charts.map(async (chart) => {
-                    // 🔥 IMPORTANTE: Usamos el mismo identificador para guardar y leer
-                    // Si tu fetchSheet requiere el NOMBRE para la API, usa chart.sheetName en el fetch
-                    // Pero la clave del cache debe ser consistente. Usaremos sheetId como clave.
                     const data = await fetchSheet(fileId, chart.sheetId);
-
-                    // Guardamos usando sheetId (o el índice si no hay ID, para asegurar unicidad)
                     newDataCache[chart.sheetId || chart.sheetName] = data;
                 });
-
                 await Promise.all(promises);
                 setAllChartsData(newDataCache);
-            } catch (err) {
-                console.error("Error loading charts data", err);
-            } finally {
-                setLoading(false);
-            }
+            } catch (err) { console.error(err); }
+            finally { setLoading(false); }
         };
-
         loadAllData();
-    }, [fileId, charts, token]);
+    }, [fileId, charts]);
 
-    // 2. HELPER: OPCIONES HIGHCHARTS
+    // 2. CARGAR TOPOLOGÍAS
+    useEffect(() => {
+        const mapCharts = charts?.filter(c => c.type === 'map') || [];
+        if (mapCharts.length === 0) return;
+
+        mapCharts.forEach(chart => {
+            const scope = chart.mapScope || 'custom/world';
+            if (!mapTopologies[scope]) {
+                fetch(`https://code.highcharts.com/mapdata/${scope}.geo.json`)
+                    .then(res => res.json())
+                    .then(topo => setMapTopologies(prev => ({ ...prev, [scope]: topo })))
+                    .catch(console.error);
+            }
+        });
+    }, [charts, mapTopologies]);
+
+    // 3. SCROLL
+    useEffect(() => {
+        if (scrollRef.current && showThumbnails) {
+            const activeElement = scrollRef.current.children[activeIndex];
+            if (activeElement) activeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }, [activeIndex, showThumbnails]);
+
+    // 4. OPCIONES
     const getChartOptions = (chartConfig, data, isThumbnail = false) => {
         if (!data || !chartConfig) return null;
 
-        // 🔥 FIX PARA LA COLUMNA VACÍA ""
-        // Si la data viene con clave "" (A1 vacío), y el config.xAxis está vacío o es "", lo manejamos.
-        let { type, xAxis, series: seriesCols, alias, color } = chartConfig;
+        let { type, xAxis, series: seriesCols } = chartConfig;
+        if (!xAxis && data.length > 0) xAxis = Object.keys(data[0])[0];
 
-        // Validación: Si xAxis no está definido, intentamos usar la primera clave disponible que no sea numérica
-        if (!xAxis && data.length > 0) {
-            xAxis = Object.keys(data[0])[0];
-        }
+        let finalSeries = [];
+        let chartSpecificOptions = {};
 
-        // Mapear Categorías (Eje X)
-        const categories = data.map(row => row[xAxis] || row[""] || ''); // Fallback a "" si el header está vacío
-
-        // Mapear Series (Eje Y)
-        const seriesData = (seriesCols || []).map((colName) => {
-            // 1. Buscamos el ALIAS (Nombre visual)
-            const seriesName = chartConfig.columnAliases?.[colName] || colName;
-
-            // 2. Buscamos el COLOR específico
-            // Si no hay color definido, pasamos undefined para que Highcharts use los automáticos
-            const seriesColor = chartConfig.columnColors?.[colName] || undefined;
-
-            return {
-                name: seriesName,
-                color: seriesColor, // 🔥 APLICAMOS EL COLOR AQUÍ
-                data: data.map(row => {
-                    let val = row[colName];
-                    if (typeof val === 'string') {
-                        val = val.replace(/[^0-9.-]+/g, "");
+        if (type === 'map') {
+            const scope = chartConfig.mapScope || 'custom/world';
+            const topology = mapTopologies[scope];
+            if (topology) {
+                finalSeries = (seriesCols || []).map(colName => {
+                    const seriesName = chartConfig.columnAliases?.[colName] || colName;
+                    const mapData = data.map(row => {
+                        const code = String(row[xAxis] || '').toLowerCase().trim();
+                        const val = parseFloat(String(row[colName]).replace(/[^0-9.-]+/g, "")) || 0;
+                        return [code, val];
+                    });
+                    return {
+                        name: seriesName,
+                        data: mapData,
+                        mapData: topology,
+                        joinBy: [scope.includes('world') ? 'iso-a2' : 'hc-key', 0],
+                        states: { hover: { color: '#a4edba' } },
+                        dataLabels: { enabled: !isThumbnail, format: '{point.name}' }
+                    };
+                });
+                chartSpecificOptions = {
+                    mapNavigation: { enabled: !isThumbnail, buttonOptions: { verticalAlign: 'bottom' } },
+                    colorAxis: { min: 0, stops: [[0, '#EFEFFF'], [0.5, '#4444FF'], [1, '#000022']] },
+                };
+            }
+        } else {
+            const categories = data.map(row => row[xAxis] || row[""] || '');
+            finalSeries = (seriesCols || []).map((colName) => {
+                const seriesName = chartConfig.columnAliases?.[colName] || colName;
+                const seriesColor = chartConfig.columnColors?.[colName] || undefined;
+                return {
+                    name: seriesName,
+                    color: seriesColor,
+                    data: data.map(row => {
+                        let val = row[colName];
+                        if (typeof val === 'string') val = val.replace(/[^0-9.-]+/g, "");
                         return parseFloat(val) || 0;
-                    }
-                    return parseFloat(val) || 0;
-                })
+                    })
+                };
+            });
+            chartSpecificOptions = {
+                xAxis: { categories, crosshair: true, lineColor: '#e0e0e0' },
+                yAxis: { title: { text: null }, gridLineColor: '#f0f0f0' },
             };
-        });
+        }
 
         const commonOptions = {
             credits: { enabled: false },
-            title: { text: isThumbnail ? null : '' },
-        };
-
-        if (isThumbnail) {
-            return {
-                ...commonOptions,
-                chart: { type: type || 'column', height: 80, backgroundColor: 'transparent', margin: [0, 0, 0, 0] },
-                xAxis: { visible: false, categories },
-                yAxis: { visible: false },
-                legend: { enabled: false },
-                tooltip: { enabled: false },
-                plotOptions: { series: { enableMouseTracking: false, marker: { enabled: false } } },
-                series: seriesData,
-            };
-        }
-
-        return {
-            ...commonOptions,
+            title: { text: null },
             chart: {
                 type: type || 'column',
-                height: height,
-                backgroundColor: '#ffffff',
+                height: isThumbnail ? 80 : null,
+                backgroundColor: isThumbnail ? 'transparent' : '#ffffff',
                 borderRadius: 8,
                 style: { fontFamily: 'inherit' }
             },
-            subtitle: { text: `Fuente: ${chartConfig.alias || chartConfig.sheetName}` },
-            xAxis: {
-                categories,
-                crosshair: true,
-                lineColor: '#e0e0e0',
-                labels: { style: { color: '#666' } }
-            },
-            yAxis: {
-                title: { text: null },
-                gridLineColor: '#f0f0f0',
-                labels: { style: { color: '#666' } }
-            },
-            legend: { enabled: true, align: 'center', verticalAlign: 'bottom' },
-            plotOptions: {
-                column: { borderRadius: 2 },
-                series: { marker: { radius: 4 } }
-            },
-            // colors: ...  <-- ELIMINAR ESTO, ya lo controlamos en seriesData
-            series: seriesData,
+            subtitle: { text: isThumbnail ? null : `Fuente: ${chartConfig.alias || chartConfig.sheetName}` },
+            legend: { enabled: !isThumbnail, align: 'center', verticalAlign: 'bottom' },
+            series: finalSeries,
+            ...chartSpecificOptions
         };
+
+        if (isThumbnail) {
+            commonOptions.xAxis = { visible: false };
+            commonOptions.yAxis = { visible: false };
+            commonOptions.tooltip = { enabled: false };
+            commonOptions.plotOptions = { series: { enableMouseTracking: false, marker: { enabled: false } } };
+        }
+
+        return commonOptions;
     };
 
-    // --- RENDER ---
-
-    // Configuración activa actual
     const activeChartConfig = charts?.[activeIndex];
-
-    // 🔥 CORRECCIÓN CLAVE: Usar la misma clave para leer que la que usamos para guardar
     const activeData = allChartsData[activeChartConfig?.sheetId || activeChartConfig?.sheetName];
 
     const mainOptions = useMemo(() =>
         getChartOptions(activeChartConfig, activeData, false),
-        [activeChartConfig, activeData, height]);
+        [activeChartConfig, activeData, mapTopologies]);
 
     const handleNext = () => setActiveIndex((prev) => (prev + 1) % charts.length);
     const handlePrev = () => setActiveIndex((prev) => (prev - 1 + charts.length) % charts.length);
@@ -171,80 +207,86 @@ export default function ChartSection({ sectionTitle, chartManager, height = 500 
                 </Typography>
             )}
 
-            {/* LOADER */}
-            {loading && !activeData && (
-                <Box height={height} display="flex" justifyContent="center" alignItems="center" bgcolor="#f9fafb" borderRadius={4}>
-                    <CircularProgress />
-                </Box>
+            {!loading && mainOptions ? (
+                <div className='flex items-center justify-center'>
+                    <Paper
+                        ref={resizablePaperRef}
+                        elevation={0}
+                        sx={{
+                            p: 3, border: '1px solid #e0e0e0', borderRadius: 4, mb: 4,
+                            position: 'relative',
+                            // 🔥🔥🔥 CAMBIO PRINCIPAL PARA RESIZE TOTAL 🔥🔥🔥
+                            resize: 'both',       // Permite redimensionar ancho y alto
+                            overflow: 'hidden',   // Necesario para que resize funcione
+
+                            minHeight: height,    // Altura inicial/mínima
+                            maxWidth: '100%',     // Evita que se salga del contenedor padre
+                            minWidth: width,    // Evita que se haga diminuto
+
+                            height: 'auto',
+                            width: 'auto',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            '&:hover .resize-handle': { opacity: 1 }
+                        }}
+                    >
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexShrink={0}>
+                            <Typography variant="h6" fontWeight="bold">{activeChartConfig.alias}</Typography>
+                            {charts.length > 1 && <Typography variant="caption" color="text.secondary">{activeIndex + 1} / {charts.length}</Typography>}
+                        </Box>
+
+                        <Box sx={{ flexGrow: 1, minHeight: 0, position: 'relative' }}>
+                            <HighchartsReact
+                                ref={chartComponentRef}
+                                highcharts={Highcharts}
+                                options={mainOptions}
+                                constructorType={activeChartConfig.type === 'map' ? 'mapChart' : 'chart'}
+                                containerProps={{ style: { height: '100%', width: '100%', position: 'absolute' } }}
+                            />
+                        </Box>
+
+                        {/* Indicador visual de resize diagonal */}
+                        <Box
+                            className="resize-handle"
+                            sx={{
+                                position: 'absolute', bottom: 4, right: 4, opacity: 0.3, transition: 'opacity 0.2s',
+                                pointerEvents: 'none', color: '#888', zIndex: 10
+                            }}
+                        >
+                            <Scaling size={20} />
+                        </Box>
+                    </Paper>
+                </div>
+            ) : (
+                loading && !activeData && <Box height={height} width={width} display="flex" justifyContent="center" alignItems="center" bgcolor="#f9fafb" borderRadius={4}><CircularProgress /></Box>
             )}
 
-            {/* GRÁFICO PRINCIPAL */}
-            {!loading && mainOptions ? (
-                <Paper elevation={0} sx={{ p: 3, border: '1px solid #e0e0e0', borderRadius: 4, mb: 4 }}>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                        <Typography variant="h6" fontWeight="bold">
-                            {activeChartConfig.alias}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                            {activeIndex + 1} / {charts.length}
-                        </Typography>
-                    </Box>
-                    <HighchartsReact highcharts={Highcharts} options={mainOptions} />
-                </Paper>
-            ) : null}
-
-            {/* MINIATURAS */}
-            <Box sx={{ position: 'relative', px: { xs: 0, md: 6 } }}>
-                <IconButton
-                    onClick={handlePrev}
-                    sx={{ display: { xs: 'none', md: 'flex' }, position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 2, bgcolor: 'white', border: '1px solid #ddd' }}
-                >
-                    <ChevronLeft size={20} />
-                </IconButton>
-
-                <Grid container spacing={2} wrap="nowrap" sx={{ overflowX: 'auto', pb: 2, '&::-webkit-scrollbar': { height: 6 } }}>
-                    {charts.map((chart, idx) => {
-                        // 🔥 CORRECCIÓN CLAVE: Leer con la misma clave
-                        const data = allChartsData[chart.sheetId || chart.sheetName];
-                        const thumbOptions = getChartOptions(chart, data, true);
-                        const isActive = idx === activeIndex;
-
-                        return (
-                            <Grid key={idx} sx={{ minWidth: 200, maxWidth: 220, flexShrink: 0 }}>
-                                <Paper
-                                    elevation={isActive ? 3 : 0}
-                                    onClick={() => setActiveIndex(idx)}
-                                    sx={{
-                                        p: 1.5, cursor: 'pointer',
-                                        border: isActive ? `2px solid ${chart.color || '#1976d2'}` : '1px solid #eee',
-                                        borderRadius: 3, opacity: isActive ? 1 : 0.7
-                                    }}
-                                >
-                                    <Box height={80} mb={1} bgcolor="#f9fafb" borderRadius={2} overflow="hidden">
-                                        {data ? (
-                                            <HighchartsReact highcharts={Highcharts} options={thumbOptions} />
-                                        ) : (
-                                            <Box height="100%" display="flex" justifyContent="center" alignItems="center">
-                                                <BarChart2 size={20} color="#ddd" />
-                                            </Box>
-                                        )}
-                                    </Box>
-                                    <Typography variant="caption" fontWeight="bold" noWrap display="block">
-                                        {chart.alias}
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                        );
-                    })}
-                </Grid>
-
-                <IconButton
-                    onClick={handleNext}
-                    sx={{ display: { xs: 'none', md: 'flex' }, position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 2, bgcolor: 'white', border: '1px solid #ddd' }}
-                >
-                    <ChevronRight size={20} />
-                </IconButton>
-            </Box>
+            {showThumbnails && (
+                <Box sx={{ position: 'relative', px: { xs: 0, md: 6 } }}>
+                    <IconButton onClick={handlePrev} sx={{ display: { xs: 'none', md: 'flex' }, position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 2, bgcolor: 'white', border: '1px solid #ddd' }}><ChevronLeft size={20} /></IconButton>
+                    <Grid ref={scrollRef} container spacing={2} wrap="nowrap" sx={{ overflowX: 'auto', pb: 2, scrollBehavior: 'smooth', '&::-webkit-scrollbar': { height: 6 } }}>
+                        {charts.map((chart, idx) => {
+                            const data = allChartsData[chart.sheetId || chart.sheetName];
+                            const thumbOptions = getChartOptions(chart, data, true);
+                            const isActive = idx === activeIndex;
+                            return (
+                                <Grid key={idx} item sx={{ minWidth: 200, maxWidth: 220, flexShrink: 0 }}>
+                                    <Paper
+                                        elevation={isActive ? 3 : 0} onClick={() => setActiveIndex(idx)}
+                                        sx={{ p: 1.5, cursor: 'pointer', border: isActive ? `2px solid ${chart.color || '#1976d2'}` : '1px solid #eee', borderRadius: 3, opacity: isActive ? 1 : 0.7, transition: 'all 0.3s ease' }}
+                                    >
+                                        <Box height={80} mb={1} bgcolor="#f9fafb" borderRadius={2} overflow="hidden">
+                                            {data ? <HighchartsReact highcharts={Highcharts} options={thumbOptions} constructorType={chart.type === 'map' ? 'mapChart' : 'chart'} /> : <Box height="100%" display="flex" justifyContent="center" alignItems="center">{chart.type === 'map' ? <MapIcon size={20} color="#ddd" /> : <BarChart2 size={20} color="#ddd" />}</Box>}
+                                        </Box>
+                                        <Typography variant="caption" fontWeight="bold" noWrap display="block">{chart.alias}</Typography>
+                                    </Paper>
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
+                    <IconButton onClick={handleNext} sx={{ display: { xs: 'none', md: 'flex' }, position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 2, bgcolor: 'white', border: '1px solid #ddd' }}><ChevronRight size={20} /></IconButton>
+                </Box>
+            )}
         </Container>
     );
 }
