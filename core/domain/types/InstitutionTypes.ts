@@ -1,3 +1,4 @@
+// core/domain/types/InstitutionTypes.ts
 /**
  * Defines the main categories of institutions.
  */

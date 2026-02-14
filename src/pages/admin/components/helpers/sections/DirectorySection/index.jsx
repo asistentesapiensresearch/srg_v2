@@ -1,4 +1,3 @@
-// src/pages/admin/components/helpers/sections/DirectorySection/index.jsx
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
     Box, Container, Grid, Skeleton, Alert, Button,
@@ -8,26 +7,36 @@ import {
 } from "@mui/material";
 import { LayoutGridIcon, LayoutListIcon, Search, SlidersHorizontal } from "lucide-react";
 
+// AWS Amplify Data Client
+import { generateClient } from "aws-amplify/data";
+
 // Componentes Internos
 import { DirectoryCard } from './results/DirectoryCard';
 import { AdCard } from './results/AdCard';
 import { FilterDrawer } from './filters/FilterDrawer';
 import { fetchSheet } from './fetchSheet';
-import { getValue } from './results/utils';
+// import { getValue } from './results/utils'; // Ya no es estrictamente necesario aquí, pero se deja por si acaso
 import TableList from './results/TableList';
 
-// 🔥 IMPORTS DE COMPARACIÓN
+// Imports de Comparación
 import { ComparisonProvider } from './comparison/ComparisonContext';
 import ComparisonWidget from './comparison/ComparisonWidget';
 import ComparisonModal from './comparison/ComparisonModal';
 
+// Inicializar cliente
+const client = generateClient();
+
 // ========================================================================
-// HELPERS PUROS (Fuera del componente para evitar recreación)
+// HELPERS PUROS
 // ========================================================================
 
 const cleanString = (val) => {
     if (val === null || val === undefined) return "";
-    return String(val).toLowerCase().replace(/\s+/g, "").trim();
+    return String(val)
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "")
+        .trim();
 };
 
 const parseQuickFilters = (jsonString) => {
@@ -46,7 +55,6 @@ const parseQuickFilters = (jsonString) => {
 const getInitialConfig = (jsonString) => {
     const list = parseQuickFilters(jsonString);
     const defaultItem = list.find(p => p.default) || list[0];
-
     const rawFilters = defaultItem.filters || {};
     const sanitized = {};
     Object.keys(rawFilters).forEach(key => {
@@ -54,15 +62,11 @@ const getInitialConfig = (jsonString) => {
         if (Array.isArray(val)) sanitized[key] = val;
         else if (val) sanitized[key] = [val];
     });
-
-    return {
-        label: defaultItem.label,
-        filters: sanitized
-    };
+    return { label: defaultItem.label, filters: sanitized };
 };
 
 // ========================================================================
-// COMPONENTE DE CONTENIDO (Lógica Principal)
+// COMPONENTE DE CONTENIDO
 // ========================================================================
 
 const DirectorySectionContent = ({
@@ -77,9 +81,17 @@ const DirectorySectionContent = ({
     research,
     itemsPerPage = 12,
     quickFilters = "[]",
-    groupByColumn = "",   // Ej: "Colegio"
-    versionColumn = "",   // Ej: "Año"
-    targetVersion = ""    // Ej: "2025-2026"
+
+    // Configuración de Agrupación
+    groupByColumn = "",
+    versionColumn = "",
+    targetVersion = "",
+
+    // Configuración de Enriquecimiento
+    enableEnrichment = false,
+    enrichmentKey = "",
+    enrichmentType = "",
+    enrichmentSubtype = ""
 }) => {
     // 1. ESTADOS
     const [activeFilters, setActiveFilters] = useState(() => getInitialConfig(quickFilters).filters);
@@ -99,22 +111,35 @@ const DirectorySectionContent = ({
     const isList = viewListType === 'list';
     const activeFilterCount = Object.values(activeFilters).flat().length;
     const quickFiltersData = useMemo(() => parseQuickFilters(quickFilters), [quickFilters]);
-
-    // 🔥 OPTIMIZACIÓN: Memorizar alias para no recalcular en cada render de tarjeta
     const columnAliases = useMemo(() => sourceConfig?.columnAliases || {}, [sourceConfig]);
 
-    // 3. HELPER DE MAPEO (OPTIMIZADO CON USECALLBACK)
+    // 3. HELPER DE MAPEO
     const mapItemWithAliases = useCallback((item) => {
         if (!item) return {};
         const newItem = {};
 
-        // Mapear propiedades principales
+        // A. Mapear propiedades del Excel (Usando Alias)
         Object.keys(item).forEach(key => {
             const alias = columnAliases[key] || key;
             newItem[alias] = item[key];
         });
 
-        // Mapear historial recursivamente
+        // B. Transferir propiedades de Enriquecimiento (DB)
+        // NOTA: 'item' ya viene con los datos fusionados desde el useEffect
+        const enrichedFields = [
+            'logo', 'rectorName', 'rectorPhoto', 'rectorSocial',
+            'socialMedia', 'website', 'languages', 'description',
+            'type', 'subtype'
+        ];
+
+        enrichedFields.forEach(field => {
+            // Verificamos explícitamente undefined para no sobrescribir con vacíos si no es necesario
+            if (item[field] !== undefined) {
+                newItem[field] = item[field];
+            }
+        });
+
+        // C. Historial y Metadatos
         if (item.history && Array.isArray(item.history)) {
             newItem.history = item.history.map(histItem => {
                 const newHistItem = {};
@@ -126,25 +151,23 @@ const DirectorySectionContent = ({
             });
         }
 
-        // Preservar metadatos internos
         newItem.id = item.id;
         newItem._id = item._id;
         newItem._isAd = item._isAd;
         newItem._hasHistory = item._hasHistory;
-        newItem.Vinculada = item.Vinculada; // Preservar original para lógica interna
+        newItem.Vinculada = item.Vinculada;
+        newItem._isEnriched = item._isEnriched;
 
         return newItem;
     }, [columnAliases]);
 
-    // 4. LÓGICA DE AGRUPACIÓN Y PROCESAMIENTO
+    // 4. LÓGICA DE AGRUPACIÓN
     const processDataWithHistory = useCallback((rawData) => {
         if (!rawData || rawData.length === 0) return [];
         let processedRaw = [...rawData];
 
-        // Ordenar por versión (Año) descendente primero
         if (versionColumn) {
             processedRaw.sort((a, b) => {
-                // Intenta extraer números del año para ordenar correctamente (2026 > 2025)
                 const yearA = parseInt(String(a[versionColumn]).match(/\d+/) || 0);
                 const yearB = parseInt(String(b[versionColumn]).match(/\d+/) || 0);
                 return yearB - yearA;
@@ -153,11 +176,9 @@ const DirectorySectionContent = ({
 
         if (!groupByColumn) return processedRaw;
 
-        // Agrupar
         const groups = {};
         processedRaw.forEach(item => {
             const name = item[groupByColumn];
-            // Normalizar nombre para agrupar (quita espacios extra y mayúsculas)
             const key = name ? cleanString(name) : `_NO_GROUP_${Math.random()}`;
             if (!groups[key]) groups[key] = [];
             groups[key].push(item);
@@ -166,15 +187,11 @@ const DirectorySectionContent = ({
         const processedResults = [];
         const targetClean = cleanString(targetVersion);
 
-        // Seleccionar registro principal + historial
         Object.values(groups).forEach(groupRecords => {
             let mainRecord = null;
-
             if (targetVersion && versionColumn) {
                 mainRecord = groupRecords.find(r => cleanString(r[versionColumn]) === targetClean);
             }
-
-            // Fallback: Si no hay versión target, usa el más reciente (primero de la lista ordenada)
             if (!mainRecord) mainRecord = groupRecords[0];
 
             if (mainRecord) {
@@ -184,9 +201,9 @@ const DirectorySectionContent = ({
         });
 
         return processedResults;
-    }, [groupByColumn, versionColumn, targetVersion, research?.dateRange]);
+    }, [groupByColumn, versionColumn, targetVersion]);
 
-    // 5. FILTROS Y ORDENAMIENTO
+    // 5. MEMOS DE FILTRADO (RESTAURADOS)
     const availableOrderColumns = useMemo(() => {
         if (!sourceConfig?.orderColumns || sourceConfig.orderColumns?.length === 0) return [];
         const orders = [];
@@ -222,13 +239,11 @@ const DirectorySectionContent = ({
             const matchesSearch = !searchTerm || Object.values(item).some(val =>
                 val && String(val).toLowerCase().includes(searchTerm.toLowerCase())
             );
-
             const matchesFilters = Object.entries(currentFilters).every(([key, selectedValues]) => {
                 if (!selectedValues || !Array.isArray(selectedValues) || selectedValues.length === 0) return true;
                 const itemValue = item[key];
                 return selectedValues.some(filterVal => cleanString(filterVal) === cleanString(itemValue));
             });
-
             return matchesSearch && matchesFilters;
         });
     }, [showData, searchTerm, activeFilters]);
@@ -253,27 +268,91 @@ const DirectorySectionContent = ({
         return itemsWithAds.slice(startIndex, endIndex);
     }, [itemsWithAds, page, itemsPerPage]);
 
-    // 6. EFECTOS (Fetch y Reset)
-    useEffect(() => {
-        const config = getInitialConfig(quickFilters);
-        if (config.label) {
-            setActiveFilters(config.filters);
-            setSelectedPreset(config.label);
-        }
-    }, [quickFilters]);
 
+    // ========================================================================
+    // 6. EFECTO PRINCIPAL (FETCH + ENRIQUECIMIENTO)
+    // ========================================================================
     useEffect(() => {
         if (!sourceConfig?.sheetId) { setData([]); return; }
-        if (data.length === 0) setLoading(true);
-        setError(null);
 
-        const fetchData = async () => {
+        const fetchDataAndEnrich = async () => {
+            setLoading(true);
+            setError(null);
             try {
+                // PASO 1: Obtener datos del Excel
                 const { selectedSheet, sheetId } = sourceConfig;
-                const rawData = await fetchSheet(sheetId, selectedSheet);
-                const groupedData = processDataWithHistory(rawData);
+                let rawSheetData = await fetchSheet(sheetId, selectedSheet);
+                console.log("📄 [Directorio] Datos Excel:", rawSheetData.length);
+
+                // PASO 2: Enriquecimiento
+                if (enableEnrichment && enrichmentKey) {
+                    console.log("🚀 [Directorio] Enriquecimiento Activo. Consultando BD...");
+
+                    try {
+                        // A. Construir Filtros
+                        let filter = {};
+                        if (enrichmentType && enrichmentType !== "") filter.type = { eq: enrichmentType };
+                        if (enrichmentSubtype && enrichmentSubtype !== "") filter.subtype = { eq: enrichmentSubtype };
+
+                        // B. Fetch Explícito a la BD (Evitando la race condition del hook)
+                        const { data: institutionsDB } = await client.models.Institution.list({
+                            filter: Object.keys(filter).length > 0 ? filter : undefined,
+                            limit: 3000 // Traemos todo para mapear en memoria
+                        });
+
+                        // C. Crear Mapa
+                        const institutionMap = new Map();
+                        institutionsDB.forEach(inst => {
+                            if (inst.name) institutionMap.set(cleanString(inst.name), inst);
+                        });
+
+                        // D. Fusionar (Merge)
+                        rawSheetData = rawSheetData.map(row => {
+                            const lookupValue = cleanString(row[enrichmentKey]);
+
+                            if (lookupValue && institutionMap.has(lookupValue)) {
+                                // Obtenemos el objeto DB
+                                const dbModel = institutionMap.get(lookupValue);
+
+                                // 🔥 FIX CRÍTICO: Serializamos el modelo Amplify a objeto plano
+                                // Esto evita problemas con Proxies y permite que { ...dbData } funcione bien
+                                const dbData = {
+                                    logo: dbModel.logo,
+                                    rectorName: dbModel.rectorName,
+                                    rectorPhoto: dbModel.rectorPhoto,
+                                    rectorSocial: dbModel.rectorSocial,
+                                    socialMedia: dbModel.socialMedia,
+                                    website: dbModel.website,
+                                    isLinked: dbModel.isLinked,
+                                    path: dbModel.path,
+                                    languages: dbModel.languages,
+                                    description: dbModel.description,
+                                    type: dbModel.type,
+                                    subtype: dbModel.subtype,
+                                    // Agrega aquí cualquier otro campo específico que necesites
+                                };
+
+                                return {
+                                    ...row,         // Datos del Excel
+                                    ...dbData,      // Datos de la BD (Sobrescriben/Complementan)
+                                    _isEnriched: true,
+                                    [enrichmentKey]: row[enrichmentKey] // Preservar key original
+                                };
+                            }
+                            return { ...row, _isEnriched: false };
+                        });
+                        console.log(`✅ [Directorio] Enriquecidos: ${rawSheetData.filter(i => i._isEnriched).length}`);
+
+                    } catch (enrichError) {
+                        console.error("❌ Error en enriquecimiento:", enrichError);
+                    }
+                }
+
+                // PASO 3: Agrupación
+                const groupedData = processDataWithHistory(rawSheetData);
                 setData(groupedData);
                 setShowData(groupedData);
+
             } catch (err) {
                 console.error(err);
                 setError(err.message);
@@ -281,8 +360,20 @@ const DirectorySectionContent = ({
                 setLoading(false);
             }
         };
-        fetchData();
-    }, [sourceConfig, processDataWithHistory]);
+
+        fetchDataAndEnrich();
+        // Quitamos 'institutions' y 'useInstitutions' de las dependencias para evitar bucles/race conditions
+    }, [sourceConfig, enableEnrichment, enrichmentKey, enrichmentType, enrichmentSubtype, processDataWithHistory]);
+
+
+    // EFECTOS DE CONTROL
+    useEffect(() => {
+        const config = getInitialConfig(quickFilters);
+        if (config.label) {
+            setActiveFilters(config.filters);
+            setSelectedPreset(config.label);
+        }
+    }, [quickFilters]);
 
     useEffect(() => {
         const activeFilterKeys = Object.keys(activeFilters).filter(k => activeFilters[k]?.length > 0);
@@ -299,7 +390,8 @@ const DirectorySectionContent = ({
 
     useEffect(() => { setPage(1); }, [searchTerm, activeFilters, order, showData]);
 
-    // 7. HANDLERS
+
+    // HANDLERS
     const handleApplyPreset = (preset) => {
         setSelectedPreset(preset.label);
         const rawFilters = preset.filters || {};
@@ -338,12 +430,12 @@ const DirectorySectionContent = ({
     const handleClearFilters = () => { setActiveFilters({}); setSearchTerm(''); };
 
 
-    // 8. RENDERIZADO
+    // RENDER
     return (
         <Container maxWidth="xl" sx={{ py: 6, bgcolor: '#f9fafb', minHeight: '100vh', position: 'relative' }}>
             {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
 
-            {/* BARRA DE HERRAMIENTAS */}
+            {/* HEADER & TOOLBAR */}
             <Box sx={{
                 mb: 2, bgcolor: 'white', p: 2, borderRadius: 4,
                 boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
@@ -378,7 +470,7 @@ const DirectorySectionContent = ({
                 aliases={columnAliases}
             />
 
-            {/* CHIPS DE FILTRO RÁPIDO */}
+            {/* PRESETS */}
             {quickFiltersData.length > 0 && (
                 <Stack direction="row" spacing={1} sx={{ mb: 3, overflowX: 'auto', pb: 1, '&::-webkit-scrollbar': { display: 'none' } }}>
                     {quickFiltersData.map((preset) => (
@@ -393,7 +485,7 @@ const DirectorySectionContent = ({
                 </Stack>
             )}
 
-            {/* CONTENIDO PRINCIPAL */}
+            {/* CONTENIDO (GRID/LIST) */}
             {loading ? (
                 <Grid container spacing={3}>
                     {[1, 2, 3].map(n => (<Grid size={{ xs: 12, sm: (isList ? 13 : 6), md: (isList ? 12 : gridSize) }} key={n}><Skeleton variant="rectangular" height={350} sx={{ borderRadius: 4 }} /></Grid>))}
@@ -426,7 +518,7 @@ const DirectorySectionContent = ({
                     ) : (
                         <Grid container spacing={3}>
                             {paginatedData.map((item, index) => {
-                                // Renderizar Anuncio
+                                // A. Renderizar Anuncio
                                 if (item._isAd) {
                                     return (
                                         <Grid size={{ xs: 12, sm: 6, md: gridSize }} key={`ad-${index}`} className="flex justify-center">
@@ -435,7 +527,7 @@ const DirectorySectionContent = ({
                                     );
                                 }
 
-                                // Renderizar Tarjeta (Usamos el helper memorizado para rendimiento)
+                                // B. Renderizar Tarjeta
                                 const mappedItem = mapItemWithAliases(item);
 
                                 return (
@@ -469,9 +561,7 @@ const DirectorySectionContent = ({
     );
 };
 
-// ========================================================================
-// WRAPPER PRINCIPAL (Provee el contexto)
-// ========================================================================
+// Wrapper para contexto
 const DirectorySection = (props) => {
     return (
         <ComparisonProvider>

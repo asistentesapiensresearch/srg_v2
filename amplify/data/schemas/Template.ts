@@ -5,10 +5,15 @@ export const Template = a.model({
     themeSettings: a.json(),
     researchId: a.id(),
     research: a.belongsTo("Research", "researchId"),
+
+    institutionId: a.id(),
+    institution: a.belongsTo("Institution", "institutionId"),
+
     brands: a.hasMany("TemplateBrand", "templateId"),
 })
     .secondaryIndexes(index => [
-        index('researchId').queryField('listTemplateByResearchId')
+        index('researchId').queryField('listTemplateByResearchId'),
+        index('institutionId').queryField('listTemplateByInstitutionId')
     ])
     .authorization((allow) => [
         allow.publicApiKey().to(['read']),

@@ -26,13 +26,7 @@ export function useInstitutions() {
         if (!loading) init();
     }, [refresh]);
 
-    const saveLogo = async (data: {
-        iconKey: string,
-        tempFolder: string,
-        name: string,
-        link: string,
-        logo: any
-    }) => {
+    const saveLogo = async (data) => {
         let finalKey = data.iconKey;
 
         // Mover icono a carpeta definitiva

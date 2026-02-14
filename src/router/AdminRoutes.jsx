@@ -7,6 +7,7 @@ const Layout = lazy(() => import("../pages/admin/Layout"));
 const Home = lazy(() => import('../pages/admin/Home'));
 const Research = lazy(() => import("../pages/admin/Research/Research"));
 const Brands = lazy(() => import("../pages/admin/Brand/Brands"));
+const Institutions = lazy(() => import("../pages/admin/Intitutions/Institutions"));
 const Builder = lazy(() => import("../pages/admin/components/builder/Editor"));
 
 export const AdminRoutes = [
@@ -58,6 +59,10 @@ export const AdminRoutes = [
             {
                 path: 'brands',
                 element: <Brands />
+            },
+            {
+                path: 'institutions',
+                element: <Institutions />
             },
             {
                 path: '*',

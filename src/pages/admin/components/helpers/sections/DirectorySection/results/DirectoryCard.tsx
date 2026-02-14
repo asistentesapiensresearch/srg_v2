@@ -18,6 +18,7 @@ import { getValue } from './utils';
 import FemaleIcon from "../icons/female";
 import MaleIcon from "../icons/male";
 import { useComparison } from '../comparison/ComparisonContext';
+import { StorageImage } from '@aws-amplify/ui-react-storage';
 
 const pillButtonStyle = {
     borderRadius: 50,
@@ -44,8 +45,7 @@ const CardItem = ({ item, primaryColor }) => {
     };
 
     // Lógica de variables
-    const rawVinculada = getAlias('Vinculada') || "";
-    const Vinculada = String(rawVinculada).toLowerCase() === 'sí' || String(rawVinculada).toLowerCase() === 'si';
+    const Vinculada = getValue(item, ['isLinked']);
 
     const Stars = getAlias('Stars');
     const city = getAlias('Ciudad');
@@ -57,13 +57,20 @@ const CardItem = ({ item, primaryColor }) => {
     const accreditationMain = getAlias('Siglas acreditación');
     const accreditationSec = getAlias('Siglas certificación');
     const gender = getAlias('Género');
-    const link = getAlias('Link');
+    const link = getValue(item, ['path']);
     const logoColegio = getValue(item, ['logo', 'imagen_institucion']);
 
     // Director
-    const directorName = getAlias('Director');
-    const directorPhoto = getValue(item, ['director_foto', 'foto_rector']);
-    const directorWeb = getAlias('DirectorWeb');
+    const directorName = getValue(item, ['rectorName']);
+    const directorPhoto = getValue(item, ['director_foto', 'foto_rector', 'rectorPhoto']);
+    const socialRector = getValue(item, ['rectorSocial']);
+    let socialR;
+    if (socialRector) {
+        if (typeof socialRector == 'string') {
+            socialR = JSON.parse(socialRector);
+        }
+    }
+    const directorWeb = socialR?.linkedin ?? getAlias('DirectorWeb');
 
     // 🔥 IMPORTANTE: El return que faltaba
     return (
@@ -163,7 +170,14 @@ const CardItem = ({ item, primaryColor }) => {
                     {/* Logo y Años */}
                     {Vinculada && (
                         <Box textAlign="center" minWidth={60}>
-                            <Avatar src={logoColegio} variant="square" sx={{ width: 45, height: 45, mb: 0.5, objectFit: 'contain', mx: 'auto' }} />
+                            {
+                                logoColegio &&
+                                <StorageImage alt={item.Nombre || item.Colegio || 'Sin Nombre'} path={logoColegio} className="h-[45px!important] rounded-[50%!important] w-[45px!important]" />
+                            }
+                            {
+                                !directorPhoto &&
+                                <Avatar src={logoColegio} variant="square" sx={{ width: 45, height: 45, mb: 0.5, objectFit: 'contain', mx: 'auto' }} />
+                            }
                             <Stack direction="row" alignItems="center" spacing={0.5} justifyContent="center">
                                 <Flag size={12} />
                                 <Typography variant="caption" sx={{ fontSize: 10 }}>{years} años</Typography>
@@ -181,7 +195,7 @@ const CardItem = ({ item, primaryColor }) => {
                             <IconButton size="small"><Instagram size={16} color="#E4405F" /></IconButton>
                             <Tooltip title="Admisiones" data-id='admisiones'>
                                 <Stack direction="row" alignItems="center" spacing={0.5} sx={{ bgcolor: '#eee', px: 1, borderRadius: 1 }}
-                                 className='cursor-pointer'>
+                                    className='cursor-pointer'>
                                     <Typography variant="caption" fontWeight="bold">Admisiones</Typography>
                                 </Stack>
                             </Tooltip>
@@ -223,10 +237,17 @@ const CardItem = ({ item, primaryColor }) => {
                     borderLeft: '1px solid #eee',
                     borderRight: '1px solid #eee'
                 }}>
-                    <Avatar
-                        src={directorPhoto}
-                        sx={{ width: 60, height: 60, mb: 1, border: '2px solid white', boxShadow: 2 }}
-                    />
+                    {
+                        directorPhoto &&
+                        <StorageImage alt="sleepy-cat" path={directorPhoto} className="h-[60px!important] rounded-[50%!important] w-[60px!important]" />
+                    }
+                    {
+                        !directorPhoto &&
+                        <Avatar
+                            src={directorPhoto}
+                            sx={{ width: 60, height: 60, mb: 1, border: '2px solid white', boxShadow: 2 }}
+                        />
+                    }
                     <Typography
                         variant="caption"
                         component="a"

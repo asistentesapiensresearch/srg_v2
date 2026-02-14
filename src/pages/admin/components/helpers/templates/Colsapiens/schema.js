@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default {
     label: "Colsapiens",
-    description: "Investigación Colsapiens 2025",
+    description: "Plantilla para colsapiens",
     getSections: () => [
         {
             "children": [
@@ -180,7 +180,11 @@ export default {
                                 "quick_filters": "[\n  {\n    \"label\": \"Todos\",\n    \"filters\": {}\n  },\n  {\n    \"label\": \"Aliados\",\n    \"filters\": {\n      \"Vinculada\": \"Sí\"\n    }\n  }\n]",
                                 "itemsPerColumn": 1,
                                 "groupByColumn": "Colegio",
-                                "targetVersion": "2025-2026"
+                                "targetVersion": "2025-2026",
+                                "enableEnrichment": true,
+                                "enrichmentKey": "Colegios",
+                                "enrichmentType": "EDUCATIONAL",
+                                "enrichmentSubtype": "school"
                             }
                         }
                     ],

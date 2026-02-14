@@ -185,6 +185,7 @@ export default function Builder() {
                     setTargetParentId={setTargetParentId}
                     setOpenSections={setOpenSections}
                     currentTemplate={currentTemplate}
+                    setCurrentTemplate={setCurrentTemplate}
                 />
 
                 {/* CANVAS CENTRAL (El más pesado) */}
