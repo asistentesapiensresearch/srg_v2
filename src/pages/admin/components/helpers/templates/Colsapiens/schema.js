@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
-    label: "Colsapiens",
-    description: "Plantilla para colsapiens",
+    label: "Investigación",
+    description: "Plantilla para investigaciones",
     getSections: () => [
         {
             "children": [

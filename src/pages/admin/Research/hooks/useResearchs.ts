@@ -4,8 +4,7 @@ import { ResearchAmplifyRepository } from "@core/infrastructure/repositories/Res
 import { TemplateAmplifyRepository } from "@core/infrastructure/repositories/TemplateAmplifyRepository";
 import { Delete, Get, Store } from "@core/application/caseUses/Research";
 import { Create as CreateTemplate, FindByResearchId, Update as UpdateTemplate } from "@core/application/caseUses/Template";
-import { FindByResearchId as FindBrandByResearchId } from "@core/application/caseUses/Brand";
-import { Brand, Research, Template } from "@core/domain/repositories/entities";
+import { Research, Template } from "@core/domain/repositories/entities";
 import { BrandAmplifyRepository } from "@core/infrastructure/repositories/BrandAmplifyRepository";
 
 export function useResearchs() {

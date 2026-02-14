@@ -5,4 +5,5 @@ export interface TemplateRepository {
   update(id: string, template: Template): Promise<boolean>;
   create(template: Template): Promise<Template | null>;
   getByResearchId(researchId: string): Promise<Template | null>;
+  getByInstitutionId(institutionId: string): Promise<Template | null>;
 }

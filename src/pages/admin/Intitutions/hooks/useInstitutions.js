@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { InstitutionAmplifyRepository } from '@core/infrastructure/repositories/InstitutionAmplifyRepository';
 import { CreateInstitution } from '@core/application/caseUses/Institution/CreateInstitution';
 import { ListInstitutions } from '@core/application/caseUses/Institution/ListInstitutions';
+import { FindByInstitutionId } from '@core/application/caseUses/Template/FindByInstitutionId';
+import { TemplateAmplifyRepository } from '@core/infrastructure/repositories/TemplateAmplifyRepository';
 
 const institutionRepo = new InstitutionAmplifyRepository();
-const createInstitutionUseCase = new CreateInstitution(institutionRepo);
-const listInstitutionsUseCase = new ListInstitutions(institutionRepo);
 
 export const useInstitutions = () => {
     const [institutions, setInstitutions] = useState([]);
@@ -15,7 +15,7 @@ export const useInstitutions = () => {
     const fetchInstitutions = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await listInstitutionsUseCase.execute();
+            const data = await (new ListInstitutions(institutionRepo)).execute();
             const safeData = data || [];
             // Ordenar...
             setInstitutions(safeData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
@@ -27,10 +27,15 @@ export const useInstitutions = () => {
         }
     }, []);
 
+    const getTemplate = async (institutionId) => {
+        const templateRepo = new TemplateAmplifyRepository();
+        return await (new FindByInstitutionId(templateRepo)).execute(institutionId);
+    }
+
     const createInstitution = async (data) => {
         setLoading(true);
         try {
-            await createInstitutionUseCase.execute(data);
+            await (new CreateInstitution(institutionRepo)).execute(data);
             await fetchInstitutions();
             return true;
         } catch (err) {
@@ -80,6 +85,7 @@ export const useInstitutions = () => {
         createInstitution,
         updateInstitution, // Exportar
         deleteInstitution,
-        refresh: fetchInstitutions
+        refresh: fetchInstitutions,
+        getTemplate
     };
 };

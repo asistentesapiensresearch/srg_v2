@@ -26,11 +26,19 @@ export class TemplateAmplifyRepository implements TemplateRepository {
     }
 
     async getByResearchId(researchId: string): Promise<Template | null> {
+        return await this.getTemplateById({ researchId }, 'listTemplateByResearchId');
+    }
+
+    async getByInstitutionId(institutionId: string): Promise<Template | null> {
+        return await this.getTemplateById({institutionId}, 'listTemplateByInstitutionId');
+    }
+
+    async getTemplateById(inputs: any, query: string) {
         try {
             const { data, errors } = await apiSyncService.query(
                 'Template',
-                'listTemplateByResearchId',
-                { researchId }
+                query,
+                inputs
             );
 
             if (errors && errors.length) {
@@ -44,7 +52,7 @@ export class TemplateAmplifyRepository implements TemplateRepository {
 
             return null;
         } catch (error: any) {
-            console.error('Error al buscar template por researchId:', error);
+            console.error(`Error al buscar template (${query}):`, error);
             return null;
         }
     }

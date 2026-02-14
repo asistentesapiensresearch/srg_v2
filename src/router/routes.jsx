@@ -3,14 +3,24 @@ import { lazy, Suspense } from 'react';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminRoutes } from './AdminRoutes';
 import { Preloader } from '@src/components/preloader';
-import { Navigate } from 'react-router-dom';
+// import { Navigate } from 'react-router-dom'; // YA NO LO NECESITAMOS AQUÍ
 
 /* Viewer Pages */
 const Home = lazy(() => import("../pages/viewer/home/Home"));
 const Layout = lazy(() => import("../pages/viewer/Layout"));
 const Profile = lazy(() => import("../pages/viewer/Profile"));
-const ResearchDetail = lazy(() => import("../pages/viewer/ResearchDetail"));
+const TemplateDetail = lazy(() => import("../pages/viewer/TemplateDetail"));
 const Auth = lazy(() => import("../components/auth"));
+
+const SuspenseLoader = ({ children }) => (
+  <Suspense fallback={
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Preloader />
+    </div>
+  }>
+    {children}
+  </Suspense>
+);
 
 export const routes = [
   {
@@ -34,18 +44,9 @@ export const routes = [
       {
         index: true,
         element: (
-          <Suspense fallback={
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100vh'
-            }}>
-              <Preloader />
-            </div>
-          }>
+          <SuspenseLoader>
             <Profile />
-          </Suspense>
+          </SuspenseLoader>
         ),
       }
     ]
@@ -59,32 +60,18 @@ export const routes = [
     ),
     children: AdminRoutes
   },
-  // Ruta dinámica para investigaciones (debe ir al final antes del wildcard)
   {
-    path: "/:path",
+    path: "/*", 
     element: (
-      <Suspense fallback={
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh'
-        }}>
-          <Preloader />
-        </div>
-      }>
+      <SuspenseLoader>
         <Layout />
-      </Suspense>
+      </SuspenseLoader>
     ),
     children: [
       {
-        index: true,
-        element: <ResearchDetail />
+        path: '*',
+        element: <TemplateDetail />
       }
     ]
-  },
-  {
-    path: "*",
-    element: <Navigate to="/" replace />,
   }
 ];
