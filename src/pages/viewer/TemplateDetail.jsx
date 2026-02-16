@@ -5,14 +5,14 @@ import {
     Container,
     Typography,
     Chip,
-    Button,
-    Alert
+    Button
 } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
 import { useResearchs } from '@src/pages/admin/Research/hooks/useResearchs';
 import PageRenderer from '@src/pages/admin/components/builder/Renderer';
 import { Preloader } from '@src/components/preloader';
 import { useInstitutions } from '../admin/Intitutions/hooks/useInstitutions';
+import NotFoundPage from './NotFoundPage';
+import { ArrowLeft, Home } from 'lucide-react';
 
 const TemplateDetail = () => {
     const navigate = useNavigate();
@@ -38,8 +38,6 @@ const TemplateDetail = () => {
         // Limpiamos el path por si acaso (quitamos slashes al inicio o final si la DB no los tiene)
         // Esto asegura que "colegios/mi-colegio" coincida con "colegios/mi-colegio"
         const cleanPath = fullPath.replace(/^\/+|\/+$/g, '');
-
-        console.log("🔍 Buscando Path Completo:", cleanPath);
 
         // 1. Buscar en Research
         const foundResearch = researchs.find(r => {
@@ -130,30 +128,8 @@ const TemplateDetail = () => {
         );
     }
 
-    // 🔴 ERROR 404 REAL
     if (error || !data) {
-        return (
-            <Container maxWidth="md" className="py-12 flex flex-col items-center text-center">
-                <Box className="mb-6 p-4 bg-red-50 rounded-full">
-                    <Typography variant="h1" className="text-4xl">🤷‍♂️</Typography>
-                </Box>
-                <Typography variant="h4" className="font-bold mb-2 text-gray-800">
-                    Página no encontrada
-                </Typography>
-                <Typography variant="body1" className="mb-8 text-gray-600 max-w-lg">
-                    No pudimos encontrar contenido para la ruta: <br />
-                    <code className="bg-gray-100 p-1 rounded text-sm text-red-600">/{fullPath}</code>
-                </Typography>
-                <Button
-                    startIcon={<ArrowBack />}
-                    onClick={() => navigate('/')}
-                    variant="contained"
-                    size="large"
-                >
-                    Ir al inicio
-                </Button>
-            </Container>
-        );
+        return <NotFoundPage />;
     }
 
     // 🟢 RENDER DE CONTENIDO
@@ -196,13 +172,37 @@ const TemplateDetail = () => {
                 )
             )}
 
-            <Box className="mt-6 flex justify-center">
+            <Box className='mt-3' sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center' }}>
                 <Button
-                    startIcon={<ArrowBack />}
-                    onClick={() => navigate('/')}
                     variant="outlined"
+                    size="large"
+                    startIcon={<ArrowLeft size={20} />}
+                    onClick={() => navigate(-1)}
+                    sx={{
+                        textTransform: 'none',
+                        borderRadius: 2,
+                        borderColor: '#cbd5e1',
+                        color: '#475569',
+                        '&:hover': { borderColor: '#94a3b8', bgcolor: '#f1f5f9' }
+                    }}
                 >
-                    Volver al inicio
+                    Regresar
+                </Button>
+
+                <Button
+                    variant="contained"
+                    size="large"
+                    startIcon={<Home size={20} />}
+                    onClick={() => navigate('/')}
+                    disableElevation
+                    sx={{
+                        textTransform: 'none',
+                        borderRadius: 2,
+                        bgcolor: '#dc2626', // Rojo
+                        '&:hover': { bgcolor: '#b91c1c' }
+                    }}
+                >
+                    Ir al Inicio
                 </Button>
             </Box>
         </Container>

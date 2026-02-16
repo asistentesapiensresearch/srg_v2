@@ -5,12 +5,10 @@ import { TemplateAmplifyRepository } from "@core/infrastructure/repositories/Tem
 import { Delete, Get, Store } from "@core/application/caseUses/Research";
 import { Create as CreateTemplate, FindByResearchId, Update as UpdateTemplate } from "@core/application/caseUses/Template";
 import { Research, Template } from "@core/domain/repositories/entities";
-import { BrandAmplifyRepository } from "@core/infrastructure/repositories/BrandAmplifyRepository";
 
 export function useResearchs() {
     const researchRepository = new ResearchAmplifyRepository();
     const templateRepository = new TemplateAmplifyRepository();
-    const brandRepository = new BrandAmplifyRepository();
     const [loading, setLoading] = useState(false);
     const [researchs, setResearchs] = useState([]);
     const [refresh, setRefresh] = useState(0);
@@ -22,7 +20,6 @@ export function useResearchs() {
                 const command = new Get(researchRepository);
                 const researchsDB = (await command.execute() as any[]);
                 await Promise.all(researchsDB.map(async (r) => {
-                    r.brands = (await r.brands()).data;
                     r.template = (await r.template()).data;
                 }))
                 setResearchs(researchsDB.sort((a, b) => a.index - b.index));
@@ -41,7 +38,7 @@ export function useResearchs() {
     }
 
     const storeResearch = async (research: Research, id?: string) => {
-        const command = new Store(researchRepository, brandRepository);
+        const command = new Store(researchRepository);
         return await command.execute(research, id);
     }
 

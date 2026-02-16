@@ -1,6 +1,5 @@
-// src/router/AdminRoutes.jsx
-import { lazy, Suspense } from "react";
-import { Preloader } from "../components/preloader";
+import { lazy } from "react";
+import { SuspenseLoader } from "../components/SuspenseLoader";
 
 const ErrorContentNotAvailable = lazy(() => import("../pages/admin/ErrorContentNotAvailable"));
 const Layout = lazy(() => import("../pages/admin/Layout"));
@@ -11,44 +10,30 @@ const Institutions = lazy(() => import("../pages/admin/Intitutions/Institutions"
 const Builder = lazy(() => import("../pages/admin/components/builder/Editor"));
 
 export const AdminRoutes = [
+    // 1. Ruta del Builder (Sin Layout General, ocupa toda la pantalla)
     {
-        path: 'research/:id',
-        element: <Suspense fallback={
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh'
-            }}>
-                <Preloader />
-            </div>
-        }>
-            <Builder />
-        </Suspense>
-    },
-    {
-        idex: true,
+        path: ':type/:id',
         element: (
-            <Suspense fallback={
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh'
-                }}>
-                    <Preloader />
-                </div>
-            }>
+            <SuspenseLoader>
+                <Builder />
+            </SuspenseLoader>
+        )
+    },
+    // 2. Rutas con Layout Administrativo
+    {
+        path: "", // Ruta base para /admin
+        element: (
+            <SuspenseLoader>
                 <Layout />
-            </Suspense>
+            </SuspenseLoader>
         ),
         children: [
             {
-                index: true,
+                index: true, // /admin
                 element: <Home />
             },
             {
-                path: 'research',
+                path: 'research', // /admin/research
                 children: [
                     {
                         index: true,
@@ -57,17 +42,17 @@ export const AdminRoutes = [
                 ]
             },
             {
-                path: 'brands',
+                path: 'brands', // /admin/brands
                 element: <Brands />
             },
             {
-                path: 'institutions',
+                path: 'institutions', // /admin/institutions
                 element: <Institutions />
             },
             {
-                path: '*',
+                path: '*', // 404 dentro del admin
                 element: <ErrorContentNotAvailable />
             }
         ]
     },
-]
+];

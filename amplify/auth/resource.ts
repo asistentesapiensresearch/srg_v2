@@ -9,7 +9,17 @@ export const auth = defineAuth({
   loginWith: {
     email: true,
   },
-  groups: ['Admin','Allies','Viewer'],
+  userAttributes: {
+    fullname: {
+      mutable: true,
+      required: false,
+    },
+    profilePicture: {
+      mutable: true,
+      required: false,
+    }
+  },
+  groups: ['Admin', 'Allies', 'Viewer'],
   triggers: {
     postConfirmation: addUserToGroup
   },

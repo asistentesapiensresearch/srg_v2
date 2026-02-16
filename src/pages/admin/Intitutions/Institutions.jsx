@@ -11,6 +11,11 @@ import { InstitutionForm } from "./components/InstitutionForm";
 import { InstitutionCard } from "./components/InstitutionCard";
 import { useNavigate } from "react-router-dom";
 
+import { UserAssignmentModal } from "./components/UserAssignmentModal";
+
+import { generateClient } from 'aws-amplify/data';
+const client = generateClient();
+
 const Institutions = () => {
 
     const navigate = useNavigate();
@@ -28,12 +33,45 @@ const Institutions = () => {
     const [openForm, setOpenForm] = useState(false);
     const [selectedInstitution, setSelectedInstitution] = useState(null);
 
+    const [openUserModal, setOpenUserModal] = useState(false);
+    const [institutionForUser, setInstitutionForUser] = useState(null);
+
     // Debugging (Opcional)
     if (import.meta.env.MODE === "development") {
         useWhyDidYouUpdate("Institutions", { institutions, openForm, selectedInstitution });
     }
 
     // --- HANDLERS ---
+    const handleClickUsers = useCallback((institution) => {
+        setInstitutionForUser(institution);
+        setOpenUserModal(true);
+    }, []);
+
+    const handleAssignUser = async (institutionId, userObj) => {
+        // userObj debe venir del modal: { username: "uuid...", email: "...", ... }
+        if (!userObj || !userObj.username) {
+            alert("Error: No se pudo identificar el Username del usuario.");
+            return;
+        }
+
+        try {
+            // 1. Guardar el adminEmail en la base de datos (para permisos de edición del registro)
+            await updateInstitution(institutionId, { adminEmail: userObj.email });
+
+            // 2. Agregar al usuario al grupo 'Allies' en Cognito (para permisos de UI/Rutas)
+            await client.mutations.addUserToGroupMutation({
+                username: userObj.username,
+                groupName: 'Allies'
+            });
+
+            alert("Usuario asignado y permisos de Aliado otorgados.");
+            refresh(); // Refrescar lista
+
+        } catch (error) {
+            console.error("Error asignando usuario:", error);
+            alert("Se asignó el colegio, pero hubo un error otorgando el rol de Aliado.");
+        }
+    };
 
     const handleClickOpen = useCallback(() => {
         setSelectedInstitution(null);
@@ -58,13 +96,6 @@ const Institutions = () => {
             deleteInstitution(id);
         }
     };
-
-    const handleClickBuilder = useCallback((institution) => {
-        // Redirige al editor del template. 
-        // AJUSTA ESTA RUTA según como tengas configurado tu router para Research.
-        // Ejemplo: navigate(`/admin/research/${id}/builder`)
-        navigate(`/admin/cms/institution/${institution.id}`); 
-    }, [navigate]);
 
     // --- WRAPPER PARA EL FORMULARIO ---
     // Adapta el retorno del hook a lo que espera el InstitutionForm ({ institution, errors })
@@ -99,6 +130,13 @@ const Institutions = () => {
                 />
             )}
 
+            <UserAssignmentModal
+                open={openUserModal}
+                onClose={() => setOpenUserModal(false)}
+                institution={institutionForUser}
+                onAssign={handleAssignUser}
+            />
+
             {/* HEADER */}
             <div className="flex items-center justify-between mb-8 gap-4 px-2">
                 <div>
@@ -127,7 +165,7 @@ const Institutions = () => {
                     // LOADING STATE (Skeletons)
                     <>
                         {[1, 2, 3, 4].map((n) => (
-                            <InstitutionCard key={n} loading={true} handleClickBuilder={handleClickBuilder} />
+                            <InstitutionCard key={n} loading={true}/>
                         ))}
                     </>
                 ) : (
@@ -138,6 +176,7 @@ const Institutions = () => {
                             institution={institution}
                             handleClickEdit={handleClickEdit}
                             handleClickDelete={handleClickDelete}
+                            handleClickUsers={handleClickUsers}
                         />
                     ))
                 )}
@@ -154,7 +193,7 @@ const Institutions = () => {
                         <Typography variant="body2" color="text.secondary" className="max-w-xs mx-auto mb-6">
                             Comienza agregando universidades o institutos para gestionar el directorio.
                         </Typography>
-                        <Button variant="outlined" onClick={handleClickOpen}>
+                        <Button variant="outlined" onClick={handleClickOpen} className="mt-[10px!important]">
                             Crear la primera
                         </Button>
                     </div>

@@ -53,7 +53,7 @@ function Row(props) {
         <React.Fragment>
             <TableRow hover sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell width={50}>
-                    {hasHistory ? (
+                    {(hasHistory && row.isLinked) ? (
                         <IconButton
                             aria-label="expand row"
                             size="small"

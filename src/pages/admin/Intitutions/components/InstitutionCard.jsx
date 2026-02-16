@@ -3,9 +3,17 @@ import { getUrl } from "aws-amplify/storage";
 import {
     Card, CardContent, Typography, IconButton, Skeleton, Box, Chip, Avatar, Tooltip
 } from "@mui/material";
-import { Edit, Trash2, Globe, LayoutTemplate } from "lucide-react";
+import { Edit, Trash2, Globe, LayoutTemplate, UserCog } from "lucide-react";
+import { Link } from "react-router-dom";
 
-export const InstitutionCard = ({ institution, loading, handleClickEdit, handleClickDelete, handleClickBuilder }) => {
+export const InstitutionCard = ({
+    institution,
+    loading,
+    isAdminView,
+    handleClickEdit,
+    handleClickDelete,
+    handleClickUsers,
+}) => {
     const [logoUrl, setLogoUrl] = useState(null);
     const [rectorUrl, setRectorUrl] = useState(null);
 
@@ -105,11 +113,13 @@ export const InstitutionCard = ({ institution, loading, handleClickEdit, handleC
                 <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/95 backdrop-blur-sm rounded-lg p-1 shadow-sm border border-gray-100 transform translate-y-[-5px] group-hover:translate-y-0 duration-200 z-10">
 
                     {/* 🔥 BOTÓN DEL BUILDER / TEMPLATE */}
-                    <Tooltip title="Diseñar Micrositio">
-                        <IconButton size="small" onClick={() => handleClickBuilder(institution)} className="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50">
-                            <LayoutTemplate size={16} />
-                        </IconButton>
-                    </Tooltip>
+                    {!isAdminView && <Link to={`/admin/institutions/${institution.id}`}>
+                        <Tooltip title="Diseñar Micrositio">
+                            <IconButton size="small" className="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50">
+                                <LayoutTemplate size={16} />
+                            </IconButton>
+                        </Tooltip>
+                    </Link>}
 
                     {institution.website && (
                         <a href={institution.website} target="_blank" rel="noopener noreferrer">
@@ -121,17 +131,23 @@ export const InstitutionCard = ({ institution, loading, handleClickEdit, handleC
                         </a>
                     )}
 
+                    {!isAdminView && <Tooltip title="Asignar Administrador">
+                        <IconButton size="small" onClick={() => handleClickUsers(institution)} className="...">
+                            <UserCog size={16} />
+                        </IconButton>
+                    </Tooltip>}
+
                     <Tooltip title="Editar">
                         <IconButton size="small" onClick={() => handleClickEdit(institution)} className="text-gray-500 hover:text-orange-600 hover:bg-orange-50">
                             <Edit size={16} />
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Eliminar">
+                    {!isAdminView && <Tooltip title="Eliminar">
                         <IconButton size="small" onClick={() => handleClickDelete(institution.id)} className="text-gray-500 hover:text-red-600 hover:bg-red-50">
                             <Trash2 size={16} />
                         </IconButton>
-                    </Tooltip>
+                    </Tooltip>}
                 </div>
 
             </CardContent>

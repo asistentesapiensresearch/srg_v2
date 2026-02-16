@@ -1,28 +1,18 @@
-// src/router/routes.jsx
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminRoutes } from './AdminRoutes';
-import { Preloader } from '@src/components/preloader';
-// import { Navigate } from 'react-router-dom'; // YA NO LO NECESITAMOS AQUÍ
+import { AlliesRoutes } from './AlliesRoutes'; // 🔥 Importante
+import { SuspenseLoader } from '../components/SuspenseLoader';
+import { ProfileRoutes } from './ProfileRoutes';
 
 /* Viewer Pages */
 const Home = lazy(() => import("../pages/viewer/home/Home"));
 const Layout = lazy(() => import("../pages/viewer/Layout"));
-const Profile = lazy(() => import("../pages/viewer/Profile"));
 const TemplateDetail = lazy(() => import("../pages/viewer/TemplateDetail"));
 const Auth = lazy(() => import("../components/auth"));
 
-const SuspenseLoader = ({ children }) => (
-  <Suspense fallback={
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <Preloader />
-    </div>
-  }>
-    {children}
-  </Suspense>
-);
-
 export const routes = [
+  // --- PÚBLICO ---
   {
     path: '/',
     element: <Layout />,
@@ -33,24 +23,20 @@ export const routes = [
       }
     ]
   },
+
+  // --- PERFIL (Compartido) ---
   {
     path: 'profile',
     element: (
+      // Protegemos esta sub-ruta solo para Aliados/Admin
       <Auth>
-        <ProtectedRoute allowedGroups={['Admin', 'viewer', 'Allies']} />
+        <ProtectedRoute allowedGroups={['Admin', 'Allies', 'Viewer']} />
       </Auth>
     ),
-    children: [
-      {
-        index: true,
-        element: (
-          <SuspenseLoader>
-            <Profile />
-          </SuspenseLoader>
-        ),
-      }
-    ]
+    children: ProfileRoutes
   },
+
+  // --- ADMIN (Super Admin) ---
   {
     path: "/admin",
     element: (
@@ -60,8 +46,24 @@ export const routes = [
     ),
     children: AdminRoutes
   },
+
+  // --- ALLIES (Aliados) ---
   {
-    path: "/*", 
+    path: "/allie",
+    element: (
+      <Auth>
+        <ProtectedRoute allowedGroups={['Allies', 'Admin']} />
+        {/* Nota: A veces es útil que el Admin también pueda entrar a ver cómo se ve el panel de aliado */}
+      </Auth>
+    ),
+    // 🔥 CORRECCIÓN: Usamos AlliesRoutes, NO AdminRoutes
+    children: AlliesRoutes
+  },
+
+  // --- CATCH-ALL (Micrositios y 404) ---
+  // Esta ruta debe ir AL FINAL
+  {
+    path: "/*",
     element: (
       <SuspenseLoader>
         <Layout />
@@ -69,6 +71,7 @@ export const routes = [
     ),
     children: [
       {
+        // 🔥 CORRECCIÓN: Usamos index: true para capturar lo que venga del /* padre
         path: '*',
         element: <TemplateDetail />
       }

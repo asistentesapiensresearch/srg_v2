@@ -13,7 +13,6 @@ const toPlainResearch = (amplifyData: any): Research | null => {
         title,
         path,
         description,
-        dateRange,
         icon,
         category,
         subCategory,
@@ -27,7 +26,6 @@ const toPlainResearch = (amplifyData: any): Research | null => {
         title,
         path,
         description,
-        dateRange,
         icon,
         category,
         subCategory,
@@ -44,7 +42,6 @@ const toPlainResearch = (amplifyData: any): Research | null => {
                 this.title?.trim() &&
                 this.path?.trim() &&
                 this.description?.trim() &&
-                this.dateRange?.trim() &&
                 this.icon?.trim() &&
                 this.category?.trim() &&
                 this.subCategory?.trim()
@@ -112,10 +109,6 @@ export class ResearchAmplifyRepository implements ResearchRepository {
 
             if (!research.description?.trim() || research.description === '<p></p>') {
                 errors.description = "La descripción es obligatoria.";
-            }
-
-            if (!research.dateRange.trim()) {
-                errors.dateRange = "El rango de fechas es obligatorio.";
             }
 
             if (!research.category) {

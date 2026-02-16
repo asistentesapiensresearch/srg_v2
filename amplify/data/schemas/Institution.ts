@@ -22,12 +22,15 @@ export const Institution = a.model({
     languages: a.string().array(), // Ej: ["Español", "Inglés"]
 
     template: a.hasOne("Template", "institutionId"),
+    adminEmail: a.string(),
 })
     .secondaryIndexes(index => [
         // 🔥 Importante para buscar por URL rápida
         index('path').queryField('listInstitutionByPath'),
+        index('adminEmail').queryField('listInstitutionsByAdmin'),
     ])
     .authorization(allow => [
         allow.publicApiKey().to(['read']),
-        allow.authenticated().to(['create', 'update', 'delete', 'read'])
+        allow.authenticated().to(['create', 'update', 'delete', 'read']),
+        allow.ownerDefinedIn('adminEmail').identityClaim('email').to(['read', 'update']),
     ]);

@@ -52,12 +52,14 @@ const CardItem = ({ item, primaryColor }) => {
     const department = getAlias('Departamento');
     const calendar = getAlias('Jornada');
     const years = getAlias('Antiguedad');
+    const dateRange = getAlias('Año');
     const category = getAlias('Categoría'); // D1
     const qualification = getAlias('Calificación'); // AAA+
     const accreditationMain = getAlias('Siglas acreditación');
     const accreditationSec = getAlias('Siglas certificación');
     const gender = getAlias('Género');
     const link = getValue(item, ['path']);
+    const hasLink = Boolean(link) && Vinculada;
     const logoColegio = getValue(item, ['logo', 'imagen_institucion']);
 
     // Director
@@ -117,20 +119,35 @@ const CardItem = ({ item, primaryColor }) => {
             <Box sx={{ flex: 1, p: 2, display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Box>
-                        <Typography
-                            variant="subtitle1"
-                            fontWeight="800"
-                            sx={{
-                                color: primaryColor,
-                                textDecoration: 'none',
-                                '&:hover': { textDecoration: 'underline' }
-                            }}
-                            component="a"
-                            href={link || '#'}
-                            target="_blank"
-                        >
-                            {item.Nombre || item.Colegio || 'Sin Nombre'}
-                        </Typography>
+                        <Box className='flex gap-3'>
+                            <Typography
+                                variant="subtitle1"
+                                fontWeight="800"
+                                // 2. Si hay link es 'a', si no, es un 'div' (o 'span')
+                                component={hasLink ? "a" : "div"}
+                                // 3. Propiedades condicionales: si no hay link, se pasan como undefined
+                                href={hasLink ? link : undefined}
+                                target={hasLink ? "_blank" : undefined}
+                                rel={hasLink ? "noopener noreferrer" : undefined} // Buena práctica de seguridad
+                                sx={{
+                                    color: hasLink ? primaryColor : 'default',
+                                    textDecoration: 'none',
+                                    // 4. Estilos visuales condicionales
+                                    cursor: hasLink ? 'pointer' : 'default',
+                                    '&:hover': {
+                                        textDecoration: hasLink ? 'underline' : 'none'
+                                    }
+                                }}
+                            >
+                                {item.Nombre || item.Colegio || 'Sin Nombre'}
+                            </Typography>
+
+                            <Tooltip title="Year">
+                                <Stack direction="row" alignItems="center" spacing={0.5} sx={{ bgcolor: '#eee', px: 1, borderRadius: 1 }}>
+                                    <Typography variant="caption" fontWeight="bold">{dateRange}</Typography>
+                                </Stack>
+                            </Tooltip>
+                        </Box>
 
                         <Stack direction="row" spacing={0.5} alignItems="center" mb={1}>
                             <MapPin size={14} color="red" />
@@ -283,7 +300,7 @@ const CardItem = ({ item, primaryColor }) => {
 };
 
 export const DirectoryCard = ({ item, primaryColor = '#337ab7' }) => {
-    const Vinculada = item.Vinculada?.toLowerCase() == 'si' || item.Vinculada?.toLowerCase() == 'sí';
+    const Vinculada = item.isLinked;
     return (
         <>
             <CardItem item={item} primaryColor={primaryColor} />
