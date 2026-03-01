@@ -88,7 +88,7 @@ export const ResearchCard = ({
                     </Typography>
                 </div>
 
-                <div className="flex-grow"></div>
+                <div className="grow"></div>
 
                 {/* FOOTER: FECHAS Y VERSIÓN */}
                 <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-gray-500">

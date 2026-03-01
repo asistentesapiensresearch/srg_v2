@@ -31,7 +31,12 @@ authResource.grant(
 // Permitir que la lambda ejecute AdminAddUserToGroup
 backend.auth.resources.userPool.grant(
   backend.manageUserGroup.resources.lambda,
-  'cognito-idp:AdminAddUserToGroup'
+  ...[ // 🔥 Agrega los tres puntos aquí
+    'cognito-idp:AdminAddUserToGroup',
+    'cognito-idp:AdminRemoveUserFromGroup',
+    'cognito-idp:AdminDisableUser',
+    'cognito-idp:AdminEnableUser'
+  ]
 );
 
 // Inyectar el ID del UserPool como variable de entorno

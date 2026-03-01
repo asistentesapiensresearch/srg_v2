@@ -51,7 +51,8 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [rectorLinkedin, setRectorLinkedin] = useState("");
     const [socialFacebook, setSocialFacebook] = useState("");
     const [socialInstagram, setSocialInstagram] = useState("");
-    const [socialLinkedin, setSocialLinkedin] = useState("");
+    const [socialTwitter, setSocialTwitter] = useState("");
+    const [socialYoutube, setSocialYoutube] = useState("");
     const [languagesStr, setLanguagesStr] = useState("");
 
     // Imágenes
@@ -88,7 +89,8 @@ export function InstitutionForm({ onClose, institution, store }) {
                 const iSocial = typeof institution.socialMedia === 'string' ? JSON.parse(institution.socialMedia) : institution.socialMedia || {};
                 setSocialFacebook(iSocial.facebook || "");
                 setSocialInstagram(iSocial.instagram || "");
-                setSocialLinkedin(iSocial.linkedin || "");
+                setSocialTwitter(iSocial.twitter || "");
+                setSocialYoutube(iSocial.youtube || "");
 
                 const langs = Array.isArray(institution.languages) ? institution.languages.join(", ") : "";
                 setLanguagesStr(langs);
@@ -166,7 +168,12 @@ export function InstitutionForm({ onClose, institution, store }) {
 
             // 3. Preparar JSONs
             const rectorSocialPayload = JSON.stringify({ linkedin: rectorLinkedin });
-            const socialMediaPayload = JSON.stringify({ facebook: socialFacebook, instagram: socialInstagram, linkedin: socialLinkedin });
+            const socialMediaPayload = JSON.stringify({
+                facebook: socialFacebook,
+                instagram: socialInstagram,
+                twitter: socialTwitter,
+                youtube: socialYoutube
+            });
             const languagesArray = languagesStr.split(",").map(s => s.trim()).filter(Boolean);
 
             // 4. Enviar al Store
@@ -381,9 +388,15 @@ export function InstitutionForm({ onClose, institution, store }) {
                         fullWidth
                     />
                     <TextField
-                        label="LinkedIn"
-                        value={socialLinkedin}
-                        onChange={(e) => setSocialLinkedin(e.target.value)}
+                        label="Twitter"
+                        value={socialTwitter}
+                        onChange={(e) => setSocialTwitter(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Youtube"
+                        value={socialYoutube}
+                        onChange={(e) => setSocialYoutube(e.target.value)}
                         fullWidth
                     />
                 </div>

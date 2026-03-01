@@ -1,5 +1,3 @@
-// src/components/builder/sectionRegistry.js
-
 // Carga todos los index.jsx y schema.js dentro de las subcarpetas de /sections
 const modules = import.meta.glob('../helpers/sections/*/*.jsx', { eager: true });
 const schemas = import.meta.glob('../helpers/sections/*/*.js', { eager: true });

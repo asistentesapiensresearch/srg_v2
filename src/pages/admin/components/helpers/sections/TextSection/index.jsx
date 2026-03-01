@@ -1,4 +1,3 @@
-// src/view/sections/TextSection/index.jsx
 import { Box, Container, Typography } from "@mui/material";
 
 const TextSection = ({

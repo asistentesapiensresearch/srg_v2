@@ -1,4 +1,3 @@
-// src/components/builder/LayerItem.jsx
 import { SECTION_SCHEMAS } from './sectionRegistry';
 import { Box, Typography, IconButton, Collapse } from '@mui/material';
 import {

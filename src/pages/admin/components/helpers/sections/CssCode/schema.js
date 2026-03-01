@@ -1,4 +1,3 @@
-// src/view/sections/CssCode/schema.js
 export default {
     label: "Bloque de Estilos CSS",
     icon: "Code2",

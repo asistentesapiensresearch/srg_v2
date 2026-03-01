@@ -1,4 +1,3 @@
-// src/view/sections/DirectorySection/search/SearchBar.tsx
 interface Props {
     value: string;
     onChange: (val: string) => void;

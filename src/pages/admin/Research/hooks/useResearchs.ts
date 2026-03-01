@@ -1,4 +1,3 @@
-// src/hooks/useResearchs.ts
 import { useEffect, useState } from "react";
 import { ResearchAmplifyRepository } from "@core/infrastructure/repositories/ResearchAmplifyRepository";
 import { TemplateAmplifyRepository } from "@core/infrastructure/repositories/TemplateAmplifyRepository";

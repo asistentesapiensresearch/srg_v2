@@ -1,4 +1,3 @@
-// src/view/sections/DirectorySection/results/EmptyState.tsx
 export const EmptyState = () => {
     return (
         <div className="text-center py-20 px-4 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50">

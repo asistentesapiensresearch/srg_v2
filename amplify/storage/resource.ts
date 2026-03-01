@@ -16,6 +16,7 @@ export const storage = defineStorage({
         'sections/*': authorizations(allow),
         'brands/*': authorizations(allow),
         'shared/*': authorizations(allow),
+        'galleries/*': authorizations(allow),
 
         // 🔥 REGLA CORREGIDA PARA PERFILES
         'profiles/*': [

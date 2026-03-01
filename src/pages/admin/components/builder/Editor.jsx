@@ -1,4 +1,3 @@
-// src/components/builder/Editor.jsx
 import { useState, useEffect, useMemo, memo, lazy, Suspense } from 'react'; // 1. Importar memo, lazy, Suspense
 import { Box, Typography, Chip, Button } from '@mui/material';
 import { Code } from 'lucide-react';
@@ -77,7 +76,6 @@ export default function Builder() {
             setIsLoadingTemplate(true);
             try {
                 const data = (type == 'research' ? researchs : institutions).find(r => r.id === dataID);
-                console.log('data', data)
 
                 if (!data) {
                     setIsLoadingTemplate(false);

@@ -1,4 +1,3 @@
-// src/pages/admin/components/helpers/sections/DirectorySection/comparison/ComparisonWidget.jsx
 import React from 'react';
 import { Box, Button, Typography, Zoom, Paper } from '@mui/material';
 import { ArrowLeftRight, Trash2 } from 'lucide-react';

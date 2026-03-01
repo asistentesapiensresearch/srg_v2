@@ -1,5 +1,3 @@
-// src/view/sections/DirectorySection/results/utils.js
-
 export const getValue = (item, searchKeys) => {
     if (!item) return null;
 

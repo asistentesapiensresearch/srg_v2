@@ -1,4 +1,3 @@
-// src/components/builder/inputs/ChartManagerInput.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import {
     Box, Button, Typography, IconButton, Divider, Chip, CircularProgress,

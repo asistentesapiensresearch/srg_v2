@@ -1,4 +1,3 @@
-// src/components/builder/helpers/moveImageToDefinitiveFolder.js
 import { copy, remove } from 'aws-amplify/storage';
 
 /**

@@ -7,6 +7,8 @@ import { Template } from './schemas/Template';
 import { TemplateBrand } from './schemas/TemplateBrand';
 import { listUsersFunction } from '../functions';
 import { manageUserGroup } from '../functions/manageUserGroup/resource';
+import { Gallery } from './schemas/Gallery';
+import { Testimonial } from './schemas/Testimonial';
 
 const schema = a.schema({
   Institution,
@@ -14,6 +16,8 @@ const schema = a.schema({
   Brand,
   Template,
   TemplateBrand,
+  Gallery,
+  Testimonial,
   listCognitoUsers: a.query()
     .returns(a.json()) // Retornará el array de usuarios como JSON
     .handler(a.handler.function(listUsersFunction))
@@ -25,7 +29,16 @@ const schema = a.schema({
     })
     .returns(a.boolean())
     .handler(a.handler.function(manageUserGroup))
-    .authorization(allow => [allow.groups(["Admin"])])
+    .authorization(allow => [allow.groups(["Admin"])]),
+  manageUserMutation: a.mutation() // Le cambié el nombre para que sea más genérico
+    .arguments({
+      username: a.string().required(),
+      groupName: a.string(), // Opcional porque disable/enable no lo necesitan
+      action: a.string().required() // 'add', 'remove', 'disable', 'enable'
+    })
+    .returns(a.boolean())
+    .handler(a.handler.function(manageUserGroup))
+    .authorization(allow => [allow.groups(["Admin"])]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

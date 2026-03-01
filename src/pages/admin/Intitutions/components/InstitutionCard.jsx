@@ -3,7 +3,7 @@ import { getUrl } from "aws-amplify/storage";
 import {
     Card, CardContent, Typography, IconButton, Skeleton, Box, Chip, Avatar, Tooltip
 } from "@mui/material";
-import { Edit, Trash2, Globe, LayoutTemplate, UserCog } from "lucide-react";
+import { Edit, Trash2, Globe, LayoutTemplate, UserCog, MessageSquareQuote } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const InstitutionCard = ({
@@ -92,7 +92,7 @@ export const InstitutionCard = ({
                     {institution.subtype}
                 </Typography>
 
-                <div className="flex-grow"></div>
+                <div className="grow"></div>
 
                 {/* RECTOR */}
                 <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-3">
@@ -142,6 +142,16 @@ export const InstitutionCard = ({
                             <Edit size={16} />
                         </IconButton>
                     </Tooltip>
+
+                    {!isAdminView && (
+                        <Link to={`/admin/institutions/${institution.id}/testimonials`}>
+                            <Tooltip title="Gestionar Testimonios">
+                                <IconButton size="small" className="text-gray-500 hover:text-green-600 hover:bg-green-50">
+                                    <MessageSquareQuote size={16} />
+                                </IconButton>
+                            </Tooltip>
+                        </Link>
+                    )}
 
                     {!isAdminView && <Tooltip title="Eliminar">
                         <IconButton size="small" onClick={() => handleClickDelete(institution.id)} className="text-gray-500 hover:text-red-600 hover:bg-red-50">

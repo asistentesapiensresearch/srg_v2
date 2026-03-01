@@ -1,4 +1,3 @@
-// src/view/sections/DirectorySection/results/TableList.jsx
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';

@@ -69,7 +69,7 @@ export default function Navigation() {
           <nav className="flex items-center justify-between h-16">
 
             {/* --- LOGO --- */}
-            <div className="flex-shrink-0 cursor-pointer">
+            <div className="shrink-0 cursor-pointer">
               <Link to="/" aria-label="Ir al inicio">
                 <img
                   src={logo}

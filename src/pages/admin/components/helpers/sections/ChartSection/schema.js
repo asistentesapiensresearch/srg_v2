@@ -1,4 +1,3 @@
-// src/pages/admin/components/helpers/sections/ChartSection/schema.js
 export default {
     label: "Galería de Gráficos (Highcharts)",
     id: "chart_section",

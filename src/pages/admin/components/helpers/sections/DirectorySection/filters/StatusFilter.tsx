@@ -1,4 +1,3 @@
-// src/view/sections/DirectorySection/filters/StatusFilter.tsx
 const STATUS_OPTIONS = [
     { value: 'all', label: 'Todos' },
     { value: 'active', label: 'Activos' },

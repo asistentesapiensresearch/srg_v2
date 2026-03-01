@@ -11,8 +11,8 @@ import {
 import { FileUploader } from "@aws-amplify/ui-react-storage";
 import { getUrl, remove } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
-import { moveIconToDefinitiveFolder } from "@src/helpers/moveIconToDefinitiveFolder"; // Tu helper existente
 import { Preloader } from "@src/components/preloader";
+import { moveIconToDefinitiveFolder } from "@src/pages/admin/helpers/moveIconToDefinitiveFolder";
 
 const client = generateClient();
 const TEMP_FOLDER = "institutions/temp/";

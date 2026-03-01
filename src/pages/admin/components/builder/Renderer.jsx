@@ -1,4 +1,3 @@
-// src/components/builder/Renderer.jsx
 import { SECTION_REGISTRY } from './sectionRegistry';
 import { Box, Typography } from '@mui/material';
 

@@ -1,0 +1,168 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { Box, Typography, Container, Avatar, Paper, Stack } from '@mui/material';
+import { Quote } from 'lucide-react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { getUrl } from 'aws-amplify/storage';
+
+// Estilos de Swiper
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+import { TestimonialAmplifyRepository } from '@core/infrastructure/repositories/TestimonialAmplifyRepository';
+import { FindTestimonialsUseCase } from '@core/application/caseUses/Testimonial/FindTestimonials';
+
+export default function TestimonialsCarousel({
+    institution,
+    sourceMode = "context",
+    targetEntityId,
+    layout = "classic",
+    itemsPerView = 3,
+    autoplay = true,
+    showArrows = true,
+    showDots = true,
+    primaryColor = "#c10008",
+    backgroundColor = "#f9fafb"
+}) {
+    const [data, setData] = useState([]);
+    const [previews, setPreviews] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    const useCase = useMemo(() => {
+        const repo = new TestimonialAmplifyRepository();
+        return new FindTestimonialsUseCase(repo);
+    }, []);
+
+    // 🔥 Hack para que el carrusel se actualice al cambiar opciones en el editor
+    const swiperKey = useMemo(() =>
+        `swiper-${itemsPerView}-${autoplay}-${showArrows}-${showDots}-${layout}`,
+        [itemsPerView, autoplay, showArrows, showDots, layout]);
+
+    useEffect(() => {
+        const loadData = async () => {
+            const finalId = sourceMode === "context" ? institution?.id : targetEntityId;
+            if (!finalId) {
+                setLoading(false);
+                setData([]);
+                return;
+            }
+
+            try {
+                const results = await useCase.execute(finalId);
+                setData(results);
+
+                const urls = {};
+                for (const t of results) {
+                    if (t.photo) {
+                        try {
+                            const res = await getUrl({ path: t.photo });
+                            urls[t.id] = res.url.toString();
+                        } catch (e) { urls[t.id] = ""; }
+                    }
+                }
+                setPreviews(urls);
+            } catch (e) {
+                console.error("Error cargando testimonios", e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, [sourceMode, targetEntityId, institution, useCase]);
+
+    if (loading) return <Box py={10} textAlign="center"><Typography>Cargando testimonios...</Typography></Box>;
+    if (data.length === 0) return null;
+
+    // --- RENDERIZADO DE LOS DIFERENTES LAYOUTS ---
+    const renderCard = (t) => {
+        const isBubble = layout === 'bubble';
+        const isMinimal = layout === 'minimal';
+
+        return (
+            <Paper
+                elevation={isMinimal ? 0 : 1}
+                sx={{
+                    p: 4,
+                    height: '100%',
+                    borderRadius: 4,
+                    border: isMinimal ? 'none' : '1px solid #e2e8f0',
+                    bgcolor: isBubble ? 'white' : 'transparent',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative'
+                }}
+            >
+                <Quote size={32} style={{ color: primaryColor, opacity: 0.3, marginBottom: 12 }} />
+
+                <Typography variant="body1" sx={{
+                    fontStyle: 'italic',
+                    mb: 3,
+                    flexGrow: 1,
+                    color: 'text.secondary',
+                    fontSize: isMinimal ? '1.1rem' : '1rem'
+                }}>
+                    "{t.content}"
+                </Typography>
+
+                <Stack direction="row" spacing={2} alignItems="center">
+                    <Avatar
+                        src={previews[t.id]}
+                        sx={{
+                            width: isMinimal ? 40 : 50,
+                            height: isMinimal ? 40 : 50,
+                            border: `2px solid ${primaryColor}`,
+                            bgcolor: primaryColor,
+                            color: 'white'
+                        }}
+                    >
+                        {t.name.charAt(0)}
+                    </Avatar>
+                    <Box>
+                        <Typography variant="subtitle1" fontWeight="bold" sx={{ lineHeight: 1, color: 'text.primary' }}>
+                            {t.name}
+                        </Typography>
+                        {t.role && (
+                            <Typography variant="caption" color="text.secondary">
+                                {t.role}
+                            </Typography>
+                        )}
+                    </Box>
+                </Stack>
+            </Paper>
+        );
+    };
+
+    return (
+        <Box sx={{
+            bgcolor: backgroundColor,
+            overflow: 'hidden',
+            '& .swiper-button-next, & .swiper-button-prev': { color: primaryColor },
+            '& .swiper-pagination-bullet-active': { bgcolor: primaryColor }
+        }}>
+            <Container maxWidth="lg">
+                <Swiper
+                    key={swiperKey} // Forzamos re-render al cambiar settings
+                    modules={[Autoplay, Navigation, Pagination]}
+                    spaceBetween={50}
+                    slidesPerView={1}
+                    navigation={showArrows}
+                    pagination={showDots ? { clickable: true } : false}
+                    autoplay={autoplay ? { delay: 5000, disableOnInteraction: false } : false}
+                    breakpoints={{
+                        640: { slidesPerView: Math.min(itemsPerView, 2) },
+                        1024: { slidesPerView: itemsPerView },
+                    }}
+                    style={{ padding: '10px 50px' }}
+                >
+                    {data.map((t) => (
+                        <SwiperSlide key={t.id}>
+                            {renderCard(t)}
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            </Container>
+        </Box>
+    );
+}

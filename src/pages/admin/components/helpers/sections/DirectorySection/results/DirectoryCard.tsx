@@ -1,4 +1,3 @@
-// src/view/sections/DirectorySection/results/DirectoryCard.tsx
 import React from 'react';
 import {
     Card, Box, Typography, Button, Tooltip,

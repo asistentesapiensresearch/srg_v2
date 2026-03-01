@@ -13,6 +13,10 @@ export const Institution = a.model({
     rectorPhoto: a.string(),
     rectorSocial: a.json(), // Ej: { linkedin: "...", x: "..." }
 
+    admisionesEmail: a.string(),
+    admisionesLink: a.url(),
+    admisionesLabel: a.string(),
+
     // Clasificación
     type: a.string(),    // Ej: Universidad, Instituto
     subtype: a.string(), // Ej: Pública, Privada
@@ -22,6 +26,7 @@ export const Institution = a.model({
     languages: a.string().array(), // Ej: ["Español", "Inglés"]
 
     template: a.hasOne("Template", "institutionId"),
+    testimonials: a.hasMany("Testimonial", "institutionId"),
     adminEmail: a.string(),
 })
     .secondaryIndexes(index => [

@@ -1,5 +1,3 @@
-// src/components/builder/templateRegistry.js
-
 // Carga todos los schema.js dentro de las subcarpetas de /templates
 const schemas = import.meta.glob('../helpers/templates/*/*.js', { eager: true });
 

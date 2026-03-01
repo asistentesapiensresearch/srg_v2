@@ -1,4 +1,3 @@
-// src/view/sections/DirectorySection/filters/FilterDrawer.jsx
 import {
     Drawer, Box, Typography, IconButton, Accordion,
     AccordionSummary, AccordionDetails, FormGroup,

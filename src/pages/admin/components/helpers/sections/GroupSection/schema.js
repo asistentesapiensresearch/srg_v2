@@ -1,4 +1,3 @@
-// src/view/sections/GroupSection/schema.js
 export default {
     label: "Grupo / Contenedor",
     icon: "BoxSelect",
