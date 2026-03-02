@@ -40,33 +40,40 @@ export const AdminRoutes = [
                 children: [
                     {
                         index: true,
-                        element: <Research />
+                        element: <Research />,
+                        title: "Investigaciones"
                     }
                 ]
             },
             {
                 path: 'brands', // /admin/brands
-                element: <Brands />
+                element: <Brands />,
+                title: "Marcas"
             },
             {
                 path: 'users', // /admin/brands
-                element: <Users />
+                element: <Users />,
+                title: "Usuarios"
             },
             {
                 path: 'institutions', // /admin/institutions
-                element: <Institutions />
+                element: <Institutions />,
+                title: "Instituciones"
             },
             {
                 path: 'institutions/:id/testimonials',
-                element: <Testimonial/>
+                element: <Testimonial/>,
+                title: "Testimonios en instituciones"
             },
             {
                 path: 'galleries', // /admin/institutions
-                element: <GalleryManager />
+                element: <GalleryManager />,
+                title: "Galerías"
             },
             {
                 path: '*', // 404 dentro del admin
-                element: <ErrorContentNotAvailable />
+                element: <ErrorContentNotAvailable />,
+                title: "Página no encontrada"
             }
         ]
     },

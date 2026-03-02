@@ -33,7 +33,8 @@ export const routes = [
         <ProtectedRoute allowedGroups={['Admin', 'Allies', 'Viewer']} />
       </Auth>
     ),
-    children: ProfileRoutes
+    children: ProfileRoutes,
+    title: "Perfil"
   },
 
   // --- ADMIN (Super Admin) ---
@@ -44,7 +45,8 @@ export const routes = [
         <ProtectedRoute allowedGroups={['Admin']} />
       </Auth>
     ),
-    children: AdminRoutes
+    children: AdminRoutes,
+    title: "Administración"
   },
 
   // --- ALLIES (Aliados) ---
@@ -57,7 +59,8 @@ export const routes = [
       </Auth>
     ),
     // 🔥 CORRECCIÓN: Usamos AlliesRoutes, NO AdminRoutes
-    children: AlliesRoutes
+    children: AlliesRoutes,
+    title: "Aliados"
   },
 
   // --- CATCH-ALL (Micrositios y 404) ---
