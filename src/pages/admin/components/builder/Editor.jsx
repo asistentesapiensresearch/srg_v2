@@ -186,6 +186,7 @@ export default function Builder() {
                     setOpenSections={setOpenSections}
                     currentTemplate={currentTemplate}
                     setCurrentTemplate={setCurrentTemplate}
+                    type={type}
                 />
 
                 {/* CANVAS CENTRAL (El más pesado) */}

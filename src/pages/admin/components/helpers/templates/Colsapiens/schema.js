@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
-    label: "Nuevo Template",
-    description: "Exportado desde el editor",
+    label: "Investigación",
+    description: "Template base para investigación de colegios",
     getSections: () => [
         {
             "children": [
