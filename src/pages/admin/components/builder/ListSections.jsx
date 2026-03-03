@@ -36,6 +36,7 @@ export default function ListSections({
     setOpenSections,
     currentTemplate,
     setCurrentTemplate,
+    hoveredSectionId,
     type
 }) {
 
@@ -57,7 +58,9 @@ export default function ListSections({
         setIsSaving(true);
         try {
             const themeSettings = JSON.stringify(sections);
-            const typeID = type == 'research'? { researchId: dataID } : { institutionId: dataID };
+            let typeID = {};
+            typeID[`${type}Id`] = dataID;
+            console.log('typeID', typeID)
 
             if (currentTemplate?.id) {
                 // Actualizar template existente
@@ -146,7 +149,11 @@ export default function ListSections({
                 variant="permanent"
                 sx={{ width: 240, flexShrink: 0, '& .MuiDrawer-paper': { width: 240, boxSizing: 'border-box', position: 'relative' } }}
             >
-                <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Box
+                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                    onMouseEnter={() => onSectionHover(section.id)}
+                    onMouseLeave={() => onSectionHover(null)}
+                >
                     <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column', gap: 1 }}>
                         <Typography variant="subtitle2" fontWeight="bold" color="text.secondary">CAPAS</Typography>
                         <Button

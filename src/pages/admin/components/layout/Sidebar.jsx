@@ -10,7 +10,17 @@ import {
     Toolbar,
     Tooltip
 } from "@mui/material";
-import { Briefcase, Building2Icon, ChevronDown, ImageIcon, LayoutDashboard, MessageSquareTextIcon, Settings, UsersIcon } from "lucide-react";
+import {
+    Briefcase,
+    Building2Icon,
+    ChevronDown,
+    ImageIcon,
+    LayoutDashboard,
+    MessageSquareTextIcon,
+    Settings,
+    SquareChartGantt,
+    UsersIcon
+} from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -44,6 +54,16 @@ export const Sidebar = ({
                     path: 'institutions',
                     label: 'Lista instituciones',
                     icon: <Building2Icon size={20} />
+                }
+            ]
+        },
+        {
+            label: 'Artículos',
+            items: [
+                {
+                    path: 'articles',
+                    label: 'Lista de artículos',
+                    icon: <SquareChartGantt size={20} />
                 }
             ]
         },
@@ -143,7 +163,7 @@ export const Sidebar = ({
                                 {item.icon}
                             </Tooltip>
                         </ListItemIcon>
-                        { open && <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.2s' }} /> }
+                        {open && <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.2s' }} />}
                     </Link>
 
                     {/* Ícono de flecha (solo visible si el drawer está abierto) */}

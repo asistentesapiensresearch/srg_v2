@@ -1,7 +1,5 @@
 import { lazy } from "react";
 import { SuspenseLoader } from "../components/SuspenseLoader";
-import Users from "@src/pages/admin/Users/Users";
-import GalleryManager from "@src/pages/admin/Galleries/GalleryManager";
 
 const ErrorContentNotAvailable = lazy(() => import("../pages/admin/ErrorContentNotAvailable"));
 const Layout = lazy(() => import("../pages/admin/Layout"));
@@ -9,8 +7,11 @@ const Home = lazy(() => import('../pages/admin/Home'));
 const Research = lazy(() => import("../pages/admin/Research/Research"));
 const Brands = lazy(() => import("../pages/admin/Brand/Brands"));
 const Institutions = lazy(() => import("../pages/admin/Intitutions/Institutions"));
+const Articles = lazy(() => import("../pages/admin/Articles/Articles"));
 const Testimonial = lazy(() => import("../pages/admin/Testimonials/TestimonialManager"));
 const Builder = lazy(() => import("../pages/admin/components/builder/Editor"));
+const Users = lazy(() => import("../pages/admin/Users/Users"));
+const GalleryManager = lazy(() => import("../pages/admin/Galleries/GalleryManager"));
 
 export const AdminRoutes = [
     // 1. Ruta del Builder (Sin Layout General, ocupa toda la pantalla)
@@ -59,6 +60,11 @@ export const AdminRoutes = [
                 path: 'institutions', // /admin/institutions
                 element: <Institutions />,
                 title: "Instituciones"
+            },
+            {
+                path: 'articles', // /admin/institutions
+                element: <Articles />,
+                title: "Artículos"
             },
             {
                 path: 'institutions/:id/testimonials',

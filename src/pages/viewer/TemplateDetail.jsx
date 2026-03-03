@@ -13,6 +13,7 @@ import { Preloader } from '@src/components/preloader';
 import { useInstitutions } from '../admin/Intitutions/hooks/useInstitutions';
 import NotFoundPage from './NotFoundPage';
 import { ArrowLeft, Home } from 'lucide-react';
+import { useArticle } from '../admin/Articles/hooks/useArticle';
 
 const TemplateDetail = () => {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ const TemplateDetail = () => {
 
     const { researchs, loading: loadingResearch, getTemplate: fetchTemplateResearch } = useResearchs();
     const { institutions, loading: loadingInstitution, getTemplate: fetchTemplateInstitution } = useInstitutions();
+    const { articles, loading: loadingArticle, getTemplate: fetchTemplateArticle } = useArticle();
 
     const [data, setData] = useState(null);
     const [dataType, setDataType] = useState(null);
@@ -66,6 +68,19 @@ const TemplateDetail = () => {
             return;
         }
 
+        // 3. Buscar en Artículos
+        const foundArticle = articles.find(i => {
+            const dbSlug = (i.slug || '').replace(/^\/+|\/+$/g, '');
+            return dbSlug === cleanPath;
+        });
+
+        if (foundArticle) {
+            setData(foundArticle);
+            setDataType('article');
+            setError(null);
+            return;
+        }
+
         // 3. No encontrado
         setData(null);
         setDataType(null);
@@ -93,6 +108,8 @@ const TemplateDetail = () => {
                     template = await fetchTemplateResearch(data.id);
                 } else if (dataType === 'institution') {
                     template = await fetchTemplateInstitution(data.id);
+                } else if (dataType === 'article') {
+                    template = await fetchTemplateArticle(data.id);
                 }
 
                 if (!template?.themeSettings) {
