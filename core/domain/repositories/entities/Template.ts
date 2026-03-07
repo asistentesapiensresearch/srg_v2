@@ -4,6 +4,8 @@ export class Template {
 
   public themeSettings: string;
   public researchId: string;
+  public articleId: string;
+  public institutionId: string;
 
   constructor(props: {
     themeSettings: string;

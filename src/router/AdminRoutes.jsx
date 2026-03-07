@@ -12,6 +12,7 @@ const Testimonial = lazy(() => import("../pages/admin/Testimonials/TestimonialMa
 const Builder = lazy(() => import("../pages/admin/components/builder/Editor"));
 const Users = lazy(() => import("../pages/admin/Users/Users"));
 const GalleryManager = lazy(() => import("../pages/admin/Galleries/GalleryManager"));
+const MigrationDashboard = lazy(() => import("../pages/admin/migration/MigrationDashboard"));
 
 export const AdminRoutes = [
     // 1. Ruta del Builder (Sin Layout General, ocupa toda la pantalla)
@@ -67,7 +68,7 @@ export const AdminRoutes = [
                 title: "Artículos"
             },
             {
-                path: 'institutions/:id/testimonials',
+                path: 'institution/:id/testimonials',
                 element: <Testimonial/>,
                 title: "Testimonios en instituciones"
             },
@@ -75,6 +76,11 @@ export const AdminRoutes = [
                 path: 'galleries', // /admin/institutions
                 element: <GalleryManager />,
                 title: "Galerías"
+            },
+            {
+                path: 'migration', // /admin/institutions
+                element: <MigrationDashboard />,
+                title: "Migración"
             },
             {
                 path: '*', // 404 dentro del admin

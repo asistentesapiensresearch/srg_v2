@@ -32,9 +32,9 @@ export class ArticleAmplifyRepository implements ArticleRepository {
                 result = data;
             } else {
                 // Actualizar artículo existente
-                const { data, errors: apiErrors } = await apiSyncService.update('Article', id, dataToSave) as any;
-                if (apiErrors) return { errors: apiErrors };
-                result = data;
+                const updated = await apiSyncService.update('Article', id, dataToSave) as any;
+                if (updated.errors) return { errors: updated.errors };
+                result = updated;
             }
 
             return result as Article;

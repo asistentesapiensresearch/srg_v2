@@ -78,6 +78,16 @@ export const Sidebar = ({
             ]
         },
         {
+            label: 'Migracion',
+            items: [
+                {
+                    path: 'migration',
+                    label: 'Lista articulos',
+                    icon: <SquareChartGantt size={20} />
+                }
+            ]
+        },
+        {
             label: 'Usuarios',
             items: [
                 {

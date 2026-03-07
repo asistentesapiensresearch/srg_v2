@@ -235,6 +235,16 @@ export default {
             step: 0.1,
             help: "0 = transparente, 1 = opaco"
         },
+        {
+            name: "hover_rotar",
+            label: "Rotar al hover",
+            type: "number",
+            default: 1,
+            min: 0,
+            max: 1,
+            step: 0.1,
+            help: "Rotación"
+        },
 
         // ========== ENLACE (OPCIONAL) ==========
         {

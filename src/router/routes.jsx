@@ -10,6 +10,7 @@ const Home = lazy(() => import("../pages/viewer/home/Home"));
 const Layout = lazy(() => import("../pages/viewer/Layout"));
 const TemplateDetail = lazy(() => import("../pages/viewer/TemplateDetail"));
 const Auth = lazy(() => import("../components/auth"));
+const NewsListView = lazy(() => import("../pages/viewer/NewsListView"));
 
 export const routes = [
   // --- PÚBLICO ---
@@ -20,6 +21,14 @@ export const routes = [
       {
         index: true,
         element: <Home />
+      },
+      {
+        path: 'noticias',
+        element: <NewsListView />
+      },
+      {
+        path: 'noticias/*',
+        element: <TemplateDetail />
       }
     ]
   },

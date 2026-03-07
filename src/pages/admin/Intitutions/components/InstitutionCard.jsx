@@ -113,7 +113,7 @@ export const InstitutionCard = ({
                 <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/95 backdrop-blur-sm rounded-lg p-1 shadow-sm border border-gray-100 transform translate-y-[-5px] group-hover:translate-y-0 duration-200 z-10">
 
                     {/* 🔥 BOTÓN DEL BUILDER / TEMPLATE */}
-                    {!isAdminView && <Link to={`/admin/institutions/${institution.id}`}>
+                    {!isAdminView && <Link to={`/admin/institution/${institution.id}`}>
                         <Tooltip title="Diseñar Micrositio">
                             <IconButton size="small" className="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50">
                                 <LayoutTemplate size={16} />

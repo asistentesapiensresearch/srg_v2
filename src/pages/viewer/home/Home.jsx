@@ -7,11 +7,13 @@ import { useResearchs } from "@src/pages/admin/Research/hooks/useResearchs";
 import Footer from "./components/Footer";
 import { Box, Skeleton } from "@mui/material";
 import { useMemo } from "react";
+import { useArticle } from "@src/pages/admin/Articles/hooks/useArticle";
 
 const Home = () => {
     const { loading, researchs } = useResearchs();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const { articles, loading: loadingArticles } = useArticle();
 
     // ==================== LÓGICA DE ORGANIZACIÓN (JERARQUÍA) ====================
     const organizedData = useMemo(() => {
@@ -69,7 +71,7 @@ const Home = () => {
                                 rankings={organizedData.rankings}
                             />
 
-                            <ScientificEcosystem />
+                            <ScientificEcosystem articles={articles} />
                             <AcademicOffer />
                         </>
                     )

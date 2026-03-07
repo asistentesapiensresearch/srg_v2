@@ -20,7 +20,7 @@ export const useArticle = () => {
                 const articlesDB = await command.execute();
                 setArticles(articlesDB);
             } catch (error) {
-                console.error("Error fetching brands:", error);
+                console.error("Error fetching articles:", error);
             } finally {
                 setLoading(false)
             }
@@ -57,6 +57,7 @@ export const useArticle = () => {
 
     return {
         refresh,
+        setRefresh,
         articles,
         loading,
         handleSave,

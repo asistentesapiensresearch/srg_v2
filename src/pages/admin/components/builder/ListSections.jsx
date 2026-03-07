@@ -11,6 +11,7 @@ import { LayerItem } from "./LayerItem";
 import { Create, Update } from "@core/application/caseUses/Template";
 import { TemplateAmplifyRepository } from "@core/infrastructure/repositories/TemplateAmplifyRepository";
 import ExportTemplate from "./ExportTemplate";
+import { useTemplate } from "./hooks/useTemplate";
 
 // ==========================================
 // HELPERS RECURSIVOS
@@ -40,9 +41,9 @@ export default function ListSections({
     type
 }) {
 
-    const templateRepository = new TemplateAmplifyRepository();
     const [isSaving, setIsSaving] = useState(false);
     const [openExport, setOpenExport] = useState(false);
+    const { handleSave: saveTemplate } = useTemplate();
     const { dndContextProps, sortableContextProps, activeId, overId } = useSortableList(
         sections,
         setSections,
@@ -62,23 +63,15 @@ export default function ListSections({
             typeID[`${type}Id`] = dataID;
             console.log('typeID', typeID)
 
+            const newTemplate = await saveTemplate({
+                themeSettings,
+                ...typeID
+            }, currentTemplate.id)
+
             if (currentTemplate?.id) {
-                // Actualizar template existente
-                const updateCommand = new Update(templateRepository);
-                await updateCommand.execute(currentTemplate.id, {
-                    themeSettings,
-                    ...typeID
-                });
                 console.log('✅ Template actualizado');
                 alert('Template actualizado correctamente');
             } else {
-                // Crear nuevo template
-                const createCommand = new Create(templateRepository);
-                const newTemplate = await createCommand.execute({
-                    themeSettings,
-                    ...typeID
-                });
-
                 setCurrentTemplate(newTemplate);
                 console.log('✅ Template creado:', newTemplate);
                 alert('Template creado correctamente');

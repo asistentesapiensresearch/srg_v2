@@ -40,6 +40,7 @@ const ImageSection = ({
     // Hover effects
     hover_scale = false,
     hover_opacity = 1,
+    hover_rotar = 45,
 
     // Link (opcional)
     link_url = "",
@@ -106,8 +107,8 @@ const ImageSection = ({
         overflow: 'hidden', // Necesario para que el border-radius corte el hover_scale
         borderRadius: border_radius, // Aplicamos el border_radius también al wrapper
         '&:hover img': { // Apuntamos a la etiqueta <img> directamente para los efectos
-            transform: hover_scale ? 'scale(1.05)' : 'none',
-            opacity: hover_opacity
+            transform: hover_scale ? `scale(1.05) rotate(${hover_rotar}deg)` : 'none',
+            opacity: hover_opacity,
         }
     };
 
