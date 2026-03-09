@@ -58,7 +58,7 @@ export default function Builder() {
         loading
     } = (
             type == 'research' ? useResearchs() :
-                type == 'institutions' ? useInstitutions() : useArticle()
+                type == 'institution' ? useInstitutions() : useArticle()
         );
     // useMemo para evitar instanciar el repositorio en cada render (micro-optimización)
     const templateRepository = useMemo(() => new TemplateAmplifyRepository(), []);
@@ -87,7 +87,7 @@ export default function Builder() {
             setIsLoadingTemplate(true);
             try {
                 const data = (
-                    type == 'research' ? researchs : type == 'institutions' ? institutions : articles).find(r => r.id === dataID);
+                    type == 'research' ? researchs : type == 'institution' ? institutions : articles).find(r => r.id === dataID);
 
                 if (!data) {
                     setIsLoadingTemplate(false);
