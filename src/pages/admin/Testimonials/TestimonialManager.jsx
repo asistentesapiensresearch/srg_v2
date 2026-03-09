@@ -209,7 +209,7 @@ export default function TestimonialManager() {
                             <Paper className="p-5 hover:shadow-lg transition-shadow border border-gray-100 relative rounded-xl h-full flex flex-col" elevation={0}>
                                 <Quote size={24} className="absolute top-4 right-4 text-gray-200" />
 
-                                <Typography variant="body2" color="text.secondary" className="mb-4 italic flex-grow line-clamp-4">
+                                <Typography variant="body2" color="text.secondary" className="mb-4 italic grow line-clamp-4">
                                     "{t.content}"
                                 </Typography>
 

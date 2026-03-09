@@ -10,6 +10,7 @@ const Home = lazy(() => import("../pages/viewer/home/Home"));
 const Layout = lazy(() => import("../pages/viewer/Layout"));
 const TemplateDetail = lazy(() => import("../pages/viewer/TemplateDetail"));
 const Auth = lazy(() => import("../components/auth"));
+const NewsListView = lazy(() => import("../pages/viewer/NewsListView"));
 
 export const routes = [
   // --- PÚBLICO ---
@@ -20,6 +21,14 @@ export const routes = [
       {
         index: true,
         element: <Home />
+      },
+      {
+        path: 'noticias',
+        element: <NewsListView />
+      },
+      {
+        path: 'noticias/*',
+        element: <TemplateDetail />
       }
     ]
   },
@@ -33,7 +42,8 @@ export const routes = [
         <ProtectedRoute allowedGroups={['Admin', 'Allies', 'Viewer']} />
       </Auth>
     ),
-    children: ProfileRoutes
+    children: ProfileRoutes,
+    title: "Perfil"
   },
 
   // --- ADMIN (Super Admin) ---
@@ -44,7 +54,8 @@ export const routes = [
         <ProtectedRoute allowedGroups={['Admin']} />
       </Auth>
     ),
-    children: AdminRoutes
+    children: AdminRoutes,
+    title: "Administración"
   },
 
   // --- ALLIES (Aliados) ---
@@ -57,7 +68,8 @@ export const routes = [
       </Auth>
     ),
     // 🔥 CORRECCIÓN: Usamos AlliesRoutes, NO AdminRoutes
-    children: AlliesRoutes
+    children: AlliesRoutes,
+    title: "Aliados"
   },
 
   // --- CATCH-ALL (Micrositios y 404) ---

@@ -9,6 +9,7 @@ import { listUsersFunction } from '../functions';
 import { manageUserGroup } from '../functions/manageUserGroup/resource';
 import { Gallery } from './schemas/Gallery';
 import { Testimonial } from './schemas/Testimonial';
+import { Article } from './schemas/Article';
 
 const schema = a.schema({
   Institution,
@@ -18,6 +19,7 @@ const schema = a.schema({
   TemplateBrand,
   Gallery,
   Testimonial,
+  Article,
   listCognitoUsers: a.query()
     .returns(a.json()) // Retornará el array de usuarios como JSON
     .handler(a.handler.function(listUsersFunction))

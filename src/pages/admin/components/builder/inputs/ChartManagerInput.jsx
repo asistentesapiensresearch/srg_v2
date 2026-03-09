@@ -9,15 +9,7 @@ import {
 } from 'lucide-react';
 import { useDrivePicker } from '@src/hooks/useDrivePicker';
 import { fetchSheet } from '@src/pages/admin/components/helpers/sections/DirectorySection/fetchSheet';
-
-const CHART_TYPES = [
-    { value: 'column', label: 'Columnas' },
-    { value: 'bar', label: 'Barras Horizontales' },
-    { value: 'line', label: 'Línea' },
-    { value: 'area', label: 'Área' },
-    { value: 'spline', label: 'Curva Suave' },
-    { value: 'map', label: 'Mapa (Colombia)' }
-];
+import { CHART_TYPES } from '../../helpers/sections/ChartSection/CHART_TYPES';
 
 export default function ChartManagerInput({ value, onChange }) {
     const [config, setConfig] = useState(value || {

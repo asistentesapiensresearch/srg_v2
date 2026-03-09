@@ -19,6 +19,8 @@ import AddSections from './AddSections';
 import ListSections from './ListSections';
 import EditSection from './EditSection';
 import { useInstitutions } from '../../Intitutions/hooks/useInstitutions';
+import { useArticle } from '../../Articles/hooks/useArticle';
+import { FindByArticleId } from '@core/application/caseUses/Template/FindByArticleId';
 
 // 2. Carga perezosa del ExportTemplate (Mejora carga inicial)
 const ExportTemplate = lazy(() => import('./ExportTemplate'));
@@ -49,9 +51,18 @@ const findNodeById = (nodes, id) => {
 export default function Builder() {
 
     const { id: dataID, type } = useParams();
-    const { researchs, institutions, loading } = (type == 'research' ? useResearchs() : useInstitutions());
+    const {
+        articles,
+        researchs,
+        institutions,
+        loading
+    } = (
+            type == 'research' ? useResearchs() :
+                type == 'institutions' ? useInstitutions() : useArticle()
+        );
     // useMemo para evitar instanciar el repositorio en cada render (micro-optimización)
     const templateRepository = useMemo(() => new TemplateAmplifyRepository(), []);
+    const [hoveredSectionId, setHoveredSectionId] = useState(null);
 
     const {
         openSections,
@@ -75,7 +86,8 @@ export default function Builder() {
 
             setIsLoadingTemplate(true);
             try {
-                const data = (type == 'research' ? researchs : institutions).find(r => r.id === dataID);
+                const data = (
+                    type == 'research' ? researchs : type == 'institutions' ? institutions : articles).find(r => r.id === dataID);
 
                 if (!data) {
                     setIsLoadingTemplate(false);
@@ -84,7 +96,9 @@ export default function Builder() {
 
                 setCurrentData(data);
 
-                const templateCommand = new (type == 'research' ? FindByResearchId : FindByInstitutionId)(templateRepository);
+                const templateCommand = new (
+                    type == 'research' ? FindByResearchId :
+                        type == 'institution' ? FindByInstitutionId : FindByArticleId)(templateRepository);
                 const template = await templateCommand.execute(dataID);
 
                 if (template) {
@@ -110,7 +124,7 @@ export default function Builder() {
         };
 
         loadDataAndTemplate();
-    }, [dataID, researchs, institutions, loading, setSections, templateRepository]); // Dependencias correctas
+    }, [dataID, articles, researchs, institutions, loading, setSections, templateRepository]); // Dependencias correctas
 
     // Mostrar loader
     if (loading || isLoadingTemplate) {
@@ -186,12 +200,19 @@ export default function Builder() {
                     setOpenSections={setOpenSections}
                     currentTemplate={currentTemplate}
                     setCurrentTemplate={setCurrentTemplate}
+                    hoveredSectionId={hoveredSectionId}
+                    onSectionHover={setHoveredSectionId}
+                    type={type}
                 />
 
                 {/* CANVAS CENTRAL (El más pesado) */}
                 <Box sx={{ flexGrow: 1, bgcolor: '#f0f2f5', p: 4, overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
                     <Box sx={{ width: '100%', maxWidth: '1200px', bgcolor: 'white', minHeight: '80vh', boxShadow: 3, borderRadius: 1 }}>
-                        <MemoizedPageRenderer sections={sections} />
+                        <MemoizedPageRenderer
+                            sections={sections}
+                            hoveredSectionId={hoveredSectionId}
+                            onSectionHover={setHoveredSectionId}
+                        />
                     </Box>
                 </Box>
 

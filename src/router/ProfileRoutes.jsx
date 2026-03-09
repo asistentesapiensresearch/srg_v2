@@ -31,7 +31,8 @@ export const ProfileRoutes = [
                     <SuspenseLoader>
                         <MyInstitutions />
                     </SuspenseLoader>
-                )
+                ),
+                title: "Mis instituciones"
             },
             {
                 path: 'institutions/manage/:id',

@@ -56,7 +56,7 @@ export default function Navigation() {
   const headerClasses = `
     w-full z-50 transition-all duration-300 ease-in-out
     ${isHome ? 'fixed top-0' : 'sticky top-0'}
-    ${isScrolled || !isHome ? 'bg-red-700 shadow-md py-2' : 'bg-transparent py-4'}
+    ${isScrolled || !isHome ? 'bg-red-700 shadow-md py-2' : 'bg-red-700 py-4'}
   `;
 
   return (

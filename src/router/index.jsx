@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { BrowserRouter, useRoutes } from "react-router-dom";
 import { routes } from "./routes";
 import { Preloader } from "@src/components/preloader";
+import { TitleUpdater } from "@src/components/TitleUpdater";
 
 function AppRoutes() {
   return useRoutes(routes);
@@ -10,6 +11,7 @@ function AppRoutes() {
 export function RouterProvider() {
   return (
     <BrowserRouter>
+      <TitleUpdater />
       <Suspense fallback={
         <div style={{
           display: 'flex',

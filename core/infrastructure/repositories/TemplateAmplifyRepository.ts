@@ -5,6 +5,17 @@ import { Template } from "@core/domain/repositories/entities";
 
 export class TemplateAmplifyRepository implements TemplateRepository {
 
+    async get(filters?: any): Promise<Template[]> {
+        try {
+            // El apiSyncService.get maneja la lista completa o filtrada
+            const data = await apiSyncService.get('Template', undefined, filters);
+            return (data || []) as Template[];
+        } catch (error) {
+            console.error('Error al obtener la lista de templates:', error);
+            throw error;
+        }
+    }
+
     async create(template: Template) {
         try {
             const data = await apiSyncService.create('Template', template);
@@ -30,7 +41,11 @@ export class TemplateAmplifyRepository implements TemplateRepository {
     }
 
     async getByInstitutionId(institutionId: string): Promise<Template | null> {
-        return await this.getTemplateById({institutionId}, 'listTemplateByInstitutionId');
+        return await this.getTemplateById({ institutionId }, 'listTemplateByInstitutionId');
+    }
+
+    async getByArticlenId(articleId: string): Promise<Template | null> {
+        return await this.getTemplateById({ articleId }, 'listTemplateByArticleId');
     }
 
     async getTemplateById(inputs: any, query: string) {

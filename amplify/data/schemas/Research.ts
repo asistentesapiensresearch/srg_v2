@@ -8,11 +8,15 @@ export const Research = a.model({
     icon: a.string(),
     category: a.string(),
     subCategory: a.string(),
+    // Nuevo campo para la relación jerárquica
+    parentId: a.string(),
     template: a.hasOne("Template", "researchId"),
     version: a.integer().default(1)
 })
     .secondaryIndexes(index => [
         index('path').queryField('listResearchByPath'),
+        // Índice opcional para buscar rápidamente indicadores de un padre
+        index('parentId').queryField('listIndicatorsByParent'),
     ])
     .authorization((allow) => [
         allow.publicApiKey().to(["read"]),
