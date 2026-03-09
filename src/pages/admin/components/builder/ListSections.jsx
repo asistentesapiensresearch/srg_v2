@@ -38,6 +38,7 @@ export default function ListSections({
     currentTemplate,
     setCurrentTemplate,
     hoveredSectionId,
+    onSectionHover,
     type
 }) {
 
@@ -66,7 +67,7 @@ export default function ListSections({
             const newTemplate = await saveTemplate({
                 themeSettings,
                 ...typeID
-            }, currentTemplate.id)
+            }, currentTemplate?.id)
 
             if (currentTemplate?.id) {
                 console.log('✅ Template actualizado');
@@ -144,7 +145,7 @@ export default function ListSections({
             >
                 <Box
                     sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                    onMouseEnter={() => onSectionHover(section.id)}
+                    onMouseEnter={() => onSectionHover(sections.id)}
                     onMouseLeave={() => onSectionHover(null)}
                 >
                     <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column', gap: 1 }}>
