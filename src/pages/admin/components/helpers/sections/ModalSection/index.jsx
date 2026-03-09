@@ -1,4 +1,3 @@
-// src/pages/admin/components/helpers/sections/ModalSection/index.jsx
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import {
     Dialog, DialogTitle, DialogContent,

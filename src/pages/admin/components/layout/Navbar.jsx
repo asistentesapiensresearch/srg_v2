@@ -55,7 +55,7 @@ export const Navbar = ({
                 >
                     <MenuIcon size={22} />
                 </IconButton>
-                <Link>
+                <Link to='/admin'>
                     <img src={logo} alt='Sapiens Research' width={100} />
                 </Link>
 

@@ -1,4 +1,3 @@
-// src/pages/admin/components/helpers/sections/DirectorySection/comparison/ComparisonModal.jsx
 import React from 'react';
 import {
     Dialog, DialogContent, IconButton, Box, Typography,

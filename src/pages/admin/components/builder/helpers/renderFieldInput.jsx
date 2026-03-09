@@ -1,4 +1,3 @@
-// src/components/builder/helpers/renderFieldInput.jsx
 import {
   TextField,
   Select,
@@ -10,7 +9,8 @@ import {
   Divider,
   Switch,
   FormControlLabel,
-  Slider
+  Slider,
+  Checkbox
 } from '@mui/material';
 import ImageUploaderField from './ImageUploaderField';
 import { ResearchEditorInptSection } from './ResearchEditorInptSection';
@@ -19,6 +19,7 @@ import BrandsListInput from '../inputs/BrandsListInput';
 import DataSourceInput from '../inputs/DataSourceInput';
 import JSONCodeInput from '../inputs/JSONCodeInput';
 import ChartManagerInput from '../inputs/ChartManagerInput';
+import AsyncSelectInput from '../inputs/AsyncSelectInput';
 
 const renderFieldInput = (field, activeSection, onChange) => {
   const value = activeSection.props[field.name];
@@ -301,6 +302,43 @@ const renderFieldInput = (field, activeSection, onChange) => {
           </Box>
         )}
       </Box>
+    );
+  }
+
+  if (field.type === 'checkbox') {
+    return (
+      <Box>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={value ?? field.default ?? false}
+              onChange={(e) => onChange(e.target.checked)}
+              color="primary" // Usa el color principal de tu tema
+            />
+          }
+          label={
+            <Typography variant="body2" fontWeight={600}>
+              {field.label}
+            </Typography>
+          }
+        />
+        {field.help && (
+          <Typography variant="caption" color="text.secondary" display="block" ml={4}>
+            {field.help}
+          </Typography>
+        )}
+      </Box>
+    );
+  }
+
+  if (field.type === 'asyncSelect') {
+    return (
+      <AsyncSelectInput
+        key={field.name}
+        field={field}
+        value={value}
+        onChange={onChange}
+      />
     );
   }
 

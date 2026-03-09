@@ -1,4 +1,3 @@
-// src/view/sections/CssCode/index.jsx
 import React, { useMemo } from 'react';
 import { Box } from '@mui/material';
 import PageRenderer from '../../../builder/Renderer';

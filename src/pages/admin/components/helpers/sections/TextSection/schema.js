@@ -1,4 +1,3 @@
-// src/view/sections/TextSection/schema.js
 export default {
     label: "Bloque de Texto",
     icon: "Type",

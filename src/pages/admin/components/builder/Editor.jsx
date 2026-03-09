@@ -1,4 +1,3 @@
-// src/components/builder/Editor.jsx
 import { useState, useEffect, useMemo, memo, lazy, Suspense } from 'react'; // 1. Importar memo, lazy, Suspense
 import { Box, Typography, Chip, Button } from '@mui/material';
 import { Code } from 'lucide-react';
@@ -12,13 +11,14 @@ import { useEditor } from '@src/hooks/builder/useEditor';
 import { useParams } from 'react-router-dom';
 import { TemplateAmplifyRepository } from '@core/infrastructure/repositories/TemplateAmplifyRepository';
 import { useResearchs } from '@src/pages/admin/Research/hooks/useResearchs';
-import { FindByResearchId } from '@core/application/caseUses/Template';
+import { FindByResearchId, FindByInstitutionId } from '@core/application/caseUses/Template';
 import { Preloader } from '@src/components/preloader';
 
 // Modales y Paneles
 import AddSections from './AddSections';
 import ListSections from './ListSections';
 import EditSection from './EditSection';
+import { useInstitutions } from '../../Intitutions/hooks/useInstitutions';
 
 // 2. Carga perezosa del ExportTemplate (Mejora carga inicial)
 const ExportTemplate = lazy(() => import('./ExportTemplate'));
@@ -48,8 +48,8 @@ const findNodeById = (nodes, id) => {
 
 export default function Builder() {
 
-    const { researchs, loading: loadingResearchs } = useResearchs();
-    const { id: researchId } = useParams();
+    const { id: dataID, type } = useParams();
+    const { researchs, institutions, loading } = (type == 'research' ? useResearchs() : useInstitutions());
     // useMemo para evitar instanciar el repositorio en cada render (micro-optimización)
     const templateRepository = useMemo(() => new TemplateAmplifyRepository(), []);
 
@@ -64,28 +64,28 @@ export default function Builder() {
 
     const [targetParentId, setTargetParentId] = useState(null);
     const [isLoadingTemplate, setIsLoadingTemplate] = useState(true);
-    const [currentResearch, setCurrentResearch] = useState(null);
+    const [currentData, setCurrentData] = useState(null);
     const [currentTemplate, setCurrentTemplate] = useState(null);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
     // ========== CARGAR INVESTIGACIÓN Y TEMPLATE ==========
     useEffect(() => {
-        const loadResearchAndTemplate = async () => {
-            if (!researchId || loadingResearchs) return;
+        const loadDataAndTemplate = async () => {
+            if (!dataID || loading) return;
 
             setIsLoadingTemplate(true);
             try {
-                const research = researchs.find(r => r.id === researchId);
+                const data = (type == 'research' ? researchs : institutions).find(r => r.id === dataID);
 
-                if (!research) {
+                if (!data) {
                     setIsLoadingTemplate(false);
                     return;
                 }
 
-                setCurrentResearch(research);
+                setCurrentData(data);
 
-                const templateCommand = new FindByResearchId(templateRepository);
-                const template = await templateCommand.execute(researchId);
+                const templateCommand = new (type == 'research' ? FindByResearchId : FindByInstitutionId)(templateRepository);
+                const template = await templateCommand.execute(dataID);
 
                 if (template) {
                     setCurrentTemplate(template);
@@ -109,11 +109,11 @@ export default function Builder() {
             }
         };
 
-        loadResearchAndTemplate();
-    }, [researchId, researchs, loadingResearchs, setSections, templateRepository]); // Dependencias correctas
+        loadDataAndTemplate();
+    }, [dataID, researchs, institutions, loading, setSections, templateRepository]); // Dependencias correctas
 
     // Mostrar loader
-    if (loadingResearchs || isLoadingTemplate) {
+    if (loading || isLoadingTemplate) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 2 }}>
                 <Preloader />
@@ -122,11 +122,11 @@ export default function Builder() {
         );
     }
 
-    if (!currentResearch) {
+    if (!currentData) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 2 }}>
                 <Typography variant="h6" color="error">❌ Investigación no encontrada</Typography>
-                <Typography variant="body2" color="text.secondary">ID: {researchId}</Typography>
+                <Typography variant="body2" color="text.secondary">ID: {dataID}</Typography>
             </Box>
         );
     }
@@ -147,7 +147,7 @@ export default function Builder() {
             }}>
                 <Box display="flex" alignItems="center" gap={2}>
                     <Typography variant="subtitle1" fontWeight="bold">
-                        📝 Editando: {currentResearch.title}
+                        📝 Editando: {currentData.title}
                     </Typography>
                     <Chip
                         label={currentTemplate ? '✅ Template existente' : '🆕 Nuevo template'}
@@ -175,7 +175,7 @@ export default function Builder() {
 
                 {/* 4. USAR LOS COMPONENTES MEMORIZADOS */}
                 <MemoizedListSections
-                    researchId={researchId}
+                    dataID={dataID}
                     sections={sections}
                     setSections={setSections}
                     findNodeById={findNodeById}
@@ -185,6 +185,7 @@ export default function Builder() {
                     setTargetParentId={setTargetParentId}
                     setOpenSections={setOpenSections}
                     currentTemplate={currentTemplate}
+                    setCurrentTemplate={setCurrentTemplate}
                 />
 
                 {/* CANVAS CENTRAL (El más pesado) */}

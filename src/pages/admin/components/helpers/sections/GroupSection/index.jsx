@@ -1,4 +1,3 @@
-// src/view/sections/GroupSection/index.jsx
 import { Box } from '@mui/material';
 import PageRenderer from '../../../builder/Renderer';
 

@@ -1,4 +1,3 @@
-// src/view/sections/DirectorySection/filters/CategoryFilter.tsx
 import { useState, useRef, useEffect } from 'react';
 
 // Datos de ejemplo (idealmente vendrían de props o una API)

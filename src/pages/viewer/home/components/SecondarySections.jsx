@@ -22,8 +22,8 @@ export default function SecondarySections({
             {indicators.length > 0 && <div className="space-y-4">
                 <h3 className="text-gray-500 font-bold text-sm mb-4">Indicadores Específicos</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {indicators.map(item => (
-                        <Link to={item.path}>
+                    {indicators.map((item, idx) => (
+                        <Link to={item.path} key={idx}>
                             <IndicatorButton icon={Microscope} label={item.title} />
                         </Link>
                     ))}

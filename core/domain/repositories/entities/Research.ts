@@ -6,14 +6,12 @@ export class Research {
     public description: string;
     public category: string;
     public subCategory: string;
-    public dateRange?: string; // En Amplify es string, no DateRange
     public path?: string;
     public icon?: string;
     public version: number;
 
     // Relaciones
     public template?: any; // hasOne Template
-    public brands?: any[]; // hasMany ResearchLogo
 
     constructor(props: {
         id?: string;
@@ -21,24 +19,20 @@ export class Research {
         subCategory: string;
         title: string;
         description: string;
-        dateRange?: string;
         path?: string;
         icon?: string;
         version?: number;
         template?: any;
-        brands?: any[];
     }) {
         this.id = props.id;
         this.category = props.category;
         this.subCategory = props.subCategory;
         this.title = props.title;
         this.description = props.description;
-        this.dateRange = props.dateRange;
         this.path = props.path;
         this.icon = props.icon;
         this.version = props.version || 1;
         this.template = props.template;
-        this.brands = props.brands;
     }
 
     // Métodos útiles

@@ -1,4 +1,3 @@
-// src/view/sections/WysiwygSection/index.jsx
 import { Box, Container } from "@mui/material";
 import React, { useId } from "react"; // 1. Importamos useId
 

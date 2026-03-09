@@ -1,4 +1,3 @@
-// src/view/sections/DirectorySection/filters/FilterContainer.tsx
 import { CategoryFilter } from './CategoryFilter'; // Sub-componentes
 import { StatusFilter } from './StatusFilter';
 

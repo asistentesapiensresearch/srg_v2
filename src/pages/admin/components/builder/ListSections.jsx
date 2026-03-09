@@ -27,14 +27,16 @@ const deleteNodeFromTree = (nodes, idToDelete) => {
 
 export default function ListSections({
     sections,
-    researchId,
+    dataID,
     setSections,
     findNodeById,
     selectedSectionId,
     setSelectedSectionId,
     setTargetParentId,
     setOpenSections,
-    currentTemplate
+    currentTemplate,
+    setCurrentTemplate,
+    type
 }) {
 
     const templateRepository = new TemplateAmplifyRepository();
@@ -47,7 +49,7 @@ export default function ListSections({
     );
 
     const handleSave = async () => {
-        if (!researchId) {
+        if (!dataID) {
             alert('No se encontró el ID de la investigación');
             return;
         }
@@ -55,13 +57,14 @@ export default function ListSections({
         setIsSaving(true);
         try {
             const themeSettings = JSON.stringify(sections);
+            const typeID = type == 'research'? { researchId: dataID } : { institutionId: dataID };
 
             if (currentTemplate?.id) {
                 // Actualizar template existente
                 const updateCommand = new Update(templateRepository);
                 await updateCommand.execute(currentTemplate.id, {
                     themeSettings,
-                    researchId
+                    ...typeID
                 });
                 console.log('✅ Template actualizado');
                 alert('Template actualizado correctamente');
@@ -70,7 +73,7 @@ export default function ListSections({
                 const createCommand = new Create(templateRepository);
                 const newTemplate = await createCommand.execute({
                     themeSettings,
-                    researchId
+                    ...typeID
                 });
 
                 setCurrentTemplate(newTemplate);

@@ -1,4 +1,3 @@
-// src/view/sections/DirectorySection/results/TableList.jsx
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
@@ -53,7 +52,7 @@ function Row(props) {
         <React.Fragment>
             <TableRow hover sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell width={50}>
-                    {hasHistory ? (
+                    {(hasHistory && row.isLinked) ? (
                         <IconButton
                             aria-label="expand row"
                             size="small"

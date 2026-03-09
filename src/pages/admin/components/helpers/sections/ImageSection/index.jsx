@@ -1,4 +1,3 @@
-// src/components/builder/sections/ImageSection/index.jsx
 import { Box, Container } from "@mui/material";
 import { useState, useEffect } from "react";
 import { getUrl } from "aws-amplify/storage";
@@ -48,7 +47,6 @@ const ImageSection = ({
 }) => {
     const [imageSrc, setImageSrc] = useState(src);
 
-    // Cargar imagen desde S3 si es una key
     useEffect(() => {
         const loadImage = async () => {
             if (src && src.startsWith('builder/')) {
@@ -60,7 +58,6 @@ const ImageSection = ({
                     setImageSrc("");
                 }
             } else if (src) {
-                // Es una URL directa
                 setImageSrc(src);
             } else {
                 setImageSrc("");
@@ -70,7 +67,8 @@ const ImageSection = ({
         loadImage();
     }, [src]);
 
-    const imageStyles = {
+    // Usamos 'style' nativo para que funcione con ambos componentes (MUI Box y Amplify StorageImage)
+    const baseImageStyles = {
         width: width,
         height: height,
         maxWidth: max_width,
@@ -80,59 +78,82 @@ const ImageSection = ({
         boxShadow: box_shadow,
         border: border,
         transition: 'all 0.3s ease',
-        cursor: link_url ? 'pointer' : 'default',
-        '&:hover': hover_scale ? {
-            transform: 'scale(1.05)',
-            opacity: hover_opacity
-        } : {
-            opacity: hover_opacity
-        }
+        display: 'block' // Evita márgenes fantasma debajo de la imagen
     };
 
-    const containerStyles = {
-        display: 'flex',
-        justifyContent: alignment,
-        alignItems: 'center',
+    // Estilos de la sección completa
+    const sectionStyles = {
         bgcolor: background_color,
         pt: padding_top,
         pb: padding_bottom,
         px: padding_horizontal,
         mt: margin_top,
-        mb: margin_bottom
+        mb: margin_bottom,
+        width: '100%',
+        display: 'flex',
+        justifyContent: alignment
     };
 
-    const ImageComponent = (
-        imageSrc.startsWith('sections/') ?
-            <StorageImage alt="sleepy-cat" path={imageSrc} className="h-[100%!important]" />
-            :
-            <Box
-                component="img"
-                src={imageSrc}
-                alt={alt}
-                sx={imageStyles}
-                loading="lazy"
-                onError={(e) => {
-                    e.target.src = "";
-                }}
-            />
-    );
+    // Estilos del Wrapper del enlace/imagen (para el hover y posicionamiento)
+    const wrapperStyles = {
+        display: 'inline-flex',
+        justifyContent: alignment,
+        alignItems: 'center',
+        width: width, // El wrapper también debe respetar el ancho para la alineación
+        maxWidth: max_width,
+        textDecoration: 'none',
+        cursor: link_url ? 'pointer' : 'default',
+        overflow: 'hidden', // Necesario para que el border-radius corte el hover_scale
+        borderRadius: border_radius, // Aplicamos el border_radius también al wrapper
+        '&:hover img': { // Apuntamos a la etiqueta <img> directamente para los efectos
+            transform: hover_scale ? 'scale(1.05)' : 'none',
+            opacity: hover_opacity
+        }
+    };
 
-    const content = link_url ? (
-        <Link to={link_url} target={link_target} rel={link_target === "_blank" ? "noopener noreferrer" : undefined}>
-            {ImageComponent}
-        </Link>
+    // 1. Determinar si es de Amplify Storage
+    const isStorageImage = imageSrc && imageSrc.startsWith('sections/');
+
+    // 2. Construir la imagen
+    const ImageRender = isStorageImage ? (
+        <StorageImage
+            alt={alt || "Image"}
+            path={imageSrc}
+            style={baseImageStyles} // Usamos style nativo, NO className ni sx
+        />
     ) : (
-        ImageComponent
+        <Box
+            component="img"
+            src={imageSrc}
+            alt={alt}
+            style={baseImageStyles} // Usamos style nativo aquí también para consistencia
+            loading="lazy"
+            onError={(e) => { e.target.src = ""; }}
+        />
     );
 
+    // 3. Envolver en Link si es necesario, O en un Box normal para los efectos hover
+    const ImageWrapper = link_url ? (
+        <Box component={Link} to={link_url} target={link_target} rel={link_target === "_blank" ? "noopener noreferrer" : undefined} sx={wrapperStyles}>
+            {ImageRender}
+        </Box>
+    ) : (
+        <Box sx={wrapperStyles}>
+            {ImageRender}
+        </Box>
+    );
+
+    // 4. Retornar el contenedor principal
     return (
-        <Box sx={containerStyles}>
-            {container_width ? (
-                <Container maxWidth={container_width}>
-                    {content}
+        <Box sx={sectionStyles}>
+            {container_width && container_width !== false && container_width !== "false" ? (
+                <Container maxWidth={container_width} sx={{ display: 'flex', justifyContent: alignment }}>
+                    {ImageWrapper}
                 </Container>
             ) : (
-                content
+                <Box sx={{ width: '100%', display: 'flex', justifyContent: alignment }}>
+                    {ImageWrapper}
+                </Box>
             )}
         </Box>
     );

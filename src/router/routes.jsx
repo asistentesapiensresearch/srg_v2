@@ -1,18 +1,18 @@
-// src/router/routes.jsx
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminRoutes } from './AdminRoutes';
-import { Preloader } from '@src/components/preloader';
-import { Navigate } from 'react-router-dom';
+import { AlliesRoutes } from './AlliesRoutes'; // 🔥 Importante
+import { SuspenseLoader } from '../components/SuspenseLoader';
+import { ProfileRoutes } from './ProfileRoutes';
 
 /* Viewer Pages */
 const Home = lazy(() => import("../pages/viewer/home/Home"));
 const Layout = lazy(() => import("../pages/viewer/Layout"));
-const Profile = lazy(() => import("../pages/viewer/Profile"));
-const ResearchDetail = lazy(() => import("../pages/viewer/ResearchDetail"));
+const TemplateDetail = lazy(() => import("../pages/viewer/TemplateDetail"));
 const Auth = lazy(() => import("../components/auth"));
 
 export const routes = [
+  // --- PÚBLICO ---
   {
     path: '/',
     element: <Layout />,
@@ -23,33 +23,20 @@ export const routes = [
       }
     ]
   },
+
+  // --- PERFIL (Compartido) ---
   {
     path: 'profile',
     element: (
+      // Protegemos esta sub-ruta solo para Aliados/Admin
       <Auth>
-        <ProtectedRoute allowedGroups={['Admin', 'viewer', 'Allies']} />
+        <ProtectedRoute allowedGroups={['Admin', 'Allies', 'Viewer']} />
       </Auth>
     ),
-    children: [
-      {
-        index: true,
-        element: (
-          <Suspense fallback={
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100vh'
-            }}>
-              <Preloader />
-            </div>
-          }>
-            <Profile />
-          </Suspense>
-        ),
-      }
-    ]
+    children: ProfileRoutes
   },
+
+  // --- ADMIN (Super Admin) ---
   {
     path: "/admin",
     element: (
@@ -59,32 +46,35 @@ export const routes = [
     ),
     children: AdminRoutes
   },
-  // Ruta dinámica para investigaciones (debe ir al final antes del wildcard)
+
+  // --- ALLIES (Aliados) ---
   {
-    path: "/:path",
+    path: "/allie",
     element: (
-      <Suspense fallback={
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh'
-        }}>
-          <Preloader />
-        </div>
-      }>
+      <Auth>
+        <ProtectedRoute allowedGroups={['Allies', 'Admin']} />
+        {/* Nota: A veces es útil que el Admin también pueda entrar a ver cómo se ve el panel de aliado */}
+      </Auth>
+    ),
+    // 🔥 CORRECCIÓN: Usamos AlliesRoutes, NO AdminRoutes
+    children: AlliesRoutes
+  },
+
+  // --- CATCH-ALL (Micrositios y 404) ---
+  // Esta ruta debe ir AL FINAL
+  {
+    path: "/*",
+    element: (
+      <SuspenseLoader>
         <Layout />
-      </Suspense>
+      </SuspenseLoader>
     ),
     children: [
       {
-        index: true,
-        element: <ResearchDetail />
+        // 🔥 CORRECCIÓN: Usamos index: true para capturar lo que venga del /* padre
+        path: '*',
+        element: <TemplateDetail />
       }
     ]
-  },
-  {
-    path: "*",
-    element: <Navigate to="/" replace />,
   }
 ];

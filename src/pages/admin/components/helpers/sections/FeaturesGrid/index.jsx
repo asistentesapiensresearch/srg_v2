@@ -1,12 +1,20 @@
-// src/view/sections/FeaturesGrid/index.jsx
 import { Box, Typography, Grid, Container } from '@mui/material';
 import PageRenderer from '../../../builder/Renderer';
 
 const FeaturesGrid = ({
-    // Props de Columnas
+    // Props de Tipo de Layout
+    layout_type = 'even',
+
+    // Props Columnas Iguales
     columns_desktop = 3,
     columns_tablet = 2,
     columns_mobile = 1,
+
+    // Props Distribución Personalizada
+    custom_desktop = "5,7",
+    custom_tablet = "6,6",
+    custom_mobile = "12,12",
+
     gap = 3,
 
     // Props de Contenido
@@ -17,23 +25,43 @@ const FeaturesGrid = ({
     children = []
 }) => {
 
-    // Función de cálculo ultra-segura
-    const getSpan = (val) => {
+    // 1. Cálculo para modo IGUAL ("even")
+    const getEvenSpan = (val) => {
         const n = Number(val);
-        if (!n || n <= 0) return 12; // Fallback a 1 columna
+        if (!n || n <= 0) return 12;
         return Math.max(1, Math.floor(12 / n));
     };
 
-    // Calculamos los breakpoints una sola vez
-    const gridSpans = {
-        xs: getSpan(columns_mobile),
-        sm: getSpan(columns_tablet),
-        md: getSpan(columns_desktop)
+    // 2. Cálculo para modo PERSONALIZADO ("custom")
+    // Convierte "5,7" en [5, 7]. Si falla o está vacío, usa el fallback
+    const parseCustomSpan = (str, fallback) => {
+        if (!str) return [fallback];
+        const arr = str.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n) && n > 0 && n <= 12);
+        return arr.length > 0 ? arr : [fallback];
+    };
+
+    const customSpans = {
+        xs: parseCustomSpan(custom_mobile, 12),
+        sm: parseCustomSpan(custom_tablet, 6),
+        md: parseCustomSpan(custom_desktop, 6)
+    };
+
+    // 3. Función maestra que decide el ancho de cada elemento según su índice
+    const getChildSpan = (index, breakpoint) => {
+        if (layout_type === 'even') {
+            if (breakpoint === 'md') return getEvenSpan(columns_desktop);
+            if (breakpoint === 'sm') return getEvenSpan(columns_tablet);
+            if (breakpoint === 'xs') return getEvenSpan(columns_mobile);
+        } else {
+            // Modo Personalizado: Recorre el array. 
+            // Si hay más hijos que anchos definidos, vuelve a empezar (ej. hijo 3 usa el ancho 0)
+            const spans = customSpans[breakpoint];
+            return spans[index % spans.length];
+        }
     };
 
     return (
         <Box
-            // Combinación de Tailwind (w-full) y MUI (sx)
             className="w-full"
             sx={{
                 bgcolor: background_color,
@@ -55,27 +83,27 @@ const FeaturesGrid = ({
                 <Grid
                     container
                     spacing={gap}
-                    // Tailwind: Aseguramos que el contenedor no tenga desbordamiento
                     className="flex flex-wrap"
                 >
                     {children && children.length > 0 ? (
-                        children.map((child) => (
+                        children.map((child, index) => (
                             <Grid
                                 key={child.id}
-                                // Aquí está el corazón de la responsividad
-                                size={{ xs: gridSpans.xs, sm: gridSpans.sm, md: gridSpans.md }}
-                                // Tailwind: aseguramos que el item se comporte bien
+                                // 🔥 Usamos el INDICE para determinar el span exacto
+                                size={{
+                                    xs: getChildSpan(index, 'xs'),
+                                    sm: getChildSpan(index, 'sm'),
+                                    md: getChildSpan(index, 'md')
+                                }}
                                 className="flex"
                             >
                                 <Box className="w-full flex flex-col">
-                                    {/* Pasamos el hijo individual al Renderer */}
                                     <PageRenderer sections={[child]} />
                                 </Box>
                             </Grid>
                         ))
                     ) : (
-                        /* Estado vacío para el editor */
-                        <Grid size={{ xs:12 }}>
+                        <Grid size={{ xs: 12 }}>
                             <Box className="w-full p-12 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50/50">
                                 <Typography className="text-gray-400 font-medium">
                                     Grid Vacío: Agregue elementos desde el panel de capas (+)

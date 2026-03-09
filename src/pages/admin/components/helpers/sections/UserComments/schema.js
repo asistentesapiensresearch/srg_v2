@@ -1,4 +1,3 @@
-// src/view/sections/ChartSection/schema.js
 export default {
     label: "Comentarios del usuario",
     icon: "MessageSquareQuote",

@@ -2,3 +2,4 @@
 export * from './Create';
 export * from './Update';
 export * from './FindByResearchId';
+export * from './FindByInstitutionId';

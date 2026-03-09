@@ -1,4 +1,3 @@
-// src/components/builder/inputs/JSONCodeInput.jsx
 import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import { javascript } from '@codemirror/lang-javascript'; // <--- Instalar o importar esto

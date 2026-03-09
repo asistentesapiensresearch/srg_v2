@@ -10,7 +10,7 @@ import {
     Toolbar,
     Tooltip
 } from "@mui/material";
-import { Briefcase, Building2Icon, ChevronDown, LayoutDashboard, MessageSquareTextIcon, Settings, UsersIcon } from "lucide-react";
+import { Briefcase, Building2Icon, ChevronDown, ImageIcon, LayoutDashboard, MessageSquareTextIcon, Settings, UsersIcon } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -44,6 +44,16 @@ export const Sidebar = ({
                     path: 'institutions',
                     label: 'Lista instituciones',
                     icon: <Building2Icon size={20} />
+                }
+            ]
+        },
+        {
+            label: 'Galerias',
+            items: [
+                {
+                    path: 'galleries',
+                    label: 'Lista galerias',
+                    icon: <ImageIcon size={20} />
                 }
             ]
         },

@@ -1,25 +1,30 @@
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { remove } from "aws-amplify/storage";
+import { uploadData, remove } from "aws-amplify/storage";
 import {
     Button,
     TextField,
-    FormGroup,
     Box,
     Dialog,
     DialogTitle,
+    DialogContent,
+    DialogActions,
     Autocomplete,
+    Avatar,
+    IconButton,
+    Grid,
+    Typography,
     FormHelperText,
+    InputAdornment
 } from "@mui/material";
+import { Camera, Save, X, Link as LinkIcon, Image as ImageIcon } from "lucide-react";
 import RichTextEditorInpt from "@src/components/forms/RichTextEditor";
-import BrandComponent from "@src/components/forms/BrandComponent";
-import UploadInputForm from "@src/components/forms/UploadInputForm";
 import useWhyDidYouUpdate from "@src/hooks/useWhyDidYouUpdate";
 import { Preloader } from "@src/components/preloader";
 import { moveIconToDefinitiveFolder } from "../../helpers/moveIconToDefinitiveFolder";
+import { getUrl } from "aws-amplify/storage";
 
 // ==================== CONSTANTS ====================
 const TEMP_FOLDER = "research/temp/";
-const ACCEPTED_FILE_TYPES = ["image/*"];
 const CATEGORIES = ['Ranking General', 'Indicadores Específicos', 'Mejores Grupos'];
 const SUB_CATEGORIES = ['Universidades', 'Colegios', 'Organizaciones'];
 
@@ -27,8 +32,6 @@ const INITIAL_FORM_STATE = {
     title: "",
     path: "",
     description: "",
-    dateRange: "",
-    brands: [],
     category: "",
     subCategory: "",
     icon: "",
@@ -54,301 +57,290 @@ export function ResearchForm({ research, onClose, store }) {
     const [uploading, setUploading] = useState(false);
     const [errors, setErrors] = useState({});
     const [isInitialized, setIsInitialized] = useState(false);
-    const [initialForm, setInitialForm] = useState(null);
 
     // ==================== COMPUTED VALUES ====================
     const getCurrentDescription = useCallback(() => {
         return rteRefDesc.current?.editor?.getHTML() || "";
     }, []);
 
-    const hasChanges = useMemo(() => {
-        if (!isInitialized || !initialForm) return false;
-
-        const formChanged = Object.keys(form).some(key => {
-            if (key === 'brands') {
-                return JSON.stringify(form[key]) !== JSON.stringify(initialForm[key]);
-            }
-            return form[key] !== initialForm[key];
-        });
-
-        const currentDesc = getCurrentDescription();
-        const descChanged = currentDesc !== initialForm.description;
-
-        return formChanged || descChanged;
-    }, [form, isInitialized, initialForm, getCurrentDescription]);
-
     // ==================== INITIALIZATION ====================
     useEffect(() => {
-        const initialData = {
-            title: research?.title || "",
-            path: research?.path || "",
-            description: research?.description || "",
-            dateRange: research?.dateRange || "",
-            brands: research?.brands || [],
-            category: research?.category || "",
-            subCategory: research?.subCategory || "",
-            icon: research?.icon || "",
-        };
+        const loadData = async () => {
+            if (research) {
+                setForm({
+                    title: research.title || "",
+                    path: research.path || "",
+                    description: research.description || "",
+                    category: research.category || "",
+                    subCategory: research.subCategory || "",
+                    icon: research.icon || "",
+                });
 
-        setForm(initialData);
-        setInitialForm(initialData);
-        setIconPreview(research?.icon || "");
-        setIsInitialized(true);
+                if (research.icon) {
+                    try {
+                        // Si ya tiene icono, obtenemos la URL firmada para mostrarlo
+                        const url = await getUrl({ path: research.icon });
+                        setIconPreview(url.url.toString());
+                    } catch (e) {
+                        console.error("Error loading icon", e);
+                    }
+                }
+            }
+            setIsInitialized(true);
+        };
+        loadData();
     }, [research]);
 
-    // ==================== VALIDATION ====================
-    const validateForm = useCallback(() => {
-        const newErrors = {};
-        const description = getCurrentDescription();
-
-        if (!description?.trim() || description === '<p></p>') {
-            newErrors.description = "La descripción es obligatoria.";
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }, [getCurrentDescription]);
-
     // ==================== EVENT HANDLERS ====================
-    const handleFieldChange = useCallback((field, value) => {
+    const handleFieldChange = (field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
-    }, []);
+        // Limpiar error al escribir
+        if (errors[field]) setErrors(prev => ({ ...prev, [field]: null }));
+    };
 
-    const handleInputChange = useCallback((field) => (e) => {
-        handleFieldChange(field, e.target.value);
-    }, [handleFieldChange]);
-
-    const handleTitleChange = useCallback((e) => {
+    const handleTitleChange = (e) => {
         const newTitle = e.target.value;
         setForm(prev => ({
             ...prev,
             title: newTitle,
-            path: generatePath(newTitle)
+            // Si es nuevo registro, autogeneramos el path. Si es edición, respetamos lo que haya.
+            path: !research?.id ? generatePath(newTitle) : prev.path
         }));
-    }, []);
+    };
 
-    const handleAutocompleteChange = useCallback((field) => (_, value) => {
-        handleFieldChange(field, value || "");
-    }, [handleFieldChange]);
+    // --- NUEVA LÓGICA DE SUBIDA DE IMAGEN (Estilo Perfil) ---
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    const handleBrandsChange = useCallback((brands) => {
-        const brandIds = brands.map(item => item.id);
-        handleFieldChange("brands", brandIds);
-    }, [handleFieldChange]);
+        try {
+            setUploading(true);
+            const path = `${TEMP_FOLDER}${Date.now()}-${file.name}`;
 
-    const handleIconChange = useCallback((value) => {
-        handleFieldChange("icon", value);
-    }, [handleFieldChange]);
+            // 1. Subir a Temp
+            const result = await uploadData({
+                path,
+                data: file,
+                // options: { accessLevel: 'guest' } // Descomentar si usas public/guest
+            }).result;
+
+            // 2. Previsualización inmediata
+            const objectUrl = URL.createObjectURL(file);
+            setIconPreview(objectUrl);
+
+            // 3. Actualizar form
+            handleFieldChange("icon", result.path);
+
+        } catch (error) {
+            console.error("Error uploading image:", error);
+            setErrors(prev => ({ ...prev, icon: "Error al subir la imagen" }));
+        } finally {
+            setUploading(false);
+        }
+    };
 
     // ==================== SAVE LOGIC ====================
-    const handleSave = useCallback(async () => {
-        if (!validateForm()) {
+    const handleSave = async () => {
+        // 1. Validaciones
+        const currentDesc = getCurrentDescription();
+        const newErrors = {};
+        if (!form.title) newErrors.title = "El título es obligatorio";
+        if (!form.path) newErrors.path = "El path es obligatorio";
+        if (!currentDesc || currentDesc === '<p></p>') newErrors.description = "La descripción es obligatoria";
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
             return;
         }
 
         try {
             setUploading(true);
 
-            // Mover icono a carpeta definitiva si es necesario
-            const finalIcon = await moveIconToDefinitiveFolder(TEMP_FOLDER, form.icon, form.title);
-            // Si estamos editando y el ícono cambió (y no es el temporal), borramos el anterior
-            if (research?.id && research.icon && research.icon !== finalIcon) {
-                await remove({ path: research.icon });
-            }
-            setForm({
-                ...form,
-                icon: finalIcon
-            });
+            // Variable local para la ruta final
+            let finalIcon = form.icon;
 
+            // 2. CRÍTICO: Solo intentamos mover si la ruta actual contiene la carpeta temporal
+            if (form.icon && form.icon.includes(TEMP_FOLDER)) {
+
+                // Movemos el archivo físico en S3
+                finalIcon = await moveIconToDefinitiveFolder(TEMP_FOLDER, form.icon, form.title);
+
+                // 🔥 IMPORTANTE: Actualizamos el estado INMEDIATAMENTE.
+                // Así, si falla el guardado en BD (paso 3), el formulario ya sabe 
+                // que la imagen está en la carpeta definitiva y no intentará moverla de nuevo.
+                setForm(prev => ({ ...prev, icon: finalIcon }));
+
+                // Borrar imagen vieja si existía, era distinta y no es la que acabamos de subir
+                if (research?.icon && research.icon !== finalIcon) {
+                    await remove({ path: research.icon }).catch(e => console.warn("No se pudo borrar imagen anterior:", e));
+                }
+            }
+
+            // 3. Preparar objeto para Base de Datos
             const researchData = {
                 ...form,
-                icon: finalIcon,
-                description: getCurrentDescription(),
+                icon: finalIcon, // Usamos la variable local actualizada
+                description: currentDesc,
                 version: (research?.version || 0) + 1
             };
 
-            const { error: saveErrors, research: researchDB } = await store(
+            const { errors: saveErrors, research: researchDB } = await store(
                 researchData,
                 research?.id
             );
 
-            if (saveErrors && Object.keys(saveErrors).length > 0) {
+            if (saveErrors) {
                 setErrors(saveErrors);
-                return;
+                // No necesitamos revertir la imagen. Si el usuario guarda de nuevo, 
+                // el `if` de arriba saltará el movimiento porque `form.icon` ya no tiene `TEMP_FOLDER`.
+            } else {
+                onClose(researchDB);
             }
-
-            onClose(researchDB);
         } catch (error) {
-            console.error("Error saving research:", error);
-            setErrors({ submit: error.message || "Error al guardar la investigación" });
+            console.error("Error saving:", error);
+            setErrors({ submit: "Error inesperado al guardar: " + (error.message || error) });
         } finally {
             setUploading(false);
         }
-    }, [form, validateForm, research, store, onClose, getCurrentDescription]);
+    };
 
-    // ==================== DEBUG ====================
-    if (import.meta.env.MODE === "development") {
-        useWhyDidYouUpdate("ResearchForm", { research, onClose, form });
-    }
+    if (!isInitialized) return <Preloader />;
 
-    // ==================== LOADING STATE ====================
-    if (!isInitialized) {
-        return (
-            <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
-                <Box className="flex justify-center items-center p-8">
-                    <Preloader/>
-                </Box>
-            </Dialog>
-        );
-    }
-
-    // ==================== RENDER ====================
     return (
-        <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
-            <DialogTitle>
-                {research?.id ? "Editar" : "Crear nueva"} investigación
+        <Dialog open onClose={() => onClose()} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
+            <DialogTitle sx={{ borderBottom: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6" component="div" fontWeight="bold">
+                    {research?.id ? "Editar Investigación" : "Nueva Investigación"}
+                </Typography>
+                <IconButton onClick={() => onClose()} size="small"><X size={20} /></IconButton>
             </DialogTitle>
 
-            <Box className="px-4 pb-4 bg-white rounded-lg shadow-md">
-                <FormGroup className="flex flex-col gap-6">
-                    {/* TÍTULO */}
-                    <TextField
-                        label="Título"
-                        value={form.title}
-                        onChange={handleTitleChange}
-                        fullWidth
-                        required
-                        error={!!errors.title}
-                        helperText={errors.title}
-                    />
+            <DialogContent sx={{ py: 4 }}>
+                <Box display="flex" flexDirection="column" gap={4}>
 
-                    {/* PATH */}
-                    <TextField
-                        label="Path (URL)"
-                        value={form.path}
-                        onChange={handleInputChange("path")}
-                        fullWidth
-                        required
-                        error={!!errors.path}
-                        helperText={
-                            errors.path ||
-                            "Se genera automáticamente desde el título. Solo minúsculas, números y guiones."
-                        }
-                        placeholder="ejemplo-de-path"
-                    />
+                    {/* --- 1. SECCIÓN DE IMAGEN (ESTILO PERFIL) --- */}
+                    <Box display="flex" flexDirection="column" alignItems="center">
+                        <Box position="relative">
+                            <Avatar
+                                src={iconPreview}
+                                variant="rounded" // O "circular" si prefieres círculo perfecto
+                                sx={{
+                                    width: 120, height: 120,
+                                    bgcolor: 'grey.100',
+                                    border: '1px solid #e0e0e0',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                                }}
+                            >
+                                <ImageIcon size={40} className="text-gray-300" />
+                            </Avatar>
 
-                    {/* RANGO DE FECHAS */}
-                    <TextField
-                        label="Rango de Fechas"
-                        value={form.dateRange}
-                        onChange={handleInputChange("dateRange")}
-                        fullWidth
-                        required
-                        error={!!errors.dateRange}
-                        helperText={errors.dateRange}
-                    />
+                            {/* Input oculto + Botón de cámara */}
+                            <input
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                id="icon-button-file"
+                                type="file"
+                                onChange={handleImageUpload}
+                            />
+                            <label htmlFor="icon-button-file">
+                                <Box
+                                    sx={{
+                                        position: 'absolute', bottom: -10, right: -10,
+                                        bgcolor: 'primary.main', borderRadius: '50%', p: 1,
+                                        cursor: 'pointer', border: '4px solid white',
+                                        boxShadow: 1,
+                                        '&:hover': { bgcolor: 'primary.dark' }
+                                    }}
+                                >
+                                    <Camera size={20} color="white" />
+                                </Box>
+                            </label>
+                        </Box>
+                        <Typography variant="caption" color="text.secondary" sx={{ mt: 2 }}>
+                            Logo o Portada de la Investigación
+                        </Typography>
+                    </Box>
 
-                    {/* CATEGORÍA Y SUBCATEGORÍA */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
+                    {/* --- 2. CAMPOS DEL FORMULARIO --- */}
+                    <Grid container spacing={3}>
+                        <Grid size={{ sx: 12, md: 6 }}>
+                            <TextField
+                                label="Título de la Investigación"
+                                value={form.title}
+                                onChange={handleTitleChange}
+                                fullWidth
+                                required
+                                error={!!errors.title}
+                                helperText={errors.title}
+                            />
+                        </Grid>
+                        <Grid size={{ sx: 12, md: 6 }}>
+                            <TextField
+                                label="URL (Path)"
+                                value={form.path}
+                                onChange={(e) => handleFieldChange("path", e.target.value)}
+                                fullWidth
+                                required
+                                error={!!errors.path}
+                                helperText={errors.path}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start"><LinkIcon size={16} /></InputAdornment>
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid size={{ sx: 12, md: 6 }}>
                             <Autocomplete
-                                disablePortal
                                 options={CATEGORIES}
                                 value={form.category || null}
-                                onChange={handleAutocompleteChange("category")}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Categoría"
-                                        required
-                                        error={!!errors.category}
-                                    />
-                                )}
-                                fullWidth
+                                onChange={(_, val) => handleFieldChange("category", val)}
+                                renderInput={(params) => <TextField {...params} label="Categoría" error={!!errors.category} />}
                             />
-                            {errors.category && (
-                                <FormHelperText error>{errors.category}</FormHelperText>
-                            )}
-                        </div>
-
-                        <div>
+                        </Grid>
+                        <Grid size={{ sx: 12, md: 6 }}>
                             <Autocomplete
-                                disablePortal
                                 options={SUB_CATEGORIES}
                                 value={form.subCategory || null}
-                                onChange={handleAutocompleteChange("subCategory")}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Subcategoría"
-                                        required
-                                        error={!!errors.subCategory}
-                                    />
-                                )}
-                                fullWidth
+                                onChange={(_, val) => handleFieldChange("subCategory", val)}
+                                renderInput={(params) => <TextField {...params} label="Subcategoría" error={!!errors.subCategory} />}
                             />
-                            {errors.subCategory && (
-                                <FormHelperText error>{errors.subCategory}</FormHelperText>
+                        </Grid>
+
+                        <Grid size={{ sx: 12 }}>
+                            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: 'text.secondary' }}>
+                                Descripción Detallada
+                            </Typography>
+                            <Box sx={{
+                                border: !!errors.description ? '1px solid #d32f2f' : '1px solid #e0e0e0',
+                                borderRadius: 2, overflow: 'hidden'
+                            }}>
+                                <RichTextEditorInpt
+                                    rteRef={rteRefDesc}
+                                    content={form.description}
+                                />
+                            </Box>
+                            {errors.description && (
+                                <FormHelperText error sx={{ mx: 2 }}>{errors.description}</FormHelperText>
                             )}
-                        </div>
-                    </div>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </DialogContent>
 
-                    {/* ÍCONO */}
-                    <div>
-                        <span className="text-sm font-medium text-gray-700">Logo</span>
-                        <UploadInputForm
-                            tempFolder={TEMP_FOLDER}
-                            iconPreview={iconPreview}
-                            setIconPreview={setIconPreview}
-                            acceptedFileTypes={ACCEPTED_FILE_TYPES}
-                            handleChange={handleIconChange}
-                            setUploading={setUploading}
-                            error={errors.icon}
-                        />
-                    </div>
-
-                    {/* DESCRIPCIÓN */}
-                    <div className={errors.description ? "border border-red-700 rounded-lg" : ""}>
-                        <RichTextEditorInpt
-                            placeholder="Descripción"
-                            rteRef={rteRefDesc}
-                            content={form.description}
-                            onChange={validateForm}
-                        />
-                        {errors.description && (
-                            <FormHelperText error>{errors.description}</FormHelperText>
-                        )}
-                    </div>
-
-                    {/* Marcas */}
-                    <BrandComponent onChange={handleBrandsChange} />
-
-                    {/* ERROR GENERAL */}
-                    {errors.submit && (
-                        <FormHelperText error>{errors.submit}</FormHelperText>
-                    )}
-
-                    {/* BOTONES */}
-                    <div className="flex justify-end gap-2 mt-4">
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={() => onClose()}
-                            disabled={uploading}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            variant="contained"
-                            disabled={uploading || !hasChanges}
-                            onClick={handleSave}
-                            startIcon={uploading && <Preloader/>}
-                        >
-                            {uploading ? "Guardando..." : "Guardar"}
-                        </Button>
-                    </div>
-                </FormGroup>
-            </Box>
+            <DialogActions sx={{ p: 3, borderTop: '1px solid #f0f0f0' }}>
+                <Button onClick={() => onClose()} color="inherit" sx={{ textTransform: 'none' }}>
+                    Cancelar
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={handleSave}
+                    disabled={uploading}
+                    startIcon={uploading ? <Preloader size={16} /> : <Save size={18} />}
+                    sx={{ px: 4, textTransform: 'none', borderRadius: 2 }}
+                >
+                    {uploading ? "Guardando..." : "Guardar Investigación"}
+                </Button>
+            </DialogActions>
         </Dialog>
     );
 }

@@ -1,3 +1,5 @@
+import FormBuilder from './FormBuilder'; // Asegúrate de importar el componente
+
 export default {
     label: "Formulario de Contacto",
     icon: "ClipboardList",
@@ -10,9 +12,14 @@ export default {
         },
         {
             name: "description",
-            label: "Texto de instrucciones",
+            label: "Instrucciones",
             type: "textarea",
-            default: "Completa el formulario y nos pondremos en contacto contigo."
+            default: "Déjanos tus datos y te contactaremos pronto."
+        },
+        {
+            name: "config_separator",
+            label: "Configuración de Envío",
+            type: "separator"
         },
         {
             name: "submitAction",
@@ -20,35 +27,40 @@ export default {
             type: "select",
             default: "whatsapp",
             options: [
-                { label: "WhatsApp", value: "whatsapp" },
-                { label: "Email (Mailto)", value: "email" }
-            ]
+                { label: "WhatsApp (Recomendado)", value: "whatsapp" },
+                { label: "Email (Cliente de Correo)", value: "email" }
+            ],
+            help: "WhatsApp abrirá el chat con los datos precargados. Email abrirá la app de correo del usuario."
         },
         {
             name: "destination",
             label: "Destino (Teléfono o Email)",
             type: "text",
-            help: "Para WhatsApp: número con código país (57300...). Para Email: correo@ejemplo.com",
+            help: "Si es WhatsApp: Número con código país (ej: 57300...). Si es Email: correo@colegio.edu.co",
             default: ""
         },
         {
             name: "submitButtonText",
             label: "Texto del Botón",
             type: "text",
-            default: "Enviar Ahora"
+            default: "Enviar Mensaje"
         },
         {
+            name: "fields_separator",
+            label: "Diseño del Formulario",
+            type: "separator"
+        },
+        // 🔥 AQUÍ ESTÁ EL CAMBIO CLAVE
+        {
             name: "formFields",
-            label: "Configuración de Campos (JSON)",
-            type: "jsonCode",
-            help: "Define los inputs. Propiedad 'width': 6 es mitad, 12 es completo.",
+            label: "Campos del Formulario",
+            type: "custom", // O 'component' dependiendo de tu sistema de renderizado de admin
+            component: FormBuilder, // Usamos el componente visual
             default: JSON.stringify([
-                { "name": "nombre", "label": "Nombre Completo", "type": "text", "width": 6, "required": true },
-                { "name": "telefono", "label": "Teléfono", "type": "number", "width": 6, "required": true },
-                { "name": "email", "label": "Correo Electrónico", "type": "email", "width": 12, "required": true },
-                { "name": "servicio", "label": "Tipo de Servicio", "type": "select", "options": "Asesoría,Soporte,Ventas", "width": 12 },
-                { "name": "mensaje", "label": "¿En qué podemos ayudarte?", "type": "textarea", "width": 12 }
-            ], null, 4)
+                { id: '1', name: "nombre", label: "Nombre Completo", type: "text", width: 12, required: true },
+                { id: '2', name: "telefono", label: "Teléfono de Contacto", type: "number", width: 12, required: true },
+                { id: '3', name: "mensaje", label: "¿Cómo podemos ayudarte?", type: "textarea", width: 12, required: false }
+            ])
         }
     ]
 };

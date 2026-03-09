@@ -1,4 +1,3 @@
-// src/pages/admin/components/helpers/sections/DirectorySection/comparison/ComparisonContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 

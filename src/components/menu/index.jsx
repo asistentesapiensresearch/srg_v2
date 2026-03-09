@@ -7,17 +7,6 @@ export const Menu = [
         auth: false
     },
     {
-        path: '/about',
-        label: 'Nosotros',
-        auth: false
-    },
-    {
-        path: '/allies',
-        label: 'Aliados',
-        group: 'Allies',
-        auth: true
-    },
-    {
         path: '/admin',
         label: 'Admin',
         group: 'Admin',
@@ -25,7 +14,7 @@ export const Menu = [
     },
     {
         path: '/profile',
-        label: 'Perfil',
+        label: 'Mi Cuenta',
         icon: <UserIcon className='me-2' />,
         auth: true
     },

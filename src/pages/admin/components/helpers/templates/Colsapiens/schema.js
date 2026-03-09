@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
-    label: "Colsapiens",
-    description: "Investigación Colsapiens 2025",
+    label: "Nuevo Template",
+    description: "Exportado desde el editor",
     getSections: () => [
         {
             "children": [
@@ -139,6 +139,15 @@ export default {
                             id: uuidv4(),
                             "type": "DirectorySection",
                             "props": {
+                                "enrichmentType": "EDUCATIONAL",
+                                "quickFilters": "[\n  {\n    \"label\": \"Aliados\",\n    \"filters\": {\n      \"isLinked\": [true]\n    },\n    \"default\": true\n  },\n  {\n    \"label\": \"Todos\",\n    \"filters\": {}\n  }\n]",
+                                "showAds": false,
+                                "primaryColor": "#c10008",
+                                "groupByColumn": "Nombre",
+                                "targetVersion": "2025-2026",
+                                "enrichmentKey": "Nombre",
+                                "enableEnrichment": true,
+                                "enrichmentSubtype": "school",
                                 "sourceConfig": {
                                     "columnAliases": {
                                         "Star": "Stars",
@@ -171,16 +180,11 @@ export default {
                                     "url": "",
                                     "token": ""
                                 },
-                                "quickFilters": "[\n  {\n    \"label\": \"Aliados\",\n    \"filters\": {\n      \"Vinculada\": [\"Sí\"]\n    },\n    \"default\": true\n  },\n  {\n    \"label\": \"Todos\",\n    \"filters\": {}\n  }\n]",
-                                "showAds": false,
                                 "viewType": "grid",
-                                "primaryColor": "#c10008",
                                 "itemsPerAds": 2,
                                 "versionColumn": "Año",
                                 "quick_filters": "[\n  {\n    \"label\": \"Todos\",\n    \"filters\": {}\n  },\n  {\n    \"label\": \"Aliados\",\n    \"filters\": {\n      \"Vinculada\": \"Sí\"\n    }\n  }\n]",
-                                "itemsPerColumn": 1,
-                                "groupByColumn": "Colegio",
-                                "targetVersion": "2025-2026"
+                                "itemsPerColumn": 1
                             }
                         }
                     ],

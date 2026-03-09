@@ -1,4 +1,3 @@
-// src/components/builder/helpers/ImageUploaderField.jsx
 import { useState, useEffect } from 'react';
 import { FileUploader } from '@aws-amplify/ui-react-storage';
 import { remove, getUrl } from 'aws-amplify/storage';

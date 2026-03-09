@@ -1,4 +1,3 @@
-// src/pages/admin/components/helpers/sections/ModalSection/schema.js
 export default {
     label: "Modal / Pop-up Contenedor",
     icon: "Maximize",
