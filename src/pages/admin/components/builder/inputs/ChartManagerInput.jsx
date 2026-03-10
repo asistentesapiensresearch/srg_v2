@@ -34,7 +34,6 @@ export default function ChartManagerInput({ value, onChange }) {
     // 1. CONECTAR DRIVE Y OBTENER HOJAS
     const fetchSheetNames = useCallback(async (fileId, authToken) => {
         if (!fileId || !authToken) return [];
-
         try {
             const response = await fetch(
                 `https://sheets.googleapis.com/v4/spreadsheets/${fileId}`,
@@ -45,6 +44,11 @@ export default function ChartManagerInput({ value, onChange }) {
             if (response.status === 401 || response.status === 403) {
                 setAuthError(true);
                 throw new Error("Token expired");
+            }
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.log("GOOGLE ERROR:", text);
             }
 
             // Si funciona, reseteamos el error
@@ -58,6 +62,7 @@ export default function ChartManagerInput({ value, onChange }) {
                 name: s.properties.title
             }));
         } catch (e) {
+            console.error("Error fetching sheets:", e.message);
             console.error("Error fetching sheets:", e);
             return [];
         }
