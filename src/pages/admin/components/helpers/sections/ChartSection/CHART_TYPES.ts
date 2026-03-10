@@ -5,6 +5,7 @@ export const CHART_TYPES = [
     { value: 'area', label: 'Área' },
     { value: 'areaspline', label: 'Área Suavizada' },
     { value: 'column', label: 'Columnas' },
+    { value: 'column_stacked', label: 'Columnas Apiladas' },
     { value: 'bar', label: 'Barras Horizontales' },
     { value: 'pie', label: 'Torta / Circular' },
     { value: 'scatter', label: 'Dispersión' },

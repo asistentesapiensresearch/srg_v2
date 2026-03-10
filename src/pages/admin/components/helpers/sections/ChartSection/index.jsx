@@ -184,6 +184,18 @@ export default function ChartSection({
             commonOptions.plotOptions = { series: { enableMouseTracking: false, marker: { enabled: false } } };
         }
 
+        // add stacking
+        if(type === 'column_stacked') {
+            commonOptions.chart.type = 'column';
+            commonOptions.plotOptions = {
+                ...(commonOptions.plotOptions || {}),
+                column: {
+                    ...(commonOptions.plotOptions?.column || {}),
+                    stacking: 'normal'
+                }
+            };
+        }
+
         return commonOptions;
     };
 
@@ -237,6 +249,7 @@ export default function ChartSection({
 
                         <Box sx={{ flexGrow: 1, minHeight: 0, position: 'relative' }}>
                             <HighchartsReact
+                                key={`${activeIndex}-${activeChartConfig.type}`}
                                 ref={chartComponentRef}
                                 highcharts={Highcharts}
                                 options={mainOptions}
@@ -276,7 +289,7 @@ export default function ChartSection({
                                         sx={{ p: 1.5, cursor: 'pointer', border: isActive ? `2px solid ${chart.color || '#1976d2'}` : '1px solid #eee', borderRadius: 3, opacity: isActive ? 1 : 0.7, transition: 'all 0.3s ease' }}
                                     >
                                         <Box height={80} mb={1} bgcolor="#f9fafb" borderRadius={2} overflow="hidden">
-                                            {data ? <HighchartsReact highcharts={Highcharts} options={thumbOptions} constructorType={chart.type === 'map' ? 'mapChart' : 'chart'} /> : <Box height="100%" display="flex" justifyContent="center" alignItems="center">{chart.type === 'map' ? <MapIcon size={20} color="#ddd" /> : <BarChart2 size={20} color="#ddd" />}</Box>}
+                                            {data ? <HighchartsReact key={`${idx}-${chart.type}`} highcharts={Highcharts} options={thumbOptions} constructorType={chart.type === 'map' ? 'mapChart' : 'chart'} /> : <Box height="100%" display="flex" justifyContent="center" alignItems="center">{chart.type === 'map' ? <MapIcon size={20} color="#ddd" /> : <BarChart2 size={20} color="#ddd" />}</Box>}
                                         </Box>
                                         <Typography variant="caption" fontWeight="bold" noWrap display="block">{chart.alias}</Typography>
                                     </Paper>
