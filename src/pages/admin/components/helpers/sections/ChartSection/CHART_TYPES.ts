@@ -5,11 +5,10 @@ export const CHART_TYPES = [
     { value: 'area', label: 'Área' },
     { value: 'areaspline', label: 'Área Suavizada' },
     { value: 'column', label: 'Columnas' },
-    { value: 'column_stacked', label: 'Columnas Apiladas' },
     { value: 'bar', label: 'Barras Horizontales' },
     { value: 'pie', label: 'Torta / Circular' },
     { value: 'scatter', label: 'Dispersión' },
-
+    
     // --- AVANZADOS (Requieren highcharts-more) ---
     { value: 'arearange', label: 'Rango de Área' },
     { value: 'areasplinerange', label: 'Rango de Área Suavizada' },
@@ -20,5 +19,11 @@ export const CHART_TYPES = [
     { value: 'errorbar', label: 'Barras de Error' },
     { value: 'waterfall', label: 'Cascada' },
     { value: 'polygon', label: 'Polígono' },
-    { value: 'packedbubble', label: 'Burbujas Empaquetadas' }
+    { value: 'packedbubble', label: 'Burbujas Empaquetadas' },
+
+    // Personalizados - que cambian propiedades
+    { value: 'column_stacked', label: 'Columnas Apiladas' },
+
+    // mapa
+    { value: 'map', label: 'Mapa (Colombia)' },
 ];
