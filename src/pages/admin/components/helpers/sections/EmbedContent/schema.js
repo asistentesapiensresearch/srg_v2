@@ -1,5 +1,5 @@
 export default {
-    label: "Embeber Contenido",
+    label: "Embed Contenido",
     icon: "Maximize",
     isContainer: false,
     fields: [

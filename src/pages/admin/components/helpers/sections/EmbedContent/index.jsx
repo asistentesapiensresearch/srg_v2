@@ -24,7 +24,7 @@ const EmbedWrapper = ({
 };
 
 
-export default function SocialEmbed ({
+export default function EmbedContent ({
     url, width,height, borderRadius, shadow, shadowColor
 }) {
 

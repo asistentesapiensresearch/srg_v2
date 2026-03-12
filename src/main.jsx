@@ -18,5 +18,7 @@ I18n.setLanguage('es');
 Amplify.configure(amplifyConfig);
 
 createRoot(document.getElementById('root')).render(
+  <StrictMode>
     <App />
+  </StrictMode>,
 )
