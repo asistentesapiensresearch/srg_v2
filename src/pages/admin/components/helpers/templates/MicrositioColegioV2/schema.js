@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
-    label: "Nuevo Template",
+    label: "Micrositio Colegio V2",
     description: "Exportado desde el editor",
     getSections: () => [
     {
@@ -17,7 +17,7 @@ export default {
                                 "props": {
                                     "playInterval": 2000,
                                     "thumbnailBarPosition": "bottom",
-                                    "galleryId": "cd0fae66-7051-4712-b4b9-90adfed5eae2",
+                                    "galleryId": "b66a2ff7-e4d1-4ec5-a366-bf70e397a26a",
                                     "showFullscreenButton": true,
                                     "LazyLoadImages": true,
                                     "showPlayButton": false,
@@ -74,7 +74,7 @@ export default {
                         "props": {
                             "border": "none",
                             "padding_horizontal": 2,
-                            "src": "https://amplify-srgv2-user-sandbo-srgstoragebucketb5da2d11-ocmoplbnxcrp.s3.us-east-1.amazonaws.com/institutions/logo-1773090240748/logo-1773090158419-Logocolegio_boston_internacional_barranquilla.webp?x-id=GetObject&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAY5QL65XF5X4SDCVK%2F20260310%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260310T195250Z&X-Amz-SignedHeaders=host&X-Amz-Expires=900&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEIT%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJGMEQCIA7IaMIcn45VzVwrfvXLSqkcBre4Ff2J4y7QhKJiBp5iAiA4vI6ra95iAdbw42zeeWpadrRScOYIfv8GNtY3dWCsqyrGBAhNEAAaDDYxMzEzMTY3NzEzMSIMDMRfv9O3RBQsZCqjKqMEjnCs4obsW0RMb%2FzLVuP2Din2k4ZztMRo8EZ96Z3fJpPqFlGf%2FczWaTiV4jAIEITnqA528bY0wddj5OZwXoaRPCUw%2Blm8OxXb7xDzkrgUstJj6ObtqExvmZO8VUhxYN3%2FNnePIp1et5%2BIV9GQC6MDuLi06ODzK0ZOCAKGMkO4rxXxGTK%2FXIatbtTs%2Fr%2F7zqq0uSmdA9sr%2FrXObxyLgRWWpE66Z3%2FegyMjEotc4nsM3Ip7fE4rj2zJBpdSRZidEMx9TCTEdqyifCuD9jLpAvsCVm9GFEsi%2F5fw0Dd%2B2ls8pt%2B8FqZiiOCVx%2BOuNUCOjJXL8IM8Xx4Bn4BLgCk77I6OfluseByAFqjAlhylzLIl91Tj0VU6ujxbn%2FErcCtVNL31STTmvivw8TzblAay9psPWkuyUmDC0k4iUR413kdyHlVBSZnoUkwnPJ6MZBSCBfsGheRpm5H4QGk4HoHbNzmSNlfmT7zBQ5ubYIq%2B0S%2B%2F%2FYaphvsFQbFRtKFQhg39PjLX%2FwPBSCc57PuQDQWGZf%2FRYV%2Ft6dzugcHAwCYLD3zAZmwswJApJSKTQ2WwGZ5hE71CNUGjTccNdqFclnBGiW5eFJb8gql22KT4zNW6umjvIeNF6Yv8GY68R51sSGG6a7VAvThy%2ByVQaCaGsHXJTMeTdxGUCczNGkAezR6x0mZyeNbfeKMXr0mMW2bhmsrXlINMPu1LmlasxBTuNNSHaSeEy63SLjCK7cHNBjqEAvvICfMNZ2ZWkTl2uHWmygJf1MekhofK0x1yJROhQrNF%2B9lmXkMZGRTpeX3YSw3tz67LACY7QMd9gjS9%2FHv1evOmSrpvMA7JRTVXX1yGvGhLFADmjhENnuAivHruTSdVBvBEreBJNXzhmDv2RrT%2FBkPJn04r0An3k1Eh5BudLO1YboUP%2F%2BJvUwZoTfSBm72%2Fq1n1%2BppNOb9qGlEGONl5O9IZL1v0e5Xq3Dx%2Fz7uKxp6WGEqHZOSEPQ%2FTvtLdDmBCv%2F%2B2osFEc2T3b%2FJqYtfhrUpZaPyGezeoC%2B7%2Bnu8x8MOtRcTRUgSA1iW78KlIe7sHJka46zqnrhZ5KIeYZTf5n4FlkAbB&X-Amz-Signature=99477780e5af9ed100a3aa47b05a93c2910c9b1fdda3ff0be39ec50d386c033c",
+                            "src": "sections/images/temp/1d22d101-186a-4281-80f5-e76da7cd9485/1773254839163-Logocolegio_boston_internacional_barranquilla.webp",
                             "margin_top": 0,
                             "alt": "Imagen",
                             "padding_top": 2,
@@ -152,31 +152,31 @@ export default {
                             "columns": 4,
                             "brands_list": [
                                 {
-                                    "createdAt": "2026-03-10T18:23:52.513Z",
-                                    "name": "icaa",
+                                    "createdAt": "2026-03-11T18:46:04.359Z",
+                                    "name": "Cognia",
+                                    "link": "https://www.cognia.org/",
+                                    "index": 0,
+                                    "id": "dbdb4ff3-1187-4378-a931-2466df39b5d3",
+                                    "key": "brands/cognia/1773254747896-Cognia.webp",
+                                    "updatedAt": "2026-03-11T18:46:04.359Z"
+                                },
+                                {
+                                    "createdAt": "2026-03-11T18:45:08.202Z",
+                                    "name": "ICAA",
                                     "link": "https://icaa.us/",
                                     "index": 0,
-                                    "id": "3ea977cd-1009-4e2c-9087-75494ad4c895",
-                                    "key": "brands/icaa/1773166989863-International Christian Accrediting Association.webp",
-                                    "updatedAt": "2026-03-10T18:23:52.513Z"
+                                    "id": "0ed96e51-0a36-433e-bf82-374e03213f60",
+                                    "key": "brands/icaa/1773254674110-International Christian Accrediting Association.webp",
+                                    "updatedAt": "2026-03-11T18:45:08.202Z"
                                 },
                                 {
-                                    "createdAt": "2026-03-10T18:23:01.222Z",
-                                    "name": "Cognia",
-                                    "link": "https://www.cognia.org/accreditation/",
+                                    "createdAt": "2026-03-11T18:46:51.484Z",
+                                    "name": "Cambridge English",
+                                    "link": "https://www.cambridgeenglish.org/es/information-for-preparation-centres/",
                                     "index": 0,
-                                    "id": "01864aed-2472-4810-bfe1-8784c217d797",
-                                    "key": "brands/cognia/1773166948491-Cognia.webp",
-                                    "updatedAt": "2026-03-10T18:23:01.222Z"
-                                },
-                                {
-                                    "createdAt": "2026-03-10T18:24:44.991Z",
-                                    "name": "PreparationCentre-CambridgeEnglish",
-                                    "link": "https://preparationcentres.cambridgeenglish.org/Views/UserManagement/LogOn.aspx?ReturnUrl=%2f",
-                                    "index": 0,
-                                    "id": "f2cca920-e544-47cc-8a5f-e82175f457a4",
-                                    "key": "brands/preparationcentre-cambridgeenglish/1773167051878-Preparation Centre-Cambridge English (PC-CE).webp",
-                                    "updatedAt": "2026-03-10T18:24:44.991Z"
+                                    "id": "a27daac8-8981-4d9c-9176-552496b91aeb",
+                                    "key": "brands/cambridge_english/1773254774468-Preparation Centre-Cambridge English (PC-CE).webp",
+                                    "updatedAt": "2026-03-11T18:46:51.484Z"
                                 }
                             ],
                             "title": "",
@@ -975,6 +975,145 @@ export default {
                     "padding_y": 20,
                     "label": "Nueva Pestaña",
                     "padding_x": 20
+                }
+            }
+        ],
+        id: uuidv4(),
+        "type": "CssCode",
+        "props": {
+            "label": "Personalización CSS",
+            "css_code": "/* Usa .custom-scope para referirte a este contenedor */\n.custom-scope {\n  padding: 45px;\n  margin: 20px 0;\n  background-color: #EEE;\n  border-radius: 10px;\n}\n\n.custom-scope h3 {\n  font-size: 24px;\n  color: var(--color-red-700);\n  font-family: 'Roboto';\n  padding: 8px;\n  margin-top: 2px;\n  border-left: 2px solid rgb(217 83 79);\n  margin-bottom: 10px;\n  font-weight: bolder;\n}"
+        }
+    },
+    {
+        "children": [
+            {
+                "children": [],
+                id: uuidv4(),
+                "type": "WysiwygSection",
+                "props": {
+                    "className": "",
+                    "content": "<h3>Explora</h3>",
+                    "customCss": "",
+                    "maxWidth": "xl",
+                    "paddingY": 0
+                }
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        id: uuidv4(),
+                        "type": "WysiwygSection",
+                        "props": {
+                            "className": "container-table-explore",
+                            "content": "<table style=\"min-width: 50px;\"><colgroup><col style=\"min-width: 25px;\"><col style=\"min-width: 25px;\"></colgroup><tbody><tr><td colspan=\"1\" rowspan=\"1\"><p>Exalumnos (2019-2024)</p></td><td colspan=\"1\" rowspan=\"1\"><p>186</p></td></tr><tr><td colspan=\"1\" rowspan=\"1\"><p>En Colombia</p></td><td colspan=\"1\" rowspan=\"1\"><p>150</p></td></tr><tr><td colspan=\"1\" rowspan=\"1\"><p>En otros países</p></td><td colspan=\"1\" rowspan=\"1\"><p>36</p></td></tr></tbody></table>",
+                            "customCss": ".container-table-explore {\n  background-color: #EEE;\n}\n\n.container-table-explore, table {\n  background-color: white;\n  padding:0;\n  margin-top: 100px;\n}\n\n.container-table-explore table {\n  border-collapse: collapse;\n}\n\n.container-table-explore table,\n.container-table-explore th,\n.container-table-explore td {\n  border: 1px solid #000;\n} ",
+                            "maxWidth": "lg",
+                            "paddingY": 4
+                        }
+                    },
+                    {
+                        "children": [],
+                        id: uuidv4(),
+                        "type": "ChartSection",
+                        "props": {
+                            "sectionTitle": "",
+                            "width": 500,
+                            "chartManager": {
+                                "fileName": "Explora_redboston",
+                                "charts": [
+                                    {
+                                        "columnAliases": {},
+                                        "xAxis": "",
+                                        "sheetName": "Hoja 1",
+                                        "color": "#2c3e50",
+                                        "series": [
+                                            "Country name",
+                                            "Exalumnos en el exterior"
+                                        ],
+                                        "columnColors": {},
+                                        "sheetId": 0,
+                                        "alias": "",
+                                        "id": 1773261541320,
+                                        "type": "map"
+                                    }
+                                ],
+                                "fileId": "1R-MdZdHUrijlQjIrWsuxvNC9fioDu38JtQGK3oUlZO8",
+                                "token": ""
+                            },
+                            "thumbnailsMode": "auto",
+                            "height": 400
+                        }
+                    }
+                ],
+                id: uuidv4(),
+                "type": "FeaturesGrid",
+                "props": {
+                    "custom_desktop": "5,7",
+                    "background_color": "#eeeeee",
+                    "custom_mobile": "12,12",
+                    "custom_tablet": "6,6",
+                    "gap": 2,
+                    "layout_type": "custom",
+                    "padding_y": 0,
+                    "title": "",
+                    "columns_desktop": 2,
+                    "columns_mobile": 1,
+                    "columns_tablet": 2
+                }
+            }
+        ],
+        id: uuidv4(),
+        "type": "CssCode",
+        "props": {
+            "label": "Personalización CSS",
+            "css_code": "/* Usa .custom-scope para referirte a este contenedor */\n.custom-scope {\n  padding: 45px;\n  margin: 20px 0;\n  background-color: #EEE;\n  border-radius: 10px;\n}\n\n.custom-scope h3 {\n  font-size: 24px;\n  color: var(--color-red-700);\n  font-family: 'Roboto';\n  padding: 8px;\n  margin-top: 2px;\n  border-left: 2px solid rgb(217 83 79);\n  margin-bottom: 10px;\n  font-weight: bolder;\n}"
+        }
+    },
+    {
+        "children": [
+            {
+                "children": [
+                    {
+                        "children": [],
+                        id: uuidv4(),
+                        "type": "WysiwygSection",
+                        "props": {
+                            "className": "container-location-map",
+                            "content": "<h3>Ubica</h3>\n<iframe \n  src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.649203301186!2d-74.81295232585819!3d10.989828855223003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8ef42d0e1238e433%3A0x7dd1660b4d64a69e!2sBoston%20International%20School!5e0!3m2!1ses-419!2sco!4v1739233477683!5m2!1ses-419!2sco\" \n  width=\"100%\" \n  height=\"450\" \n  style=\"border:0;\" \n  allowfullscreen=\"\" \n  loading=\"lazy\" \n  referrerpolicy=\"no-referrer-when-downgrade\">\n</iframe>\n",
+                            "customCss": ".container-location-map {\n  background-color: #EEE;\n  padding:0;\n}\n.container-location-map h3 {\n  margin-bottom: 40px;\n}",
+                            "maxWidth": "xl",
+                            "paddingY": 0
+                        }
+                    },
+                    {
+                        "children": [],
+                        id: uuidv4(),
+                        "type": "WysiwygSection",
+                        "props": {
+                            "className": "container-facebook",
+                            "content": "<iframe \n  src=\"https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fredbisboston%2F&tabs=timeline&width=500&height=1000&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId\" \n  width=\"100%\" \n  height=\"700\" \n  style=\"border:none; overflow:hidden; min-width:326px; border-radius:3px;\" \n  scrolling=\"no\" \n  frameborder=\"0\" \n  allowfullscreen=\"true\" \n  allow=\"autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share\">\n</iframe>",
+                            "customCss": ".container-facebook {\n  background-color: #EEE;\n  padding:0;\n}",
+                            "maxWidth": "xl",
+                            "paddingY": 4
+                        }
+                    }
+                ],
+                id: uuidv4(),
+                "type": "FeaturesGrid",
+                "props": {
+                    "custom_desktop": "6",
+                    "background_color": "#eeeeee",
+                    "custom_mobile": "12,12",
+                    "custom_tablet": "6,6",
+                    "gap": 6,
+                    "layout_type": "custom",
+                    "padding_y": 0,
+                    "title": "",
+                    "columns_desktop": 2,
+                    "columns_mobile": 1,
+                    "columns_tablet": 2
                 }
             }
         ],
