@@ -55,6 +55,11 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [socialYoutube, setSocialYoutube] = useState("");
     const [languagesStr, setLanguagesStr] = useState("");
 
+    // Estados para contenidos embebidos
+    const [embedFacebook, setEmbedFacebook] = useState("");
+    const [embedInstagram, setEmbedInstagram] = useState("");
+    const [embedGoogleMap, setEmbedGoogleMap] = useState("");
+
     // Imágenes
     const [logoKey, setLogoKey] = useState(institution?.logo || "");
     const [logoPreview, setLogoPreview] = useState("");
@@ -91,6 +96,11 @@ export function InstitutionForm({ onClose, institution, store }) {
                 setSocialInstagram(iSocial.instagram || "");
                 setSocialTwitter(iSocial.twitter || "");
                 setSocialYoutube(iSocial.youtube || "");
+               
+                const embed = typeof institution.embed === 'string' ? JSON.parse(institution.embed) : institution.embed || {};
+                setEmbedFacebook(embed.facebook || "");
+                setEmbedInstagram(embed.instagram || "");
+                setEmbedGoogleMap(embed.googleMap || "");
 
                 const langs = Array.isArray(institution.languages) ? institution.languages.join(", ") : "";
                 setLanguagesStr(langs);
@@ -174,6 +184,12 @@ export function InstitutionForm({ onClose, institution, store }) {
                 twitter: socialTwitter,
                 youtube: socialYoutube
             });
+            // Para contenidos embebidos
+            const embedPayload = JSON.stringify({
+                facebook: embedFacebook,
+                instagram: embedInstagram,
+                googleMap: embedGoogleMap
+            });
             const languagesArray = languagesStr.split(",").map(s => s.trim()).filter(Boolean);
 
             // 4. Enviar al Store
@@ -194,6 +210,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 rectorPhoto: currentRectorKey,
                 rectorSocial: rectorSocialPayload,
                 socialMedia: socialMediaPayload,
+                embed: embedPayload,
                 languages: languagesArray
             });
 
@@ -408,6 +425,30 @@ export function InstitutionForm({ onClose, institution, store }) {
                     fullWidth
                     helperText="Ej: Español, Inglés, Francés"
                 />
+
+                <h3 className="font-bold text-gray-700 mt-2 border-b">Redes y ubicación Embebida</h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <TextField
+                        label="Facebook"
+                        value={embedFacebook}
+                        onChange={(e) => setEmbedFacebook(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Instagram"
+                        value={embedInstagram}
+                        onChange={(e) => setEmbedInstagram(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Google Map"
+                        value={embedGoogleMap}
+                        onChange={(e) => setEmbedGoogleMap(e.target.value)}
+                        fullWidth
+                    />
+                </div>
+
 
                 <div className="flex justify-end gap-2 mt-4">
                     <Button variant="outlined" color="error" onClick={handleCancel}>

@@ -23,6 +23,7 @@ export const Institution = a.model({
 
     // Info Institucional
     socialMedia: a.json(), // Ej: { facebook: "...", instagram: "..." }
+    embed: a.json(), // Ej: { googleMap: "...", facebook: "..." }
     languages: a.string().array(), // Ej: ["Español", "Inglés"]
 
     template: a.hasOne("Template", "institutionId"),
