@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Stack, IconButton, Tooltip, CircularProgress } from '@mui/material';
 import { Facebook, Instagram, Linkedin, Twitter, Youtube, Globe, Link as LinkIcon } from 'lucide-react';
-import { generateClient } from 'aws-amplify/data';
 import DataSourceManager from '@src/core/data/DataSourceManager';
-
-const client = generateClient();
 
 export default function DynamicSocialMedia({
     // Contexto inyectado

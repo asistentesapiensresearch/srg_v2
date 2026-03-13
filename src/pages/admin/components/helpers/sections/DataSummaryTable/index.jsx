@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Typography, Container, Skeleton, Alert } from '@mui/material';
 import { Linkedin, Mail, Link as LinkIcon, Globe } from 'lucide-react';
-import { generateClient } from "aws-amplify/data";
 import { fetchSheet } from '../DirectorySection/fetchSheet';
 import DataSourceManager from '@src/core/data/DataSourceManager';
 
-const client = generateClient();
 
 // Helper de limpieza
 const cleanString = (val) => {
