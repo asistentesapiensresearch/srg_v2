@@ -24,7 +24,7 @@ const EmbedWrapper = ({
 };
 
 
-export default function EmbedContent ({
+export default function EmbedContent({
     url, width,height, borderRadius, shadow, shadowColor
 }) {
 

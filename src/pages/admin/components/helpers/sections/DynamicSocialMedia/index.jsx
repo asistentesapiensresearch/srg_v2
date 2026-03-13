@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Stack, IconButton, Tooltip, CircularProgress } from '@mui/material';
 import { Facebook, Instagram, Linkedin, Twitter, Youtube, Globe, Link as LinkIcon } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
+import DataSourceManager from '@src/core/data/DataSourceManager';
 
 const client = generateClient();
 
@@ -40,10 +41,7 @@ export default function DynamicSocialMedia({
             setLoading(true);
             try {
                 // Hacemos un list con el filtro especificado (ej: filter: { name: { eq: "Colegio Boston..." } })
-                const { data } = await client.models[modelName].list({
-                    filter: { [searchField]: { eq: searchValue } },
-                    limit: 1
-                });
+                const { data }  = await DataSourceManager.findByField(modelName, searchField, searchValue, 1);
 
                 if (data && data.length > 0) {
                     setFetchedRecord(data[0]);

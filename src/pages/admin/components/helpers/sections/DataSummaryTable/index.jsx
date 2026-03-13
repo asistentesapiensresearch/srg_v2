@@ -3,6 +3,7 @@ import { Box, Typography, Container, Skeleton, Alert } from '@mui/material';
 import { Linkedin, Mail, Link as LinkIcon, Globe } from 'lucide-react';
 import { generateClient } from "aws-amplify/data";
 import { fetchSheet } from '../DirectorySection/fetchSheet';
+import DataSourceManager from '@src/core/data/DataSourceManager';
 
 const client = generateClient();
 
@@ -111,10 +112,12 @@ const DataSummaryTable = ({
                         if (enrichmentSubtype) filter.subtype = { eq: enrichmentSubtype };
 
                         // Fetch BD (Traemos con límite para hacer el matching por cleanString localmente)
-                        const { data: institutionsDB } = await client.models.Institution.list({
-                            filter: Object.keys(filter).length > 0 ? filter : undefined,
-                            limit: 3000
-                        });
+                        // Cambio llamado de petición para que dependa directamente de DataSourceManager y su sistema de cacheo
+                        const { data: institutionsDB } = await DataSourceManager.findWithFilter(
+                            "Institution",
+                            filter,
+                            3000
+                        );
 
                         const institutionMap = new Map();
                         institutionsDB.forEach(inst => {
