@@ -418,31 +418,31 @@ export function InstitutionForm({ onClose, institution, store }) {
                     <TextField
                         label="Nombre encargado"
                         value={admisionesName}
-                        onChange={(e) => setSocialFacebook(e.target.value)}
+                        onChange={(e) => setAdmisionesName(e.target.value)}
                         fullWidth
                     />
                     <TextField
                         label="Correo"
                         value={admisionesEmail}
-                        onChange={(e) => setSocialInstagram(e.target.value)}
+                        onChange={(e) => setAdmisionesEmail(e.target.value)}
                         fullWidth
                     />
                     <TextField
                         label="Celular/WhatsApp"
                         value={admisionesPhone}
-                        onChange={(e) => setSocialTwitter(e.target.value)}
+                        onChange={(e) => setAdmisionesPhone(e.target.value)}
                         fullWidth
                     />
                     <TextField
                         label="Ubicación"
                         value={admisionesLocation}
-                        onChange={(e) => setSocialYoutube(e.target.value)}
+                        onChange={(e) => setAdmisionesLocation(e.target.value)}
                         fullWidth
                     />
                     <TextField
                         label="Link de Admisiones"
                         value={admisionesLink}
-                        onChange={(e) => setSocialYoutube(e.target.value)}
+                        onChange={(e) => setAdmisionesLink(e.target.value)}
                         fullWidth
                     />
                 </div>

@@ -15,9 +15,9 @@ export const Institution = a.model({
 
     // Admisiones lo cambio a json
     admisiones: a.json(), // Ej: { mail, location, phone, link, name, photo }
-    // admisionesEmail: a.string(),
-    // admisionesLink: a.url(),
-    // admisionesLabel: a.string(),
+    admisionesEmail: a.string(),  // temporalmente estos campos - deben eliminarse
+    admisionesLink: a.url(), // temporalmente estos campos
+    admisionesLabel: a.string(), // temporalmente estos campos
 
     // Clasificación
     type: a.string(),    // Ej: Universidad, Instituto
