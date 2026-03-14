@@ -66,6 +66,12 @@ export default {
         { name: "gap", label: "Separación entre iconos", type: "number", default: 2 },
         { name: "icon_color", label: "Color de los Iconos", type: "color", default: "#4b5563" },
         { name: "hover_color", label: "Color al pasar el mouse", type: "color", default: "#c10008" },
+        {
+            name: "marginTop",
+            label: "Margen superior",
+            type: "number",
+            default: "10",
+        },
 
         { name: "content_settings", label: "⚙️ CONTENIDO", type: "separator" },
         {
@@ -74,6 +80,6 @@ export default {
             type: "checkbox",
             default: true,
             help: "Si el registro tiene un campo 'website' configurado, mostrará un icono de mundo."
-        }
+        },
     ]
 };

@@ -21,7 +21,8 @@ export default function DynamicSocialMedia({
     gap = 2,
     icon_color = "#4b5563",
     hover_color = "#c10008",
-    show_website = true
+    show_website = true,
+    marginTop = 10
 }) {
 
     // Estado para almacenar el registro si lo buscamos manualmente
@@ -112,7 +113,7 @@ export default function DynamicSocialMedia({
 
     // 4. Renderizado principal
     return (
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: alignment }}>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: alignment, marginTop: `${marginTop}px` }}>
             {loading ? (
                 <CircularProgress size={icon_size} sx={{ color: icon_color }} />
             ) : activeLinks.length > 0 ? (
