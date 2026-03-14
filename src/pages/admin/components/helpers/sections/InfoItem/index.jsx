@@ -50,6 +50,7 @@ const InfoItem = ({
     searchField,
     searchValue,
     selectValue,
+    itemsCustom,
     // css
     sizeIcon,
     colorIcon,
@@ -84,6 +85,10 @@ const InfoItem = ({
 
     const items = useMemo(() => {
 
+        if ( mode=== "custom") {
+            return itemsCustom;
+        }
+
         if(mode === "database") {
             if (!selectValue || !fetchedRecord) {
                 return [];
@@ -114,7 +119,7 @@ const InfoItem = ({
         }
 
 
-    }, [mode, fetchedRecord, selectValue]);
+    }, [mode, fetchedRecord, selectValue, itemsCustom]);
 
 
     return (

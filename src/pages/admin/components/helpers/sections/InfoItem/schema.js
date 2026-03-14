@@ -13,6 +13,37 @@ export default {
                 { label: "Base de datos", value: "database" }
             ]
         },
+        // is Custom
+        {
+            name: "itemsCustom",
+            label: "Items",
+            type: "list",
+            condition: "mode === 'custom'",
+            fields: [
+                {
+                    name: "icon",
+                    label: "Icono",
+                    type: "select",
+                    default: "Mail",
+                    options: [
+                        { label: "Mail", value: "Mail" },
+                        { label: "Phone", value: "Phone" },
+                        { label: "MapPin", value: "MapPin" },
+                    ]
+                },
+                {
+                    name: "label",
+                    label: "Título",
+                    type: "text"
+                },
+                {
+                    name: "value",
+                    label: "Texto",
+                    type: "text"
+                }
+            ]
+        },
+        // isDatabase
         {
             name: "dataSourceMode",
             label: "Modo de Origen",
