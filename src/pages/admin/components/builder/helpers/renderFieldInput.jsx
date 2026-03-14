@@ -365,6 +365,92 @@ const renderFieldInput = (field, activeSection, onChange) => {
     );
   }
 
+
+  // ========== Items list ===============
+  if (field.type === "list") {
+
+    const items = value || [];
+
+    const updateItem = (index, key, newValue) => {
+      const updated = [...items];
+      updated[index] = { ...updated[index], [key]: newValue };
+      onChange(updated);
+    };
+
+    const addItem = () => {
+      const newItem = {};
+      field.fields.forEach(f => {
+        newItem[f.name] = f.default || "";
+      });
+      onChange([...items, newItem]);
+    };
+
+    const removeItem = (index) => {
+      const updated = items.filter((_, i) => i !== index);
+      onChange(updated);
+    };
+
+    return (
+      <Box>
+        <Typography variant="caption" fontWeight={600} color="text.secondary">
+          {field.label}
+        </Typography>
+
+        {items.map((item, index) => (
+          <Box
+            key={index}
+            sx={{
+              border: "1px solid #e5e7eb",
+              borderRadius: 2,
+              p: 2,
+              mt: 1
+            }}
+          >
+
+            {field.fields.map((subField) => (
+              <Box key={subField.name} mb={1}>
+                {renderFieldInput(
+                  subField,
+                  {
+                    ...activeSection,
+                    props: item
+                  },
+                  (val) => updateItem(index, subField.name, val)
+                )}
+              </Box>
+            ))}
+
+            <Box mt={1}>
+              <Typography
+                sx={{ cursor: "pointer", color: "error.main", fontSize: 12 }}
+                onClick={() => removeItem(index)}
+              >
+                Eliminar
+              </Typography>
+            </Box>
+
+          </Box>
+        ))}
+
+        <Box mt={1}>
+          <Typography
+            sx={{
+              cursor: "pointer",
+              color: "primary.main",
+              fontSize: 13,
+              fontWeight: 600
+            }}
+            onClick={addItem}
+          >
+            + Agregar item
+          </Typography>
+        </Box>
+
+      </Box>
+    );
+  }
+
+
   // ========== FALLBACK ==========
   return (
     <Box>
