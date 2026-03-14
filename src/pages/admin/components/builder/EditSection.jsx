@@ -48,15 +48,32 @@ export default function EditSection({
                         </Box>
 
                         <Box display="flex" flexDirection="column" gap={1} mt={2}>
-                            {activeSchema.fields.map((field) => (
-                                <Box key={field.name}>
-                                    {renderFieldInput(
-                                        field,
-                                        activeSection,
-                                        (value) => handleFieldChange(field.name, value)
-                                    )}
-                                </Box>
-                            ))}
+                            {activeSchema.fields
+                                .filter((field) => {
+                                    if (!field.condition) return true;
+
+                                    const props = activeSection?.props || {};
+
+                                    try {
+                                        return new Function(
+                                            ...Object.keys(props),
+                                            `return ${field.condition}`
+                                        )(...Object.values(props));
+                                    } catch (e) {
+                                        console.warn("Error evaluando condition:", field.condition);
+                                        return true;
+                                    }
+                                })
+                                .map((field) => (
+                                    <Box key={field.name}>
+                                        {renderFieldInput(
+                                            field,
+                                            activeSection,
+                                            (value) => handleFieldChange(field.name, value)
+                                        )}
+                                    </Box>
+                                ))
+                            }
                         </Box>
                     </Box>
                 </Drawer>
