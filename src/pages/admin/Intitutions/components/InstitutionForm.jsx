@@ -60,6 +60,13 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [embedInstagram, setEmbedInstagram] = useState("");
     const [embedGoogleMap, setEmbedGoogleMap] = useState("");
 
+    // Estados para sección de admisiones
+    const [admisionesName, setAdmisionesName] = useState("");
+    const [admisionesEmail, setAdmisionesEmail] = useState("");
+    const [admisionesPhone, setAdmisionesPhone] = useState("");
+    const [admisionesLocation, setAdmisionesLocation] = useState("");
+    const [admisionesLink, setAdmisionesLink] = useState("");
+
     // Imágenes
     const [logoKey, setLogoKey] = useState(institution?.logo || "");
     const [logoPreview, setLogoPreview] = useState("");
@@ -101,6 +108,13 @@ export function InstitutionForm({ onClose, institution, store }) {
                 setEmbedFacebook(embed.facebook || "");
                 setEmbedInstagram(embed.instagram || "");
                 setEmbedGoogleMap(embed.googleMap || "");
+
+                const admisiones = typeof institution.admisiones === 'string' ? JSON.parse(institution.admisiones) : institution.admisiones || {};
+                setAdmisionesName(admisiones.name || "");
+                setAdmisionesEmail(admisiones.email || "");
+                setAdmisionesPhone(admisiones.phone || "");
+                setAdmisionesLocation(admisiones.location || "");
+                setAdmisionesLink(admisiones.link || "");
 
                 const langs = Array.isArray(institution.languages) ? institution.languages.join(", ") : "";
                 setLanguagesStr(langs);
@@ -190,6 +204,14 @@ export function InstitutionForm({ onClose, institution, store }) {
                 instagram: embedInstagram,
                 googleMap: embedGoogleMap
             });
+            // Para admisiones
+            const admisionesPayload = JSON.stringify({
+                name: admisionesName,
+                email: admisionesEmail,
+                phone: admisionesPhone,
+                location: admisionesLocation,
+                link: admisionesLink
+            });
             const languagesArray = languagesStr.split(",").map(s => s.trim()).filter(Boolean);
 
             // 4. Enviar al Store
@@ -211,6 +233,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 rectorSocial: rectorSocialPayload,
                 socialMedia: socialMediaPayload,
                 embed: embedPayload,
+                admisiones: admisionesPayload,
                 languages: languagesArray
             });
 
@@ -389,6 +412,42 @@ export function InstitutionForm({ onClose, institution, store }) {
                     />
                 </FormControl>
 
+                <h3 className="font-bold text-gray-700 mt-2 border-b">Admisiones</h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <TextField
+                        label="Nombre encargado"
+                        value={admisionesName}
+                        onChange={(e) => setSocialFacebook(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Correo"
+                        value={admisionesEmail}
+                        onChange={(e) => setSocialInstagram(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Celular/WhatsApp"
+                        value={admisionesPhone}
+                        onChange={(e) => setSocialTwitter(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Ubicación"
+                        value={admisionesLocation}
+                        onChange={(e) => setSocialYoutube(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Link de Admisiones"
+                        value={admisionesLink}
+                        onChange={(e) => setSocialYoutube(e.target.value)}
+                        fullWidth
+                    />
+                </div>
+
+                
                 <h3 className="font-bold text-gray-700 mt-2 border-b">Redes e Idiomas</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
