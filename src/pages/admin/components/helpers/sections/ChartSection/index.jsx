@@ -110,7 +110,18 @@ export default function ChartSection({
         if (!data || !chartConfig) return null;
 
         let { type, xAxis, series: seriesCols } = chartConfig;
-        if (!xAxis && data.length > 0) xAxis = Object.keys(data[0])[0];
+
+        // Añado seriesFromChartConfig and propertiesData para obtener la propiedad de xAxis y garantizar el valor de las etiquetas, ya sea "", o cualquier valor definido en el excel
+        //  año  |  col-sapiens | sapiens | .....   -> ese año sera xLabel {año: valor} o  lo siguiente las series   ""  |  col-sapiens | sapiens |  -> "" tomara el valor de los objetos {"": valor}
+        let seriesFromChartConfig = chartConfig.series;
+        let propertiesData = Object.keys(data[0]);
+        if(seriesFromChartConfig.length > 0 && propertiesData.length > 0 && seriesFromChartConfig.length < propertiesData.length) {
+            xAxis = propertiesData.find(
+                prop => !seriesFromChartConfig.includes(prop)
+            ); 
+        } else {
+            xAxis = Object.keys(data[0])[0];
+        }
 
         let finalSeries = [];
         let chartSpecificOptions = {};

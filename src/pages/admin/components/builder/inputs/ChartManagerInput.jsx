@@ -337,8 +337,12 @@ export default function ChartManagerInput({ value, onChange }) {
                                                 value={chart.series || []}
                                                 onChange={(e) => handleUpdateChart(index, 'series', e.target.value)}
                                             >
-                                                {headers.map((h, idx) => (
-                                                    <MenuItem key={idx} value={h}>{h === "" ? "(Columna A / Sin Título)" : h}</MenuItem>
+                                                {headers
+                                                    .filter((h) => h !== chart.xAxis)
+                                                    .map((h, idx) => (
+                                                    <MenuItem key={idx} value={h}>
+                                                        {h === "" ? "(Columna A / Sin Título)" : h}
+                                                    </MenuItem>
                                                 ))}
                                             </TextField>
                                         </>
