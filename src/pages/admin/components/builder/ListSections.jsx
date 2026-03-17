@@ -51,6 +51,8 @@ export default function ListSections({
         SECTION_SCHEMAS
     );
 
+    console.log("Dbg - temporal para ver los componentes y sus hijos ->",{sections});
+
     const handleSave = async () => {
         if (!dataID) {
             alert('No se encontró el ID de la investigación');
