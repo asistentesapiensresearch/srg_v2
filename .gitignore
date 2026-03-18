@@ -30,3 +30,6 @@ amplifyconfiguration*
 
 # .evn
 .env
+
+# package-lock.json
+package-lock.json
