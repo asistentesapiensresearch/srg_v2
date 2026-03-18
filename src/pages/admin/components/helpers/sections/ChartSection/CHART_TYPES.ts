@@ -25,6 +25,7 @@ export const CHART_TYPES = [
     { value: 'column_stacked', label: 'Columnas Apiladas' },
     { value: 'column_spline', label: 'Columnas + Línea Suavizada' },
     { value: 'column_spline_3d', label: 'Columnas + Línea Suavizada 3D' },
+    { value: 'multi_combo', label: 'Columnas + Múltiples Líneas' },
 
     // mapa
     { value: 'map', label: 'Mapa (Colombia)' },

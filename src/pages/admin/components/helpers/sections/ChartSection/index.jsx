@@ -252,6 +252,54 @@ export default function ChartSection({
             });
         }
 
+        if (type === 'multi_combo') {
+            commonOptions.chart.type = 'column';
+
+            commonOptions.series = (seriesCols || []).map((colName, index) => {
+                const seriesName = chartConfig.columnAliases?.[colName] || colName;
+                const seriesColor = chartConfig.columnColors?.[colName] || undefined;
+                const seriesType = index === 0 ? 'column' : 'spline';
+                return {
+                    type: seriesType,
+                    name: seriesName,
+                    color: seriesColor,
+                    data: data.map(row => {
+                        let val = row[colName];
+                        if (typeof val === 'string') val = val.replace(/[^0-9.-]+/g, "");
+                        return parseFloat(val) || 0;
+                    }),
+                    ...(seriesType === 'spline'
+                        ? {
+                            marker: {
+                                enabled: true,
+                                radius: 3
+                            },
+                            lineWidth: 2
+                        }
+                        : {
+                            borderRadius: 3
+                        })
+                };
+            });
+
+            commonOptions.plotOptions = {
+                ...(commonOptions.plotOptions || {}),
+                column: {
+                    ...(commonOptions.plotOptions?.column || {}),
+                    borderRadius: 4,
+                    pointPadding: 0.1
+                },
+                spline: {
+                    ...(commonOptions.plotOptions?.spline || {}),
+                    lineWidth: 2,
+                    marker: {
+                        enabled: true,
+                        radius: 3
+                    }
+                }
+            };
+        }
+
         return commonOptions;
     };
 
