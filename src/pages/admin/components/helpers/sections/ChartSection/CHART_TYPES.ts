@@ -23,6 +23,8 @@ export const CHART_TYPES = [
 
     // Personalizados - que cambian propiedades
     { value: 'column_stacked', label: 'Columnas Apiladas' },
+    { value: 'column_spline', label: 'Columnas + Línea Suavizada' },
+    { value: 'column_spline_3d', label: 'Columnas + Línea Suavizada 3D' },
 
     // mapa
     { value: 'map', label: 'Mapa (Colombia)' },

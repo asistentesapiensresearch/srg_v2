@@ -5,6 +5,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import highchartsMore from 'highcharts/highcharts-more';
 import highchartsMap from 'highcharts/modules/map';
+import Highcharts3D from 'highcharts/highcharts-3d';
 
 import { fetchSheet } from '@src/pages/admin/components/helpers/sections/DirectorySection/fetchSheet';
 
@@ -14,6 +15,7 @@ const initHighchartsModule = (module, H) => {
 };
 initHighchartsModule(highchartsMore, Highcharts);
 initHighchartsModule(highchartsMap, Highcharts);
+initHighchartsModule(Highcharts3D, Highcharts);
 
 // 🔥 HOOK DE RESIZE (Funciona para Alto y Ancho)
 const useChartResize = (chartRef, wrapperRef) => {
@@ -195,6 +197,7 @@ export default function ChartSection({
             commonOptions.plotOptions = { series: { enableMouseTracking: false, marker: { enabled: false } } };
         }
 
+        // Personalizadas
         // add stacking
         if(type === 'column_stacked') {
             commonOptions.chart.type = 'column';
@@ -205,6 +208,48 @@ export default function ChartSection({
                     stacking: 'normal'
                 }
             };
+        }
+
+        if(type === 'column_spline' || type === 'column_spline_3d') {
+            commonOptions.chart.type = 'column';
+            if (type === 'column_spline_3d') {
+                commonOptions.chart.options3d = {
+                    enabled: true,
+                    alpha: type === 'column_spline_3d_rotated' ? 18 : 10,
+                    beta: type === 'column_spline_3d_rotated' ? 28 : 15,
+                    depth: 55,
+                    viewDistance: 25,
+                    frame: {
+                        bottom: { size: 1, color: 'transparent' },
+                        back: { size: 1, color: 'transparent' },
+                        side: { size: 1, color: 'transparent' }
+                    }
+                };
+            }
+
+            commonOptions.series = (seriesCols || []).map((colName, index) => {
+                const seriesName = chartConfig.columnAliases?.[colName] || colName;
+                const seriesColor = chartConfig.columnColors?.[colName] || undefined;
+
+                return {
+                    type: index === 0 ? 'spline' : 'column',
+                    name: seriesName,
+                    color: seriesColor,
+                    data: data.map(row => {
+                        let val = row[colName];
+                        if (typeof val === 'string') val = val.replace(/[^0-9.-]+/g, "");
+                        return parseFloat(val) || 0;
+                    }),
+                    ...(index !== 0
+                        ? {
+                            marker: {
+                                enabled: true,
+                                radius: 4
+                            }
+                        }
+                        : {})
+                };
+            });
         }
 
         return commonOptions;
