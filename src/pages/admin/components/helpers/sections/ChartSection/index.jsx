@@ -301,6 +301,152 @@ export default function ChartSection({
             };
         }
 
+        if (type === 'min_max_marker') {
+            commonOptions.chart.type = 'line';
+
+            const categories = data.map(row => row[xAxis] ?? row[""] ?? '');
+            
+            const minCol = seriesCols?.[0];
+            const schoolCol = seriesCols?.[1];
+            const schoolCol2025 = seriesCols?.[3];
+            const maxCol = seriesCols?.[4];
+
+            const parseValue = (val) => {
+                if (val === undefined || val === null || val === '') return null;
+                if (typeof val === 'string') {
+                    val = val.replace(/[^0-9.-]+/g, "");
+                }
+                const parsed = parseFloat(val);
+                return Number.isNaN(parsed) ? null : parsed;
+            };
+
+            //obtener el maximo para poner en el tamaño de la grafica
+            const values = data.flatMap(row => 
+                seriesCols.map(col => parseValue(row[col]))
+            ).filter(v => v !== null && !Number.isNaN(v));
+
+            const maxY = Math.max(...values);
+            const minY = Math.min(...values);
+
+            console.log({maxY, minY});
+
+            commonOptions.xAxis = {
+                categories,
+                crosshair: false,
+                lineColor: '#e0e0e0'
+            };
+
+            commonOptions.yAxis = {
+                title: { text: 'Puntajes' },
+                min: minY || 0,
+                max: maxY || 100,
+                gridLineColor: '#f0f0f0'
+            };
+
+            const rangeSeries = {
+                type: 'errorbar',
+                name: 'Rango mínimo-máximo',
+                color: '#e74c3c',
+
+                data: data.map(row => [
+                    parseValue(row[minCol]),
+                    parseValue(row[maxCol])
+                ]),
+
+                whiskerWidth: 2,
+                whiskerLength: '60%',
+                stemWidth: 2,
+                lineWidth: 1.5,
+
+                dashStyle: 'Dot',
+
+                tooltip: {
+                    pointFormatter: function () {
+                        return `Min: ${this.low}<br/>Max: ${this.high}`;
+                    }
+                }
+            };
+
+            // Serie 2: rayitas horizontales verdes
+            // Truco: pequeños segmentos por categoría
+            const schoolLineData = [];
+            data.forEach((row, i) => {
+                const y = parseValue(row[schoolCol]);
+
+                schoolLineData.push(
+                    [i - 0.18, y],
+                    [i + 0.18, y],
+                    [null, null]
+                );
+            });
+
+            const schoolSeries = {
+                type: 'line',
+                name: chartConfig.columnAliases?.[schoolCol] || schoolCol,
+                color: '#16a34a',
+                lineWidth: 4,
+                marker: {
+                    enabled: false
+                },
+                enableMouseTracking: false,
+                data: schoolLineData,
+                dataLabels: {
+                    enabled: false
+                }
+            };
+
+            commonOptions.series = [rangeSeries, schoolSeries];
+
+            commonOptions.plotOptions = {
+                ...(commonOptions.plotOptions || {}),
+                errorbar: {
+                    color: '#e74c3c'
+                },
+                line: {
+                    animation: false,
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
+                    }
+                }
+            };
+
+            commonOptions.legend = {
+                enabled: !isThumbnail,
+                align: 'center',
+                verticalAlign: 'bottom'
+            };
+
+            commonOptions.tooltip = {
+                shared: false,
+                useHTML: true,
+                formatter: function () {
+                    const point = this.point;
+
+                    const pointIndex =
+                        this.series.type === 'errorbar'
+                            ? point.x
+                            : Math.round(point.x);
+
+                    const category = categories[pointIndex] ?? '';
+
+                    const schoolValue2024 = parseValue(data[pointIndex]?.[schoolCol]);
+                    const schoolValue2025 = parseValue(data[pointIndex]?.[schoolCol2025]);
+                    const minValue = parseValue(data[pointIndex]?.[minCol]);
+                    const maxValue = parseValue(data[pointIndex]?.[maxCol]);
+
+                    return `
+                        <b>${category}</b><br/>
+                        Mínimo: <b>${minValue}</b><br/>
+                        <span style="color:#16a34a">●</span> ${chartConfig.columnAliases?.[schoolCol] || schoolCol}: <b>${schoolValue2024}</b><br/>
+                        <span style="color:#2563eb">●</span> ${chartConfig.columnAliases?.[schoolCol2025] || schoolCol2025}: <b>${schoolValue2025}</b><br/>
+                        Máximo: <b>${maxValue}</b>
+                    `;
+                }
+            };
+        }
+
         return commonOptions;
     };
 
