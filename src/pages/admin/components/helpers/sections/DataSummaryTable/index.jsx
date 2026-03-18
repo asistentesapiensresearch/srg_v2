@@ -29,7 +29,8 @@ const DataSummaryTable = ({
     // UI
     tableLayout = "[]",
     borderColor = "#e5e7eb",
-    labelColor = "#1f2937"
+    labelColor = "#1f2937",
+    title = "Ficha Técnica", 
 }) => {
     const [record, setRecord] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -163,7 +164,7 @@ const DataSummaryTable = ({
     // ==========================================
     const renderIcon = (iconName) => {
         switch (iconName) {
-            case 'linkedin': return <Linkedin size={16} className="inline mr-1 text-blue-600" />;
+            case 'linkedin': return <Linkedin size={16} className="inline mr-1 text-white" />;
             case 'mail': return <Mail size={16} className="inline mr-1 text-gray-600" />;
             case 'globe': return <Globe size={16} className="inline mr-1 text-gray-600" />;
             default: return <LinkIcon size={16} className="inline mr-1 text-gray-600" />;
@@ -174,7 +175,7 @@ const DataSummaryTable = ({
         if (!record) return null;
 
         const value = record[cell.field];
-        if (value === undefined || value === null || value === "") return <span className="text-gray-400 italic">N/D</span>;
+        if (value === undefined || value === null || value === "") return <span style={{ color: '#9aa0ad', fontStyle: 'italic', fontSize: '14px' }}>N/D</span>;
 
         switch (cell.type) {
             case 'badge':
@@ -182,31 +183,60 @@ const DataSummaryTable = ({
                 const prefix = cell.prefix || "";
                 const suffix = cell.suffix || "";
 
+                const badgeStyle = cell.badgeColor
+                    ? { backgroundColor: cell.badgeColor, color: '#fff', padding: '0 6px', borderRadius: '4px' }
+                    : { color: '#c0392b' };
+
                 return (
-                    <span
-                        className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded text-sm font-bold border border-gray-300 shadow-sm whitespace-nowrap"
-                        style={cell.badgeColor ? { backgroundColor: cell.badgeColor, color: '#fff', borderColor: cell.badgeColor } : {}}
-                    >
+                   <span style={{ fontSize: '14px', fontWeight: 700, ...badgeStyle }}>
                         {prefix}{value}{suffix}
                     </span>
                 );
             case 'link':
                 const url = record[cell.urlField];
                 return (
-                    <a href={url || "#"} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center transition-colors">
-                        {value} {cell.icon && renderIcon(cell.icon)}
+                    <a href={url || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            fontSize: '14px',
+                            fontWeight: 600,
+                            color: '#2563eb',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                        }}
+                    >
+                        {value}
+                        {cell.icon && (
+                            <span style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: '22px',
+                                    height: '22px',
+                                    borderRadius: '5px',
+                                    backgroundColor: '#378FE9',
+                                    color: '#ffffff',
+                                    flexShrink: 0,
+                                    marginLeft: '8px',
+                                }}>
+                                {renderIcon(cell.icon)}
+                            </span>
+                        )}
                     </a>
                 );
 
             case 'email':
                 return (
-                    <a href={`mailto:${value}`} className="text-gray-700 hover:text-blue-600 hover:underline inline-flex items-center transition-colors">
+                    <a href={`mailto:${value}`} style={{ fontSize: '14px', fontWeight: 600, color: '#2563eb', textDecoration: 'none' }}>
                         {cell.icon && renderIcon(cell.icon)} {value}
                     </a>
                 );
 
             default: // text
-                return <span className="text-gray-700">{value}</span>;
+                return <span style={{ fontSize: '14px', fontWeight: 700, color: '#1a1f2e' }}>{value}</span>;
         }
     };
 
@@ -216,26 +246,47 @@ const DataSummaryTable = ({
 
     return (
         <Container maxWidth="md" className="px-[0!important]">
-            <Box className="overflow-hidden rounded-xl border bg-white shadow-sm" sx={{ borderColor }}>
-                <table className="w-full text-left border-collapse">
+            <Box className="overflow-hidden rounded-xl border bg-white shadow-sm flex flex-col" sx={{
+                    background: '#ffffff',
+                    borderRadius: '16px',
+                    boxShadow: '0 2px 16px rgba(0,0,0,0.10)',
+                    padding: '28px 28px 8px 28px',
+                    overflow: 'hidden',
+                }}>
+
+                {/* Título */}
+                <Typography
+                    component="h2"
+                    sx={{ fontSize: '22px', fontWeight: 700, color: '#1a1f2e', mb: '20px', letterSpacing: '-0.3px' }}
+                >
+                    {title}
+                </Typography>
+
+                {/* Tabla */}
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <tbody>
                         {layout.map((row, rowIndex) => (
-                            <tr key={rowIndex} className="border-b last:border-0 hover:bg-gray-50/50 transition-colors" style={{ borderColor }}>
+                            <tr key={rowIndex} style={{ borderBottom: '1px solid #f0f0f0' }}>
                                 {row.map((cell, cellIndex) => (
                                     <td
                                         key={cellIndex}
                                         colSpan={cell.colSpan || 1}
-                                        className={`p-2 align-middle ${cellIndex > 0 ? 'border-l' : ''}`}
-                                        style={{ borderColor }}
+                                        style={{
+                                            padding: '14px 0',
+                                            verticalAlign: 'middle',
+                                            
+                                        }}
                                     >
-                                        <Box className="flex items-center flex-wrap gap-1">
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
                                             {cell.label && (
-                                                <Typography component="strong" fontWeight={700} sx={{ color: labelColor }}>
+                                                <span style={{ fontSize: '14px', color: '#9aa0ad', fontWeight: 700 }}>
                                                     {cell.label}
-                                                </Typography>
+                                                </span>
                                             )}
-                                            {renderCellValue(cell)}
-                                        </Box>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                {renderCellValue(cell)}
+                                            </div>
+                                        </div>
                                     </td>
                                 ))}
                             </tr>
