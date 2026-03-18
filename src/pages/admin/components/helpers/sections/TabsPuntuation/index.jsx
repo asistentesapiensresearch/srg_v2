@@ -9,7 +9,8 @@ const cleanString = (val) => {
     return String(val).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 };
 
-const TabsPuntuation = ({ sourceConfig, filterField, filterValue, textcolor}) => {
+const TabsPuntuation = ({ sourceConfig, filterField, filterValue, textcolor = "#1f2937"}) => {
+  
   // Estado que guarda la fila que se encontró según el filtro
   const [record, setRecord] = useState(null);
   // mensaje de carga para mostrar al usuario que se están trayendo datos
@@ -18,7 +19,6 @@ const TabsPuntuation = ({ sourceConfig, filterField, filterValue, textcolor}) =>
   const [error, setError] = useState(null);
 
   //UI
-  console.log('color', textcolor)
 
 
   
@@ -113,7 +113,12 @@ const TabsPuntuation = ({ sourceConfig, filterField, filterValue, textcolor}) =>
             key={key}
             className="flex flex-col items-center justify-center min-w-[140px] p-6 rounded-2xl bg-white border border-gray-200 shadow-sm transform transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
           >
-           <div className={`text-xs font-semibold uppercase tracking-wide text-[${textcolor}]`}>
+           <div 
+            className={`text-xs font-semibold uppercase tracking-wide`}
+            style={{
+              color: textcolor
+            }}
+          >
               {label}
             </div>
             <div className="mt-4 flex flex-col items-center gap-2">
