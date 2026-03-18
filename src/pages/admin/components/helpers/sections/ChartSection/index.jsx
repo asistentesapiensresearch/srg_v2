@@ -15,6 +15,7 @@ const initHighchartsModule = (module, H) => {
 };
 initHighchartsModule(highchartsMore, Highcharts);
 initHighchartsModule(highchartsMap, Highcharts);
+
 initHighchartsModule(Highcharts3D, Highcharts);
 
 // 🔥 HOOK DE RESIZE (Funciona para Alto y Ancho)
