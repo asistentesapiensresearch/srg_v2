@@ -2,7 +2,6 @@ import { a } from "@aws-amplify/backend";
 
 export const Institution = a.model({
     name: a.string().required(),
-    slogan: a.string().required(),
     description: a.string(),
     logo: a.string(), // URL del logo
     website: a.url(),
@@ -19,6 +18,7 @@ export const Institution = a.model({
     admisionesEmail: a.string(),  // temporalmente estos campos - deben eliminarse
     admisionesLink: a.url(), // temporalmente estos campos
     admisionesLabel: a.string(), // temporalmente estos campos
+    /* slogan: a.string().required(), */
 
     // Clasificación
     type: a.string(),    // Ej: Universidad, Instituto
