@@ -38,8 +38,21 @@ const DataSummaryTable = ({
 
     const columnAliases = useMemo(() => sourceConfig?.columnAliases || {}, [sourceConfig]);
     const layout = useMemo(() => {
-        try { return JSON.parse(tableLayout || "[]"); }
-        catch (e) { return []; }
+        try {
+            const parsed = JSON.parse(tableLayout || "[]");
+            const blacklist = ['categoria', 'calificacion'];
+
+            const normalizedLayout = Array.isArray(parsed) ? parsed : [];
+
+            return normalizedLayout
+                .map(row => Array.isArray(row) ? row.filter(cell => {
+                    const field = (cell?.field || "").toString().trim().toLowerCase();
+                    return field && !blacklist.includes(field);
+                }) : [])
+                .filter(row => row.length > 0);
+        } catch (e) {
+            return [];
+        }
     }, [tableLayout]);
 
     // ==========================================
