@@ -39,6 +39,14 @@ export default {
             default: "",
             help: "El valor exacto para encontrar el registro.",
             condition: "dataSourceMode === 'custom'"
+        },
+        {
+            name: "searchValue",
+            label: "Valor a buscar",
+            type: "text",
+            default: "",
+            help: "El valor exacto para encontrar el registro.",
+            condition: "dataSourceMode === 'custom'"
         }  
     ]
 };
