@@ -328,8 +328,6 @@ export default function ChartSection({
             const maxY = Math.max(...values);
             const minY = Math.min(...values);
 
-            console.log({maxY, minY});
-
             commonOptions.xAxis = {
                 categories,
                 crosshair: false,

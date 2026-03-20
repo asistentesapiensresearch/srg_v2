@@ -151,9 +151,9 @@ const TemplateDetail = () => {
 
     // 🟢 RENDER DE CONTENIDO
     return (
-        <Container maxWidth="xl" className="py-8">
+        <Container maxWidth="xl" className="">
             {/* Header */}
-            <Box className="md:flex items-center gap-6 mb-4">
+            {/* <Box className="md:flex items-center gap-6 mb-4">
                 <Box className="flex items-center gap-2">
                     <Typography variant="h4" className="font-bold text-red-700">
                         {data.title || data.name}
@@ -166,7 +166,7 @@ const TemplateDetail = () => {
                         <Chip label={data.type || "Institución"} color="secondary" variant="outlined" />
                     )}
                 </Box>
-            </Box>
+            </Box> */}
 
             {/* Template / Builder */}
             {templateLoading && (
