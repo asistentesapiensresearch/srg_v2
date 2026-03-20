@@ -205,11 +205,18 @@ export default {
             type: "separator"
         },
         {
+            name: "isBackground",
+            label: "Habilitar color de fondo",
+            type: "boolean",
+            default: false,
+        },
+        {
             name: "background_color",
             label: "Color de fondo",
             type: "color",
             default: "#ffffff",
-            help: "Color de fondo de la sección completa"
+            help: "Color de fondo de la sección completa",
+            condition: "isBackground === true"
         },
 
         // ========== EFECTOS HOVER ==========

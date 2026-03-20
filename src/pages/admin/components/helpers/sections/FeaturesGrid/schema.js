@@ -55,7 +55,13 @@ export default {
         },
         { name: "style_settings", label: "🎨 ESTILO Y DISEÑO", type: "separator" },
         { name: "title", label: "Título de la Sección", type: "text", default: "" },
-        { name: "background_color", label: "Color de Fondo", type: "color", default: "#ffffff" },
-        { name: "padding_y", label: "Padding Vertical", type: "number", default: 8 }
+        { name: "padding_y", label: "Padding Vertical", type: "number", default: 8 },
+        {
+            name: "isBackground",
+            label: "Habilitar color de fondo",
+            type: "boolean",
+            default: false,
+        },
+        { name: "background_color", label: "Color de Fondo", type: "color", default: "#ffffff", condition: "isBackground === true"},
     ]
 };

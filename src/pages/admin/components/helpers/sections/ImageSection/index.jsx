@@ -34,6 +34,7 @@ const ImageSection = ({
     margin_top = 0,
     margin_bottom = 0,
 
+    isBackground,
     // Fondo
     background_color = "transparent",
 
@@ -84,7 +85,7 @@ const ImageSection = ({
 
     // Estilos de la sección completa
     const sectionStyles = {
-        bgcolor: background_color,
+        bgcolor: (isBackground) ? background_color : "none",
         pt: padding_top,
         pb: padding_bottom,
         px: padding_horizontal,

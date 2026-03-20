@@ -19,6 +19,7 @@ const FeaturesGrid = ({
 
     // Props de Contenido
     title,
+    isBackground,
     background_color = '#ffffff',
     padding_y = 8,
 
@@ -64,7 +65,7 @@ const FeaturesGrid = ({
         <Box
             className="w-full"
             sx={{
-                bgcolor: background_color,
+                bgcolor: (isBackground) ? background_color : "none",
                 py: padding_y,
                 overflow: 'hidden'
             }}
