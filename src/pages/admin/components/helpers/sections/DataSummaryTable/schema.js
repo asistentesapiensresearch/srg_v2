@@ -91,10 +91,6 @@ export default {
             type: "jsonCode",
             default: JSON.stringify([
                 [
-                    { "label": "Categoría:", "field": "categoria", "type": "badge", "badgeColor": "D1" },
-                    { "label": "Calificación:", "field": "calificacion", "type": "badge", "badgeColor": "AAA+" }
-                ],
-                [
                     { "label": "Sector:", "field": "sector" },
                     { "label": "Calendario:", "field": "calendario" }
                 ],

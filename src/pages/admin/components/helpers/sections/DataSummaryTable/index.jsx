@@ -38,8 +38,21 @@ const DataSummaryTable = ({
 
     const columnAliases = useMemo(() => sourceConfig?.columnAliases || {}, [sourceConfig]);
     const layout = useMemo(() => {
-        try { return JSON.parse(tableLayout || "[]"); }
-        catch (e) { return []; }
+        try {
+            const parsed = JSON.parse(tableLayout || "[]");
+            const blacklist = ['categoria', 'calificacion'];
+
+            const normalizedLayout = Array.isArray(parsed) ? parsed : [];
+
+            return normalizedLayout
+                .map(row => Array.isArray(row) ? row.filter(cell => {
+                    const field = (cell?.field || "").toString().trim().toLowerCase();
+                    return field && !blacklist.includes(field);
+                }) : [])
+                .filter(row => row.length > 0);
+        } catch (e) {
+            return [];
+        }
     }, [tableLayout]);
 
     // ==========================================
@@ -194,10 +207,13 @@ const DataSummaryTable = ({
                 );
             case 'link':
                 const url = record[cell.urlField];
+                const isRectorLink = cell.field === 'rectorName' || String(cell.label || '').toLowerCase().includes('rectoría');
                 return (
-                    <a href={url || "#"}
+                    <a
+                        href={url || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
+                        className={isRectorLink ? 'transition-colors duration-150 hover:text-blue-800 hover:underline' : 'transition-colors duration-150 hover:underline'}
                         style={{
                             fontSize: '14px',
                             fontWeight: 600,
@@ -245,11 +261,11 @@ const DataSummaryTable = ({
     if (!record) return null;
 
     return (
-        <Container maxWidth="md" className="px-[0!important]">
-            <Box className="overflow-hidden rounded-xl border bg-white shadow-sm flex flex-col" sx={{
+        <Container maxWidth="md" className="px-4" sx={{ mr: 3, mb: 3 }}>
+            <Box className="overflow-hidden rounded-xl bg-white shadow-sm flex flex-col" sx={{
                     background: '#ffffff',
                     borderRadius: '16px',
-                    boxShadow: '0 2px 16px rgba(0,0,0,0.10)',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
                     padding: '28px 28px 8px 28px',
                     overflow: 'hidden',
                 }}>
@@ -266,7 +282,7 @@ const DataSummaryTable = ({
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <tbody>
                         {layout.map((row, rowIndex) => (
-                            <tr key={rowIndex} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                            <tr key={rowIndex}>
                                 {row.map((cell, cellIndex) => (
                                     <td
                                         key={cellIndex}
@@ -274,7 +290,6 @@ const DataSummaryTable = ({
                                         style={{
                                             padding: '14px 0',
                                             verticalAlign: 'middle',
-                                            
                                         }}
                                     >
                                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
