@@ -44,10 +44,10 @@ const HeaderPortada = ({
          
          const fetchDataModel = async () => {
           try {
-            const {data}= await DataSourceManager.findByField(modelName, searchField, searchValue, 1);
-            if(data && data.lenght > 0){
+            const { data } = await DataSourceManager.findByField(modelName, searchField, searchValue, 1);
+            if (data && data.length > 0) {
               setFetchedRecord(data[0]);
-            }else{
+            } else {
               setFetchedRecord(null);
             }
           } catch (error) {
@@ -60,13 +60,77 @@ const HeaderPortada = ({
          fetchDataModel();
        }, [dataSourceMode, modelName, searchField, searchValue]); 
 
-       
+       // Procesamos el campo 'embed' del registro obtenido, asumiendo que es un JSON string o un objeto
+       const embed = useMemo(() => {
+      if (!fetchedRecord?.embed) return {};
+
+      try {
+        return typeof fetchedRecord.embed === "string"
+          ? JSON.parse(fetchedRecord.embed)
+          : fetchedRecord.embed;
+      } catch (error) {
+        console.error("Error parseando embed:", error);
+        return {};
+      }
+    }, [fetchedRecord]);
+
     
-  return (
-    <Box>
-      <h1>Header Portada</h1>
-    </Box>
-  )
+
+    // EXTRAER campos clave (título y descripción) del registro obtenido
+    const title = fetchedRecord?.name || "Título no disponible";
+    const description = fetchedRecord?.description || "Descripción no disponible";
+
+    // Usamos la imagen del logo o path como fondo de sección (si existe).
+    // Se puede ajustar aquí según el campo que uses en tu modelo.
+    const backgroundImage =
+      fetchedRecord?.coverImage || // campo personalizado posible
+      fetchedRecord?.logo ||
+      fetchedRecord?.path ||
+      "";
+
+    console.log("Registro 1212:", fetchedRecord);
+
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          minHeight: "360px",
+          color: "#fff",
+          backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "relative",
+          p: 4,
+        }}
+      >
+
+        {/* Contenido principal encima del overlay */}
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 2,
+            maxWidth: "960px",
+            color: "#fff",
+          }}
+        >
+          <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", marginBottom: "0.6rem" }}>
+            {title}
+          </h1>
+          <p style={{ fontSize: "clamp(1rem, 2.5vw, 1.8rem)", lineHeight: 1.4 }}>
+            {description}
+          </p>
+
+         
+        </Box>
+
+        {/* Estado en caso de no encontrar registros */}
+        {!fetchedRecord && (
+          <Box sx={{ position: "relative", zIndex: 2, mt: 2 }}>
+            <span>No se encontró el registro solicitado.</span>
+          </Box>
+        )}
+      </Box>
+    );
 }
 
 export default HeaderPortada
