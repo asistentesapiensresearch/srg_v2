@@ -39,6 +39,7 @@ export function InstitutionForm({ onClose, institution, store }) {
     // --- ESTADOS ---
     const [name, setName] = useState(institution?.name || "");
     const [description, setDescription] = useState(institution?.description || "");
+    const [slogan, setSlogan] = useState(institution?.slogan || "");
     const [website, setWebsite] = useState(institution?.website || "");
 
     // 🔥 NUEVOS ESTADOS
@@ -84,6 +85,7 @@ export function InstitutionForm({ onClose, institution, store }) {
         if (institution) {
             setName(institution.name);
             setDescription(institution.description || "");
+            setSlogan(institution.slogan || "");
             setWebsite(institution.website || "");
 
             // 🔥 Cargar nuevos campos
@@ -219,6 +221,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 id: institution?.id,
                 name,
                 description,
+                slogan,
                 website: website.trim() === "" ? null : website,
 
                 // 🔥 NUEVOS CAMPOS EN EL PAYLOAD
@@ -341,6 +344,16 @@ export function InstitutionForm({ onClose, institution, store }) {
                         ))}
                     </TextField>
                 </div>
+
+                <TextField
+                    label="Slogan"
+                    value={slogan}
+                    onChange={(e) => setSlogan(e.target.value)}
+                    fullWidth
+                    multiline
+                    rows={3}
+                    helperText="Ej: Formamos líderes íntegros con una visión global, fundamentados en valores cristianos y excelencia académica bilingue"
+                />
 
                 <TextField
                     label="Descripción"

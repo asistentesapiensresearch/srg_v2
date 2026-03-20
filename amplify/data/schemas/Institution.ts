@@ -2,6 +2,7 @@ import { a } from "@aws-amplify/backend";
 
 export const Institution = a.model({
     name: a.string().required(),
+    slogan: a.string().required(),
     description: a.string(),
     logo: a.string(), // URL del logo
     website: a.url(),
