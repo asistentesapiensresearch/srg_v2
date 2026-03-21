@@ -220,8 +220,8 @@ export function InstitutionForm({ onClose, institution, store }) {
             const { institution: instDB, errors: apiErrors } = await store({
                 id: institution?.id,
                 name,
-                description,
                 slogan,
+                description,
                 website: website.trim() === "" ? null : website,
 
                 // 🔥 NUEVOS CAMPOS EN EL PAYLOAD
@@ -239,6 +239,8 @@ export function InstitutionForm({ onClose, institution, store }) {
                 admisiones: admisionesPayload,
                 languages: languagesArray
             });
+
+            console.log({instDB});
 
             if (apiErrors) {
                 setErrors(apiErrors);
