@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { fetchSheet } from '../DirectorySection/fetchSheet';
 
 const cleanString = (val) => {
@@ -57,7 +57,6 @@ const CalificationAndCategory = ({
       try {
 
         const rawRows = await fetchSheet(sourceConfig.sheetId, sourceConfig.selectedSheet);
-        console.log('rawRows traídas:', rawRows);
 
         const targetValueClean = cleanString(filterValue);
 
@@ -68,8 +67,6 @@ const CalificationAndCategory = ({
           return cellClean === targetValueClean;
         });
 
-        console.log('registro encontrado:', found);
-
         if (!found) {
           throw new Error(`No se encontró registro con ${filterField}="${filterValue}"`);
         }
@@ -79,8 +76,6 @@ const CalificationAndCategory = ({
         calificationAndCategoryColumns.forEach(({ key }) => {
           calificationAndCategoryData[key] = found[key] ?? '';
         });
-
-        console.log('datos de calificación y categoría:', calificationAndCategoryData);
 
         if (mounted) setRecord(calificationAndCategoryData);
       } catch (err) {
@@ -183,7 +178,7 @@ const CalificationAndCategory = ({
   return (
     <div className="w-[280px] float-left mr-4 mt-4 bg-transparent">
       <div className="bg-transparent rounded-xl shadow-none p-0 max-w-[280px]">
-        {React.renderContent()}
+        {renderContent()}
       </div>
     </div>
   );
