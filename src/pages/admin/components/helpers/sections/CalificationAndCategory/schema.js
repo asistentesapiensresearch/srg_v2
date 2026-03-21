@@ -18,7 +18,7 @@ export default {
             name: "filterField",
             label: "Columna de Búsqueda (Alias)",
             type: "text",
-            default: "Colegios",
+            default: "Colegio",
             help: "Alias de la columna para buscar la entidad (ej: Colegios, ID, etc)"
         },
         {

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { fetchSheet } from '../DirectorySection/fetchSheet';
-import { Star, Tag } from 'lucide-react';
 
 const cleanString = (val) => {
     if (val === null || val === undefined) return "";
@@ -184,7 +183,7 @@ const CalificationAndCategory = ({
   return (
     <div className="w-[280px] float-left mr-4 mt-4 bg-transparent">
       <div className="bg-transparent rounded-xl shadow-none p-0 max-w-[280px]">
-        {renderContent()}
+        {React.renderContent()}
       </div>
     </div>
   );
