@@ -76,9 +76,9 @@ const HeaderPortada = ({
 
     
 
-    // EXTRAER campos clave (título y descripción) del registro obtenido
+    // EXTRAER campos clave (título y slogan) del registro obtenido
     const title = fetchedRecord?.name || "Título no disponible";
-    const description = fetchedRecord?.description || "Descripción no disponible";
+    const slogan = fetchedRecord?.slogan || "Slogan no disponible";
 
     // Usamos la imagen del logo o path como fondo de sección (si existe).
     // Se puede ajustar aquí según el campo que uses en tu modelo.
@@ -113,11 +113,11 @@ const HeaderPortada = ({
             color: "#fff",
           }}
         >
-          <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", marginBottom: "0.6rem" }}>
+          <h1 className="w-full text-2xl mt-20 font-black font-[Roboto]" style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", marginBottom: "0.6rem" }}>
             {title}
           </h1>
           <p style={{ fontSize: "clamp(1rem, 2.5vw, 1.8rem)", lineHeight: 1.4 }}>
-            {description}
+            {slogan}
           </p>
 
          
