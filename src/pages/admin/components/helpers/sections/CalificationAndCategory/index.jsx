@@ -11,26 +11,27 @@ const CalificationAndCategory = ({
   sourceConfig, 
   filterField, 
   filterValue,
-  titleColor = "#C10007",
-  iconColor = "#EF4444",
-  circleColor = "#DC2626",
-  largeCircleColor = "#ababab",
+  borderColor = "#DC2626",
+  innerCircleColor = "#ababab",
   textColor = "#FFFFFF",
+  hoverColor = "rgba(255,255,255,0.2)",
   hoverEffect = true,
   hoverIntensity = "medium"
 }) => {
 
-  const finalLargeCircleColor = largeCircleColor || "#ababab";
+  const finalInnerCircleColor = innerCircleColor || "#ababab";
+  const finalBorderColor = borderColor || "#DC2626";
 
   const [record, setRecord] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
 
 
   const calificationAndCategoryColumns = useMemo(
     () => [
       { key: 'Calificación', label: 'Calificación' },
-      { key: 'Categoría', label: 'Categoría' },
+      { key: 'Categoría sin D', label: 'Categoría' },
     ],  
     []
   );
@@ -57,6 +58,7 @@ const CalificationAndCategory = ({
       try {
 
         const rawRows = await fetchSheet(sourceConfig.sheetId, sourceConfig.selectedSheet);
+        console.log('rawRows traídas:', rawRows);
 
         const targetValueClean = cleanString(filterValue);
 
@@ -67,6 +69,8 @@ const CalificationAndCategory = ({
           return cellClean === targetValueClean;
         });
 
+        console.log('registro encontrado:', found);
+
         if (!found) {
           throw new Error(`No se encontró registro con ${filterField}="${filterValue}"`);
         }
@@ -76,6 +80,8 @@ const CalificationAndCategory = ({
         calificationAndCategoryColumns.forEach(({ key }) => {
           calificationAndCategoryData[key] = found[key] ?? '';
         });
+
+        console.log('datos de calificación y categoría:', calificationAndCategoryData);
 
         if (mounted) setRecord(calificationAndCategoryData);
       } catch (err) {
@@ -94,14 +100,14 @@ const CalificationAndCategory = ({
 
   const getHoverClasses = () => {
     if (!hoverEffect) return '';
-    
+
     const hoverMap = {
       none: '',
-      small: 'transform hover:-translate-y-0.25 hover:shadow-md',
-      medium: 'transform hover:-translate-y-0.5 hover:shadow-lg',
-      large: 'transform hover:-translate-y-1 hover:shadow-xl'
+      small: 'hover:scale-105 hover:shadow-sm',
+      medium: 'hover:scale-110 hover:shadow-md',
+      large: 'hover:scale-115 hover:shadow-xl'
     };
-    
+
     return hoverMap[hoverIntensity] || hoverMap.medium;
   };
 
@@ -116,46 +122,67 @@ const CalificationAndCategory = ({
       return <div className="text-center py-4 text-gray-400">No hay datos para mostrar.</div>;
     }
 
-    const iconByLabel = {
-      Calificación: Star,
-      Categoría: Tag,
-    };
+    const calificationValue = String(record['Calificación'] ?? '-');
+    const categoryValue = 'D' + String(record['Categoría sin D'] ?? '-');
+
+    const categoryScale = isHovered ? 1.2 : 1;
+    const calificationScale = isHovered ? 1.1 : 1;
 
     return (
-      <div className="grid grid-cols-1 gap-2">
-        {calificationAndCategoryColumns.map(({ key, label }) => {
-          const value = String(record[key] ?? '-');
-          const Icon = iconByLabel[label];
-
-          return (
-            <div key={key} className={`relative p-2 bg-transparent border border-white/15 backdrop-blur-sm rounded-lg transition text-white max-w-[260px] ${getHoverClasses()}`}>
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-1">
-                  {Icon && <Icon className="h-4 w-4" style={{ color: iconColor }} />}
-                  <span className="text-[11px] font-semibold uppercase tracking-wider drop-shadow" style={{ color: textColor }}>{label}</span>
-                </div>
-                <div className="w-7 h-7 rounded-full text-white flex items-center justify-center text-xs font-bold" style={{ backgroundColor: circleColor, color: textColor }}>
-                  {key === 'Calificación' ? '★' : <Tag className="h-4 w-4" />}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-center h-16 rounded-lg bg-white/10">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full shadow-inner backdrop-blur-sm px-1" style={{ backgroundColor: finalLargeCircleColor }}>
-                  <span className="text-sm font-bold drop-shadow whitespace-nowrap overflow-hidden text-ellipsis text-center" style={{ color: textColor }}>{value}</span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+      <div className="flex items-center justify-center background-transparent">
+        <div
+          className={`relative w-40 h-40 rounded-full flex items-center justify-center text-center transition-transform duration-300 ${getHoverClasses()}`}
+          style={{ backgroundColor: finalBorderColor }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <div
+            className="w-36 h-36 rounded-full flex flex-col items-center justify-center text-white transition-all duration-300 p-3 overflow-hidden"
+            style={{
+              backgroundColor: finalInnerCircleColor,
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: isHovered ? hoverColor : 'transparent',
+                borderRadius: '9999px',
+                transition: 'background 0.25s ease',
+                pointerEvents: 'none'
+              }}
+            />
+            <span
+              className="text-3xl font-black drop-shadow mb-2"
+              style={{
+                color: textColor,
+                transform: `scale(${categoryScale})`,
+                transition: 'transform 0.3s ease'
+              }}
+            >
+              {categoryValue}
+            </span>
+            <span
+              className="text-xl font-bold drop-shadow"
+              style={{
+                color: textColor,
+                transform: `scale(${calificationScale})`,
+                transition: 'transform 0.3s ease'
+              }}
+            >
+              {calificationValue}
+            </span>
+          </div>
+        </div>
       </div>
     );
   };
 
   return (
     <div className="w-[280px] float-left mr-4 mt-4 bg-transparent">
-      <div className='border-l-4 mb-2 pl-3 bg-transparent' style={{ borderLeftColor: titleColor }}>
-        <h3 className='font-[Roboto] font-black text-xs uppercase tracking-wider opacity-80' style={{ color: titleColor }}>Categoría y Calificación</h3>
-      </div>
       <div className="bg-transparent rounded-xl shadow-none p-0 max-w-[280px]">
         {renderContent()}
       </div>
