@@ -109,14 +109,13 @@ const HeaderPortada = ({
           sx={{
             position: "relative",
             zIndex: 2,
-            maxWidth: "960px",
             color: "#fff",
           }}
         >
-          <h1 className="w-full text-2xl mt-20 font-black font-[Roboto]" style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", marginBottom: "0.6rem" }}>
+          <h1 className="w-full text-2xl mt-20 font-black font-[Roboto] text-center" style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", marginBottom: "0.6rem" }}>
             {title}
           </h1>
-          <p style={{ fontSize: "clamp(1rem, 2.5vw, 1.8rem)", lineHeight: 1.4 }}>
+          <p className="text-center" style={{ fontSize: "clamp(1rem, 2.5vw, 1.8rem)", lineHeight: 1.4 }}>
             {slogan}
           </p>
 

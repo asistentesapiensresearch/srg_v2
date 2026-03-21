@@ -240,8 +240,6 @@ export function InstitutionForm({ onClose, institution, store }) {
                 languages: languagesArray
             });
 
-            console.log({instDB});
-
             if (apiErrors) {
                 setErrors(apiErrors);
             } else if (instDB) {
