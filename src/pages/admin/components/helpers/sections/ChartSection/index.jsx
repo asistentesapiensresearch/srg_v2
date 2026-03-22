@@ -132,6 +132,7 @@ export default function ChartSection({
         if (type === 'map') {
             const scope = chartConfig.mapScope || 'custom/world';
             const topology = mapTopologies[scope];
+            const isWorldMap = scope.includes('world');
 
             const parseNumber = (val) => {
                 if (val === undefined || val === null || val === '') return null;
@@ -141,39 +142,68 @@ export default function ChartSection({
             };
 
             if (topology) {
-
                 const validSeriesCols = (seriesCols || []).filter(col => {
                     if (col === xAxis) return false;
                     return data.some(row => parseNumber(row[col]) !== null);
                 });
 
-                finalSeries = (validSeriesCols || []).map(colName => {
+                finalSeries = validSeriesCols.map(colName => {
                     const seriesName = chartConfig.columnAliases?.[colName] || colName;
-                    const mapData = data.map(row => {
-                        const code = (scope.includes('world') ) ? String(row[xAxis] || '').toUpperCase().trim() : String(row[xAxis] || '').toLowerCase().trim();
-                        const val = parseFloat(String(row[colName]).replace(/[^0-9.-]+/g, "")) || 0;
-                        return [code, val];
-                    });
-                    console.log({
-                        name: seriesName,
-                        data: mapData,
-                        mapData: topology,
-                        joinBy: [scope.includes('world') ? 'iso-a2' : 'hc-key', 0],
-                        states: { hover: { color: '#a4edba' } },
-                        dataLabels: { enabled: !isThumbnail, format: '{point.name}' }
-                    });
+
+                    const mapPoints = data
+                        .map(row => {
+                            const rawCode = String(row[xAxis] || '').trim();
+                            if (!rawCode) return null;
+
+                            const code = isWorldMap
+                                ? rawCode.toUpperCase()
+                                : rawCode.toLowerCase();
+
+                            const val = parseNumber(row[colName]);
+                            if (val === null) return null;
+
+                            return isWorldMap
+                                ? { 'iso-a2': code, value: val }
+                                : { 'hc-key': code, value: val };
+                        })
+                        .filter(Boolean);
+
                     return {
+                        type: 'map',
                         name: seriesName,
-                        data: mapData,
+                        data: mapPoints,
                         mapData: topology,
-                        joinBy: [scope.includes('world') ? 'iso-a2' : 'hc-key', 0],
-                        states: { hover: { color: '#a4edba' } },
-                        dataLabels: { enabled: !isThumbnail, format: '{point.name}' }
+                        joinBy: isWorldMap
+                            ? ['iso-a2', 'iso-a2']
+                            : ['hc-key', 'hc-key'],
+                        colorKey: 'value',
+                        nullColor: '#f1f1f1',
+                        borderColor: '#d9d9d9',
+                        states: {
+                            hover: { color: '#a4edba' }
+                        },
+                        dataLabels: {
+                            enabled: !isThumbnail,
+                            formatter: function () {
+                                return this.point.value != null ? this.point.name : '';
+                            }
+                        }
                     };
                 });
+
                 chartSpecificOptions = {
-                    mapNavigation: { enabled: !isThumbnail, buttonOptions: { verticalAlign: 'bottom' } },
-                    colorAxis: { min: 0, stops: [[0, '#EFEFFF'], [0.5, '#4444FF'], [1, '#000022']] },
+                    mapNavigation: {
+                        enabled: !isThumbnail,
+                        buttonOptions: { verticalAlign: 'bottom' }
+                    },
+                    colorAxis: {
+                        min: 0,
+                        stops: [
+                            [0, '#EFEFFF'],
+                            [0.5, '#4444FF'],
+                            [1, '#000022']
+                        ]
+                    }
                 };
             }
         } else {
