@@ -497,8 +497,6 @@ export default function ChartSection({
             };
         }
 
-        console.log("commonOptions ", commonOptions);
-
         return commonOptions;
     };
 
