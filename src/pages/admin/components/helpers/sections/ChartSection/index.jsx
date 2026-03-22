@@ -132,8 +132,22 @@ export default function ChartSection({
         if (type === 'map') {
             const scope = chartConfig.mapScope || 'custom/world';
             const topology = mapTopologies[scope];
+
+            const parseNumber = (val) => {
+                if (val === undefined || val === null || val === '') return null;
+                const cleaned = String(val).replace(/[^0-9.-]+/g, '');
+                const parsed = parseFloat(cleaned);
+                return Number.isNaN(parsed) ? null : parsed;
+            };
+
             if (topology) {
-                finalSeries = (seriesCols || []).map(colName => {
+
+                const validSeriesCols = (seriesCols || []).filter(col => {
+                    if (col === xAxis) return false;
+                    return data.some(row => parseNumber(row[col]) !== null);
+                });
+
+                finalSeries = (validSeriesCols || []).map(colName => {
                     const seriesName = chartConfig.columnAliases?.[colName] || colName;
                     const mapData = data.map(row => {
                         const code = (scope.includes('world') ) ? String(row[xAxis] || '').toUpperCase().trim() : String(row[xAxis] || '').toLowerCase().trim();
