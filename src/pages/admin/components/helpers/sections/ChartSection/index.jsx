@@ -140,6 +140,14 @@ export default function ChartSection({
                         const val = parseFloat(String(row[colName]).replace(/[^0-9.-]+/g, "")) || 0;
                         return [code, val];
                     });
+                    console.log({
+                        name: seriesName,
+                        data: mapData,
+                        mapData: topology,
+                        joinBy: [scope.includes('world') ? 'iso-a2' : 'hc-key', 0],
+                        states: { hover: { color: '#a4edba' } },
+                        dataLabels: { enabled: !isThumbnail, format: '{point.name}' }
+                    });
                     return {
                         name: seriesName,
                         data: mapData,
@@ -444,6 +452,8 @@ export default function ChartSection({
                 }
             };
         }
+
+        console.log("commonOptions ", commonOptions);
 
         return commonOptions;
     };
