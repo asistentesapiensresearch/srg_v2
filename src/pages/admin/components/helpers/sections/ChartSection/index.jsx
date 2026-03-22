@@ -132,93 +132,30 @@ export default function ChartSection({
         if (type === 'map') {
             const scope = chartConfig.mapScope || 'custom/world';
             const topology = mapTopologies[scope];
-            console.log({scope});
-            console.log({topology});
-
-            const countryNameToIso2 = {
-                colombia: 'co',
-                'united states': 'us',
-                'united states of america': 'us',
-                canada: 'ca',
-                mexico: 'mx',
-                brazil: 'br',
-                argentina: 'ar',
-                chile: 'cl',
-                spain: 'es',
-                france: 'fr',
-                italy: 'it',
-                germany: 'de',
-                portugal: 'pt',
-                russia: 'ru',
-                china: 'cn',
-                japan: 'jp',
-                india: 'in',
-                australia: 'au',
-                'new zealand': 'nz',
-                'south africa': 'za',
-                norway: 'no',
-                iceland: 'is',
-                ukraine: 'ua',
-                kazakhstan: 'kz',
-                philippines: 'ph',
-                indonesia: 'id',
-                ethiopia: 'et',
-                'saudi arabia': 'sa',
-                cuba: 'cu',
-                paraguay: 'py',
-                peru: 'pe'
-            };
-
             if (topology) {
+                console.log({seriesCols});
                 finalSeries = (seriesCols || []).map(colName => {
                     const seriesName = chartConfig.columnAliases?.[colName] || colName;
-
-                    const mapData = data
-                        .map(row => {
-                            const rawCode = String(row[xAxis] || '').toLowerCase().trim();
-                            const code = countryNameToIso2[rawCode] || rawCode;
-
-                            let val = row[colName];
-                            if (typeof val === 'string') {
-                                val = val.replace(/[^0-9.-]+/g, '');
-                            }
-                            val = parseFloat(val);
-
-                            if (!code || Number.isNaN(val)) return null;
-
-                            return [code, val];
-                        })
-                        .filter(Boolean);
-
+                    console.log({chartConfig});
+                    const mapData = data.map(row => {
+                        const code = String(row[xAxis] || '').toLowerCase().trim();
+                        const val = parseFloat(String(row[colName]).replace(/[^0-9.-]+/g, "")) || 0;
+                        return [code, val];
+                    });
                     return {
                         name: seriesName,
                         data: mapData,
                         mapData: topology,
                         joinBy: [scope.includes('world') ? 'iso-a2' : 'hc-key', 0],
                         states: { hover: { color: '#a4edba' } },
-                        dataLabels: {
-                            enabled: !isThumbnail,
-                            format: '{point.name}'
-                        }
+                        dataLabels: { enabled: !isThumbnail, format: '{point.name}' }
                     };
                 });
-
                 chartSpecificOptions = {
-                    mapNavigation: {
-                        enabled: !isThumbnail,
-                        buttonOptions: { verticalAlign: 'bottom' }
-                    },
-                    colorAxis: {
-                        min: 0,
-                        stops: [
-                            [0, '#EFEFFF'],
-                            [0.5, '#4444FF'],
-                            [1, '#000022']
-                        ]
-                    }
+                    mapNavigation: { enabled: !isThumbnail, buttonOptions: { verticalAlign: 'bottom' } },
+                    colorAxis: { min: 0, stops: [[0, '#EFEFFF'], [0.5, '#4444FF'], [1, '#000022']] },
                 };
             }
-
         } else {
             const categories = data.map(row => row[xAxis] || row[""] || '');
             finalSeries = (seriesCols || []).map((colName) => {
