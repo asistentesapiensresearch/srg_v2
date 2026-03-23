@@ -125,12 +125,9 @@ const InfoItem = ({
     return (
         <InfoItemWrapper spacingItem={spacingItem}>
             {
-                items && items.map( el => {
+                items && items.map( (el,idx) => {
                     return <Box
-                        sx={{
-                        }}
-                    > 
-                        <Box
+                            key={`infoItem-${idx}`}
                             sx={{
                                 display: "flex",
                                 gap: spacingIconTitle,
@@ -146,7 +143,6 @@ const InfoItem = ({
                                 <p>{el.value}</p>
                             </div>
                         </Box>
-                    </Box>
                 })
             }
         </InfoItemWrapper>
