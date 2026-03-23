@@ -103,8 +103,18 @@ export default function ChartSection({
     // 3. SCROLL
     useEffect(() => {
         if (scrollRef.current && showThumbnails) {
-            const activeElement = scrollRef.current.children[activeIndex];
-            if (activeElement) activeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            const container = scrollRef.current;
+            const activeElement = container.children[activeIndex];
+            if (activeElement) {
+                const offsetLeft = activeElement.offsetLeft;
+                const elementWidth = activeElement.offsetWidth;
+                const containerWidth = container.offsetWidth;
+
+                container.scrollTo({
+                    left: offsetLeft - (containerWidth / 2) + (elementWidth / 2),
+                    behavior: 'smooth'
+                });
+            }
         }
     }, [activeIndex, showThumbnails]);
 
