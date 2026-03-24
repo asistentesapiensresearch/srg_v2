@@ -41,6 +41,8 @@ export default {
                 { label: "Minimalista (Limpio)", value: "minimal" }
             ]
         },
+        { name: "isVertical", label: "Orientación vertical", type: "boolean", default: false },
+        { name: "heightCarrusel", label: "Altura vertical", type: "text", default: "400px" },
         { name: "itemsPerView", label: "Testimonios visibles (PC)", type: "number", default: 3, min: 1, max: 4 },
         { name: "autoplay", label: "Reproducción Automática", type: "checkbox", default: true },
         { name: "showArrows", label: "Mostrar Flechas", type: "checkbox", default: true },

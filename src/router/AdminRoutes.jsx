@@ -68,7 +68,7 @@ export const AdminRoutes = [
                 title: "Artículos"
             },
             {
-                path: 'institution/:id/testimonials',
+                path: 'institutions/:id/testimonials',
                 element: <Testimonial/>,
                 title: "Testimonios en instituciones"
             },

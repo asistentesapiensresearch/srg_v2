@@ -18,6 +18,8 @@ export default function TestimonialsCarousel({
     sourceMode = "context",
     targetEntityId,
     layout = "classic",
+    isVertical = false,
+    heightCarrusel = "400px",
     itemsPerView = 3,
     autoplay = true,
     showArrows = true,
@@ -144,6 +146,7 @@ export default function TestimonialsCarousel({
             <Container maxWidth="lg">
                 <Swiper
                     key={swiperKey} // Forzamos re-render al cambiar settings
+                    direction={(isVertical) ? "vertical" : "horizontal"}
                     modules={[Autoplay, Navigation, Pagination]}
                     spaceBetween={50}
                     slidesPerView={1}
@@ -154,7 +157,7 @@ export default function TestimonialsCarousel({
                         640: { slidesPerView: Math.min(itemsPerView, 2) },
                         1024: { slidesPerView: itemsPerView },
                     }}
-                    style={{ padding: '10px 50px' }}
+                    style={{ height: `${heightCarrusel}`, padding: '10px 50px' }}
                 >
                     {data.map((t) => (
                         <SwiperSlide key={t.id}>
