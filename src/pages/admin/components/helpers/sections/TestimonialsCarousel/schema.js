@@ -48,6 +48,15 @@ export default {
         { name: "showArrows", label: "Mostrar Flechas", type: "checkbox", default: true },
         { name: "showDots", label: "Mostrar Puntos (Paginación)", type: "checkbox", default: true }, // Nueva opción útil
         { name: "primaryColor", label: "Color de Acento", type: "color", default: "#c10008" },
-        { name: "backgroundColor", label: "Color de Fondo", type: "color", default: "#f9fafb" }
+        { name: "backgroundColor", label: "Color de Fondo componente general", type: "color", default: "#f9fafb" },
+        { name: "backgroundColorContent", label: "Color de Fondo contenido", type: "color", default: "#EEEEEE" },
+        { name: "borderRadius", label: "Borde redondo del contenido", type: "text", default: "10px" },
+        {
+            name: "shadow",
+            label: "Sombra",
+            type: "boolean",
+            default: true
+        },
+        { name: "shadowColor", label: "Color de la sombra", type: "color", default: "rgba(0,0,0,0.08)" },
     ]
 };
