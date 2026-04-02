@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
-import DataSourceManager from "@src/core/data/DataSourceManager";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
 
 const EmbedWrapper = ({
   children,
@@ -27,10 +27,6 @@ const EmbedWrapper = ({
 
 
 export default function EmbedContent({
-    dataSourceMode = "context",
-    modelName = "Institution",
-    searchField = "name",
-    searchValue = "",
     provider,
     height, 
     borderRadius, 
@@ -38,45 +34,23 @@ export default function EmbedContent({
     shadowColor 
 }) {
 
-    const [fetchedRecord, setFetchedRecord] = useState(null);
-
-    useEffect(() => {
-
-      if (dataSourceMode !== 'custom' || !modelName || !searchField || !searchValue) {
-            return;
-        }
-      
-      const fetchDataModel = async () => {
-        try {
-          const { data }  = await DataSourceManager.findByField(modelName, searchField, searchValue, 1);
-          if(data && data.length > 0) {
-            setFetchedRecord(data[0]);
-          } else {
-            setFetchedRecord(null);
-          }
-        } catch (error) {
-          console.error("Error buscando en BD:", error);
-          setFetchedRecord(null);
-        } 
-
-      }
-
-      fetchDataModel();
-    }, [dataSourceMode, modelName, searchField, searchValue]);
-
+    const {model, data} = useSelector((state) => state.sections.fetchData.databaseDownload);
+    console.log({model});
 
     const embed = useMemo(() => {
-      if (!fetchedRecord?.embed) return {};
+
+      console.log({data});
+      if (!data?.embed) return {};
 
       try {
-        return typeof fetchedRecord.embed === "string"
-          ? JSON.parse(fetchedRecord.embed)
-          : fetchedRecord.embed;
+        return typeof data.embed === "string"
+          ? JSON.parse(data.embed)
+          : data.embed;
       } catch (error) {
         console.error("Error parseando embed:", error);
         return {};
       }
-    }, [fetchedRecord]);
+    }, [data]);
 
     const iframeUrl = useMemo(() => {
       return embed?.[provider] || "";

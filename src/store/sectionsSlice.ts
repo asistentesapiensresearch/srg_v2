@@ -3,7 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     fetchData: {
         sheets: [],
-        dbInfo: []
+        databaseDownload: {
+          model: null,
+          data: null,
+        },
     }
 };
 
@@ -15,11 +18,11 @@ const sectionsSlice = createSlice({
         setSheetData: (state, action) => {
             state.fetchData.sheets = action.payload;
         },
-        setDataBD: (state, action) => {
-            state.fetchData.dbInfo = action.payload;
+        setDatabaseDownload: (state, action) => {
+            state.fetchData.databaseDownload = action.payload;
         }
     },
 });
 
-export const { setSections, setSheetData, setDataBD } = sectionsSlice.actions;
+export const { setSections, setSheetData, setDatabaseDownload } = sectionsSlice.actions;
 export default sectionsSlice.reducer;
