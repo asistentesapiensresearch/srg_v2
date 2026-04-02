@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Typography, Container, Skeleton, Alert } from '@mui/material';
 import { Linkedin, Mail, Link as LinkIcon, Globe } from 'lucide-react';
 import { fetchSheet } from '../DirectorySection/fetchSheet';
-import DataSourceManager from '@src/core/data/DataSourceManager';
+import { useSelector } from 'react-redux';
 
 
 // Helper de limpieza
@@ -32,6 +32,8 @@ const DataSummaryTable = ({
     labelColor = "#1f2937",
     title = "Ficha Técnica", 
 }) => {
+
+    const { data: institutionsDB  } = useSelector((state) => state.sections.fetchData.databaseDownload);
     const [record, setRecord] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -123,18 +125,8 @@ const DataSummaryTable = ({
                         if (enrichmentType) filter.type = { eq: enrichmentType };
                         if (enrichmentSubtype) filter.subtype = { eq: enrichmentSubtype };
 
-                        // Fetch BD (Traemos con límite para hacer el matching por cleanString localmente)
-                        // Cambio llamado de petición para que dependa directamente de DataSourceManager y su sistema de cacheo
-                        const { data: institutionsDB } = await DataSourceManager.findWithFilter(
-                            "Institution",
-                            filter,
-                            3000
-                        );
-
                         const institutionMap = new Map();
-                        institutionsDB.forEach(inst => {
-                            if (inst.name) institutionMap.set(cleanString(inst.name), inst);
-                        });
+                        if (institutionsDB.name) institutionMap.set(cleanString(institutionsDB.name), institutionsDB);
 
                         const lookupValue = cleanString(mainRecord[enrichmentKey]);
                         if (lookupValue && institutionMap.has(lookupValue)) {
@@ -170,7 +162,7 @@ const DataSummaryTable = ({
         };
 
         fetchData();
-    }, [sourceConfig, filterField, filterValue, versionColumn, targetVersion, enableEnrichment, enrichmentKey, enrichmentType, enrichmentSubtype, columnAliases]);
+    }, [sourceConfig, filterField, filterValue, versionColumn, targetVersion, enableEnrichment, enrichmentKey, enrichmentType, enrichmentSubtype, columnAliases, institutionsDB]);
 
     // ==========================================
     // RENDERIZADO DE LA TABLA

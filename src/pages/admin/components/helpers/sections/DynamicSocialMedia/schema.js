@@ -5,51 +5,12 @@ export default {
     fields: [
         { name: "data_settings", label: "🔌 ORIGEN DE DATOS", type: "separator" },
         {
-            name: "dataSourceMode",
-            label: "Modo de Origen",
-            type: "select",
-            default: "context",
-            options: [
-                { label: "Buscar en Base de Datos", value: "custom" }
-            ],
-            help: "Automático usa los datos de la página actual. Buscar te permite traer redes de cualquier registro."
-        },
-        {
-            name: "modelName",
-            label: "Tabla / Modelo (BD)",
-            type: "select",
-            default: "Institution",
-            options: [
-                { label: "Institución (Institution)", value: "Institution" },
-                { label: "Investigación (Research)", value: "Research" }
-                // Puedes agregar más modelos aquí si los tienes en tu schema de Amplify
-            ],
-            condition: "dataSourceMode === 'custom'"
-        },
-        {
-            name: "searchField",
-            label: "Campo a filtrar",
-            type: "text",
-            default: "id",
-            help: "Ej: id, name, slug",
-            condition: "dataSourceMode === 'custom'"
-        },
-        {
-            name: "searchValue",
-            label: "Valor a buscar",
-            type: "text",
-            default: "",
-            help: "El valor exacto para encontrar el registro.",
-            condition: "dataSourceMode === 'custom'"
-        },
-        {
             name: "targetField",
             label: "Campo JSON de Redes",
             type: "text",
             default: "socialMedia",
             help: "El campo en la BD que guarda el JSON (ej: socialMedia o rectorSocial)"
         },
-
         { name: "style_settings", label: "🎨 ESTILO Y DISEÑO", type: "separator" },
         {
             name: "alignment",

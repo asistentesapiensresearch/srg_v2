@@ -1,7 +1,7 @@
-import DataSourceManager from "@src/core/data/DataSourceManager";
 import { Box } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import DynamicIcon from "../../../builder/helpers/DynamicIcon";
+import { useSelector } from "react-redux";
 
 
 const propertiesAdmitted = {
@@ -45,10 +45,6 @@ const InfoItemWrapper = ({
 
 const InfoItem = ({
     mode,
-    dataSourceMode,
-    modelName,
-    searchField,
-    searchValue,
     selectValue,
     itemsCustom,
     // css
@@ -60,28 +56,8 @@ const InfoItem = ({
     spacingIconTitle
 }) => {
 
-    const [fetchedRecord, setFetchedRecord] = useState(null);
+    const { data } = useSelector((state) => state.sections.fetchData.databaseDownload);
 
-    useEffect(() => {
-        if ((dataSourceMode !== 'custom' && mode != "database") || !modelName || !searchField || !searchValue) {
-            return;
-        }
-        const fetchDataModel = async () => {
-            try {
-            const { data }  = await DataSourceManager.findByField(modelName, searchField, searchValue, 1);
-            if(data && data.length > 0) {
-                setFetchedRecord(data[0]);
-            } else {
-                setFetchedRecord(null);
-            }
-            } catch (error) {
-                console.error("Error buscando en BD:", error);
-                setFetchedRecord(null);
-            } 
-
-        }
-        fetchDataModel();
-    }, [mode, dataSourceMode, modelName, searchField, searchValue]);
 
     const items = useMemo(() => {
 
@@ -90,10 +66,10 @@ const InfoItem = ({
         }
 
         if(mode === "database") {
-            if (!selectValue || !fetchedRecord) {
+            if (!selectValue || !data) {
                 return [];
             }
-            const rawField = fetchedRecord[selectValue];
+            const rawField = data[selectValue];
             if (!rawField) return [];
     
             try {
@@ -119,7 +95,7 @@ const InfoItem = ({
         }
 
 
-    }, [mode, fetchedRecord, selectValue, itemsCustom]);
+    }, [mode, data, selectValue, itemsCustom]);
 
 
     return (

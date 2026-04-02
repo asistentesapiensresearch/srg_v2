@@ -34,12 +34,10 @@ export default function EmbedContent({
     shadowColor 
 }) {
 
-    const {model, data} = useSelector((state) => state.sections.fetchData.databaseDownload);
-    console.log({model});
+    const { data } = useSelector((state) => state.sections.fetchData.databaseDownload);
 
     const embed = useMemo(() => {
 
-      console.log({data});
       if (!data?.embed) return {};
 
       try {

@@ -1,20 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Box, Stack, IconButton, Tooltip, CircularProgress } from '@mui/material';
 import { Facebook, Instagram, Linkedin, Twitter, Youtube, Globe, Link as LinkIcon } from 'lucide-react';
-import DataSourceManager from '@src/core/data/DataSourceManager';
+import { useSelector } from 'react-redux';
 
 export default function DynamicSocialMedia({
     // Contexto inyectado
     institution,
     research,
-
-    // Props de Origen de Datos
-    dataSourceMode = "context",
-    modelName = "Institution",
-    searchField = "id",
-    searchValue = "",
     targetField = "socialMedia",
-
     // Props visuales
     alignment = "center",
     icon_size = 24,
@@ -25,43 +18,18 @@ export default function DynamicSocialMedia({
     marginTop = 10
 }) {
 
-    // Estado para almacenar el registro si lo buscamos manualmente
-    const [fetchedRecord, setFetchedRecord] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    // 1. Efecto para buscar en la BD si el modo es "custom"
+    const { data } = useSelector((state) => state.sections.fetchData.databaseDownload);
+
     useEffect(() => {
-        if (dataSourceMode !== 'custom' || !modelName || !searchField || !searchValue) {
-            return;
-        }
-
-        const fetchCustomData = async () => {
-            setLoading(true);
-            try {
-                // Hacemos un list con el filtro especificado (ej: filter: { name: { eq: "Colegio Boston..." } })
-                const { data }  = await DataSourceManager.findByField(modelName, searchField, searchValue, 1);
-
-                if (data && data.length > 0) {
-                    setFetchedRecord(data[0]);
-                } else {
-                    setFetchedRecord(null);
-                }
-            } catch (error) {
-                console.error("Error buscando redes sociales en BD:", error);
-                setFetchedRecord(null);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCustomData();
-    }, [dataSourceMode, modelName, searchField, searchValue]);
-
+        if(data) setLoading(false);
+    }, [data])
 
     // 2. Determinar la fuente de datos final y procesar las redes
     const activeLinks = useMemo(() => {
         // ¿De dónde sacamos la data?
-        const entityData = dataSourceMode === 'custom' ? fetchedRecord : (institution || research);
+        const entityData = data ? data : (institution || research);
 
         if (!entityData) return [];
 
@@ -90,10 +58,8 @@ export default function DynamicSocialMedia({
             links.push({ network: 'website', url: entityData.website });
         }
 
-        console.log('links', links)
-
         return links;
-    }, [dataSourceMode, fetchedRecord, institution, research, targetField, show_website]);
+    }, [data, institution, research, targetField, show_website]);
 
 
     // 3. Helper de Iconos
@@ -142,7 +108,7 @@ export default function DynamicSocialMedia({
             ) : (
                 /* Estado vacío para el modo edición */
                 <Box sx={{ p: 2, border: '1px dashed #ccc', borderRadius: 2, color: '#999', fontSize: '0.875rem' }}>
-                    {dataSourceMode === 'custom'
+                    { data
                         ? "No se encontraron redes para esta búsqueda."
                         : "No hay redes configuradas para esta entidad."}
                 </Box>

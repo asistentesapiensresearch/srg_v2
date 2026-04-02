@@ -43,44 +43,6 @@ export default {
                 }
             ]
         },
-        // isDatabase
-        {
-            name: "dataSourceMode",
-            label: "Modo de Origen",
-            type: "select",
-            default: "custom",
-            options: [
-                { label: "Buscar en Base de Datos", value: "custom" }
-            ],
-            condition: "mode === 'database'"
-        },
-        {
-            name: "modelName",
-            label: "Tabla / Modelo (BD)",
-            type: "select",
-            default: "Institution",
-            options: [
-                { label: "Institución (Institution)", value: "Institution" },
-                { label: "Investigación (Research)", value: "Research" }
-            ],
-            condition: "mode === 'database'"
-        },
-        {
-            name: "searchField",
-            label: "Campo a filtrar",
-            type: "text",
-            default: "id",
-            help: "Ej: id, name, slug",
-            condition: "mode === 'database'"
-        },
-        {
-            name: "searchValue",
-            label: "Valor a buscar",
-            type: "text",
-            default: "",
-            help: "El valor exacto para encontrar el registro.",
-            condition: "mode === 'database'"
-        },
         {
             name: "selectValue",
             label: "Campo que deseas seleccionar para renderizar información",
