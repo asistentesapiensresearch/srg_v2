@@ -29,24 +29,6 @@ class DataSourceManager {
         return promise;
     }
 
-    static async findWithFilter(modelName, filter = {}, limit = 1) {
-
-        const key = this.getCacheKey("db-filter", { modelName, filter, limit });
-
-        if (this.cache[key]) {
-            return this.cache[key];
-        }
-
-        const promise = client.models[modelName].list({
-            filter: Object.keys(filter).length ? filter : undefined,
-            limit
-        });
-
-        this.cache[key] = promise;
-
-        return promise;
-    }
-
 }
 
 export default DataSourceManager;
