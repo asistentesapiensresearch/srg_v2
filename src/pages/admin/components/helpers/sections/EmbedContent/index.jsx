@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
+import { fieldsSection } from "./fields";
 
 const EmbedWrapper = ({
   children,
@@ -34,21 +35,22 @@ export default function EmbedContent({
     shadowColor 
 }) {
 
-    const { data } = useSelector((state) => state.sections.fetchData.databaseDownload);
+    const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
 
     const embed = useMemo(() => {
 
-      if (!data?.embed) return {};
+      if (!model || !data || !fieldsSection[model]?.embed) return {};
+      const embedField = fieldsSection[model].embed;
 
       try {
-        return typeof data.embed === "string"
-          ? JSON.parse(data.embed)
-          : data.embed;
+        return typeof data[embedField] === "string"
+          ? JSON.parse(data[embedField])
+          : data[embedField];
       } catch (error) {
         console.error("Error parseando embed:", error);
         return {};
       }
-    }, [data]);
+    }, [data,model]);
 
     const iframeUrl = useMemo(() => {
       return embed?.[provider] || "";
