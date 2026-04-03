@@ -71,6 +71,11 @@ export function InstitutionForm({ onClose, institution, store }) {
     // Imágenes
     const [logoKey, setLogoKey] = useState(institution?.logo || "");
     const [logoPreview, setLogoPreview] = useState("");
+    
+    
+    const [portadaPhotoKey, setPortadaPhotoKey] = useState(institution?.portadaPhoto || "");
+    const [portadaPhotoPreview, setPortadaPhotoPreview] = useState("");
+
     const [rectorPhotoKey, setRectorPhotoKey] = useState(institution?.rectorPhoto || "");
     const [rectorPhotoPreview, setRectorPhotoPreview] = useState("");
 
@@ -130,6 +135,10 @@ export function InstitutionForm({ onClose, institution, store }) {
                 setRectorPhotoKey(institution.rectorPhoto);
                 getUrl({ path: institution.rectorPhoto }).then((res) => setRectorPhotoPreview(res.url.toString())).catch(() => { });
             }
+            if(institution.portadaPhoto) {
+                setPortadaPhotoKey(institution.portadaPhoto);
+                getUrl({ path: institution.portadaPhoto }).then((res) => setPortadaPhotoPreview(res.url.toString())).catch(() => { });
+            }
         }
     }, [institution]);
 
@@ -151,6 +160,13 @@ export function InstitutionForm({ onClose, institution, store }) {
         getUrl({ path: key }).then(res => setRectorPhotoPreview(res.url.toString()));
         setUploading(false);
     };
+
+    const handlePortadaPhotoSuccess = async ({key}) => {
+        setPortadaPhotoKey(key);
+        setTempKeys(prev => [...prev, key]);
+        getUrl({path: key}).then(res => setPortadaPhotoPreview(res.url.toString()));
+        setUploading(false);
+    }
 
     // --- GUARDAR ---
     const handleSave = async () => {
@@ -187,6 +203,23 @@ export function InstitutionForm({ onClose, institution, store }) {
                     }
                 } catch (moveError) {
                     setErrors({ form: "Error al procesar la foto del rector." });
+                    setUploading(false);
+                    return;
+                }
+            }
+
+            // procesar portada
+            let currentPortadaKey = portadaPhotoKey;
+            if(currentPortadaKey && currentPortadaKey.includes(TEMP_FOLDER)) {
+                try {
+                    const newKey = moveIconToDefinitiveFolder(TEMP_FOLDER, currentPortadaKey, `rector-${Date.now()}`);
+                    currentPortadaKey = newKey;
+                    setPortadaPhotoKey(newKey);
+                    if (institution?.portadaPhoto && institution.portadaPhoto !== newKey) {
+                        await remove({ path: institution.portadaPhoto }).catch(e => console.warn("No se pudo borrar foto antigua", e));
+                    }
+                } catch (moveError) {
+                    setErrors({ form: "Error al procesar la foto de la portada." });
                     setUploading(false);
                     return;
                 }
@@ -231,6 +264,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 type,
                 subtype,
                 logo: currentLogoKey,
+                portadaPhoto: currentPortadaKey,
                 rectorName,
                 rectorPhoto: currentRectorKey,
                 rectorSocial: rectorSocialPayload,
@@ -379,6 +413,28 @@ export function InstitutionForm({ onClose, institution, store }) {
                         maxFileCount={1}
                         onUploadStart={handleUploadStart}
                         onUploadSuccess={handleLogoSuccess}
+                        onUploadError={handleUploadError}
+                        showThumbnails={false}
+                        processFile={({ file }) => ({ file, key: `logo-${Date.now()}-${file.name}` })}
+                    />
+                    {errors.logo && <FormHelperText>{errors.logo}</FormHelperText>}
+                </FormControl>
+                
+                <FormControl fullWidth error={!!errors.portadaPhoto}>
+                    <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
+                        Foto de Portada
+                    </InputLabel>
+                    {portadaPhotoPreview && (
+                        <div className="mb-2 max-w-20">
+                            <img src={portadaPhotoPreview} alt="Portada" className="w-full object-contain border rounded" />
+                        </div>
+                    )}
+                    <FileUploader
+                        acceptedFileTypes={["image/*"]}
+                        path={TEMP_FOLDER}
+                        maxFileCount={1}
+                        onUploadStart={handleUploadStart}
+                        onUploadSuccess={handlePortadaPhotoSuccess}
                         onUploadError={handleUploadError}
                         showThumbnails={false}
                         processFile={({ file }) => ({ file, key: `logo-${Date.now()}-${file.name}` })}

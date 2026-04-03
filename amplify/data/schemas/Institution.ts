@@ -4,6 +4,7 @@ export const Institution = a.model({
     name: a.string().required(),
     description: a.string(),
     logo: a.string(), // URL del logo
+    portadaPhoto: a.string(), // URL de la foto de portada
     slogan: a.string(),
     website: a.url(),
     path: a.string(),
