@@ -4,31 +4,15 @@ export default {
     isContainer: false,
     fields: [
         {
-            name: "data_settings",
-            label: "🔌 CONEXIÓN Y BÚSQUEDA",
-            type: "separator"
+            name: "excelSource",
+            label: "Seleccionar Fuente de Datos Archivo Excel",
+            type: "select",
+            default: "M-TOP",
+            options: [
+                { label: "COLSAPIENS", value: "COL" },
+                { label: "Mejores 100", value: "M-TOP" }
+            ],
         },
-        {
-            name: "sourceConfig",
-            label: "Conexión de Datos",
-            type: "data_source_manager",
-            default: { type: 'sheet', url: '' }
-        },
-        {
-            name: "filterField",
-            label: "Columna de Búsqueda (Alias)",
-            type: "text",
-            default: "Colegio",
-            help: "Alias de la columna para buscar la entidad (ej: Colegios, ID, etc)"
-        },
-        {
-            name: "filterValue",
-            label: "Valor a Buscar",
-            type: "text",
-            default: "Colegio Boston Internacional",
-            help: "El valor exacto de la entidad que deseas mostrar."
-        },
-
         //personalizacion de los estilos
         { name: "style_settings", label: "🎨 ESTILOS", type: "separator" },
         { name: "borderColor", label: "Color del Borde del Círculo", type: "color", default: "#DC2626" },
