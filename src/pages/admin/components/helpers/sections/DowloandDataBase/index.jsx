@@ -3,6 +3,20 @@ import { useDispatch } from "react-redux";
 import { setDatabaseDownload } from "@src/store/sectionsSlice";
 import DataSourceManager from "@src/core/data/DataSourceManager";
 
+const cleanObject = (obj) => {
+  if (!obj || typeof obj !== "object") return obj;
+
+  const cleaned = {};
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (typeof value !== "function") {
+      cleaned[key] = value;
+    }
+  });
+
+  return cleaned;
+};
+
 const DowloandDataBase = ({
     modelName = "Institution",
     searchField = "name",
@@ -24,11 +38,12 @@ const DowloandDataBase = ({
                     1
                 );
 
-
+                const cleanData = cleanObject(data[0]);
+                
                 if (data && data.length > 0) {
                     dispatch(setDatabaseDownload({
                         model: modelName,
-                        data: data[0]
+                        data: cleanData
                     }));
                 } else {
                     dispatch(setDatabaseDownload({

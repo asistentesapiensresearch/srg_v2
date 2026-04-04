@@ -1,15 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
-import { fetchSheet } from '../DirectorySection/fetchSheet';
+import { useState } from 'react'
+import { useSelector } from 'react-redux';
+import { fieldsSection } from './fields';
 
-const cleanString = (val) => {
-    if (val === null || val === undefined) return "";
-    return String(val).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-};
-
-const CalificationAndCategory = ({ 
-  sourceConfig, 
-  filterField, 
-  filterValue,
+const CalificationAndCategory = ({
+  excelSource = "M-TOP", 
   borderColor = "#DC2626",
   innerCircleColor = "#ababab",
   textColor = "#FFFFFF",
@@ -18,79 +12,13 @@ const CalificationAndCategory = ({
   hoverIntensity = "medium"
 }) => {
 
+  const dataExcels = useSelector((state) => state.sections.fetchData.sheets[excelSource]);
+  const fields = fieldsSection[excelSource];
+
   const finalInnerCircleColor = innerCircleColor || "#ababab";
   const finalBorderColor = borderColor || "#DC2626";
 
-  const [record, setRecord] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
-
-
-  const calificationAndCategoryColumns = useMemo(
-    () => [
-      { key: 'Calificación', label: 'Calificación' },
-      { key: 'Categoría sin D', label: 'Categoría' },
-    ],  
-    []
-  );
-
-  useEffect(() => {
-    if (!sourceConfig || !sourceConfig.sheetId) {
-      setError('No hay configuración de hoja disponible.');
-      setRecord(null);
-      return;
-    }
-    if (!filterField || !filterValue) {
-      setError('No se ha definido el filtro para buscar el registro.');
-      setRecord(null);
-      return;
-    }
-
-    let mounted = true;
-
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      setRecord(null);
-
-      try {
-
-        const rawRows = await fetchSheet(sourceConfig.sheetId, sourceConfig.selectedSheet);
-
-        const targetValueClean = cleanString(filterValue);
-
-        const found = rawRows.find((row) => {
-          const cell = row[filterField];
-          if (cell === undefined || cell === null) return false;
-          const cellClean = cleanString(cell);
-          return cellClean === targetValueClean;
-        });
-
-        if (!found) {
-          throw new Error(`No se encontró registro con ${filterField}="${filterValue}"`);
-        }
-
-
-        const calificationAndCategoryData = {};
-        calificationAndCategoryColumns.forEach(({ key }) => {
-          calificationAndCategoryData[key] = found[key] ?? '';
-        });
-
-        if (mounted) setRecord(calificationAndCategoryData);
-      } catch (err) {
-        if (mounted) setError(err?.message ?? 'Error al cargar datos.');
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      mounted = false;
-    };
-  }, [sourceConfig, filterField, filterValue, calificationAndCategoryColumns]);
 
   const getHoverClasses = () => {
     if (!hoverEffect) return '';
@@ -106,7 +34,7 @@ const CalificationAndCategory = ({
   };
 
   const renderContent = () => {
-    if (loading) {
+    /* if (loading) {
       return <div className="text-center py-4 text-gray-500">Cargando datos...</div>;
     }
     if (error) {
@@ -114,10 +42,10 @@ const CalificationAndCategory = ({
     }
     if (!record) {
       return <div className="text-center py-4 text-gray-400">No hay datos para mostrar.</div>;
-    }
+    } */
 
-    const calificationValue = String(record['Calificación'] ?? '-');
-    const categoryValue = 'D' + String(record['Categoría sin D'] ?? '-');
+    const calificationValue = (dataExcels) && String(dataExcels.data[fields.calificación] ?? '-');
+    const categoryValue = (dataExcels) && 'D' + String(dataExcels.data[fields.categoría] ?? '-');
 
     const categoryScale = isHovered ? 1.2 : 1;
     const calificationScale = isHovered ? 1.1 : 1;

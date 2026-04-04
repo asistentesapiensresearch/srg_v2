@@ -3,8 +3,10 @@ import { useImageUrl } from "@src/hooks/useImageUrl";
 import { useSelector } from "react-redux";
 import CalificationAndCategory from "../CalificationAndCategory";
 import PageRenderer from "../../../builder/Renderer";
+import InstitutionHighlights from "../InstitutionHighlights";
 
 const HeaderPortada = ({
+  excelSource,
   sourceConfig, 
   filterField, 
   filterValue,
@@ -110,30 +112,9 @@ const HeaderPortada = ({
               }
             </Box>
             {/* Aquí va el contenido info colegio */}
-            <Box
-              sx={{
-                backgroundColor: "#C10007",
-                width: "100%",
-                height: "80px",
-              }}
-              className="flex justify-between items-center"
-            >
-              {children && children.length > 0 && children?.some((child) => child.type === "InstitutionHighlights") ?  (
-                      children.filter((child) => child.type === "InstitutionHighlights")
-                      .map((child) => (
-                        <Box key={child.id} className="w-full flex flex-col">
-                          <PageRenderer sections={[child]} />
-                        </Box>
-                      ))
-                  ) : (
-                    <Box className="w-full p-12 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50/50">
-                        <Typography className="text-gray-400 font-medium">
-                            Marcas vacias: Aquí debe ir el componente de Grilla de Marcas (Brands) (+)
-                        </Typography>
-                    </Box>
-                  )
-              }
-            </Box>
+            <InstitutionHighlights 
+              excelSource={excelSource} 
+            />
 
           </Box>
 

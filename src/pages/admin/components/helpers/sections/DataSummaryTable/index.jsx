@@ -126,7 +126,7 @@ const DataSummaryTable = ({
                         if (enrichmentSubtype) filter.subtype = { eq: enrichmentSubtype };
 
                         const institutionMap = new Map();
-                        if (institutionsDB.name) institutionMap.set(cleanString(institutionsDB.name), institutionsDB);
+                        if (institutionsDB?.name) institutionMap.set(cleanString(institutionsDB.name), institutionsDB);
 
                         const lookupValue = cleanString(mainRecord[enrichmentKey]);
                         if (lookupValue && institutionMap.has(lookupValue)) {

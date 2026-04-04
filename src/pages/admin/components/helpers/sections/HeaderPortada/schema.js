@@ -8,25 +8,16 @@ export default {
             label: "🔌 CONEXIÓN Y BÚSQUEDA",
             type: "separator"
         },
+        // Fuente de datos, importante mantener esto actualizado en todos los schemas que lo usen
         {
-            name: "sourceConfig",
-            label: "Conexión de Datos",
-            type: "data_source_manager",
-            default: { type: 'sheet', url: '' }
-        },
-        {
-            name: "filterField",
-            label: "Columna de Búsqueda (Alias)",
-            type: "text",
-            default: "Colegio",
-            help: "Alias de la columna para buscar la entidad (ej: Colegios, ID, etc)"
-        },
-        {
-            name: "filterValue",
-            label: "Valor a Buscar",
-            type: "text",
-            default: "Colegio Boston Internacional",
-            help: "El valor exacto de la entidad que deseas mostrar."
+            name: "excelSource",
+            label: "Seleccionar Fuente de Datos Archivo Excel",
+            type: "select",
+            default: "M-TOP",
+            options: [
+                { label: "COLSAPIENS", value: "COL" },
+                { label: "Mejores 100", value: "M-TOP" }
+            ],
         },
         {
             name: "data_settings",
