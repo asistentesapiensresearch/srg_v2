@@ -54,7 +54,7 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [rectorInstagram, setRectorInstagram] = useState("");
     const [rectorFacebook, setRectorFacebook] = useState("");
     const [rectorYoutube, setRectorYoutube] = useState("");
-    const [rectorDesciption, setRectorDesciption] = useState(institution?.rectorDescription || "");
+    const [rectorDescription, setRectorDescription] = useState(institution?.rectorDescription || "");
     const [socialFacebook, setSocialFacebook] = useState("");
     const [socialInstagram, setSocialInstagram] = useState("");
     const [socialTwitter, setSocialTwitter] = useState("");
@@ -105,7 +105,7 @@ export function InstitutionForm({ onClose, institution, store }) {
             setType(institution.type || InstitutionType.Educational);
             setSubtype(institution.subtype || InstitutionSubtype.University);
             setRectorName(institution.rectorName || "");
-            setRectorDesciption(institution.rectorDesciption || "");
+            setRectorDescription(institution.rectorDescription || "");
 
             try {
                 const rSocial = typeof institution.rectorSocial === 'string' ? JSON.parse(institution.rectorSocial) : institution.rectorSocial || {};
@@ -278,7 +278,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 rectorName,
                 rectorPhoto: currentRectorKey,
                 rectorSocial: rectorSocialPayload,
-                rectorDesciption,
+                rectorDescription,
                 socialMedia: socialMediaPayload,
                 embed: embedPayload,
                 admisiones: admisionesPayload,
@@ -500,8 +500,8 @@ export function InstitutionForm({ onClose, institution, store }) {
                 </div>
                 <TextField
                     label="Descripción del rector e invitación"
-                    value={rectorDesciption}
-                    onChange={(e) => setRectorDesciption(e.target.value)}
+                    value={rectorDescription}
+                    onChange={(e) => setRectorDescription(e.target.value)}
                     fullWidth
                     multiline
                     rows={3}

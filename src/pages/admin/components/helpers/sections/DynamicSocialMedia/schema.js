@@ -6,10 +6,13 @@ export default {
         { name: "data_settings", label: "🔌 ORIGEN DE DATOS", type: "separator" },
         {
             name: "targetField",
-            label: "Campo JSON de Redes",
-            type: "text",
+            label: "Seleccione la redes que necesita",
+            type: "select",
             default: "socialMedia",
-            help: "El campo en la BD que guarda el JSON (ej: socialMedia o rectorSocial)"
+            options: [
+                { label: "Redes Instituto", value: "socialMedia" },
+                { label: "Redes Rector", value: "rectorSocial" },
+            ]
         },
         { name: "style_settings", label: "🎨 ESTILO Y DISEÑO", type: "separator" },
         {

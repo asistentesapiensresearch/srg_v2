@@ -54,12 +54,13 @@ export default function DynamicSocialMedia({
         });
 
         // Añadir el sitio web si está activo y existe en la data
-        if (show_website && entityData.website) {
+        if (show_website && entityData.website && targetField != "rectorSocial") {
             links.push({ network: 'website', url: entityData.website });
         }
 
         return links;
     }, [data, institution, research, targetField, show_website]);
+
 
 
     // 3. Helper de Iconos
