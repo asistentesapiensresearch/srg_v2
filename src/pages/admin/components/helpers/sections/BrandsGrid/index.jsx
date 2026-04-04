@@ -19,6 +19,7 @@ export default function BrandsGrid({
 
     // Styles
     logo_height = 60,
+    isBackground = false,
     background_color = "#ffffff",
     grayscale = true,
     hover_scale = true
@@ -29,7 +30,7 @@ export default function BrandsGrid({
     const calculateGrid = (cols) => Math.max(1, Math.floor(12 / Number(cols)));
 
     // Tarjeta individual reutilizable para ambos modos
-    const renderBrandItem = (brand, index, isMarquee) => (
+    const renderBrandItem = (brand, index, isMarquee, isBackground) => (
         <Tooltip title={brand.name || "Marca"} key={brand.id || index}>
             <Box
                 sx={{
@@ -64,6 +65,7 @@ export default function BrandsGrid({
                         objectFit: 'contain',
                         // Si grayscale es true, lo pone gris y un poco transparente. Si no, lo deja normal.
                         filter: grayscale ? 'grayscale(100%) opacity(0.7)' : 'none',
+                        mixBlendMode: !isBackground ? 'multiply' : 'normal',
                         transition: 'all 0.4s ease'
                     }}
                 />
@@ -87,7 +89,7 @@ export default function BrandsGrid({
     );
 
     return (
-        <Box sx={{ bgcolor: background_color, width: '100%', py: 2, overflow: 'hidden' }}>
+        <Box sx={{ bgcolor: ((isBackground) ? background_color : 'none'), width: '100%', py: 2, overflow: 'hidden' }}>
             <Container maxWidth="lg" className='px-[0!important]'>
                 {title && (
                     <Typography variant="h4" textAlign="center" fontWeight="bold" sx={{ mb: 6 }}>
@@ -105,8 +107,8 @@ export default function BrandsGrid({
                                 direction={marquee_direction}
                                 speed={marquee_speed}
                                 pauseOnHover={pause_on_hover}
-                                gradient={true} // Opcional: Agrega un desvanecido a los bordes
-                                gradientColor={background_color} // Para que el desvanecido coincida con tu fondo
+                                gradient={isBackground} // Opcional: Agrega un desvanecido a los bordes
+                                gradientColor={((isBackground) ? background_color : 'none')} // Para que el desvanecido coincida con tu fondo
                                 gradientWidth={50}
                                 autoFill={true}
                             >
@@ -120,7 +122,7 @@ export default function BrandsGrid({
                         <Grid container spacing={4} justifyContent="center" alignItems="center">
                             {brands.map((brand, idx) => (
                                 <Grid item key={brand.id || idx} xs={6} sm={4} md={calculateGrid(columns)}>
-                                    {renderBrandItem(brand, idx, false)}
+                                    {renderBrandItem(brand, idx, false, isBackground)}
                                 </Grid>
                             ))}
                         </Grid>

@@ -61,8 +61,13 @@ export default {
 
         { name: "style_settings", label: "🎨 ESTILO VISUAL", type: "separator" },
         { name: "logo_height", label: "Altura de logos (px)", type: "number", default: 60 },
-        { name: "background_color", label: "Color de fondo", type: "color", default: "#ffffff" },
-
+        {
+            name: "isBackground",
+            label: "Habilitar color de fondo",
+            type: "boolean",
+            default: false,
+        },
+        { name: "background_color", label: "Color de Fondo", type: "color", default: "#ffffff", condition: "isBackground === true"},
         { name: "hover_settings", label: "✨ EFECTOS HOVER", type: "separator" },
         {
             name: "grayscale",
