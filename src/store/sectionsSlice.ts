@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     fetchData: {
-        sheets: [],
+        sheets: {},
         databaseDownload: {
           model: null,
           data: null,
@@ -16,7 +16,11 @@ const sectionsSlice = createSlice({
     reducers: {
         setSections: (state, action) => action.payload,
         setSheetData: (state, action) => {
-            state.fetchData.sheets = action.payload;
+            const { identifierExcel, data } = action.payload;
+            state.fetchData.sheets[identifierExcel] = {
+                identifierExcel,
+                data,
+            };
         },
         setDatabaseDownload: (state, action) => {
             state.fetchData.databaseDownload = action.payload;
