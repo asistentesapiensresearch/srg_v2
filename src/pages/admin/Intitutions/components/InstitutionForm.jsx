@@ -212,8 +212,9 @@ export function InstitutionForm({ onClose, institution, store }) {
             let currentPortadaKey = portadaPhotoKey;
             if(currentPortadaKey && currentPortadaKey.includes(TEMP_FOLDER)) {
                 try {
-                    const newKey = moveIconToDefinitiveFolder(TEMP_FOLDER, currentPortadaKey, `rector-${Date.now()}`);
+                    const newKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, currentPortadaKey, `portada-${Date.now()}`);
                     currentPortadaKey = newKey;
+                    console.log({newKey});
                     setPortadaPhotoKey(newKey);
                     if (institution?.portadaPhoto && institution.portadaPhoto !== newKey) {
                         await remove({ path: institution.portadaPhoto }).catch(e => console.warn("No se pudo borrar foto antigua", e));
