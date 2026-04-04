@@ -50,6 +50,11 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [subtype, setSubtype] = useState(institution?.subtype || InstitutionSubtype.University);
     const [rectorName, setRectorName] = useState(institution?.rectorName || "");
     const [rectorLinkedin, setRectorLinkedin] = useState("");
+    const [rectorWeb, setRectorWeb] = useState("");
+    const [rectorInstagram, setRectorInstagram] = useState("");
+    const [rectorFacebook, setRectorFacebook] = useState("");
+    const [rectorYoutube, setRectorYoutube] = useState("");
+    const [rectorDesciption, setRectorDesciption] = useState(institution?.rectorDescription || "");
     const [socialFacebook, setSocialFacebook] = useState("");
     const [socialInstagram, setSocialInstagram] = useState("");
     const [socialTwitter, setSocialTwitter] = useState("");
@@ -100,10 +105,15 @@ export function InstitutionForm({ onClose, institution, store }) {
             setType(institution.type || InstitutionType.Educational);
             setSubtype(institution.subtype || InstitutionSubtype.University);
             setRectorName(institution.rectorName || "");
+            setRectorDesciption(institution.rectorDesciption || "");
 
             try {
                 const rSocial = typeof institution.rectorSocial === 'string' ? JSON.parse(institution.rectorSocial) : institution.rectorSocial || {};
                 setRectorLinkedin(rSocial.linkedin || "");
+                setRectorWeb(rSocial.website || "");
+                setRectorInstagram(rSocial.instagram || "");
+                setRectorFacebook(rSocial.facebook || "");
+                setRectorYoutube(rSocial.youtube || "");
 
                 const iSocial = typeof institution.socialMedia === 'string' ? JSON.parse(institution.socialMedia) : institution.socialMedia || {};
                 setSocialFacebook(iSocial.facebook || "");
@@ -214,7 +224,6 @@ export function InstitutionForm({ onClose, institution, store }) {
                 try {
                     const newKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, currentPortadaKey, `portada-${Date.now()}`);
                     currentPortadaKey = newKey;
-                    console.log({newKey});
                     setPortadaPhotoKey(newKey);
                     if (institution?.portadaPhoto && institution.portadaPhoto !== newKey) {
                         await remove({ path: institution.portadaPhoto }).catch(e => console.warn("No se pudo borrar foto antigua", e));
@@ -227,7 +236,7 @@ export function InstitutionForm({ onClose, institution, store }) {
             }
 
             // 3. Preparar JSONs
-            const rectorSocialPayload = JSON.stringify({ linkedin: rectorLinkedin });
+            const rectorSocialPayload = JSON.stringify({ linkedin: rectorLinkedin, website: rectorWeb, instagram: rectorInstagram, facebook: rectorFacebook, youtube: rectorYoutube  });
             const socialMediaPayload = JSON.stringify({
                 facebook: socialFacebook,
                 instagram: socialInstagram,
@@ -269,6 +278,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 rectorName,
                 rectorPhoto: currentRectorKey,
                 rectorSocial: rectorSocialPayload,
+                rectorDesciption,
                 socialMedia: socialMediaPayload,
                 embed: embedPayload,
                 admisiones: admisionesPayload,
@@ -459,7 +469,43 @@ export function InstitutionForm({ onClose, institution, store }) {
                         fullWidth
                         placeholder="https://linkedin.com/in/..."
                     />
+                    <TextField
+                        label="Web Rector"
+                        value={rectorWeb}
+                        onChange={(e) => setRectorWeb(e.target.value)}
+                        fullWidth
+                        placeholder="https://....."
+                    />
+                    <TextField
+                        label="Facebook Rector"
+                        value={rectorFacebook}
+                        onChange={(e) => setRectorFacebook(e.target.value)}
+                        fullWidth
+                        placeholder="https://facebook.com/....."
+                    />
+                    <TextField
+                        label="Instagram Rector"
+                        value={rectorInstagram}
+                        onChange={(e) => setRectorInstagram(e.target.value)}
+                        fullWidth
+                        placeholder="https://Instagram.com/....."
+                    />
+                    <TextField
+                        label="Youtube Rector"
+                        value={rectorYoutube}
+                        onChange={(e) => setRectorYoutube(e.target.value)}
+                        fullWidth
+                        placeholder="https://youtube.com/....."
+                    />
                 </div>
+                <TextField
+                    label="Descripción del rector e invitación"
+                    value={rectorDesciption}
+                    onChange={(e) => setRectorDesciption(e.target.value)}
+                    fullWidth
+                    multiline
+                    rows={3}
+                />
 
                 <FormControl fullWidth>
                     <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>

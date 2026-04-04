@@ -14,6 +14,7 @@ export const Institution = a.model({
     rectorName: a.string(),
     rectorPhoto: a.string(),
     rectorSocial: a.json(), // Ej: { linkedin: "...", x: "..." }
+    rectorDescription: a.string(),
 
     // Admisiones lo cambio a json
     admisiones: a.json(), // Ej: { mail, location, phone, link, name, photo }
