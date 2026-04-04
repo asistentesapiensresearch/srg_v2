@@ -33,8 +33,10 @@ const HeaderPortada = ({
       <Box
         sx={{
           width: "100%",
-          minHeight: "360px",
-          height,
+          minHeight: {
+            xs: "90vh",
+            md: height,
+          },
           color: "#fff",
           backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none",
           backgroundSize: "cover",
