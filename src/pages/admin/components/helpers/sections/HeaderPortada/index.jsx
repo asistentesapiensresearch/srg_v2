@@ -35,7 +35,7 @@ const HeaderPortada = ({
         sx={{
           width: "100%",
           minHeight: {
-            xs: "90vh",
+            xs: "100vh",
             md: height,
           },
           color: "#fff",
@@ -60,7 +60,7 @@ const HeaderPortada = ({
           <Box
            sx={{
             display: "grid",
-            gridTemplateRows: "1fr auto auto",
+            gridTemplateRows: "auto 0.2fr 0.1fr",
             height: "100%",
            }}
           >
