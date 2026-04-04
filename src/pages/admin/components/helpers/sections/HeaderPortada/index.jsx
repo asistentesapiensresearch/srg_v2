@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import CalificationAndCategory from "../CalificationAndCategory";
 import PageRenderer from "../../../builder/Renderer";
 import InstitutionHighlights from "../InstitutionHighlights";
+import StartSection from "../StartsSection";
 
 const HeaderPortada = ({
   excelSource,
@@ -66,7 +67,7 @@ const HeaderPortada = ({
             <Box
               className="grid grid-cols-1 md:grid-cols-2 md:w-[90%] gap-4 w-[80%] mx-auto"
             >
-              <Box className="flex flex-col justify-center">
+              <Box className="flex flex-col justify-center gap-2 md:gap-4">
                 <h1 
                   style={{color: "#fff", fontWeight: "bold", fontSize: "clamp(2.2rem, 5vw, 4rem)"}}
                   className="text-center md:text-left"
@@ -82,6 +83,9 @@ const HeaderPortada = ({
                 >
                   {slogan}
                 </p>
+                <StartSection
+                  excelSource={excelSource}
+                />
               </Box>
               {/* Aquí iría el componente branch interno */}
               <Box
