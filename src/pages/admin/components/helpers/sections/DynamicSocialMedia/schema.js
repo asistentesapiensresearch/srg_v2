@@ -31,6 +31,13 @@ export default {
         { name: "icon_color", label: "Color de los Iconos", type: "color", default: "#4b5563" },
         { name: "hover_color", label: "Color al pasar el mouse", type: "color", default: "#c10008" },
         {
+            name: "isBackground",
+            label: "Habilitar color de fondo Iconos",
+            type: "boolean",
+            default: false,
+        },
+        { name: "bg_icon_color", label: "Color de Fondo", type: "color", default: "#c10008", condition: "isBackground === true" },
+        {
             name: "marginTop",
             label: "Margen superior",
             type: "number",

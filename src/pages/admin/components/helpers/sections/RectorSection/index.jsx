@@ -9,7 +9,7 @@ const RectorSection = ({
 }) => {
     
     const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
-    
+
     const imageRector =  useImageUrl(data?.rectorPhoto) || "";
 
     // 🔐 Guard clause (clave)
@@ -17,6 +17,7 @@ const RectorSection = ({
         return <p>Cargando información del rector...</p>;
     }
 
+    const colegio = data[fieldsSection[model]?.colegio] || "Nombre colegio"
     const rectorName = data[fieldsSection[model]?.rectorName] || "Sin Nombre de rector"
     const rectorDescription = data[fieldsSection[model]?.rectorDescription] || "Sin descripcion"
 
@@ -24,33 +25,33 @@ const RectorSection = ({
     return (
         <Box
             sx={{
+                backgroundColor: "#EEEEEE",
                 width: "100%",
                 display: "grid",
-                gridTemplateColumns: "0.3fr 1fr",
-                gap: "10px",
-                padding: "40px",
+                gridTemplateColumns: {
+                    xs: "1fr",
+                    md: "0.3fr 1fr",
+                },
+                gap: "30px",
+                padding: "50px",
             }}
         >
             <Box 
-                sx={{
-
-                }}
-                className="flex flex-col justify-center items-center "
+                className="flex flex-col justify-center items-center gap-4"
             >
                 <Box
                     sx={{
-                        border: "2px solid #C10007",
-                        width: "120px",
-                        height: "120px",
+                        border: "4px solid #fff",
+                        width: "250px",
+                        height: "250px",
                         backgroundImage: imageRector ? `url(${imageRector})` : "none",
                         backgroundPosition: "center",
-                        borderRadius: "50%",
+                        backgroundSize: "cover",
+                        borderRadius: "20px",
+                        boxShadow: '0 6px 20px #000'
                     }}
-                >
-
-                </Box>
+                ></Box>
                 {/* <p>{imageRector}</p> */}
-                <p className="font-bold">{rectorName}</p>
                 {/* redes sociales */}
                 {children && children.length > 0 && children?.some((child) => child.type === "DynamicSocialMedia") ?  (
                         children.filter((child) => child.type === "DynamicSocialMedia")
@@ -71,8 +72,20 @@ const RectorSection = ({
             <Box 
                 className="flex justify-center items-center"
             >
-                {/* description */}
-                <p>{rectorDescription}</p>
+                <Box>
+                    <h2 className="font-bold">{rectorName}</h2>
+                    <h4 className="font-bold" style={{
+                        color: "#c10008"
+                    }}>
+                        RECTOR { colegio.toUpperCase() }
+                    </h4>
+                    <div style={{
+                        borderTop: "4px solid #c10008",
+                        width: "40px",
+                    }}></div>
+                    {/* description */}
+                    <p className="mt-4" style={{color: "#232221"}}>{rectorDescription}</p>
+                </Box>
             </Box>
         </Box>
     )

@@ -14,6 +14,8 @@ export default function DynamicSocialMedia({
     gap = 2,
     icon_color = "#4b5563",
     hover_color = "#c10008",
+    isBackground = false,
+    bg_icon_color = "none",
     show_website = true,
     marginTop = 10
 }) {
@@ -93,6 +95,7 @@ export default function DynamicSocialMedia({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 sx={{
+                                    backgroundColor: (isBackground) ? bg_icon_color : "none",
                                     color: icon_color,
                                     transition: 'all 0.2s ease',
                                     '&:hover': {
