@@ -42,8 +42,14 @@ const RectorSection = ({
                 <Box
                     sx={{
                         border: "4px solid #fff",
-                        width: "250px",
-                        height: "250px",
+                        width: {
+                            xs: "200px",
+                            md: "250px"
+                        },
+                        height: {
+                            xs: "200px",
+                            md: "250px"
+                        },
                         backgroundImage: imageRector ? `url(${imageRector})` : "none",
                         backgroundPosition: "center",
                         backgroundSize: "cover",
