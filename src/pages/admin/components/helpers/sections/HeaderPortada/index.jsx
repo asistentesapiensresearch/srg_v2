@@ -34,10 +34,11 @@ const HeaderPortada = ({
       <Box
         sx={{
           width: "100%",
-          minHeight: {
+          height,
+          /* minHeight: {
             xs: "100vh",
             md: height,
-          },
+          }, */
           color: "#fff",
           backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none",
           backgroundSize: "cover",
@@ -104,7 +105,14 @@ const HeaderPortada = ({
               {children && children.length > 0 && children?.some((child) => child.type === "BrandsGrid") ?  (
                       children.filter((child) => child.type === "BrandsGrid")
                       .map((child) => (
-                        <Box key={child.id} className="w-full flex flex-col">
+                        <Box 
+                          sx={{display: {
+                            xs: "none",
+                            md: "block"
+                          }}} 
+                          key={child.id} 
+                          className="w-full flex flex-col"
+                      >
                           <PageRenderer sections={[child]} />
                         </Box>
                       ))
