@@ -11,7 +11,7 @@ const container = (key, label, tag) =>  (
             height: "100%",
             textAlign: "center",
         }}
-        className="px-10 py-4 border-gray-50 border-b-1 md:border-b-0 md:border-l-1"
+        className="px-10 py-4 border-gray-50 border-b-1 md:border-b-0 md:border-r-1"
     >
         <h4 
             style={{

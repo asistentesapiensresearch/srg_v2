@@ -151,7 +151,7 @@ const TemplateDetail = () => {
 
     // 🟢 RENDER DE CONTENIDO
     return (
-        <Container maxWidth="xl" className="">
+        <Container maxWidth={false} disableGutters className="">
             {/* Header */}
             {/* <Box className="md:flex items-center gap-6 mb-4">
                 <Box className="flex items-center gap-2">
