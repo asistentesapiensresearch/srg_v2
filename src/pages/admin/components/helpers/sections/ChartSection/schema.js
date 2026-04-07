@@ -28,14 +28,7 @@ export default {
             name: "height",
             label: "Altura Mínima Inicial (px)", // Cambio de label para reflejar funcionalidad
             type: "number",
-            default: 200,
-            help: "El usuario podrá agrandar el gráfico arrastrando la esquina inferior."
-        },
-        {
-            name: "width",
-            label: "Ancho Mínimo Inicial (px)", // Cambio de label para reflejar funcionalidad
-            type: "number",
-            default: 200,
+            default: 500,
             help: "El usuario podrá agrandar el gráfico arrastrando la esquina inferior."
         },
         {

@@ -41,7 +41,6 @@ export default function ChartSection({
     sectionTitle,
     chartManager,
     height = 500,
-    width = 500,
     thumbnailsMode = 'auto'
 }) {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -541,13 +540,11 @@ export default function ChartSection({
                             // 🔥🔥🔥 CAMBIO PRINCIPAL PARA RESIZE TOTAL 🔥🔥🔥
                             resize: 'both',       // Permite redimensionar ancho y alto
                             overflow: 'hidden',   // Necesario para que resize funcione
-
+                            width: "100%",
                             minHeight: height,    // Altura inicial/mínima
                             maxWidth: '100%',     // Evita que se salga del contenedor padre
-                            minWidth: width,    // Evita que se haga diminuto
-
+                            minWidth: 0,    // Evita que se haga diminuto
                             height: 'auto',
-                            width: 'auto',
                             display: 'flex',
                             flexDirection: 'column',
                             '&:hover .resize-handle': { opacity: 1 }
