@@ -579,7 +579,7 @@ export default function ChartSection({
                     </Paper>
                 </div>
             ) : (
-                loading && !activeData && <Box height={height} width={width} display="flex" justifyContent="center" alignItems="center" bgcolor="#f9fafb" borderRadius={4}><CircularProgress /></Box>
+                loading && !activeData && <Box height={height} width={"100%"} display="flex" justifyContent="center" alignItems="center" bgcolor="#f9fafb" borderRadius={4}><CircularProgress /></Box>
             )}
 
             {showThumbnails && (

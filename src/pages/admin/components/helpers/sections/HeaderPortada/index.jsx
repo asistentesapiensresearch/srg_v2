@@ -36,7 +36,7 @@ const HeaderPortada = ({
           width: "100%",
           height,
           minHeight: {
-            xs: "120vh",
+            xs: "140vh",
             md: height,
           },
           color: "#fff",
