@@ -16,7 +16,7 @@ export default function CssCode({ id, css_code, children = [] }) {
     }, [css_code, scopeClass]);
 
     return (
-        <Box className={`${scopeClass} w-full`}>
+        <Box className={`${scopeClass} w-full section-component`}>
             {/* Inyectamos el CSS solo para esta instancia */}
             <style dangerouslySetInnerHTML={{ __html: processedCss }} />
 

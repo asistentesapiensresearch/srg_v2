@@ -1,24 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { fetchSheet } from '../DirectorySection/fetchSheet';
+import React, { useMemo } from 'react'
 import { Atom, Globe, BookOpen, Calculator, MessageSquare } from 'lucide-react';
-import { color } from 'highcharts';
 import { useSelector } from 'react-redux';
 import { fieldsSection } from './fields';
 
-
-// Helper de limpieza (nos ayuda a eliminar acentos y caracteres especiales para encontrar datos)
-const cleanString = (val) => {
-  if (val === null || val === undefined) return "";
-  return String(val).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-};
 
 const TabsPuntuation = ({ 
   excelSource = "Micro-Posionamiento",
   textcolor = "#1f2937", 
   titleTabsPuntuation, 
   HoverCardsPuntuation = 2, sizeTitleTabs = 20, 
-  BackgroundCardsPuntuation = "#e0f2fe", 
-  textColorCards = "#024a70" }) => {
+}) => {
 
   const excelStored = useSelector(
     (state) => state.sections.fetchData.sheets?.[excelSource]
@@ -125,10 +116,7 @@ const TabsPuntuation = ({
   };
 
   return (
-    <div style={{
-      width: "90%",
-      margin: "20px auto"
-    }}>
+    <div className=''>
       <div className=''>
         <h3 className='font-black underline' style={{ fontSize: `${sizeTitleTabs}px` }}>
           {titleTabsPuntuation}

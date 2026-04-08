@@ -82,3 +82,8 @@
         opacity: 0.5;
     }
 }
+
+.section-component {
+  width: 90%;
+  margin: 0 auto;
+}
