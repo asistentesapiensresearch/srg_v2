@@ -20,14 +20,14 @@ export default {
                     type: "select",
                     default: "Mail",
                     options: [
-                        { label: "Globe", value: "Globo" },
+                        { label: "Globe", value: "Globe" },
                         { label: "Calendario", value: "Calendar" },
                         { label: "Casa", value: "House" },
                         { label: "Usuarios", value: "Users" },
                         { label: "Usuario", value: "User" },
-                        { label: "Mapa", value: "Mapin" },
+                        { label: "Mapa", value: "MapPin" },
                         { label: "Book", value: "Book" },
-                        { label: "Star", value: "Start" },
+                        { label: "Star", value: "Star" },
                     ]
                 },
                 {
