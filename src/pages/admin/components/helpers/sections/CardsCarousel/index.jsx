@@ -13,20 +13,25 @@ const CardsCarousel = ({
     title,
     itemsCustom,
     gap = 20,
-    paddingVertical = 20,
     bgBorde = "#C8102E",
     itemsPerView = 4,
     autoplay = true,
     showArrows = true,
     showDots = true,
 }) => {
-
     const items = useMemo(() => itemsCustom || [], [itemsCustom])
 
-    const renderCarrusel = () => <Box
+    const swiperKey = useMemo(
+        () =>
+            `swiper-${itemsPerView}-${autoplay}-${showArrows}-${showDots}-${gap}`,
+        [itemsPerView, autoplay, showArrows, showDots, gap]
+    )
+
+    const renderCarrusel = () => (
+        <Box
             sx={{
                 width: "100%",
-                padding: `${paddingVertical}px 0`,
+                padding: `20px 0`,
                 display: "flex",
                 alignItems: "center",
                 gap: 2,
@@ -38,6 +43,7 @@ const CardsCarousel = ({
                     marginTop: '40px',
                 }
             }}
+            className="h-full"
         >
             {showArrows && (
                 <Box
@@ -67,8 +73,9 @@ const CardsCarousel = ({
 
             <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Swiper
+                    key={swiperKey}
                     modules={[Autoplay, Navigation, Pagination]}
-                    spaceBetween={15}
+                    spaceBetween={Number(gap)}
                     slidesPerView={1}
                     navigation={
                         showArrows
@@ -87,14 +94,15 @@ const CardsCarousel = ({
                     pagination={showDots ? { clickable: true } : false}
                     autoplay={autoplay ? { delay: 4000, disableOnInteraction: false } : false}
                     breakpoints={{
-                        640: { slidesPerView: Math.min(itemsPerView, 2) },
-                        1024: { slidesPerView: itemsPerView },
+                        640: { slidesPerView: Math.min(Number(itemsPerView), 2) },
+                        1024: { slidesPerView: Number(itemsPerView) },
                     }}
                 >
                     {items.map((el, idx) => (
-                        <SwiperSlide key={`infoCard-${idx}`}>
+                        <SwiperSlide key={`infoCard-${idx}`} style={{height: "auto", display:"flex"}}>
                             <Box
                                 className="
+                                    h-auto
                                     rounded-r-xl
                                     hover:shadow-md
                                     transition-all duration-200
@@ -112,7 +120,6 @@ const CardsCarousel = ({
                                     transition: "all 300ms ease-out",
                                     borderTop: "3px solid #C10008"
                                 }}
-                                
                             >
                                 <div className='flex gap-2 items-center'>
                                     <DynamicIcon name={el.icon || "Globe"} color={"#C10008"} size={20} />
@@ -124,15 +131,17 @@ const CardsCarousel = ({
                                     <p className="text-sm">
                                         {el.value}
                                     </p>
-                                    <span style={{
-                                        padding: "2px 30px",
-                                        backgroundColor: "#FDEEEF",
-                                        color: "#C10008",
-                                        fontWeight: "bold",
-                                        border: "1px solid #EF9A9A",
-                                        borderRadius: "30px",
-                                        fontSize: "11px",
-                                    }}>
+                                    <span
+                                        style={{
+                                            padding: "2px 30px",
+                                            backgroundColor: "#FDEEEF",
+                                            color: "#C10008",
+                                            fontWeight: "bold",
+                                            border: "1px solid #EF9A9A",
+                                            borderRadius: "30px",
+                                            fontSize: "11px",
+                                        }}
+                                    >
                                         {el.tag}
                                     </span>
                                 </div>
@@ -168,6 +177,7 @@ const CardsCarousel = ({
                 </Box>
             )}
         </Box>
+    )
 
     return (
         <Box

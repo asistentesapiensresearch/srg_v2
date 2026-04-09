@@ -30,33 +30,10 @@ export default {
         },
 
         { name: "style_settings", label: "🎨 ESTILO VISUAL", type: "separator" },
-        {
-            name: "layout",
-            label: "Diseño de Tarjeta",
-            type: "select",
-            default: "classic",
-            options: [
-                { label: "Clásico (Avatar abajo)", value: "classic" },
-                { label: "Burbuja (Cita con fondo)", value: "bubble" },
-                { label: "Minimalista (Limpio)", value: "minimal" }
-            ]
-        },
-        { name: "isVertical", label: "Orientación vertical", type: "boolean", default: false },
-        { name: "heightCarrusel", label: "Altura vertical", type: "text", default: "400px" },
         { name: "itemsPerView", label: "Testimonios visibles (PC)", type: "number", default: 3, min: 1, max: 4 },
+        { name: "gap", label: "Espaciado entre testimonios", type: "number", default: 15, min: 1, max: 40 },
         { name: "autoplay", label: "Reproducción Automática", type: "checkbox", default: true },
         { name: "showArrows", label: "Mostrar Flechas", type: "checkbox", default: true },
         { name: "showDots", label: "Mostrar Puntos (Paginación)", type: "checkbox", default: true }, // Nueva opción útil
-        { name: "primaryColor", label: "Color de Acento", type: "color", default: "#c10008" },
-        { name: "backgroundColor", label: "Color de Fondo componente general", type: "color", default: "#f9fafb" },
-        { name: "backgroundColorContent", label: "Color de Fondo contenido", type: "color", default: "#EEEEEE" },
-        { name: "borderRadius", label: "Borde redondo del contenido", type: "text", default: "10px" },
-        {
-            name: "shadow",
-            label: "Sombra",
-            type: "boolean",
-            default: true
-        },
-        { name: "shadowColor", label: "Color de la sombra", type: "color", default: "rgba(0,0,0,0.08)" },
     ]
 };

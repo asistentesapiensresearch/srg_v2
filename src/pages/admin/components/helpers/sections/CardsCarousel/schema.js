@@ -42,11 +42,16 @@ export default {
                 },
                 {
                     name: "tag",
-                    label: "Texto",
+                    label: "Etiquetas",
                     type: "text"
                 },
             ]
         },
-        { name: "style_settings", label: "🎨 ESTILO Y DISEÑO", type: "separator" },
+        { name: "style_settings", label: "🎨 ESTILO VISUAL", type: "separator" },
+        { name: "itemsPerView", label: "Testimonios visibles (PC)", type: "number", default: 3, min: 1, max: 4 },
+        { name: "gap", label: "Espaciado entre testimonios", type: "number", default: 15, min: 1, max: 40 },
+        { name: "autoplay", label: "Reproducción Automática", type: "checkbox", default: true },
+        { name: "showArrows", label: "Mostrar Flechas", type: "checkbox", default: true },
+        { name: "showDots", label: "Mostrar Puntos (Paginación)", type: "checkbox", default: true },
     ]
 };
