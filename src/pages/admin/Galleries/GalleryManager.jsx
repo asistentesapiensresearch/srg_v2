@@ -5,7 +5,7 @@ import {
     DialogActions, ImageList, ImageListItem, ImageListItemBar,
     Divider
 } from '@mui/material';
-import { Plus, Trash2, Image as ImageIcon, Save, X } from 'lucide-react';
+import { Plus, Type, Trash2, Image as ImageIcon, Save, X } from 'lucide-react';
 import { uploadData, getUrl, remove } from 'aws-amplify/storage';
 import { Preloader } from '@src/components/preloader';
 
@@ -28,6 +28,11 @@ export default function GalleryManager() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [images, setImages] = useState([]); // Array de objetos: { key (S3), url (Blob/Firmada), isNew (boolean), file (File) }
+
+    // Agregamos estados para controlar modal de descripción por imagen
+    const [openDescriptionModal, setOpenDescriptionModal] = useState(false);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+    const [imageDescription, setImageDescription] = useState("");
 
     // Cargar galerías al montar
     useEffect(() => {
@@ -52,9 +57,9 @@ export default function GalleryManager() {
             const withUrls = await Promise.all(parsedImages.map(async (img) => {
                 try {
                     const res = await getUrl({ path: img.original });
-                    return { key: img.original, url: res.url.toString(), isNew: false };
+                    return { key: img.original, url: res.url.toString(), isNew: false, description: img.description || "" };
                 } catch (err) {
-                    return { key: img.original, url: "", isNew: false }; // Fallback si la imagen no existe
+                    return { key: img.original, url: "", isNew: false, description: img.description || "" }; // Fallback si la imagen no existe
                 }
             }));
             setImages(withUrls);
@@ -84,7 +89,8 @@ export default function GalleryManager() {
             key: null, // Aún no tiene key en S3
             url: URL.createObjectURL(file), // Preview local
             isNew: true,
-            file: file
+            file: file,
+            description: ""
         }));
 
         setImages(prev => [...prev, ...newImages]);
@@ -96,6 +102,37 @@ export default function GalleryManager() {
             URL.revokeObjectURL(imgToRemove.url);
         }
         setImages(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const handleOpenAddDescription = (index) => {
+        const selectedImage = images[index];
+        setSelectedImageIndex(index);
+        setImageDescription(selectedImage.description || "");
+        setOpenDescriptionModal(true);
+    }
+
+    // save descriptionImg
+    const handleSaveImageDescription = () => {
+        if (selectedImageIndex === null) return;
+
+        setImages(prev =>
+            prev.map((img, i) =>
+                i === selectedImageIndex
+                    ? { ...img, description: imageDescription }
+                    : img
+            )
+        );
+
+        setOpenDescriptionModal(false);
+        setSelectedImageIndex(null);
+        setImageDescription("");
+    };
+
+    // close descriptionImg modal
+    const handleCloseDescriptionModal = () => {
+        setOpenDescriptionModal(false);
+        setSelectedImageIndex(null);
+        setImageDescription("");
     };
 
     // --- GUARDAR EN S3 Y LUEGO EN BD ---
@@ -124,14 +161,14 @@ export default function GalleryManager() {
                     finalImagesPayload.push({
                         original: fileKey,
                         thumbnail: fileKey, // Aquí podrías enviar a generar un thumbnail si tuvieras Lambda
-                        description: ""
+                        description: img.description || ""
                     });
                 } else if (!img.isNew && img.key) {
                     // Mantener las que ya estaban en S3
                     finalImagesPayload.push({
                         original: img.key,
                         thumbnail: img.key,
-                        description: ""
+                        description: img.description || ""
                     });
                 }
             }
@@ -318,11 +355,33 @@ export default function GalleryManager() {
                                             style={{ height: '100%', objectFit: 'cover' }}
                                         />
 
-                                        {/* Overlay Hover */}
-                                        <Box className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <IconButton sx={{ color: 'white', bgcolor: 'rgba(239, 68, 68, 0.8)', '&:hover': { bgcolor: 'red' } }} onClick={() => handleRemoveImage(index)}>
-                                                <Trash2 size={20} />
+                                        <Box className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                            
+                                            {/* Botón eliminar */}
+                                            <IconButton
+                                                sx={{
+                                                    color: 'white',
+                                                    bgcolor: 'rgba(239, 68, 68, 0.8)',
+                                                    '&:hover': { bgcolor: 'red' }
+                                                }}
+                                                onClick={() => handleRemoveImage(index)}
+                                            >
+                                            <Trash2 size={20} />
                                             </IconButton>
+
+                                            {/* Botón agregar descripción */}
+                                            <IconButton
+                                                sx={{
+                                                    color: 'white',
+                                                    bgcolor: 'rgba(20, 68, 68, 0.8)',
+                                                    '&:hover': { bgcolor: 'green' }
+                                                }}
+                                                onClick={() => handleOpenAddDescription(index)}
+                                            >
+                                                {/* cambia el icono si quieres */}
+                                                <Type size={20} />
+                                            </IconButton>
+
                                         </Box>
 
                                         {/* Etiqueta de "Nuevo" */}
@@ -348,6 +407,43 @@ export default function GalleryManager() {
                         sx={{ px: 4, textTransform: 'none', borderRadius: 2 }}
                     >
                         {uploading ? "Subiendo imágenes..." : "Guardar Galería"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Modal para agregar descripción de la imagen */}
+            <Dialog
+                open={openDescriptionModal}
+                onClose={handleCloseDescriptionModal}
+                maxWidth="xs"
+                fullWidth
+                PaperProps={{ sx: { borderRadius: 3 } }}
+            >
+                <DialogTitle>
+                    <Typography fontWeight="bold">
+                        Agregar descripción
+                    </Typography>
+                </DialogTitle>
+
+                <DialogContent>
+                    <TextField
+                        label="Descripción de la imagen"
+                        fullWidth
+                        multiline
+                        rows={4}
+                        value={imageDescription}
+                        onChange={(e) => setImageDescription(e.target.value)}
+                        placeholder="Escribe un texto para esta imagen"
+                        sx={{ mt: 1 }}
+                    />
+                </DialogContent>
+
+                <DialogActions sx={{ px: 3, pb: 3 }}>
+                    <Button onClick={handleCloseDescriptionModal} color="inherit">
+                        Cancelar
+                    </Button>
+                    <Button variant="contained" onClick={handleSaveImageDescription}>
+                        Guardar
                     </Button>
                 </DialogActions>
             </Dialog>
