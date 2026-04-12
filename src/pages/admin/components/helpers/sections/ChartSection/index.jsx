@@ -541,7 +541,10 @@ export default function ChartSection({
                             resize: 'both',       // Permite redimensionar ancho y alto
                             overflow: 'hidden',   // Necesario para que resize funcione
                             width: "100%",
-                            minHeight: height,    // Altura inicial/mínima
+                            minHeight: {
+                                xs: 650,
+                                md: height
+                            },    // Altura inicial/mínima
                             maxWidth: '100%',     // Evita que se salga del contenedor padre
                             minWidth: 0,    // Evita que se haga diminuto
                             height: 'auto',
