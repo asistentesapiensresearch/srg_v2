@@ -92,58 +92,104 @@ export default function FormSection({
     };
 
     if (!fields || fields.length === 0) return null;
+    const normalFields = fields.filter((field) => field.type !== "textarea");
+    const textareaField = fields.find((field) => field.type === "textarea");
 
     return (
-        <Container maxWidth="md" sx={{ py: 6 }}>
-            <Paper elevation={0} sx={{ p: { xs: 3, md: 6 }, borderRadius: 4, border: '1px solid #eee', bgcolor: '#fff' }}>
-
-                <Box textAlign="center" mb={5}>
-                    <Typography variant="h4" fontWeight={800} gutterBottom sx={{ color: '#1e293b' }}>
-                        {title}
-                    </Typography>
-                    {description && (
-                        <Typography variant="body1" sx={{ color: '#64748b', maxWidth: 600, mx: 'auto' }}>
-                            {description}
-                        </Typography>
-                    )}
-                </Box>
+        <Container  
+            sx={{ 
+                py: {
+                    xs: 3,
+                    md: 8
+                },
+                px: {
+                    xs:0,
+                    md:4
+                } 
+            }}
+        >
+            <Paper elevation={0} sx={{ py: {xs: 3, md: 4} , px: { xs: 0, md: 4 }, borderRadius: 4, border: '1px solid #eee', bgcolor: '#fff' }}>
+                <Box
+                    sx={{
+                        width: "100%",
+                        height: "4px",
+                        backgroundColor: "#c10008",
+                        borderRadius: "4px",
+                        mb: 4,
+                    }}
+                />
 
                 <Box component="form" onSubmit={handleSubmit} noValidate>
-                    <Grid container spacing={3}>
-                        {fields.map((field, index) => (
-                            <Grid item xs={12} md={field.width || 12} key={index}>
-                                <FieldRenderer
-                                    field={field}
-                                    value={formData[field.name]}
-                                    onChange={handleChange}
-                                    error={errors[field.name]}
-                                />
-                            </Grid>
-                        ))}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 3,
+                        }}
+                    >
+                        {/* Campos superiores */}
+                        <Box
+                            sx={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                                gap: 3,
+                            }}
+                        >
+                            {normalFields.map((field, index) => (
+                                <Box key={index}>
+                                    <FieldRenderer
+                                        field={field}
+                                        value={formData[field.name]}
+                                        onChange={handleChange}
+                                        error={errors[field.name]}
+                                    />
+                                </Box>
+                            ))}
+                        </Box>
 
-                        <Grid item xs={12} sx={{ mt: 2 }}>
+                        {/* Textarea abajo al 100% */}
+                        {textareaField && (
+                            <Box sx={{ width: "100%" }}>
+                                <FieldRenderer
+                                    field={{ ...textareaField, rows: 6 }}
+                                    value={formData[textareaField.name]}
+                                    onChange={handleChange}
+                                    error={errors[textareaField.name]}
+                                />
+                            </Box>
+                        )}
+
+                        {/* Botón */}
+                        <Box
+                             sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                        >
                             <Button
                                 type="submit"
                                 variant="contained"
                                 size="large"
-                                fullWidth
                                 endIcon={submitAction === 'whatsapp' ? <MessageCircle /> : <Send />}
                                 sx={{
+                                    width: { xs: "100%", sm: "auto" },
+                                    minWidth: { sm: 240 },
                                     py: 1.8,
+                                    px: 4,
                                     borderRadius: 3,
                                     fontSize: '1rem',
                                     fontWeight: 700,
                                     textTransform: 'none',
-                                    bgcolor: submitAction === 'whatsapp' ? '#25D366' : 'primary.main',
+                                    bgcolor: submitAction === 'whatsapp' ? '#25D366' : '#ef4444',
                                     '&:hover': {
-                                        bgcolor: submitAction === 'whatsapp' ? '#128C7E' : 'primary.dark',
+                                        bgcolor: submitAction === 'whatsapp' ? '#128C7E' : '#c10008',
                                     }
                                 }}
                             >
                                 {submitButtonText}
                             </Button>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </Box>
             </Paper>
 
