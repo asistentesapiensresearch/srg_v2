@@ -49,13 +49,16 @@ const CardsCarousel = ({
                 <Box
                     className="cards-carousel-prev"
                     sx={{
+                        display: {
+                            xs: "none",
+                            sm: "flex"
+                        },
                         minWidth: "30px",
                         width: "30px",
                         height: "30px",
                         borderRadius: "50%",
                         border: `1px solid ${bgBorde}`,
                         color: bgBorde,
-                        display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
@@ -155,13 +158,16 @@ const CardsCarousel = ({
                 <Box
                     className="cards-carousel-next"
                     sx={{
+                        display: {
+                            xs: "none",
+                            sm: "flex"
+                        },
                         minWidth: "30px",
                         width: "30px",
                         height: "30px",
                         borderRadius: "50%",
                         border: `1px solid ${bgBorde}`,
                         color: bgBorde,
-                        display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",

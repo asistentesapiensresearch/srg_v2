@@ -188,13 +188,16 @@ export default function TestimonialsCarousel({
                     <Box
                         className="testimonials-carousel-prev"
                         sx={{
+                            display: {
+                                xs: "none",
+                                sm: "flex"
+                            },
                             minWidth: "36px",
                             width: "36px",
                             height: "36px",
                             borderRadius: "50%",
                             border: `1px solid #C8102E`,
                             color: "#C8102E",
-                            display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             cursor: "pointer",
@@ -252,13 +255,16 @@ export default function TestimonialsCarousel({
                     <Box
                         className="testimonials-carousel-next"
                         sx={{
+                            display: {
+                                xs: "none",
+                                sm: "flex"
+                            },
                             minWidth: "36px",
                             width: "36px",
                             height: "36px",
                             borderRadius: "50%",
                             border: `1px solid #C8102E`,
                             color: "#C8102E",
-                            display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             cursor: "pointer",
