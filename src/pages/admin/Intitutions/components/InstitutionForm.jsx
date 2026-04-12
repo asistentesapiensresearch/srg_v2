@@ -84,6 +84,13 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [rectorPhotoKey, setRectorPhotoKey] = useState(institution?.rectorPhoto || "");
     const [rectorPhotoPreview, setRectorPhotoPreview] = useState("");
 
+    const [photoAdmisionesKey, setPhotoAdmisionesKey] = useState(
+        typeof institution.admisiones === "string"
+        ? JSON.parse(institution.admisiones)?.photo || ""
+        : ""
+    );
+    const [photoAdmisionesPreview, setPhotoAdmisionesPreview] = useState("");
+
     const [uploading, setUploading] = useState(false);
     const [tempKeys, setTempKeys] = useState([]);
     const [errors, setErrors] = useState({});
@@ -132,6 +139,12 @@ export function InstitutionForm({ onClose, institution, store }) {
                 setAdmisionesPhone(admisiones.phone || "");
                 setAdmisionesLocation(admisiones.location || "");
                 setAdmisionesLink(admisiones.link || "");
+                
+                // Aquí debo poner la imagen de admisiones
+                if(admisiones.photo) {
+                    setPhotoAdmisionesKey(admisiones.photo || "");
+                    getUrl({ path: admisiones.photo }).then((res) => setPhotoAdmisionesPreview(res.url.toString())).catch(() => { });
+                }
 
                 const langs = Array.isArray(institution.languages) ? institution.languages.join(", ") : "";
                 setLanguagesStr(langs);
@@ -175,6 +188,13 @@ export function InstitutionForm({ onClose, institution, store }) {
         setPortadaPhotoKey(key);
         setTempKeys(prev => [...prev, key]);
         getUrl({path: key}).then(res => setPortadaPhotoPreview(res.url.toString()));
+        setUploading(false);
+    }
+    
+    const handlePhotoAmissionSuccess = async ({key}) => {
+        setPhotoAdmisionesKey(key);
+        setTempKeys(prev => [...prev, key]);
+        getUrl({path: key}).then(res => setPhotoAdmisionesPreview(res.url.toString()));
         setUploading(false);
     }
 
@@ -235,6 +255,24 @@ export function InstitutionForm({ onClose, institution, store }) {
                 }
             }
 
+            // procesar foto persona de admisiones
+            let currentPhotoAdmisionesKey = photoAdmisionesKey;
+            if(currentPhotoAdmisionesKey && currentPhotoAdmisionesKey.includes(TEMP_FOLDER)) {
+                try {
+                    const newKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, currentPhotoAdmisionesKey, `photo-admisiones-${Date.now()}`);
+                    currentPhotoAdmisionesKey = newKey;
+                    setPhotoAdmisionesKey(newKey);
+                    const admisiones = typeof institution.admisiones === 'string' ? JSON.parse(institution.admisiones) : institution.admisiones || {};
+                    if (admisiones?.photo && admisiones?.photo !== newKey) {
+                        await remove({ path: admisiones?.photo }).catch(e => console.warn("No se pudo borrar foto antigua", e));
+                    }
+                } catch (moveError) {
+                    setErrors({ form: "Error al procesar la foto de la portada." });
+                    setUploading(false);
+                    return;
+                }
+            }
+
             // 3. Preparar JSONs
             const rectorSocialPayload = JSON.stringify({ linkedin: rectorLinkedin, website: rectorWeb, instagram: rectorInstagram, facebook: rectorFacebook, youtube: rectorYoutube  });
             const socialMediaPayload = JSON.stringify({
@@ -255,7 +293,8 @@ export function InstitutionForm({ onClose, institution, store }) {
                 email: admisionesEmail,
                 phone: admisionesPhone,
                 location: admisionesLocation,
-                link: admisionesLink
+                link: admisionesLink,
+                photo: currentPhotoAdmisionesKey
             });
             const languagesArray = languagesStr.split(",").map(s => s.trim()).filter(Boolean);
 
@@ -561,6 +600,27 @@ export function InstitutionForm({ onClose, institution, store }) {
                         onChange={(e) => setAdmisionesLink(e.target.value)}
                         fullWidth
                     />
+                    <FormControl fullWidth error={!!errors.portadaPhoto}>
+                        <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
+                            Foto de la persona encargada de admisiones
+                        </InputLabel>
+                        {photoAdmisionesPreview && (
+                            <div className="mb-2 max-w-20">
+                                <img src={photoAdmisionesPreview} alt="Portada" className="w-full object-contain border rounded" />
+                            </div>
+                        )}
+                        <FileUploader
+                            acceptedFileTypes={["image/*"]}
+                            path={TEMP_FOLDER}
+                            maxFileCount={1}
+                            onUploadStart={handleUploadStart}
+                            onUploadSuccess={handlePhotoAmissionSuccess}
+                            onUploadError={handleUploadError}
+                            showThumbnails={false}
+                            processFile={({ file }) => ({ file, key: `logo-${Date.now()}-${file.name}` })}
+                        />
+                        {errors.logo && <FormHelperText>{errors.logo}</FormHelperText>}
+                    </FormControl>
                 </div>
 
                 
