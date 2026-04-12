@@ -449,7 +449,50 @@ const renderFieldInput = (field, activeSection, onChange) => {
       </Box>
     );
   }
+  
+  // =========== CUSTOM FORM ==========
+  if (field.type === 'custom') {
+    const CustomComponent = field.component;
 
+    if (!CustomComponent) {
+      return (
+        <Box>
+          <Typography variant="caption" color="error">
+            Campo custom sin componente: {field.name}
+          </Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <Box>
+        {field.label && (
+          <Typography
+            variant="caption"
+            fontWeight={600}
+            color="text.secondary"
+            mb={0.5}
+            display="block"
+          >
+            {field.label}
+          </Typography>
+        )}
+
+        <CustomComponent
+          field={field}
+          value={value ?? field.default}
+          onChange={onChange}
+          activeSection={activeSection}
+        />
+
+        {field.help && (
+          <Typography variant="caption" color="text.secondary" mt={0.5} display="block">
+            {field.help}
+          </Typography>
+        )}
+      </Box>
+    );
+  }
 
   // ========== FALLBACK ==========
   return (
@@ -459,6 +502,9 @@ const renderFieldInput = (field, activeSection, onChange) => {
       </Typography>
     </Box>
   );
+
+
+  
 };
 
 export default renderFieldInput;
