@@ -522,7 +522,7 @@ export default function ChartSection({
     if (!charts || charts.length === 0) return null;
 
     return (
-        <Container maxWidth="xl" sx={{ py: 6 }}>
+        <Container maxWidth="xl" disableGutters sx={{ py: 4 }}>
             {sectionTitle && (
                 <Typography variant="h4" fontWeight={700} textAlign="center" gutterBottom sx={{ mb: 4 }}>
                     {sectionTitle}
