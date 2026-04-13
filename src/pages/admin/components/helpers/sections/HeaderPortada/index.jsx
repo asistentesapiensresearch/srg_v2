@@ -8,9 +8,6 @@ import StartSection from "../StartsSection";
 
 const HeaderPortada = ({
   excelSource,
-  sourceConfig, 
-  filterField, 
-  filterValue,
   // Estilos
   height = "400px",
   children = []
@@ -93,9 +90,7 @@ const HeaderPortada = ({
                 className="flex flex-col justify-center items-center md:items-end"
               >
                 <CalificationAndCategory
-                  sourceConfig={sourceConfig}
-                  filterField={filterField}
-                  filterValue={filterValue}
+                  excelSource={excelSource}
                 />
               </Box>
 
