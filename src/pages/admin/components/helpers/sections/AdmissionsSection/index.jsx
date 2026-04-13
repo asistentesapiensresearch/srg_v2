@@ -33,6 +33,7 @@ const AdmissionsSection = ({
 
   const photoAdmisiones = useImageUrl(admisiones?.photo) || "";
   const audioAdmisiones = useImageUrl(admisiones?.audio) || "";
+  
 
   return (
     <Box
