@@ -91,6 +91,14 @@ export function InstitutionForm({ onClose, institution, store }) {
     );
     const [photoAdmisionesPreview, setPhotoAdmisionesPreview] = useState("");
 
+    //Audio mp3 admisiones
+    const [audioAdmisionesKey, setAudioAdmisionesKey] = useState(
+        typeof institution.admisiones === "string"
+        ? JSON.parse(institution.admisiones)?.audio || ""
+        : ""
+    );
+    const [audioAdmisionesPreview, setAudioAdmisionesPreview] = useState("");
+
     const [uploading, setUploading] = useState(false);
     const [tempKeys, setTempKeys] = useState([]);
     const [errors, setErrors] = useState({});
@@ -146,6 +154,12 @@ export function InstitutionForm({ onClose, institution, store }) {
                     getUrl({ path: admisiones.photo }).then((res) => setPhotoAdmisionesPreview(res.url.toString())).catch(() => { });
                 }
 
+                // Agrego audio admisiones
+                if(admisiones.audio) {
+                    setAudioAdmisionesKey(admisiones.audio || "");
+                    getUrl({ path: admisiones.audio }).then((res) => setAudioAdmisionesPreview(res.url.toString())).catch(() => { });
+                }
+
                 const langs = Array.isArray(institution.languages) ? institution.languages.join(", ") : "";
                 setLanguagesStr(langs);
             } catch (e) { console.error(e); }
@@ -195,6 +209,13 @@ export function InstitutionForm({ onClose, institution, store }) {
         setPhotoAdmisionesKey(key);
         setTempKeys(prev => [...prev, key]);
         getUrl({path: key}).then(res => setPhotoAdmisionesPreview(res.url.toString()));
+        setUploading(false);
+    }
+
+    const handleAudioAdmisionesSuccess = async ({key}) => {
+        setAudioAdmisionesKey(key);
+        setTempKeys(prev => [...prev, key]);
+        getUrl({path: key}).then(res => setAudioAdmisionesPreview(res.url.toString()));
         setUploading(false);
     }
 
@@ -273,6 +294,24 @@ export function InstitutionForm({ onClose, institution, store }) {
                 }
             }
 
+            // procesar audio admisiones
+            let currentAudioAdmisionesKey = audioAdmisionesKey;
+            if(currentAudioAdmisionesKey && currentAudioAdmisionesKey.includes(TEMP_FOLDER)) {
+                try {
+                    const newKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, currentAudioAdmisionesKey, `audio-admisiones-${Date.now()}`);
+                    currentAudioAdmisionesKey = newKey;
+                    setAudioAdmisionesKey(newKey);
+                    const admisiones = typeof institution.admisiones === 'string' ? JSON.parse(institution.admisiones) : institution.admisiones || {};
+                    if (admisiones?.audio && admisiones?.audio !== newKey) {
+                        await remove({ path: admisiones?.audio }).catch(e => console.warn("No se pudo borrar foto antigua", e));
+                    }
+                } catch (moveError) {
+                    setErrors({ form: "Error al procesar la foto de la portada." });
+                    setUploading(false);
+                    return;
+                }
+            }
+
             // 3. Preparar JSONs
             const rectorSocialPayload = JSON.stringify({ linkedin: rectorLinkedin, website: rectorWeb, instagram: rectorInstagram, facebook: rectorFacebook, youtube: rectorYoutube  });
             const socialMediaPayload = JSON.stringify({
@@ -294,7 +333,8 @@ export function InstitutionForm({ onClose, institution, store }) {
                 phone: admisionesPhone,
                 location: admisionesLocation,
                 link: admisionesLink,
-                photo: currentPhotoAdmisionesKey
+                photo: currentPhotoAdmisionesKey,
+                audio: currentAudioAdmisionesKey
             });
             const languagesArray = languagesStr.split(",").map(s => s.trim()).filter(Boolean);
 
@@ -487,9 +527,9 @@ export function InstitutionForm({ onClose, institution, store }) {
                         onUploadSuccess={handlePortadaPhotoSuccess}
                         onUploadError={handleUploadError}
                         showThumbnails={false}
-                        processFile={({ file }) => ({ file, key: `logo-${Date.now()}-${file.name}` })}
+                        processFile={({ file }) => ({ file, key: `portada-${Date.now()}-${file.name}` })}
                     />
-                    {errors.logo && <FormHelperText>{errors.logo}</FormHelperText>}
+                    {errors.portadaPhoto && <FormHelperText>{errors.portadaPhoto}</FormHelperText>}
                 </FormControl>
 
                 <h3 className="font-bold text-gray-700 mt-2 border-b">Rectoría</h3>
@@ -600,7 +640,9 @@ export function InstitutionForm({ onClose, institution, store }) {
                         onChange={(e) => setAdmisionesLink(e.target.value)}
                         fullWidth
                     />
-                    <FormControl fullWidth error={!!errors.portadaPhoto}>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <FormControl fullWidth error={!!errors.photoAdmisiones}>
                         <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
                             Foto de la persona encargada de admisiones
                         </InputLabel>
@@ -617,9 +659,33 @@ export function InstitutionForm({ onClose, institution, store }) {
                             onUploadSuccess={handlePhotoAmissionSuccess}
                             onUploadError={handleUploadError}
                             showThumbnails={false}
-                            processFile={({ file }) => ({ file, key: `logo-${Date.now()}-${file.name}` })}
+                            processFile={({ file }) => ({ file, key: `photo-admisiones-${Date.now()}-${file.name}` })}
                         />
-                        {errors.logo && <FormHelperText>{errors.logo}</FormHelperText>}
+                        {errors.photoAdmisiones && <FormHelperText>{errors.photoAdmisiones}</FormHelperText>}
+                    </FormControl>
+                    <FormControl fullWidth error={!!errors.audioAdmisiones}>
+                        <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
+                            Audio mp3 de admisiones (puede ser un mensaje del encargado)
+                        </InputLabel>
+                        {audioAdmisionesPreview && (
+                            <div className="mb-2 w-full">
+                                <audio controls className="w-full rounded border">
+                                    <source src={audioAdmisionesPreview} type="audio/mpeg" />
+                                    Tu navegador no soporta el audio.
+                                </audio>
+                            </div>
+                        )}
+                        <FileUploader
+                            acceptedFileTypes={["audio/mpeg", ".mp3"]}
+                            path={TEMP_FOLDER}
+                            maxFileCount={1}
+                            onUploadStart={handleUploadStart}
+                            onUploadSuccess={handleAudioAdmisionesSuccess}
+                            onUploadError={handleUploadError}
+                            showThumbnails={false}
+                            processFile={({ file }) => ({ file, key: `audio-admisiones-${Date.now()}-${file.name}` })}
+                        />
+                        {errors.audioAdmisiones && <FormHelperText>{errors.audioAdmisiones}</FormHelperText>}
                     </FormControl>
                 </div>
 

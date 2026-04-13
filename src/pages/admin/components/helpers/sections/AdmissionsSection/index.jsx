@@ -4,6 +4,7 @@ import { Clock3, FileText, Mail, MessageSquare, Phone } from "lucide-react";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import PageRenderer from "../../../builder/Renderer";
+import AdmissionsAudioPlayer from "./AdmissionsAudioPlayer";
 
 const AdmissionsSection = ({
       children = []
@@ -31,12 +32,7 @@ const AdmissionsSection = ({
   }, [data]);
 
   const photoAdmisiones = useImageUrl(admisiones?.photo) || "";
-
-  console.log({
-    name,
-    admisiones,
-    photoAdmisiones
-  });
+  const audioAdmisiones = useImageUrl(admisiones?.audio) || "";
 
   return (
     <Box
@@ -254,98 +250,12 @@ const AdmissionsSection = ({
               gap: 1.5,
             }}
           >
-            <Box
-              sx={{
-                border: "1px solid #d9d9d9",
-                borderRadius: "18px",
-                backgroundColor: "#f7f7f7",
-                px: 2,
-                py: 1.5,
-                display: "flex",
-                alignItems: "center",
-                gap: 1.5,
-                boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
-              }}
-            >
-              <Box
-                component="button"
-                sx={{
-                  width: 42,
-                  height: 42,
-                  minWidth: 42,
-                  borderRadius: "50%",
-                  border: "none",
-                  backgroundColor: "#d90000",
-                  color: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  boxShadow: "0 6px 14px rgba(217,0,0,0.25)",
-                  transition: "transform 0.2s ease",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                  },
-                }}
-              >
-                ▶
-              </Box>
-
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography
-                  sx={{
-                    fontWeight: 700,
-                    fontSize: "0.95rem",
-                    color: "#1f2937",
-                    lineHeight: 1.2,
-                    mb: 0.75,
-                  }}
-                >
-                  {`Mensaje del Director de Admisiones`}
-                </Typography>
-
-                <Box
-                  sx={{
-                    height: 6,
-                    borderRadius: 999,
-                    backgroundColor: "#dddddd",
-                    overflow: "hidden",
-                    mb: 0.5,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: "0%",
-                      height: "100%",
-                      backgroundColor: "#d90000",
-                      borderRadius: 999,
-                    }}
-                  />
-                </Box>
-
-                <Typography
-                  sx={{
-                    fontSize: "0.78rem",
-                    color: "#9ca3af",
-                  }}
-                >
-                  0:00 / 0:00
-                </Typography>
-              </Box>
-
-              <Box
-                sx={{
-                  color: "#bdbdbd",
-                  fontSize: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minWidth: 20,
-                }}
-              >
-                🔊
-              </Box>
-            </Box>
+            {/* Creo componente interno para el audio */}
+            {
+              audioAdmisiones.length > 0 ? (
+                <AdmissionsAudioPlayer audioUrl={audioAdmisiones} />
+              ) : <p>No tiene audio de admisiones, cargué el audio...</p>
+            }
 
             <Button
               variant="outlined"
@@ -375,7 +285,7 @@ const AdmissionsSection = ({
       <Box
         sx={{
           position: "relative",
-          py: { xs: 2, md: 0 },
+          py: { xs: 2, md: 4 },
           px: 0,
           width: "100%",
           overflow: "hidden",
