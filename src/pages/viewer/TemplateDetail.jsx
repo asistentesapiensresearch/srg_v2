@@ -189,7 +189,7 @@ const TemplateDetail = () => {
                 )
             )}
 
-            <Box className='mt-3' sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center' }}>
+            {/* <Box className='mt-3' sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center' }}>
                 <Button
                     variant="outlined"
                     size="large"
@@ -221,7 +221,8 @@ const TemplateDetail = () => {
                 >
                     Ir al Inicio
                 </Button>
-            </Box>
+            </Box> */}
+            
         </Container>
     );
 };
