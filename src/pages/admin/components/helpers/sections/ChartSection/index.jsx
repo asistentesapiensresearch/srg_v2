@@ -522,7 +522,7 @@ export default function ChartSection({
     if (!charts || charts.length === 0) return null;
 
     return (
-        <Container maxWidth="xl" disableGutters sx={{ py: 4 }}>
+        <Container maxWidth="xl" disableGutters sx={{ pt: 2 }}>
             {sectionTitle && (
                 <Typography variant="h4" fontWeight={700} textAlign="center" gutterBottom sx={{ mb: 4 }}>
                     {sectionTitle}
@@ -535,7 +535,7 @@ export default function ChartSection({
                         ref={resizablePaperRef}
                         elevation={0}
                         sx={{
-                            p: 3, border: '1px solid #e0e0e0', borderRadius: 4, mb: 4,
+                            p: 3, border: '1px solid #e0e0e0', borderRadius: 4, mb: 2,
                             position: 'relative',
                             // 🔥🔥🔥 CAMBIO PRINCIPAL PARA RESIZE TOTAL 🔥🔥🔥
                             resize: 'both',       // Permite redimensionar ancho y alto

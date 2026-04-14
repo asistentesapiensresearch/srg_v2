@@ -85,5 +85,7 @@
 
 .section-component {
   width: 90%;
-  margin: 20px auto;
+  margin: 0 auto;
+  padding: 30px;
+  border-top: 1px solid #EEEEEE;
 }

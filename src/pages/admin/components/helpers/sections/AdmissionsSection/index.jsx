@@ -40,6 +40,7 @@ const AdmissionsSection = ({
     <Box
       sx={{
         display: "grid",
+        py: 2,
         gridTemplateColumns: {
           xs: "1fr",
           md: "0.5fr 1fr",
