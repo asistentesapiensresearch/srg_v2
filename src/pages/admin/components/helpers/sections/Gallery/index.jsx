@@ -111,7 +111,7 @@ const GalleryRenderer = ({
           sx={{
             width: "100%",
             height: "100%",
-            objectFit: "cover center",
+            objectFit: "contain",
             display: "block",
           }}
         />
@@ -141,7 +141,7 @@ const GalleryRenderer = ({
             <Typography
               sx={{
                 margin: "40px 70px",
-                fontSize: { xs: "0.9rem", md: "1rem" },
+                fontSize: { xs: "1rem", md: "2rem" },
                 opacity: 0.95,
               }}
             >
