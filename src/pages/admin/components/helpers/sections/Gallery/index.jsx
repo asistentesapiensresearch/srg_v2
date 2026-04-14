@@ -1,139 +1,224 @@
-import React, { useState, useEffect } from 'react';
-import ImageGallery from 'react-image-gallery';
-import "react-image-gallery/styles/image-gallery.css"; // Importar estilos CSS (asegúrate de usar la ruta /css/)
-import { Box, Typography } from '@mui/material';
-import { generateClient } from 'aws-amplify/data';
-import { getUrl } from 'aws-amplify/storage';
-import { Preloader } from '@src/components/preloader';
+import React, { useState, useEffect } from "react";
+import ImageGallery from "react-image-gallery";
+import "react-image-gallery/styles/image-gallery.css";
+import { Box, Typography } from "@mui/material";
+import { generateClient } from "aws-amplify/data";
+import { getUrl } from "aws-amplify/storage";
+import { Preloader } from "@src/components/preloader";
 
 const client = generateClient();
 
 const GalleryRenderer = ({
-    // Props de Origen de datos
-    sourceType = 'custom',
-    galleryId,
-    research,
-    institution,
-
-    // Props de Personalización (mapeados desde el Builder)
-    playInterval = 2000,
-    slideDuration = 550,
-    thumbnailBarPosition = 'bottom',
-    showArrows = true,
-    showThumbnails = true,
-    showBulletIndicators = true,
-    showSliderCounter = false,
-    showAutoplayButton = true,
-    showFullscreenButton = true,
-    InfiniteLoop = true,
-    SlideOnThumbnailHover = false,
-    KeyboardNavigation = true,
-    LazyLoadImages = false,
-    RightToLeft = false,
-    // (VerticalSliding no es nativo de la librería para la imagen principal, 
-    // pero thumbnailBarPosition='left' o 'right' ya cumple esa función visual)
+  sourceType = "custom",
+  galleryId,
+  research,
+  institution,
+  playInterval = 2000,
+  slideDuration = 550,
+  thumbnailBarPosition = "bottom",
+  showArrows = true,
+  showThumbnails = true,
+  showBulletIndicators = true,
+  showSliderCounter = false,
+  showAutoplayButton = true,
+  showFullscreenButton = true,
+  InfiniteLoop = true,
+  SlideOnThumbnailHover = false,
+  KeyboardNavigation = true,
+  LazyLoadImages = false,
+  RightToLeft = false,
 }) => {
-    const [images, setImages] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const loadGallery = async () => {
-            setLoading(true);
-            try {
-                let targetGalleryData = null;
+  useEffect(() => {
+    const loadGallery = async () => {
+      setLoading(true);
 
-                // 1. MODO ENTIDAD (AUTOMÁTICO)
-                if (sourceType === 'entity') {
-                    const entityId = research?.id || institution?.id;
-                    if (entityId) {
-                        const { data } = await client.models.Gallery.list({
-                            filter: { entityId: { eq: entityId } }
-                        });
-                        if (data.length > 0) targetGalleryData = data[0];
-                    }
-                }
+      try {
+        let targetGalleryData = null;
 
-                // 2. MODO PERSONALIZADO (MANUAL)
-                else if (sourceType === 'custom' && galleryId) {
-                    const { data } = await client.models.Gallery.get({ id: galleryId });
-                    targetGalleryData = data;
-                }
+        if (sourceType === "entity") {
+          const entityId = research?.id || institution?.id;
 
-                // 3. PROCESAR IMÁGENES
-                if (targetGalleryData && targetGalleryData.images) {
-                    const rawImages = typeof targetGalleryData.images === 'string'
-                        ? JSON.parse(targetGalleryData.images)
-                        : targetGalleryData.images;
+          if (entityId) {
+            const { data } = await client.models.Gallery.list({
+              filter: { entityId: { eq: entityId } },
+            });
 
-                    // Convertir claves S3 a URLs firmadas
-                    const formattedImages = await Promise.all(rawImages.map(async (img) => {
-                        try {
-                            const signedUrl = await getUrl({ path: img.original }).then(res => res.url.toString());
-                            return {
-                                original: signedUrl,
-                                thumbnail: signedUrl,
-                                description: img.description || "",
-                                originalClass: 'rounded-lg',
-                            };
-                        } catch (e) {
-                            return null;
-                        }
-                    }));
+            if (data.length > 0) targetGalleryData = data[0];
+          }
+        } else if (sourceType === "custom" && galleryId) {
+          const { data } = await client.models.Gallery.get({ id: galleryId });
+          targetGalleryData = data;
+        }
 
-                    setImages(formattedImages.filter(img => img !== null));
-                }
-            } catch (err) {
-                console.error("Error loading gallery", err);
-                setError("No se pudo cargar la galería");
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (targetGalleryData && targetGalleryData.images) {
+          const rawImages =
+            typeof targetGalleryData.images === "string"
+              ? JSON.parse(targetGalleryData.images)
+              : targetGalleryData.images;
 
-        loadGallery();
-    }, [sourceType, galleryId, research, institution]);
+          const formattedImages = await Promise.all(
+            rawImages.map(async (img, index) => {
+              try {
+                const signedUrl = await getUrl({ path: img.original }).then(
+                  (res) => res.url.toString()
+                );
 
-    if (loading) return <Box py={10} display="flex" justifyContent="center"><Preloader /></Box>;
+                return {
+                  original: signedUrl,
+                  thumbnail: signedUrl,
+                  description: img.description || "",
+                  originalAlt: img.description || `Imagen ${index + 1}`,
+                };
+              } catch (e) {
+                return null;
+              }
+            })
+          );
 
-    if (error || !images || images.length === 0) {
-        return (
-            <Box p={4} textAlign="center" bgcolor="grey.100" borderRadius={2}>
-                <Typography color="text.secondary">{error || "Galería vacía o no encontrada"}</Typography>
-            </Box>
-        );
-    }
+          setImages(formattedImages.filter(Boolean));
+        }
+      } catch (err) {
+        console.error("Error loading gallery", err);
+        setError("No se pudo cargar la galería");
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    loadGallery();
+  }, [sourceType, galleryId, research, institution]);
+
+  const renderCustomItem = (item) => {
     return (
-        <Box className="gallery-wrapper py-4" dir={RightToLeft ? 'rtl' : 'ltr'}>
-            <ImageGallery
-                items={images}
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          height: { xs: 400, md: 700 },
+          overflow: "hidden",
+          borderRadius: "18px",
+          backgroundColor: "#e5e7eb",
+        }}
+      >
+        <Box
+          component="img"
+          src={item.original}
+          alt={item.originalAlt}
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover center",
+            display: "block",
+          }}
+        />
 
-                // --- MAPEO DE OPCIONES AL COMPONENTE ---
-                slideInterval={playInterval}
-                slideDuration={slideDuration}
-                thumbnailPosition={thumbnailBarPosition}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.05) 48%, rgba(0,0,0,0) 68%)",
+          }}
+        />
 
-                // Mostrar/Ocultar elementos
-                showNav={showArrows}
-                showThumbnails={showThumbnails}
-                showBullets={showBulletIndicators}
-                showIndex={showSliderCounter}
-                showPlayButton={showAutoplayButton}
-                showFullscreenButton={showFullscreenButton}
+        <Box
+          sx={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            color: "#fff",
+            zIndex: 2,
+            bgcolor: "rgba(0,0,0,0.2)",
+          }}
+        >
 
-                // Comportamientos
-                infinite={InfiniteLoop}
-                slideOnThumbnailOver={SlideOnThumbnailHover}
-                disableKeyDown={!KeyboardNavigation} // Lógica inversa para la librería
-                lazyLoad={LazyLoadImages}
-                isRTL={RightToLeft}
-
-            // Opcional: Si quieres que arranque solo si hay botón de autoplay
-            // autoPlay={false} 
-            />
+          {(item.description) && (
+            <Typography
+              sx={{
+                margin: "40px 70px",
+                fontSize: { xs: "0.9rem", md: "1rem" },
+                opacity: 0.95,
+              }}
+            >
+              {item.description}
+            </Typography>
+          )}
         </Box>
+      </Box>
     );
+  };
+
+  const renderCustomThumbInner = (item) => {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: 64,
+          overflow: "hidden",
+          borderRadius: "10px",
+        }}
+      >
+        <Box
+          component="img"
+          src={item.thumbnail}
+          alt={item.originalAlt || item.title}
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            display: "block",
+          }}
+        />
+      </Box>
+    );
+  };
+
+  if (loading) {
+    return (
+      <Box py={10} display="flex" justifyContent="center">
+        <Preloader />
+      </Box>
+    );
+  }
+
+  if (error || !images || images.length === 0) {
+    return (
+      <Box p={4} textAlign="center" bgcolor="grey.100" borderRadius={2}>
+        <Typography color="text.secondary">
+          {error || "Galería vacía o no encontrada"}
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box className="gallery-wrapper py-4" dir={RightToLeft ? "rtl" : "ltr"}>
+      <ImageGallery
+        items={images}
+        renderItem={renderCustomItem}
+        renderThumbInner={renderCustomThumbInner}
+        slideInterval={playInterval}
+        slideDuration={slideDuration}
+        thumbnailPosition={thumbnailBarPosition}
+        showNav={showArrows}
+        showThumbnails={showThumbnails}
+        showBullets={showBulletIndicators}
+        showIndex={showSliderCounter}
+        showPlayButton={showAutoplayButton}
+        showFullscreenButton={showFullscreenButton}
+        infinite={InfiniteLoop}
+        slideOnThumbnailOver={SlideOnThumbnailHover}
+        disableKeyDown={!KeyboardNavigation}
+        lazyLoad={LazyLoadImages}
+        isRTL={RightToLeft}
+      />
+    </Box>
+  );
 };
 
 export default GalleryRenderer;
