@@ -85,5 +85,13 @@
 
 .section-component {
   width: 90%;
-  margin: 20px auto;
+  margin: 0 auto;
+  padding: 30px 0;
+  border-top: 1px solid #EEEEEE;
+}
+
+@media (min-width: 768px) {
+  .section-component {
+    padding: 30px;
+  }
 }

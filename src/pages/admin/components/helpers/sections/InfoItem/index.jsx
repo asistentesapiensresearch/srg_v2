@@ -31,9 +31,8 @@ const InfoItemWrapper = ({
 }) => {
     return (
         <Box
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
             sx={{
-                display: "flex",
-                flexDirection: "column",    
                 gap: spacingItem,
             }}
         >
@@ -51,6 +50,7 @@ const InfoItem = ({
     sizeIcon,
     colorIcon,
     colorTitle,
+    colorText,
     paddingItem,
     spacingItem,
     spacingIconTitle
@@ -107,16 +107,16 @@ const InfoItem = ({
                             sx={{
                                 display: "flex",
                                 gap: spacingIconTitle,
-                                padding: paddingItem,
+                                //padding: paddingItem,
                             }}
                         >
                             <DynamicIcon name={el.icon} color={colorIcon} size={sizeIcon} />
                             <div>
-                                <h4 style={{
+                                <h6 style={{
                                     fontWeight: "bold",
-                                    color: {colorTitle}
-                                }} >{el.label}</h4>
-                                <p>{el.value}</p>
+                                    color: colorTitle
+                                }} >{el.label.toUpperCase()}</h6>
+                                <p style={{color: colorText}}>{el.value}</p>
                             </div>
                         </Box>
                 })

@@ -98,10 +98,7 @@ export default function FormSection({
     return (
         <Container  
             sx={{ 
-                py: {
-                    xs: 3,
-                    md: 8
-                },
+                py: 3,
                 px: {
                     xs:0,
                     md:4

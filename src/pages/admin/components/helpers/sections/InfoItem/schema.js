@@ -88,5 +88,12 @@ export default {
             type: "color",
             default: "#000"
         },
+        {
+            name: "colorText",
+            label: "Color para el texto",
+            type: "color",
+            default: "#000"
+        }
+
     ]
 };

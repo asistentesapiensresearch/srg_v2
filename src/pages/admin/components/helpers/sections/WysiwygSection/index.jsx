@@ -4,7 +4,6 @@ import React, { useId } from "react"; // 1. Importamos useId
 const WysiwygSection = ({
     content,
     paddingY = 4,
-    maxWidth = "lg",
     className = "",
     customCss = ""
 }) => {
@@ -15,7 +14,7 @@ const WysiwygSection = ({
 
     return (
         // 3. Asignamos el ID al contenedor padre
-        <Container className="px-[0!important]" maxWidth={maxWidth} id={uniqueId}>
+        <Box className="px-[0!important]" style={{ width: "100%" }} id={uniqueId}>
 
             {/* 4. Envolvemos el CSS del usuario dentro del ID generado */}
             {customCss && (
@@ -42,7 +41,7 @@ const WysiwygSection = ({
                 className={`wysiwyg-content ${className}`}
                 dangerouslySetInnerHTML={{ __html: content }}
             />
-        </Container>
+        </Box>
     );
 };
 

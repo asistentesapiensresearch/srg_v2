@@ -178,7 +178,7 @@ export default function TestimonialsCarousel({
             <Box
                 sx={{
                     width: "100%",
-                    padding: '20px 0',
+                    padding: 0,
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
