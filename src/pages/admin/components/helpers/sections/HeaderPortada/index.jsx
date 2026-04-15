@@ -108,7 +108,7 @@ const HeaderPortada = ({
                       overflow: 'hidden'
                     }}
                   >
-                    <MapPin size={16} color="#ff4444" strokeWidth={2.5} />
+                    <MapPin size={16} color="#fff" strokeWidth={2.5} />
                   </Box>
                   <Typography sx={{ color: '#fff', fontSize: '13px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
                     {fullLocation}
