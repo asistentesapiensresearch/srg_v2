@@ -2,11 +2,15 @@ import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { fieldsSection } from "./fields";
 import { Star } from "lucide-react";
+import { useImageUrl } from "@src/hooks/useImageUrl";
 
 const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
   const dataExcels = useSelector(
     (state) => state.sections.fetchData.sheets?.[excelSource],
   );
+  const { data: globalData } = useSelector((state) => state.sections.fetchData.databaseDownload);
+  const logoUrl = useImageUrl(globalData?.logo);
+
   const fields = fieldsSection?.[excelSource];
 
   const recordData = dataExcels?.data || {};
@@ -36,7 +40,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
   };
 
   return (
-    <div className="w-[300px] float-left mr-6 mt-6 bg-transparent flex flex-col items-center">
+    <div className="w-full md:w-[300px] md:float-left md:mr-6 mt-6 bg-transparent flex flex-col items-center">
       {/* Estrellas */}
       <div className="flex items-end justify-center mb-0 z-10 gap-1.5 h-12">
         {Array.from({ length: maxStars }, (_, index) => {
@@ -84,7 +88,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
           }
         `}
       </style>
-      <div className="relative w-[280px] h-[390px] animate-glow-pulse group">
+      <div className="relative w-[210px] h-[300px] md:w-[280px] md:h-[390px] animate-glow-pulse group">
         <svg
           className="absolute inset-0 w-full h-full"
           viewBox="160 20 360 510"
@@ -240,7 +244,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
             y="83"
             textAnchor="middle"
             fontFamily="Arial, sans-serif"
-            fontSize="14"
+            fontSize="12"
             fontWeight="700"
             fill="#ffffff"
             letterSpacing="2"
@@ -253,7 +257,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
             y="125"
             textAnchor="middle"
             fontFamily="Arial Black, Arial, sans-serif"
-            fontSize="18"
+            fontSize="15.5"
             fontWeight="900"
             fill="#ffffff"
             letterSpacing="8"
@@ -265,7 +269,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
             y="100"
             textAnchor="middle"
             fontFamily="Arial, sans-serif"
-            fontSize="14"
+            fontSize="12"
             fontWeight="600"
             fill="#ffcccc"
             letterSpacing="3"
@@ -280,7 +284,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
             y="272"
             textAnchor="middle"
             fontFamily="Arial Black, Arial, sans-serif"
-            fontSize="90"
+            fontSize="75"
             fontWeight="900"
             fill="#CC0000"
             letterSpacing="-4"
@@ -293,7 +297,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
             y="272"
             textAnchor="middle"
             fontFamily="Arial Black, Arial, sans-serif"
-            fontSize="90"
+            fontSize="75"
             fontWeight="900"
             fill="#CC0000"
             letterSpacing="-4"
@@ -322,23 +326,39 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
           <circle cx="282" cy="175" r="3" fill="#CC0000" />
           <circle cx="398" cy="175" r="3" fill="#CC0000" />
 
+          {logoUrl && (
+            <image
+              href={logoUrl}
+              x="302"
+              y="137"
+              width="76"
+              height="76"
+              preserveAspectRatio="xMidYMid meet"
+              style={{
+                filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.15))",
+                transformOrigin: "340px 175px",
+              }}
+              className="transition-transform duration-300 group-hover:scale-105"
+            />
+          )}
+
           {/* Calificación */}
           <rect
-            x="262"
-            y="284"
-            width="156"
-            height="32"
-            rx="16"
+            x="272"
+            y="286"
+            width="136"
+            height="28"
+            rx="14"
             fill="#CC0000"
             className="transition-transform duration-300 group-hover:scale-105"
             style={{ transformOrigin: "340px 300px" }}
           />
           <text
             x="340"
-            y="309"
+            y="307"
             textAnchor="middle"
             fontFamily="Arial Black, Arial, sans-serif"
-            fontSize="28"
+            fontSize="22"
             fontWeight="900"
             fill="#ffffff"
             letterSpacing="4"
@@ -403,7 +423,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
               y="365"
               textAnchor="middle"
               fontFamily="Arial, sans-serif"
-              fontSize="13"
+              fontSize="11.5"
               fontWeight="700"
               fill="#ffaaaa"
               letterSpacing="3"
@@ -424,7 +444,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
               y="384"
               textAnchor="middle"
               fontFamily="Arial Black, Arial, sans-serif"
-              fontSize="18"
+              fontSize="15.5"
               fontWeight="900"
               fill="#ffffff"
               letterSpacing="2"
@@ -436,7 +456,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
               y="399"
               textAnchor="middle"
               fontFamily="Arial, sans-serif"
-              fontSize="13"
+              fontSize="11.5"
               fontWeight="700"
               fill="#ffaaaa"
               letterSpacing="2"
