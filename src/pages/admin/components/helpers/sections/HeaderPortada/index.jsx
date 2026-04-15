@@ -60,6 +60,8 @@ const HeaderPortada = ({
           backgroundSize: "cover",
           backgroundPosition: "center",
           position: "relative", // Ensures all underlying relative children size correctly
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {/* Contenido principal encima del overlay */}
@@ -67,7 +69,7 @@ const HeaderPortada = ({
           sx={{
             position: "relative", // Changed from absolute mapping to prevent overflow breakage
             width: "100%",
-            minHeight: "100%",
+            flexGrow: 1, // Stretches this overlay to the literal bottom of the parent minHeight
             zIndex: 2,
             color: "#000",
             backgroundColor: "rgba(0, 0, 0, 0.6)",

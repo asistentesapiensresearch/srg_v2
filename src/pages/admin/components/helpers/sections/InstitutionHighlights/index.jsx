@@ -11,16 +11,22 @@ const container = (key, label, tag) =>  (
             height: "100%",
             textAlign: "center",
         }}
-        className="px-10 py-4 border-gray-50 border-b-1 md:border-b-0 md:border-r-1"
+        className="px-6 py-6"
     >
         <h4 
             style={{
                 color: "#fff",
             }}
-            className="mb-0 font-bold">{label}</h4>
+            className="mb-1 font-bold text-lg leading-tight"
+        >
+            {label}
+        </h4>
         <span 
             style={{
-                color: "#ccc",
+                color: "#ffcdd2", // A softer light red/pink for the tag text
+                fontSize: "0.85rem",
+                letterSpacing: "0.05em",
+                fontWeight: "500",
             }}
         >
             {tag}
@@ -30,7 +36,6 @@ const container = (key, label, tag) =>  (
 const InstitutionHighlights = ({
     excelSource,
 }) => {
-
 
     let fieldsKeys;
 
@@ -46,14 +51,17 @@ const InstitutionHighlights = ({
                 width: "100%",
                 height: "auto",
             }}
-            className="flex flex-col md:flex-row justify-between items-center"
         >
-            {
-                dataExcels && fieldsKeys && fieldsKeys.length > 0 && fieldsKeys.map((key) => {
-                    const label = dataExcels.data[fields[key]].toUpperCase();
-                    return container(key, label, key.toUpperCase());
-                })
-            }
+            <div 
+              className={`w-full max-w-[1440px] mx-auto md:w-[90%] grid grid-cols-1 sm:grid-cols-2 ${fieldsKeys?.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]'} divide-y sm:divide-y-0 sm:divide-x divide-white/20`}
+            >
+                {
+                    dataExcels && fieldsKeys && fieldsKeys.length > 0 && fieldsKeys.map((key) => {
+                        const label = dataExcels.data[fields[key]] ? String(dataExcels.data[fields[key]]).toUpperCase() : "";
+                        return container(key, label, key.toUpperCase());
+                    })
+                }
+            </div>
         </Box>
     )
 }
