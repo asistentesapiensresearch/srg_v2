@@ -46,13 +46,14 @@ const DowloandDataExcel = ({
                     if (cell === undefined || cell === null) return false;
                     return cleanString(cell) === targetValueClean;
                 })
-                .at(-1);
 
                 if (!found) return;
+
                 dispatch(
                     setSheetData({
                         identifierExcel,
-                        data: found,
+                        data: found.at(-1),
+                        total: found.length
                     })
                 );
             } catch (err) {

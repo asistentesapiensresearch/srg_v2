@@ -5,7 +5,7 @@ const initialState = {
         sheets: {},
         databaseDownload: {
           model: null,
-          data: null,
+          data: null
         },
     }
 };
@@ -16,10 +16,11 @@ const sectionsSlice = createSlice({
     reducers: {
         setSections: (state, action) => action.payload,
         setSheetData: (state, action) => {
-            const { identifierExcel, data } = action.payload;
+            const { identifierExcel, data, total } = action.payload;
             state.fetchData.sheets[identifierExcel] = {
                 identifierExcel,
                 data,
+                total
             };
         },
         setDatabaseDownload: (state, action) => {

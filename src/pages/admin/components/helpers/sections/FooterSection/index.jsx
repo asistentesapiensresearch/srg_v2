@@ -11,7 +11,6 @@ const FooterSection = ({
 }) => {
 
     const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
-    console.log({data});
 
     const info = useMemo(() => {
         return (data && model) ? {
