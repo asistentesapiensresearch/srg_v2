@@ -37,20 +37,21 @@ export default function EmbedContent({
 
     const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
 
-    const embed = useMemo(() => {
+    const fieldsDB = fieldsSection.db?.[model];
 
-      if (!model || !data || !fieldsSection[model]?.embed) return {};
-      const embedField = fieldsSection[model].embed;
+    const embed = useMemo(() => {
+      const value = data?.[fieldsDB?.embed];
+      if (!value) return {};
+      if (typeof value !== "string") return value;
 
       try {
-        return typeof data[embedField] === "string"
-          ? JSON.parse(data[embedField])
-          : data[embedField];
+        return JSON.parse(value);
       } catch (error) {
-        console.error("Error parseando embed:", error);
+        if(error)
+        console.error("Error parseando embed:", value);
         return {};
       }
-    }, [data,model]);
+    }, [data, fieldsDB]);
 
     const iframeUrl = useMemo(() => {
       return embed?.[provider] || "";
