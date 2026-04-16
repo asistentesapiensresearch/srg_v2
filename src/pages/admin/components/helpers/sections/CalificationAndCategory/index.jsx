@@ -4,7 +4,7 @@ import { fieldsSection } from "./fields";
 import { Star } from "lucide-react";
 import { useImageUrl } from "@src/hooks/useImageUrl";
 
-const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
+const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
   const dataExcels = useSelector(
     (state) => state.sections.fetchData.sheets?.[excelSource],
   );
@@ -14,10 +14,14 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
   const fields = fieldsSection?.[excelSource];
 
   const recordData = dataExcels?.data || {};
+  const totalTimes = dataExcels?.total ?? 0;
 
   const calificationValue = String(recordData[fields?.calificación] ?? "-");
   const catParam = recordData[fields?.categoría];
   const categoryValue = "D" + String(catParam ?? "-");
+
+  const countryValue = String(recordData[fields?.pais] ?? "COLOMBIA").toUpperCase();
+  const dateValue = String(recordData[fields?.fecha] ?? "2025 - 2026");
 
   const totalStars = useMemo(() => {
     if (!recordData || !fields?.stars) return 0;
@@ -262,7 +266,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
             fill="#ffffff"
             letterSpacing="8"
           >
-            COLOMBIA
+            {countryValue}
           </text>
           <text
             x="340"
@@ -275,7 +279,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
             letterSpacing="3"
             opacity="0.85"
           >
-            2025 - 2026
+            {dateValue}
           </text>
 
           {/* Categoría fondo y texto */}
@@ -449,7 +453,7 @@ const CalificationAndCategory = ({ excelSource = "M-TOP", maxStars = 5 }) => {
               fill="#ffffff"
               letterSpacing="2"
             >
-              13 VECES
+              {totalTimes} VECES
             </text>
             <text
               x="340"

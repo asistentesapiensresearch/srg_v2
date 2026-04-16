@@ -5,8 +5,10 @@ export const fieldsSection = {
         "stars": "Star"
     },
     "COL": {
-        "calificación": "Cal",
-        "categoría": "Cat",
-        "stars": "Star"
+        "calificación": "Calificación",
+        "categoría": "Categoría sin D",
+        "stars": "Star",
+        "pais": "Pais",
+        "fecha": "Año"
     }
 }
