@@ -3,24 +3,32 @@ import { useSelector } from "react-redux";
 import PageRenderer from "../../../builder/Renderer";
 import { useImageUrl } from "@src/hooks/useImageUrl";
 import { fieldsSection } from "./fields";
+import { useMemo } from "react";
 
 const RectorSection = ({
     children = []
 }) => {
     
     const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
+    const fieldsDB = fieldsSection.db?.[model];
 
-    const imageRector =  useImageUrl(data?.rectorPhoto) || "";
+    const rectorData = useMemo(() => {
+        if (!data || !model || !fieldsDB) return { isLoading: true };
 
-    // 🔐 Guard clause (clave)
-    if (!data || !model || !fieldsSection[model]) {
+        return {
+            imageRector: data?.[fieldsDB?.rectorPhoto] || "",
+            colegio: data?.[fieldsDB?.colegio] || "Nombre colegio",
+            rectorName: data?.[fieldsDB?.rectorName] || "Sin Nombre de rector",
+            rectorDescription: data?.[fieldsDB?.rectorDescription] || "Sin descripcion",
+            isLoading: false
+        };
+    }, [data, model, fieldsDB]);
+
+    const imageRector =  useImageUrl(rectorData?.imageRector) || "";
+
+    if (rectorData.isLoading) {
         return <p>Cargando información del rector...</p>;
     }
-
-    const colegio = data[fieldsSection[model]?.colegio] || "Nombre colegio"
-    const rectorName = data[fieldsSection[model]?.rectorName] || "Sin Nombre de rector"
-    const rectorDescription = data[fieldsSection[model]?.rectorDescription] || "Sin descripcion"
-
 
     return (
         <Box
@@ -79,18 +87,18 @@ const RectorSection = ({
                 className="flex justify-center items-center"
             >
                 <Box>
-                    <h2 className="font-bold">{rectorName}</h2>
+                    <h2 className="font-bold">{rectorData.rectorName}</h2>
                     <h4 className="font-bold" style={{
                         color: "#c10008"
                     }}>
-                        RECTOR { colegio.toUpperCase() }
+                        RECTOR { rectorData.colegio.toUpperCase() }
                     </h4>
                     <div style={{
                         borderTop: "4px solid #c10008",
                         width: "40px",
                     }}></div>
                     {/* description */}
-                    <p className="mt-4" style={{color: "#232221"}}>{rectorDescription}</p>
+                    <p className="mt-4" style={{color: "#232221"}}>{rectorData.rectorDescription}</p>
                 </Box>
             </Box>
         </Box>
