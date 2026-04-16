@@ -1,6 +1,8 @@
 export const fieldsSection = {
-  Institution: {
-    logo: "logo",
-    colegio: "name",
-  },
+  "db" : {
+    Institution: {
+      logo: "logo",
+      colegio: "name",
+    }
+  }
 };

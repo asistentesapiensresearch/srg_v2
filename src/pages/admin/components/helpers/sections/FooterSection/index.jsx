@@ -11,13 +11,14 @@ const FooterSection = ({
 }) => {
 
     const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
+    const fieldsDB = fieldsSection.db?.[model];
 
     const info = useMemo(() => {
-        return (data && model) ? {
-            title: data[fieldsSection[model]?.colegio] || "",
-            logo: data[fieldsSection[model]?.logo] || "",
-        } : {};
-    }, [data,model]);
+        return {
+            title: data?.[fieldsDB?.colegio] || "",
+            logo: data?.[fieldsDB?.logo] || "",
+        };
+    }, [data, fieldsDB]);
 
     const logoUrl = useImageUrl(info.logo);
 
