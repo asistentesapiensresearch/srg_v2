@@ -4,8 +4,9 @@ import { useSelector } from "react-redux";
 import CalificationAndCategory from "../CalificationAndCategory";
 import PageRenderer from "../../../builder/Renderer";
 import InstitutionHighlights from "../InstitutionHighlights";
-import { fieldsSection } from "../InstitutionHighlights/fields";
+import { fieldsSection } from "./fields";
 import { MapPin } from "lucide-react";
+import { useMemo } from "react";
 
 const HeaderPortada = ({
   excelSource,
@@ -14,41 +15,47 @@ const HeaderPortada = ({
   children = []
 }) => {
 
-    let title;
-    let wordsTitle;
-    let lastWordtitle;
-    const { data } = useSelector((state) => state.sections.fetchData.databaseDownload);
+    
+
+    const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
     const dataExcels = useSelector((state) => state.sections.fetchData.sheets[excelSource]);
-    const backgroundImage = useImageUrl(data?.portadaPhoto);
 
-    let cityHighlight = "";
-    let deptHighlight = "";
-    const fields = fieldsSection?.[excelSource];
-    if (dataExcels?.data && fields?.ciudad && dataExcels.data[fields.ciudad]) {
-        cityHighlight = String(dataExcels.data[fields.ciudad]).toUpperCase();
-        if (dataExcels.data["Departamento"]) {
-            deptHighlight = String(dataExcels.data["Departamento"]).toUpperCase();
-        } else if (dataExcels.data["Depto"]) {
-            deptHighlight = String(dataExcels.data["Depto"]).toUpperCase();
+    const fieldsDB = fieldsSection.db?.[model];
+    const fieldsExcel = fieldsSection.excel?.[excelSource];
+
+    // merge y guardo los datos en useMemo
+    const mergedData = useMemo(() => {
+        let title;
+        let wordsTitle;
+        let lastWordTitle;
+        let cityHighlight = "";
+        let deptHighlight = "";
+        if (dataExcels?.data && fieldsExcel?.ciudad && fieldsExcel?.departamento) {
+            cityHighlight = String(dataExcels.data[fieldsExcel.ciudad]).toUpperCase();
+            deptHighlight = String(dataExcels.data[fieldsExcel.departamento]).toUpperCase();
+        } 
+    
+        let fullLocation = cityHighlight;
+        if (deptHighlight && deptHighlight !== cityHighlight && !cityHighlight.includes(deptHighlight)) {
+            fullLocation = `${cityHighlight}, ${deptHighlight}`;
         }
-    } else if (data?.city?.name) {
-        cityHighlight = data.city.name.toUpperCase();
-        if (data?.departament?.name) deptHighlight = data.departament.name.toUpperCase();
-        else if (data?.department?.name) deptHighlight = data.department.name.toUpperCase();
-    }
 
-    let fullLocation = cityHighlight;
-    if (deptHighlight && deptHighlight !== cityHighlight && !cityHighlight.includes(deptHighlight)) {
-        fullLocation = `${cityHighlight}, ${deptHighlight}`;
-    }
+        if(data && data[fieldsDB?.name]) {
+          wordsTitle = data[fieldsDB.name].split(" ");
+          lastWordTitle = wordsTitle.pop();
+          title = wordsTitle.join(" ");
+        }
 
-    if(data?.name) {
-      wordsTitle = data.name.split(" ");
-      lastWordtitle = wordsTitle.pop();
-      title = wordsTitle.join(" ");
-    }
-    const slogan = data?.slogan || "Slogan no disponible";
+        return {
+          title: title || "",
+          lastWordTitle: lastWordTitle || "",
+          portadaPhoto: data?.[fieldsDB?.portadaPhoto] || "",
+          slogan: data?.[fieldsDB?.slogan] || "",
+          fullLocation : fullLocation || "",
+        };
+    }, [data, dataExcels, fieldsDB, fieldsExcel]);
 
+    const backgroundImage = useImageUrl(mergedData?.portadaPhoto || "");
 
     return (
       <Box
@@ -113,23 +120,23 @@ const HeaderPortada = ({
                     <MapPin size={16} color="#fff" strokeWidth={2.5} />
                   </Box>
                   <Typography sx={{ color: '#fff', fontSize: '13px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
-                    {fullLocation}
+                    {mergedData.fullLocation}
                   </Typography>
                 </Box>
                 <h1 
                   style={{color: "#fff", fontWeight: "bold", fontSize: "clamp(2rem, 5vw, 4rem)", lineHeight: 1.2 }}
                   className="text-center md:text-left mt-2 md:mt-0"
                 >
-                  {title}
+                  {mergedData.title}
                   <span style={{color: "#F0C30E", fontSize: "clamp(2rem, 5vw, 4rem)"}}>
-                    {` ${lastWordtitle}`}
+                    {` ${mergedData.lastWordTitle}`}
                   </span>
                 </h1>
                 <p 
                   style={{color:"#fff", fontSize: "clamp(1rem, 2.5vw, 1.8rem)", lineHeight: 1.4}}
                   className="text-center md:text-left mt-2"  
                 >
-                  {slogan}
+                  {mergedData.slogan}
                 </p>
               </Box>
               {/* Aquí iría el escudo */}

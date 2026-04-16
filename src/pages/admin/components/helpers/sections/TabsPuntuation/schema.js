@@ -28,7 +28,7 @@ export default {
                 { label: "REV-Sapiens", value: "REV" },
                 { label: "POST-Sapiens", value: "POST" },
                 { label: "PRE-Sapiens", value: "PRE" },
-                { label: "Col-Sapiens", value: "Col" },
+                { label: "Col-Sapiens", value: "COL" },
                 { label: "100 Mejores por Materia", value: "M-TOP" },
                 { label: "Micrositios / Universidades / Encuentra / Grupos", value: "E-Grupos"},
                 { label: "Micrositios / Universidades / Encuentra / Revistas", value: "E-Revistas"},
