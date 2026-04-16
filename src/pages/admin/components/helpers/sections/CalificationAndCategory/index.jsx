@@ -5,31 +5,50 @@ import { Star } from "lucide-react";
 import { useImageUrl } from "@src/hooks/useImageUrl";
 
 const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
-  const dataExcels = useSelector(
-    (state) => state.sections.fetchData.sheets?.[excelSource],
-  );
-  const { data: globalData } = useSelector((state) => state.sections.fetchData.databaseDownload);
-  const logoUrl = useImageUrl(globalData?.logo);
+  const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
+  const dataExcels = useSelector((state) => state.sections.fetchData.sheets?.[excelSource]);
 
-  const fields = fieldsSection?.[excelSource];
+  const fieldsDB = fieldsSection.db?.[model];
+  const fieldsExcel = fieldsSection.excel?.[excelSource];
 
-  const recordData = dataExcels?.data || {};
-  const totalTimes = dataExcels?.total ?? 0;
+  const mergedData = useMemo(() => {
 
-  const calificationValue = String(recordData[fields?.calificación] ?? "-");
-  const catParam = recordData[fields?.categoría];
-  const categoryValue = "D" + String(catParam ?? "-");
+    const logo = data?.[fieldsDB?.logo] || "";
+    const excelData = dataExcels?.data || {};
+    const totalTimes = dataExcels?.total ?? 0;
+    const calificationValue = String(
+      excelData[fieldsExcel?.calificación] ?? "-"
+    );
+    const catParam = excelData[fieldsExcel?.categoría];
+    const categoryValue = "D" + String(catParam ?? "-");
+    const countryValue = String(
+      excelData[fieldsExcel?.pais] ?? "COLOMBIA"
+    ).toUpperCase();
+    const dateValue = String(
+      excelData[fieldsExcel?.fecha] ?? "2025 - 2026"
+    );
+    let totalStars = 0;
+    if (excelData && fieldsExcel?.stars) {
+      const rawValue = excelData[fieldsExcel.stars];
+      const parsed = Number(rawValue);
 
-  const countryValue = String(recordData[fields?.pais] ?? "COLOMBIA").toUpperCase();
-  const dateValue = String(recordData[fields?.fecha] ?? "2025 - 2026");
+      if (!Number.isNaN(parsed)) {
+        totalStars = Math.max(0, Math.min(parsed, maxStars));
+      }
+    }
 
-  const totalStars = useMemo(() => {
-    if (!recordData || !fields?.stars) return 0;
-    const rawValue = recordData[fields.stars];
-    const parsed = Number(rawValue);
-    if (Number.isNaN(parsed)) return 0;
-    return Math.max(0, Math.min(parsed, maxStars));
-  }, [recordData, fields, maxStars]);
+    return {
+      logo,
+      totalTimes,
+      calificationValue,
+      categoryValue,
+      countryValue,
+      dateValue,
+      totalStars,
+    };
+  }, [data, dataExcels, fieldsExcel, fieldsDB, maxStars]);
+
+  const logoUrl = useImageUrl(mergedData.logo) || "";
 
   // Posiciones de las estrellas en arco
   const getStarTransform = (index) => {
@@ -48,7 +67,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
       {/* Estrellas */}
       <div className="flex items-end justify-center mb-0 z-10 gap-1.5 h-12">
         {Array.from({ length: maxStars }, (_, index) => {
-          const isActive = index < totalStars;
+          const isActive = index < mergedData.totalStars;
           return (
             <div
               key={index}
@@ -266,7 +285,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
             fill="#ffffff"
             letterSpacing="8"
           >
-            {countryValue}
+            {mergedData.countryValue}
           </text>
           <text
             x="340"
@@ -279,7 +298,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
             letterSpacing="3"
             opacity="0.85"
           >
-            {dateValue}
+            {mergedData.dateValue}
           </text>
 
           {/* Categoría fondo y texto */}
@@ -294,7 +313,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
             letterSpacing="-4"
             opacity="0.06"
           >
-            {categoryValue}
+            {mergedData.categoryValue}
           </text>
           <text
             x="340"
@@ -308,7 +327,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
             className="transition-transform duration-300 group-hover:scale-110"
             style={{ transformOrigin: "340px 240px" }}
           >
-            {categoryValue}
+            {mergedData.categoryValue}
           </text>
 
           <line
@@ -369,7 +388,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
             className="transition-transform duration-300 group-hover:scale-105"
             style={{ transformOrigin: "340px 300px" }}
           >
-            {calificationValue}
+            {mergedData.calificationValue}
           </text>
 
           <line
@@ -453,7 +472,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
               fill="#ffffff"
               letterSpacing="2"
             >
-              {totalTimes} VECES
+              {mergedData.totalTimes} VECES
             </text>
             <text
               x="340"
