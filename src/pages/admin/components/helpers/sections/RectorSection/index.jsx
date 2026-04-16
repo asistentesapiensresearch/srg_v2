@@ -83,22 +83,32 @@ const RectorSection = ({
                     )
                 }
             </Box>
-            <Box 
-                className="flex justify-center items-center"
-            >
-                <Box>
+            <Box className="flex justify-center items-center w-full">
+                <Box sx={{ width: "100%" }}>
                     <h2 className="font-bold">{rectorData.rectorName}</h2>
-                    <h4 className="font-bold" style={{
-                        color: "#c10008"
-                    }}>
-                        RECTOR { rectorData.colegio.toUpperCase() }
+
+                    <h4
+                        className="font-bold"
+                        style={{ color: "#c10008" }}
+                    >
+                        RECTOR {rectorData.colegio.toUpperCase()}
                     </h4>
-                    <div style={{
-                        borderTop: "4px solid #c10008",
-                        width: "40px",
-                    }}></div>
-                    {/* description */}
-                    <p className="mt-4" style={{color: "#232221"}}>{rectorData.rectorDescription}</p>
+
+                    <div
+                        style={{
+                            borderTop: "4px solid #c10008",
+                            width: "40px",
+                        }}
+                    />
+                    <p
+                        className="mt-4 text-justify"
+                        style={{
+                            color: "#232221",
+                            maxWidth: "1000px"
+                        }}
+                    >
+                        {rectorData.rectorDescription}
+                    </p>
                 </Box>
             </Box>
         </Box>
