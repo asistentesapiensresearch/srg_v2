@@ -40,7 +40,7 @@ const InstitutionHighlights = ({
     let fieldsKeys;
 
     const dataExcels = useSelector((state) => state.sections.fetchData.sheets[excelSource]);
-    const fields = fieldsSection[excelSource];
+    const fields = fieldsSection.excel[excelSource];
 
     if (fields) fieldsKeys = Object.keys(fields);
 
