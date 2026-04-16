@@ -15,8 +15,6 @@ const HeaderPortada = ({
   children = []
 }) => {
 
-    
-
     const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
     const dataExcels = useSelector((state) => state.sections.fetchData.sheets[excelSource]);
 
@@ -25,34 +23,35 @@ const HeaderPortada = ({
 
     // merge y guardo los datos en useMemo
     const mergedData = useMemo(() => {
-        let title;
-        let wordsTitle;
-        let lastWordTitle;
-        let cityHighlight = "";
-        let deptHighlight = "";
-        if (dataExcels?.data && fieldsExcel?.ciudad && fieldsExcel?.departamento) {
-            cityHighlight = String(dataExcels.data[fieldsExcel.ciudad]).toUpperCase();
-            deptHighlight = String(dataExcels.data[fieldsExcel.departamento]).toUpperCase();
-        } 
-    
-        let fullLocation = cityHighlight;
-        if (deptHighlight && deptHighlight !== cityHighlight && !cityHighlight.includes(deptHighlight)) {
-            fullLocation = `${cityHighlight}, ${deptHighlight}`;
-        }
+      const excelData = dataExcels?.data || {};
+      const portadaPhoto = data?.[fieldsDB?.portadaPhoto] || "";
+      const slogan = data?.[fieldsDB?.slogan] || "";
+      const city = fieldsExcel?.ciudad
+        ? String(excelData[fieldsExcel.ciudad] || "").toUpperCase()
+        : "";
 
-        if(data && data[fieldsDB?.name]) {
-          wordsTitle = data[fieldsDB.name].split(" ");
-          lastWordTitle = wordsTitle.pop();
-          title = wordsTitle.join(" ");
-        }
+      const dept = fieldsExcel?.departamento
+        ? String(excelData[fieldsExcel.departamento] || "").toUpperCase()
+        : "";
 
-        return {
-          title: title || "",
-          lastWordTitle: lastWordTitle || "",
-          portadaPhoto: data?.[fieldsDB?.portadaPhoto] || "",
-          slogan: data?.[fieldsDB?.slogan] || "",
-          fullLocation : fullLocation || "",
-        };
+      const fullLocation =
+        dept && dept !== city && !city.includes(dept)
+          ? `${city}, ${dept}`
+          : city;
+
+      const nameValue = data?.[fieldsDB?.name] || "";
+      const words = nameValue ? nameValue.split(" ") : [];
+
+      const lastWordTitle = words.length ? words.pop() : "";
+      const title = words.join(" ");
+
+      return {
+        title,
+        lastWordTitle,
+        portadaPhoto,
+        slogan,
+        fullLocation,
+      };
     }, [data, dataExcels, fieldsDB, fieldsExcel]);
 
     const backgroundImage = useImageUrl(mergedData?.portadaPhoto || "");
