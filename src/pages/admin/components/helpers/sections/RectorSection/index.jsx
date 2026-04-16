@@ -104,7 +104,7 @@ const RectorSection = ({
                         className="mt-4 text-justify"
                         style={{
                             color: "#232221",
-                            maxWidth: "1000px"
+                            maxWidth: "1100px"
                         }}
                     >
                         {rectorData.rectorDescription}
