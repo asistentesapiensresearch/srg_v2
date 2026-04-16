@@ -16,7 +16,7 @@ const TabsPuntuation = ({
   );
 
   const data = excelStored?.data;
-  const fields = fieldsSection?.[excelSource];
+  const fields = fieldsSection.excel?.[excelSource];
 
   const scoreColumns = useMemo(() => {
      if (!data || !fields) return [];
