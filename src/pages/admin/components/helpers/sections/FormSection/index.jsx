@@ -187,7 +187,7 @@ export default function FormSection({
             }
 
             console.log(payload);
-            const response = await apiService.post('/sendEmail', payload);
+            const response = await apiService.post('sendEmail', payload);
 
             if (!response?.success) {
                 throw new Error(response?.message || 'No se pudo enviar el correo');

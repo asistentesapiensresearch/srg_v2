@@ -7,6 +7,6 @@ export const sendEmail = defineFunction({
   environment: {
     BREVO_API_KEY: secret("BREVO_API_KEY"),
     BREVO_SENDER_EMAIL: secret("BREVO_SENDER_EMAIL"),
-    BREVO_SENDER_NAME: "Sapiens Research",
+    BREVO_SENDER_NAME: secret("BREVO_SENDER_NAME"),
   },
 });
