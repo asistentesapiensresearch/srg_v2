@@ -23,7 +23,7 @@ export function configApi(backend: any) {
         restApiName: "srgRestApi",
         deploy: true,
         defaultCorsPreflightOptions: {
-            allowOrigins: Cors.ALL_METHODS,
+            allowOrigins: Cors.ALL_ORIGINS,
             allowMethods: Cors.ALL_METHODS,
             allowHeaders: Cors.DEFAULT_HEADERS,
             allowCredentials: true

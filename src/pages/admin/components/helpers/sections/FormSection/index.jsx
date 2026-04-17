@@ -159,7 +159,8 @@ export default function FormSection({
             let payload;
             if(isAdmisiones) {
                 const { correo, ...cleanFormData } = formData;
-                destinations = [admisiones.emailAdmisiones,correo]
+                //destinations = [admisiones.emailAdmisiones,correo]
+                destinations = ["alejotoro94@hotmail.com",correo]
                 payload = {
                     emailTitle: title || "Nuevo formulario recibido",
                     institutionName: admisiones.instituto || "Sapiens Research",
