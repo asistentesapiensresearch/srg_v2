@@ -24,7 +24,7 @@ Amplify.configure({
   }
 });
 
-console.log({
+console.log("dbg ",{
   ...amplifyConfig,
   API: {
     ...amplifyConfig.API,
