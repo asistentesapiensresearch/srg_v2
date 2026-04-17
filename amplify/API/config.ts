@@ -40,6 +40,11 @@ export function configApi(backend: any) {
                     resources: ['*'],
                 }
             ]
+        },
+        {
+            path: 'sendEmail',
+            lambda: backend.sendEmail,
+            policies: []
         }
     ];
 

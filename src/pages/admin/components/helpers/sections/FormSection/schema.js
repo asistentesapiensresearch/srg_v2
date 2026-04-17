@@ -32,12 +32,19 @@ export default {
             ],
             help: "WhatsApp abrirá el chat con los datos precargados. Email abrirá la app de correo del usuario."
         },
+         {
+            name: "isAdmisiones",
+            label: "Es formulario de admisiones",
+            type: "boolean",
+            default: false,
+        },
         {
             name: "destination",
             label: "Destino (Teléfono o Email)",
             type: "text",
             help: "Si es WhatsApp: Número con código país (ej: 57300...). Si es Email: correo@colegio.edu.co",
-            default: ""
+            default: "",
+            condition: "isAdmisiones === false"
         },
         {
             name: "submitButtonText",
