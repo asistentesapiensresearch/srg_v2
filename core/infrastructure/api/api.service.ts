@@ -57,7 +57,7 @@ export const apiService = {
                 options: {
                     ...options,
                     body,
-                    withCredentials: true,
+                    withCredentials: options.withCredentials ?? false,
                     queryParams: normalizeQueryParams(options.queryParams),
                 },
             }).response;

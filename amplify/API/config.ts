@@ -26,12 +26,13 @@ export function configApi(backend: any) {
             allowOrigins: Cors.ALL_ORIGINS,
             allowMethods: Cors.ALL_METHODS,
             allowHeaders: Cors.DEFAULT_HEADERS,
-            allowCredentials: true
+            allowCredentials: false
         },
     });
 
     const lambdas: Lambda[] = [
-        {
+        /* Comentó esto por que no lo estamos usando y puede ser sensible ya que agrega a grupos de cognito */
+        /* {
             path: 'addUserToGroup',
             lambda: backend.addUserToGroup,
             policies: [
@@ -40,7 +41,7 @@ export function configApi(backend: any) {
                     resources: ['*'],
                 }
             ]
-        },
+        }, */
         {
             path: 'sendEmail',
             lambda: backend.sendEmail,
