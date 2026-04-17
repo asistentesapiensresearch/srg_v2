@@ -32,8 +32,8 @@ export function configApi(backend: any) {
 
     const lambdas: Lambda[] = [
         {
-            path: 'addUserToViewer',
-            lambda: backend.addUserToViewer,
+            path: 'addUserToGroup',
+            lambda: backend.addUserToGroup,
             policies: [
                 {
                     actions: ['cognito-idp:AdminAddUserToGroup'],
