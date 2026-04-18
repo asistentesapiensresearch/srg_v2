@@ -218,12 +218,6 @@ export const handler = async (event: any) => {
       description,
       formData,
     });
-
-    console.log({
-        api_key: process.env.BREVO_API_KEY,
-        sender_email: process.env.BREVO_SENDER_EMAIL,
-        SENDER_NAME: process.env.BREVO_SENDER_NAME
-    });
     
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
