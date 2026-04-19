@@ -7,6 +7,13 @@ import { Send, Mail, MessageCircle, User, Phone, Calendar } from 'lucide-react';
 import { apiService } from '@core/infrastructure/api/api.service';
 import { useSelector } from 'react-redux';
 
+
+/* correo */
+const isValidEmail = (email) => {
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+};
+
+
 export default function FormSection({
     title = "Contáctanos",
     description,
@@ -158,16 +165,31 @@ export default function FormSection({
             let destinations;
             let payload;
             if(isAdmisiones) {
-                //destinations = [admisiones.emailAdmisiones,correo]
-                // prueba
-                destinations = ["alejotoro94@hotmail.com",formData.correo]
+
+                let { verificar_correo, ...restFormData } = formData;
+
+                if(restFormData.correo && !isValidEmail(restFormData.correo)){
+                    setErrors({
+                        correo: "Por favor ingrese correos validos"
+                    })
+                    return;
+                }
+                if(restFormData.correo !== verificar_correo) {
+                    setErrors({ correo: "Los correos no son iguales",  verificar_correo: "Los correos no son iguales"});
+                    return;
+                }
+                
+                // para pruebas
+                //destinations = ["alejotoro94@hotmail.com",restFormData.correo]
+                destinations = [admisiones.emailAdmisiones,restFormData.correo]
+                
                 payload = {
                     emailTitle: title || "Nuevo formulario recibido",
                     institutionName: admisiones.instituto || "Sapiens Research",
                     description: `Director de Admisiones ${admisiones.nameAdmision}, A través de la página web srg.com.co, se ha recibido una nueva solicitud de contacto de una persona interesada en obtener información en el proceso de admisiones.`,
-                    subject: `Solicitud información de admisiones para${formData.nombre ? `: ${formData.nombre}` : ''}`,
+                    subject: `Solicitud información de admisiones para${restFormData.nombre ? `: ${restFormData.nombre}` : ''}`,
                     to: destinations,
-                    formData: formData,
+                    formData: restFormData,
                 };
             } else {
                 destinations = destination
@@ -185,7 +207,6 @@ export default function FormSection({
                 };
             }
 
-            console.log(payload);
             const response = await apiService.post('sendEmail', payload);
 
             if (!response?.success) {

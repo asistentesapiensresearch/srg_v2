@@ -48,9 +48,6 @@ export const apiService = {
         try {
             const e = localStorage.getItem("e");
             const body = { ...data, ...(e ? { email: e } : {}) };
-
-            console.log({body, API_NAME});
-
             const { body: responseBody } = await post({
                 apiName: API_NAME,
                 path,

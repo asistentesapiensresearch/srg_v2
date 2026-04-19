@@ -24,15 +24,6 @@ Amplify.configure({
   }
 });
 
-console.log("dbg ",{
-  ...amplifyConfig,
-  API: {
-    ...amplifyConfig.API,
-    REST: outputs.custom?.API ?? {}
-
-  }
-});
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
