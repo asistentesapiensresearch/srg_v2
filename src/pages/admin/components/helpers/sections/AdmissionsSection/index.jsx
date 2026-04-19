@@ -7,8 +7,8 @@ import PageRenderer from "../../../builder/Renderer";
 import AdmissionsAudioPlayer from "./AdmissionsAudioPlayer";
 
 const AdmissionsSection = ({
-      description,
-      children = []
+  description,
+  children = []
 }) => {
 
   const { data } = useSelector((state) => state.sections.fetchData.databaseDownload);
@@ -16,25 +16,25 @@ const AdmissionsSection = ({
   // Obtengo el nombre del colegio
   const name = useMemo(() => {
     return data?.name || "";
-  }, [data]);  
+  }, [data]);
 
   // Obtengo los campos de admisiones
   const admisiones = useMemo(() => {
-          try {
-              const parsed =
-                  data?.admisiones
-                      ? JSON.parse(data.admisiones)
-                      : {};
-              return parsed;
-          } catch (error) {
-              console.error("Error parseando campo:", error);
-              return [];
-          }
+    try {
+      const parsed =
+        data?.admisiones
+          ? JSON.parse(data.admisiones)
+          : {};
+      return parsed;
+    } catch (error) {
+      console.error("Error parseando campo:", error);
+      return [];
+    }
   }, [data]);
 
   const photoAdmisiones = useImageUrl(admisiones?.photo) || "";
   const audioAdmisiones = useImageUrl(admisiones?.audio) || "";
-  
+
 
   return (
     <Box
@@ -262,6 +262,10 @@ const AdmissionsSection = ({
 
             <Button
               variant="outlined"
+              component="a"
+              href={admisiones?.informationLink}
+              target="_blank"
+              rel="noopener noreferrer"
               startIcon={<FileText size={18} />}
               sx={{
                 py: 1.4,
@@ -308,7 +312,7 @@ const AdmissionsSection = ({
         />
 
         <Box sx={{ position: "relative", zIndex: 1 }}>
-          
+
           <Typography
             sx={{
               fontSize: "0.75rem",
@@ -338,38 +342,72 @@ const AdmissionsSection = ({
             {`Empieza el camino hacia ${name || "nuestro colegio"}`}
           </Typography>
 
-          {/* Descripción */}
-          <Typography
-            sx={{
-              color: "#4b5563",
-              fontSize: "1rem",
-              lineHeight: 1.7,
-              maxWidth: "720px",
-              mt: 2,
-            }}
-          >
-            { description || "Agrega tu descripción" }
-          </Typography>
+          {/* Descripción y Mes de Admisión */}
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'flex-start', md: 'center' }, gap: 3, mt: 2 }}>
+            <Typography
+              sx={{
+                color: "#4b5563",
+                fontSize: "1rem",
+                lineHeight: 1.7,
+                maxWidth: "720px",
+                flex: 1,
+              }}
+            >
+              {description || "Agrega tu descripción"}
+            </Typography>
+
+            {admisiones?.monthAdmision && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  backgroundColor: "#fef2f2",
+                  border: "1px solid #fecaca",
+                  borderRadius: "12px",
+                  p: 2,
+                  minWidth: "max-content",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#dc2626",
+                    fontWeight: 800,
+                    fontSize: "1.4rem",
+                    mr: 2,
+                    pr: 2,
+                    borderRight: "1px solid #fca5a5",
+                    lineHeight: 1,
+                  }}
+                >
+                  {admisiones.monthAdmision}
+                </Typography>
+                <Box>
+                  <Typography sx={{ fontWeight: 800, fontSize: "0.85rem", color: "#111827", lineHeight: 1.2 }}>Admisiones</Typography>
+                  <Typography sx={{ fontWeight: 800, fontSize: "0.85rem", color: "#111827", lineHeight: 1.2 }}>2026</Typography>
+                </Box>
+              </Box>
+            )}
+          </Box>
         </Box>
 
-        {children && children.length > 0 && children?.some((child) => child.type === "FormSection") ?  (
-                children.filter((child) => child.type === "FormSection")
-                .map((child) => (
-                  <Box 
-                    sx={{ position: "relative", zIndex: 1 }}
-                    key={child.id} 
-                    className="w-full flex flex-col"
-                >
-                    <PageRenderer sections={[child]} />
-                  </Box>
-                ))
-            ) : (
-              <Box className="w-full p-12 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50/50">
-                  <Typography className="text-gray-400 font-medium">
-                      Marcas vacias: Aquí debe ir el componente de Formulario (FormSection) (+)
-                  </Typography>
+        {children && children.length > 0 && children?.some((child) => child.type === "FormSection") ? (
+          children.filter((child) => child.type === "FormSection")
+            .map((child) => (
+              <Box
+                sx={{ position: "relative", zIndex: 1 }}
+                key={child.id}
+                className="w-full flex flex-col"
+              >
+                <PageRenderer sections={[child]} />
               </Box>
-            )
+            ))
+        ) : (
+          <Box className="w-full p-12 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50/50">
+            <Typography className="text-gray-400 font-medium">
+              Marcas vacias: Aquí debe ir el componente de Formulario (FormSection) (+)
+            </Typography>
+          </Box>
+        )
         }
       </Box>
     </Box>

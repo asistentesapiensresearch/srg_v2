@@ -9,7 +9,7 @@ import { MapPin } from "lucide-react";
 import { useMemo } from "react";
 
 const HeaderPortada = ({
-  excelSource,
+  excelSource = "COL",
   // Estilos
   height = "400px",
   children = []

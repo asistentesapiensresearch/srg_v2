@@ -72,6 +72,9 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [admisionesPhone, setAdmisionesPhone] = useState("");
     const [admisionesLocation, setAdmisionesLocation] = useState("");
     const [admisionesLink, setAdmisionesLink] = useState("");
+    const [admisionesSchedule, setAdmisionesSchedule] = useState("");
+    const [admisionesMonth, setAdmisionesMonth] = useState("");
+    const [admisionesInformationLink, setAdmisionesInformationLink] = useState("");
 
     // Imágenes
     const [logoKey, setLogoKey] = useState(institution?.logo || "");
@@ -147,6 +150,9 @@ export function InstitutionForm({ onClose, institution, store }) {
                 setAdmisionesPhone(admisiones.phone || "");
                 setAdmisionesLocation(admisiones.location || "");
                 setAdmisionesLink(admisiones.link || "");
+                setAdmisionesSchedule(admisiones.schedule || "");
+                setAdmisionesMonth(admisiones.monthAdmision || "");
+                setAdmisionesInformationLink(admisiones.informationLink || "");
                 
                 // Aquí debo poner la imagen de admisiones
                 if(admisiones.photo) {
@@ -333,6 +339,9 @@ export function InstitutionForm({ onClose, institution, store }) {
                 phone: admisionesPhone,
                 location: admisionesLocation,
                 link: admisionesLink,
+                schedule: admisionesSchedule,
+                monthAdmision: admisionesMonth,
+                informationLink: admisionesInformationLink,
                 photo: currentPhotoAdmisionesKey,
                 audio: currentAudioAdmisionesKey
             });
@@ -635,10 +644,31 @@ export function InstitutionForm({ onClose, institution, store }) {
                         fullWidth
                     />
                     <TextField
+                        label="Horario de atención"
+                        value={admisionesSchedule}
+                        onChange={(e) => setAdmisionesSchedule(e.target.value)}
+                        fullWidth
+                        placeholder="Ej: Lun – Vie · 7:00 am – 5:00 pm"
+                    />
+                    <TextField
+                        label="Mes de Admisión"
+                        value={admisionesMonth}
+                        onChange={(e) => setAdmisionesMonth(e.target.value)}
+                        fullWidth
+                        placeholder="Ej: SEPT"
+                    />
+                    <TextField
                         label="Link de Admisiones"
                         value={admisionesLink}
                         onChange={(e) => setAdmisionesLink(e.target.value)}
                         fullWidth
+                    />
+                    <TextField
+                        label="Link de Más Información"
+                        value={admisionesInformationLink}
+                        onChange={(e) => setAdmisionesInformationLink(e.target.value)}
+                        fullWidth
+                        placeholder="https://..."
                     />
                 </div>
                 <div className="flex flex-col gap-2">

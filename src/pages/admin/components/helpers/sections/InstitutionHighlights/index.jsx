@@ -10,6 +10,7 @@ const container = (key, label, tag) =>  (
             width: "100%",
             height: "100%",
             textAlign: "center",
+            bgcolor: "#C10007",
         }}
         className="px-6 py-6"
     >
@@ -27,6 +28,7 @@ const container = (key, label, tag) =>  (
                 fontSize: "0.85rem",
                 letterSpacing: "0.05em",
                 fontWeight: "500",
+                textTransform: "uppercase",
             }}
         >
             {tag}
@@ -34,7 +36,7 @@ const container = (key, label, tag) =>  (
     </Box>)
 
 const InstitutionHighlights = ({
-    excelSource,
+    excelSource = "COL",
 }) => {
 
     let fieldsKeys;
@@ -53,12 +55,27 @@ const InstitutionHighlights = ({
             }}
         >
             <div 
-              className={`w-full max-w-[1440px] mx-auto md:w-[90%] grid grid-cols-1 sm:grid-cols-2 ${fieldsKeys?.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]'} divide-y sm:divide-y-0 sm:divide-x divide-white/20`}
+              className={`w-full max-w-[1440px] mx-auto md:w-[90%] grid grid-cols-2 ${fieldsKeys?.length === 4 ? 'md:grid-cols-4' : 'md:grid-cols-3 lg:grid-cols-6'} gap-[1px] bg-white/20`}
             >
                 {
                     dataExcels && fieldsKeys && fieldsKeys.length > 0 && fieldsKeys.map((key) => {
-                        const label = dataExcels.data[fields[key]] ? String(dataExcels.data[fields[key]]).toUpperCase() : "";
-                        return container(key, label, key.toUpperCase());
+                        if (key === 'icfes ind') return null;
+
+                        const isIcfes = key === 'icfes cat' || key === 'icfes';
+                        
+                        const labelParts = [
+                            dataExcels.data[fields[key]],
+                            isIcfes ? dataExcels.data[fields['icfes ind']] : undefined
+                        ];
+
+                        const label = labelParts
+                            .filter(Boolean)
+                            .map(v => String(v).toUpperCase())
+                            .join(" | ");
+
+                        const tag = isIcfes ? "ICFES" : key;
+
+                        return container(key, label, tag);
                     })
                 }
             </div>
