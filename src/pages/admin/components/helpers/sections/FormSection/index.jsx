@@ -158,32 +158,30 @@ export default function FormSection({
             let destinations;
             let payload;
             if(isAdmisiones) {
-                const { correo, ...cleanFormData } = formData;
                 //destinations = [admisiones.emailAdmisiones,correo]
                 // prueba
-                destinations = ["alejotoro94@hotmail.com",correo]
+                destinations = ["alejotoro94@hotmail.com",formData.correo]
                 payload = {
                     emailTitle: title || "Nuevo formulario recibido",
                     institutionName: admisiones.instituto || "Sapiens Research",
                     description: `Director de Admisiones ${admisiones.nameAdmision}, A través de la página web srg.com.co, se ha recibido una nueva solicitud de contacto de una persona interesada en obtener información en el proceso de admisiones.`,
                     subject: `Solicitud información de admisiones para${formData.nombre ? `: ${formData.nombre}` : ''}`,
                     to: destinations,
-                    formData: cleanFormData,
+                    formData: formData,
                 };
             } else {
-                const { correo, ...cleanFormData } = formData;
                 destinations = destination
                     .split(',')
                     .map(item => item.trim())
                     .filter(Boolean);
-                destinations.push(correo);
+                destinations.push(formData.correo);
                 payload = {
                     emailTitle: title || "Nuevo formulario recibido",
                     institutionName: description || "Sapiens Research",
                     description: "Este es un correo generado a través de la página web srg.com.co ",
                     subject: `Nuevo contacto web${formData.nombre ? `: ${formData.nombre}` : ''}`,
                     to: destinations,
-                    formData: cleanFormData,
+                    formData: formData,
                 };
             }
 
