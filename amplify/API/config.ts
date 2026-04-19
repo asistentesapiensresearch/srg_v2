@@ -23,23 +23,29 @@ export function configApi(backend: any) {
         restApiName: "srgRestApi",
         deploy: true,
         defaultCorsPreflightOptions: {
-            allowOrigins: Cors.ALL_METHODS,
+            allowOrigins: Cors.ALL_ORIGINS,
             allowMethods: Cors.ALL_METHODS,
             allowHeaders: Cors.DEFAULT_HEADERS,
-            allowCredentials: true
+            allowCredentials: false
         },
     });
 
     const lambdas: Lambda[] = [
-        {
-            path: 'addUserToViewer',
-            lambda: backend.addUserToViewer,
+        /* Comentó esto por que no lo estamos usando y puede ser sensible ya que agrega a grupos de cognito */
+        /* {
+            path: 'addUserToGroup',
+            lambda: backend.addUserToGroup,
             policies: [
                 {
                     actions: ['cognito-idp:AdminAddUserToGroup'],
                     resources: ['*'],
                 }
             ]
+        }, */
+        {
+            path: 'sendEmail',
+            lambda: backend.sendEmail,
+            policies: []
         }
     ];
 

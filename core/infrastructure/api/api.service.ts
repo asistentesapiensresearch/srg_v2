@@ -7,7 +7,7 @@ interface RequestOptions {
     queryParams?: Record<string, string>;
 }
 
-const API_NAME = "authRestApi";
+const API_NAME = "srgRestApi";
 
 const normalizeQueryParams = (
     queryParams?: Record<string, string | number | boolean | undefined>
@@ -49,19 +49,22 @@ export const apiService = {
             const e = localStorage.getItem("e");
             const body = { ...data, ...(e ? { email: e } : {}) };
 
+            console.log({body, API_NAME});
+
             const { body: responseBody } = await post({
                 apiName: API_NAME,
                 path,
                 options: {
                     ...options,
                     body,
-                    withCredentials: true,
+                    withCredentials: options.withCredentials ?? false,
                     queryParams: normalizeQueryParams(options.queryParams),
                 },
             }).response;
 
             return await responseBody.json();
         } catch (error: any) {
+            console.log({error});
             throw handleApiError(path, error);
         }
     },

@@ -15,7 +15,23 @@ const amplifyConfig = parseAmplifyConfig(outputs);
 I18n.putVocabularies(translations);
 I18n.setLanguage('es');
 
-Amplify.configure(amplifyConfig);
+Amplify.configure({
+  ...amplifyConfig,
+  API: {
+    ...amplifyConfig.API,
+    REST: outputs.custom?.API ?? {}
+
+  }
+});
+
+console.log("dbg ",{
+  ...amplifyConfig,
+  API: {
+    ...amplifyConfig.API,
+    REST: outputs.custom?.API ?? {}
+
+  }
+});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

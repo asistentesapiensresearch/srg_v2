@@ -3,8 +3,9 @@ import { auth } from './auth/resource';
 import { data } from './data/resource';
 import { storage } from './storage/resource';
 // Asegúrate de importar la nueva función (si usas un archivo index en functions, expórtala ahí primero)
-import { addUserToGroup, listUsersFunction } from './functions';
+import { addUserToGroup, listUsersFunction, sendEmail } from './functions';
 import { manageUserGroup } from './functions/manageUserGroup/resource'; // Importación directa
+import { configApi } from './API/config';
 
 const backend = defineBackend({
   auth,
@@ -13,7 +14,10 @@ const backend = defineBackend({
   addUserToGroup,
   listUsersFunction,
   manageUserGroup, // 1. Agregamos la función al backend
+  sendEmail, // envio de correo
 });
+
+configApi(backend);
 
 // --- Permisos para Listar Usuarios (Ya lo tenías) ---
 const authResource = backend.auth.resources.userPool;

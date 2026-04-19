@@ -8,10 +8,8 @@ export const fieldsSection = {
     },
     "excel": {
         "COL": {
-            "name": "name",
             "ciudad": "Ciudad",
             "departamento": "Departamento",
-            "slogan": "Slogan",
         }
     }
 }

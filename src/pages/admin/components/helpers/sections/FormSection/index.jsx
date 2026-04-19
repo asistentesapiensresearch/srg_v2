@@ -4,15 +4,44 @@ import {
     Button, MenuItem, Paper, Snackbar, Alert, InputAdornment
 } from '@mui/material';
 import { Send, Mail, MessageCircle, User, Phone, Calendar } from 'lucide-react';
+import { apiService } from '@core/infrastructure/api/api.service';
+import { useSelector } from 'react-redux';
 
 export default function FormSection({
     title = "Contáctanos",
     description,
+    isAdmisiones,
     submitAction = "whatsapp",
     destination,
     submitButtonText = "Enviar",
     formFields = "[]"
 }) {
+
+    const { data } = useSelector((state) => state.sections.fetchData.databaseDownload);
+
+    
+      // Obtengo los campos de admisiones
+      const admisiones = useMemo(() => {
+            if(isAdmisiones) {
+                try {
+                    const parsed =
+                        data?.admisiones
+                            ? JSON.parse(data.admisiones)
+                            : {};
+                     
+                    return {
+                        instituto: data?.name,
+                        nameAdmision: parsed?.name,
+                        emailAdmisiones: parsed?.email
+                    };
+                } catch (error) {
+                    console.error("Error parseando campo:", error);
+                    return [];
+                }
+            }
+            return null;
+      }, [data,isAdmisiones]);
+
     // Parseo seguro del JSON que viene del Builder
     const fields = useMemo(() => {
         try {
@@ -56,7 +85,7 @@ export default function FormSection({
         return isValid;
     };
 
-    const handleSubmit = (e) => {
+    /* const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!validate()) {
@@ -89,6 +118,99 @@ export default function FormSection({
         }
 
         setNotification({ open: true, msg: '¡Redirigiendo a la aplicación de mensajería!', type: 'success' });
+    }; */
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!validate()) {
+            setNotification({ open: true, msg: 'Por favor completa los campos requeridos.', type: 'error' });
+            return;
+        }
+
+        if (!destination) {
+            setNotification({ open: true, msg: 'Error de configuración: No hay destino definido.', type: 'error' });
+            return;
+        }
+
+        try {
+            if (submitAction === 'whatsapp') {
+                let message = `*Hola, vengo de su sitio web.*\n\n`;
+
+                fields.forEach(field => {
+                    const val = formData[field.name] || 'No especificado';
+                    message += `🔹 *${field.label}:* ${val}\n`;
+                });
+
+                const url = `https://wa.me/${destination.replace(/\+/g, '')}?text=${encodeURIComponent(message)}`;
+                window.open(url, '_blank');
+
+                setNotification({
+                    open: true,
+                    msg: '¡Redirigiendo a la aplicación de mensajería!',
+                    type: 'success'
+                });
+
+                return;
+            }
+
+            // validamos si es admisiones para tratar la data
+            let destinations;
+            let payload;
+            if(isAdmisiones) {
+                const { correo, ...cleanFormData } = formData;
+                //destinations = [admisiones.emailAdmisiones,correo]
+                destinations = ["alejotoro94@hotmail.com",correo]
+                payload = {
+                    emailTitle: title || "Nuevo formulario recibido",
+                    institutionName: admisiones.instituto || "Sapiens Research",
+                    description: `Director de Admisiones ${admisiones.nameAdmision}, A través de la página web srg.com.co, se ha recibido una nueva solicitud de contacto de una persona interesada en obtener información en el proceso de admisiones.`,
+                    subject: `Solicitud información de admisiones para${formData.nombre ? `: ${formData.nombre}` : ''}`,
+                    to: destinations,
+                    formData: cleanFormData,
+                };
+            } else {
+                const { correo, ...cleanFormData } = formData;
+                destinations = destination
+                    .split(',')
+                    .map(item => item.trim())
+                    .filter(Boolean);
+                destinations.push(correo);
+                payload = {
+                    emailTitle: title || "Nuevo formulario recibido",
+                    institutionName: description || "Sapiens Research",
+                    description: "Este es un correo generado a través de la página web srg.com.co ",
+                    subject: `Nuevo contacto web${formData.nombre ? `: ${formData.nombre}` : ''}`,
+                    to: destinations,
+                    formData: cleanFormData,
+                };
+            }
+
+            console.log(payload);
+            const response = await apiService.post('sendEmail', payload);
+
+            if (!response?.success) {
+                throw new Error(response?.message || 'No se pudo enviar el correo');
+            }
+
+            setNotification({
+                open: true,
+                msg: '¡Formulario enviado correctamente!',
+                type: 'success'
+            });
+
+            // opcional: limpiar formulario
+            setFormData({});
+            setErrors({});
+        } catch (error) {
+            console.error("Error enviando formulario:", error);
+
+            setNotification({
+                open: true,
+                msg: error?.message || 'Ocurrió un error enviando el formulario.',
+                type: 'error'
+            });
+        }
     };
 
     if (!fields || fields.length === 0) return null;
