@@ -13,7 +13,7 @@ const CardsCarousel = ({
     title,
     itemsCustom,
     gap = 20,
-    bgBorde = "#C8102E",
+    bgBorde = "var(--color-primary)",
     itemsPerView = 4,
     autoplay = true,
     showArrows = true,
@@ -121,11 +121,11 @@ const CardsCarousel = ({
                                 "
                                 sx={{
                                     transition: "all 300ms ease-out",
-                                    borderTop: "3px solid #C10008"
+                                    borderTop: "3px solid var(--color-primary)"
                                 }}
                             >
                                 <div className='flex gap-2 items-center'>
-                                    <DynamicIcon name={el.icon || "Globe"} color={"#C10008"} size={20} />
+                                    <DynamicIcon name={el.icon || "Globe"} color={"var(--color-primary)"} size={20} />
                                     <h5 className="font-semibold mb-0">
                                         {el.label}
                                     </h5>
@@ -138,7 +138,7 @@ const CardsCarousel = ({
                                         style={{
                                             padding: "2px 30px",
                                             backgroundColor: "#FDEEEF",
-                                            color: "#C10008",
+                                            color: "var(--color-primary)",
                                             fontWeight: "bold",
                                             border: "1px solid #EF9A9A",
                                             borderRadius: "30px",

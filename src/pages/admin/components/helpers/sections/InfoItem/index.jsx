@@ -51,7 +51,6 @@ const InfoItem = ({
     colorIcon,
     colorTitle,
     colorText,
-    paddingItem,
     spacingItem,
     spacingIconTitle
 }) => {
@@ -112,10 +111,10 @@ const InfoItem = ({
                         >
                             <DynamicIcon name={el.icon} color={colorIcon} size={sizeIcon} />
                             <div>
-                                <h6 style={{
+                                <span style={{
                                     fontWeight: "bold",
                                     color: colorTitle
-                                }} >{el.label.toUpperCase()}</h6>
+                                }} >{el.label.toUpperCase()}</span>
                                 <p style={{color: colorText}}>{el.value}</p>
                             </div>
                         </Box>

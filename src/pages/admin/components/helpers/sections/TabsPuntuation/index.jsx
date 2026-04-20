@@ -8,7 +8,7 @@ const TabsPuntuation = ({
   excelSource = "Micro-Posionamiento",
   textcolor = "#1f2937", 
   titleTabsPuntuation, 
-  HoverCardsPuntuation = 2, sizeTitleTabs = 20, 
+  HoverCardsPuntuation = 2, 
 }) => {
 
   const excelStored = useSelector(
@@ -55,7 +55,7 @@ const TabsPuntuation = ({
             className="group min-w-[140px] rounded-[22px] border border-gray-200 bg-white p-5 shadow-sm"
             style={{
               transition: "all 300ms ease-out",
-              borderTop: "3px solid #C10008"
+              borderTop: "3px solid var(--color-primary)"
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = `translateY(-${HoverCardsPuntuation * 2}px)`;
@@ -95,17 +95,21 @@ const TabsPuntuation = ({
                     color: "#1B61A5",
                   }}
                 >
-                  {puntuations.regional ?? "-"}
+                  <span>
+                    {puntuations.regional ?? "-"}
+                  </span>
                 </div>
 
                 <div
                   className="flex h-[54px] items-center justify-center rounded-2xl text-2xl font-extrabold"
                   style={{
                     backgroundColor: "#FDEEEF",
-                    color: "#C10008",
+                    color: "var(--color-primary)",
                   }}
                 >
-                  {puntuations.country ?? "-"}
+                  <span>
+                    {puntuations.country ?? "-"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -118,12 +122,12 @@ const TabsPuntuation = ({
   return (
     <div className=''>
       <div className=''>
-        <h3 className='font-black underline' style={{ fontSize: `${sizeTitleTabs}px` }}>
+        <h3 className='font-black underline'>
           {titleTabsPuntuation}
         </h3>
         <div className='mt-8 flex flex-row gap-5' style={{color: "black"}}>
           <p> <span style={{display: "inline-block", width: "10px", height: "10px", backgroundColor: "#1B61A5", borderRadius: "50%"}}></span> Nacional</p>
-          <p> <span style={{display: "inline-block", width: "10px", height: "10px", backgroundColor: "#C10008", borderRadius: "50%"}}></span> {city}</p>
+          <p> <span style={{display: "inline-block", width: "10px", height: "10px", backgroundColor: "var(--color-primary)", borderRadius: "50%"}}></span> {city}</p>
         </div>
       </div>
       {renderContent()}

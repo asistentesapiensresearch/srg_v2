@@ -107,7 +107,7 @@ export default function TestimonialsCarousel({
                     gap-4
                 "
                 sx={{
-                    borderTop: "3px solid #C10008",
+                    borderTop: "3px solid var(--color-primary)",
                 }}
             >
                 <div>
@@ -115,7 +115,7 @@ export default function TestimonialsCarousel({
                         <Quote
                             size={20}
                             style={{
-                                color: "#C10008",
+                                color: "var(--color-primary)",
                                 opacity: 0.2,
                                 position: "absolute",
                                 top: -5,
@@ -163,7 +163,7 @@ export default function TestimonialsCarousel({
                 width: "100%",
                 overflow: 'hidden',
                 '& .swiper-pagination-bullet-active': {
-                    backgroundColor: "#C8102E"
+                    backgroundColor: "var(--color-primary)"
                 },
                 '& .swiper-pagination': {
                     position: 'relative',
@@ -196,8 +196,8 @@ export default function TestimonialsCarousel({
                             width: "36px",
                             height: "36px",
                             borderRadius: "50%",
-                            border: `1px solid #C8102E`,
-                            color: "#C8102E",
+                            border: `1px solid var(--color-primary)`,
+                            color: "var(--color-primary)",
                             alignItems: "center",
                             justifyContent: "center",
                             cursor: "pointer",
@@ -205,7 +205,7 @@ export default function TestimonialsCarousel({
                             transition: "all 0.2s ease",
                             flexShrink: 0,
                             '&:hover': {
-                                backgroundColor: "#C8102E",
+                                backgroundColor: "var(--color-primary)",
                                 color: "#fff",
                             }
                         }}
@@ -263,8 +263,8 @@ export default function TestimonialsCarousel({
                             width: "36px",
                             height: "36px",
                             borderRadius: "50%",
-                            border: `1px solid #C8102E`,
-                            color: "#C8102E",
+                            border: `1px solid var(--color-primary)`,
+                            color: "var(--color-primary)",
                             alignItems: "center",
                             justifyContent: "center",
                             cursor: "pointer",
@@ -272,7 +272,7 @@ export default function TestimonialsCarousel({
                             transition: "all 0.2s ease",
                             flexShrink: 0,
                             '&:hover': {
-                                backgroundColor: "#C8102E",
+                                backgroundColor: "var(--color-primary)",
                                 color: "#fff",
                             }
                         }}

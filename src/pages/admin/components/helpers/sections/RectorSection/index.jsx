@@ -33,7 +33,6 @@ const RectorSection = ({
     return (
         <Box
             sx={{
-                backgroundColor: "#EEEEEE",
                 width: "100%",
                 display: "grid",
                 gridTemplateColumns: {
@@ -43,6 +42,7 @@ const RectorSection = ({
                 gap: "30px",
                 padding: "50px",
             }}
+            className="bg-secundary"
         >
             <Box 
                 className="flex flex-col justify-center items-center gap-4"
@@ -88,15 +88,14 @@ const RectorSection = ({
                     <h2 className="font-bold">{rectorData.rectorName}</h2>
 
                     <h4
-                        className="font-bold"
-                        style={{ color: "#c10008" }}
+                        className="font-bold color-primary"
                     >
                         RECTOR {rectorData.colegio.toUpperCase()}
                     </h4>
 
                     <div
                         style={{
-                            borderTop: "4px solid #c10008",
+                            borderTop: "4px solid var(--color-primary)",
                             width: "40px",
                         }}
                     />

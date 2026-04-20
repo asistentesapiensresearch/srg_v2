@@ -59,12 +59,6 @@ export default {
             default: 24
         },
         {
-            name: "paddingItem",
-            label: "Padding interno Item",
-            type: "number",
-            default: 0
-        },
-        {
             name: "spacingItem",
             label: "Espaciado entre items",
             type: "number",
