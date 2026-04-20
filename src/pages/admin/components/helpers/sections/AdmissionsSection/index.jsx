@@ -318,12 +318,11 @@ const AdmissionsSection = ({
               fontSize: "0.75rem",
               letterSpacing: "0.25em",
               fontWeight: 800,
-              color: "var(--color-primary)",
+              color: "#d90000",
               textTransform: "uppercase",
               mb: 1.5,
             }}
-          >
-            {`Proceso de admisiones · ${new Date().getFullYear()}`}
+          >{`Proceso de admisiones · ${new Date().getFullYear()}`}
           </Typography>
 
           {/* Título principal */}
