@@ -20,7 +20,24 @@
     --text-2xl: clamp(1.875rem, 1.5rem + 1.2vw, 2.35rem);     /* 30–38px */
     --text-3xl: clamp(2.1rem, 1.7rem + 1.6vw, 2.8rem);        /* 34–45px */
     --text-4xl: clamp(2.4rem, 1.9rem + 2.1vw, 3.4rem);        /* 38–54px */
+    --color-primary: #C10007;
+    --color-gris: #EEEEEE;
   }
+
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+  .color-primary {
+    color: var(--color-primary);
+  }
+  .bg-secundary {
+    background-color: var(--color-gris);
+  }
+  .color-secundary {
+    color: var(--color-secundary);
+  }
+
+
 
   h1,h2,h3,h4,h5,h6 {
     font-family: "Google Sans", sans-serif;

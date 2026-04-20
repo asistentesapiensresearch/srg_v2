@@ -10,9 +10,8 @@ const container = (key, label, tag) =>  (
             width: "100%",
             height: "100%",
             textAlign: "center",
-            bgcolor: "#C10007",
         }}
-        className="px-6 py-6"
+        className="px-6 py-6 bg-primary"
     >
         <h4 
             style={{
@@ -49,10 +48,10 @@ const InstitutionHighlights = ({
     return (
         <Box
             sx={{
-                bgcolor: "#C10007",
                 width: "100%",
                 height: "auto",
             }}
+            className="bg-primary"
         >
             <div 
               className={`w-full max-w-[1440px] mx-auto md:w-[90%] grid grid-cols-2 ${fieldsKeys?.length === 4 ? 'md:grid-cols-4' : 'md:grid-cols-3 lg:grid-cols-6'} gap-[1px] bg-white/20`}
