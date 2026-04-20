@@ -19,17 +19,38 @@ export default function TabsSection({
     return (
         <Box sx={{ bgcolor: background_color, width: '100%' }}>
             {/* Cabecera de Pestañas */}
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: alignment }}>
+            <Box sx={{ borderBottom: { xs: 0, sm: 1 }, borderColor: 'divider', display: 'flex', justifyContent: alignment }}>
                 <Tabs
                     value={activeTab}
                     onChange={handleChange}
                     variant={variant}
                     TabIndicatorProps={{
-                        style: { backgroundColor: indicator_color }
+                        sx: {
+                            backgroundColor: indicator_color,
+                            display: { xs: 'none', sm: 'block' }
+                        }
                     }}
                     sx={{
-                        '& .MuiTab-root': { color: tabs_color },
-                        '& .Mui-selected': { color: indicator_color, fontWeight: 'bold' },
+                        width: '100%',
+                        '& .MuiTabs-scroller': {
+                            overflow: { xs: 'hidden !important', sm: 'hidden !important' } // Use hidden for xs, but flex-wrap handles children
+                        },
+                        '& .MuiTabs-flexContainer': {
+                            flexWrap: { xs: 'wrap', sm: 'nowrap' }
+                        },
+                        '& .MuiTab-root': {
+                            color: tabs_color,
+                            flexBasis: { xs: '50%', sm: 'auto' },
+                            maxWidth: { xs: '50%', sm: 'none' },
+                            boxSizing: 'border-box',
+                            borderBottom: { xs: 2, sm: 0 },
+                            borderColor: { xs: 'transparent', sm: 'transparent' }
+                        },
+                        '& .Mui-selected': {
+                            color: indicator_color,
+                            fontWeight: 'bold',
+                            borderBottomColor: { xs: indicator_color, sm: 'transparent' }
+                        },
                     }}
                 >
                     {children.length > 0 ? (

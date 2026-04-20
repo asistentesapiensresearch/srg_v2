@@ -248,6 +248,18 @@ export default function ChartSection({
             },
             subtitle: { text: isThumbnail ? null : `Fuente: ${chartConfig.alias || chartConfig.sheetName}` },
             legend: { enabled: !isThumbnail, align: 'center', verticalAlign: 'bottom' },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 768
+                    },
+                    chartOptions: {
+                        subtitle: {
+                            text: null
+                        }
+                    }
+                }]
+            },
             series: finalSeries,
             ...chartSpecificOptions
         };
