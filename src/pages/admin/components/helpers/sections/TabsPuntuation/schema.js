@@ -40,7 +40,6 @@ export default {
         { name: "style_settings", label: "🎨 ESTILOS", type: "separator" },
         { name: "textcolor", label: "Color del Texto(Las Etiquetas)", type: "color", default: "#1f2937" },
         { name: "titleTabsPuntuation", label: "Titulo Del Componente", type: "text", default: "Posiciones según 100 Mejores por Materia 2026" },
-        { name: "sizeTitleTabs", label: "Tamaño Del Titulo Del Componente(en px)", type: "number", default: 20 },
         { name: "HoverCardsPuntuation", label: "Cantidad del Hover", type: "number", default: 1 },
     ]
 }

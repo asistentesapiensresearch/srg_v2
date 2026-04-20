@@ -246,7 +246,7 @@ export default function ChartSection({
                 borderRadius: 8,
                 style: { fontFamily: 'inherit' }
             },
-            subtitle: { text: isThumbnail ? null : `Fuente: ${chartConfig.alias || chartConfig.sheetName}` },
+            //subtitle: { text: isThumbnail ? null : `Fuente: ${chartConfig.alias || chartConfig.sheetName}` },
             legend: { enabled: !isThumbnail, align: 'center', verticalAlign: 'bottom' },
             series: finalSeries,
             ...chartSpecificOptions

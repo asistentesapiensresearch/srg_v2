@@ -8,7 +8,7 @@ const TabsPuntuation = ({
   excelSource = "Micro-Posionamiento",
   textcolor = "#1f2937", 
   titleTabsPuntuation, 
-  HoverCardsPuntuation = 2, sizeTitleTabs = 20, 
+  HoverCardsPuntuation = 2, 
 }) => {
 
   const excelStored = useSelector(
@@ -118,7 +118,7 @@ const TabsPuntuation = ({
   return (
     <div className=''>
       <div className=''>
-        <h3 className='font-black underline' style={{ fontSize: `${sizeTitleTabs}px` }}>
+        <h3 className='font-black underline'>
           {titleTabsPuntuation}
         </h3>
         <div className='mt-8 flex flex-row gap-5' style={{color: "black"}}>
