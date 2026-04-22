@@ -53,7 +53,7 @@ const DowloandDataExcel = ({
                     setSheetData({
                         identifierExcel,
                         data: found.at(-1),
-                        total: found.length
+                        total: found.filter( el => el["(↘↗) Cat"] != "-").length
                     })
                 );
             } catch (err) {
