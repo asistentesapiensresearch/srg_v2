@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Box, Stack, IconButton, Tooltip, CircularProgress } from '@mui/material';
-import { Facebook, Instagram, Linkedin, Twitter, Youtube, Globe, Link as LinkIcon } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Twitter, Youtube, Globe, Link as LinkIcon, FileSpreadsheet } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
 export default function DynamicSocialMedia({
@@ -75,6 +75,7 @@ export default function DynamicSocialMedia({
             case 'twitter': case 'x': return <Twitter {...props} />;
             case 'youtube': return <Youtube {...props} />;
             case 'website': return <Globe {...props} />;
+            case 'cvlac': return <FileSpreadsheet {...props} />;
             default: return <LinkIcon {...props} />;
         }
     };

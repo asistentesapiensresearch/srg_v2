@@ -14,8 +14,8 @@ import {
     Switch,            // 🔥 Nuevo import
     FormControlLabel   // 🔥 Nuevo import
 } from "@mui/material";
-import { moveIconToDefinitiveFolder } from "../../helpers/moveIconToDefinitiveFolder";
 import { Preloader } from "@src/components/preloader";
+import { processTempFile } from "../../helpers/proccessTempFile";
 import { InstitutionType, InstitutionSubtype } from "@core/domain/types/InstitutionTypes";
 
 // ... (CONSTANTES DE LABELS IGUAL) ...
@@ -54,6 +54,7 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [rectorInstagram, setRectorInstagram] = useState("");
     const [rectorFacebook, setRectorFacebook] = useState("");
     const [rectorYoutube, setRectorYoutube] = useState("");
+    const [rectorCV, setRectorCV] = useState("");
     const [rectorDescription, setRectorDescription] = useState(institution?.rectorDescription || "");
     const [socialFacebook, setSocialFacebook] = useState("");
     const [socialInstagram, setSocialInstagram] = useState("");
@@ -132,6 +133,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 setRectorInstagram(rSocial.instagram || "");
                 setRectorFacebook(rSocial.facebook || "");
                 setRectorYoutube(rSocial.youtube || "");
+                setRectorCV(rSocial.cvlac || "");
 
                 const iSocial = typeof institution.socialMedia === 'string' ? JSON.parse(institution.socialMedia) : institution.socialMedia || {};
                 setSocialFacebook(iSocial.facebook || "");
@@ -225,101 +227,83 @@ export function InstitutionForm({ onClose, institution, store }) {
         setUploading(false);
     }
 
+    useEffect(() => {
+      console.log({errors});
+    }, [errors])
+    
+
     // --- GUARDAR ---
     const handleSave = async () => {
         try {
             setUploading(true);
             setErrors({});
+            let currentLogoKey = await processTempFile({
+                currentKey: logoKey,
+                oldKey: institution?.logo,
+                fileNamePrefix: "logo",
+                setKey: setLogoKey,
+                errorKey: "logo",
+                TEMP_FOLDER,
+                setErrors,
+                setUploading,
+                allowedExtensions: ["webp"]
+            });
 
-            // 1. Procesar Logo
-            let currentLogoKey = logoKey;
-            if (currentLogoKey && currentLogoKey.includes(TEMP_FOLDER)) {
-                try {
-                    const newKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, currentLogoKey, `logo-${Date.now()}`);
-                    currentLogoKey = newKey;
-                    setLogoKey(newKey);
-                    if (institution?.logo && institution.logo !== newKey) {
-                        await remove({ path: institution.logo }).catch(e => console.warn("No se pudo borrar imagen antigua", e));
-                    }
-                } catch (moveError) {
-                    setErrors({ logo: "Error al procesar la imagen del logo." });
-                    setUploading(false);
-                    return;
-                }
-            }
+            let currentRectorKey = await processTempFile({
+                currentKey: rectorPhotoKey,
+                oldKey: institution?.rectorPhoto,
+                fileNamePrefix: "rector",
+                setKey: setRectorPhotoKey,
+                errorKey: "photoRector",
+                TEMP_FOLDER,
+                setErrors,
+                setUploading,
+                allowedExtensions: ["webp"]
+            });
 
-            // 2. Procesar Rector
-            let currentRectorKey = rectorPhotoKey;
-            if (currentRectorKey && currentRectorKey.includes(TEMP_FOLDER)) {
-                try {
-                    const newKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, currentRectorKey, `rector-${Date.now()}`);
-                    currentRectorKey = newKey;
-                    setRectorPhotoKey(newKey);
-                    if (institution?.rectorPhoto && institution.rectorPhoto !== newKey) {
-                        await remove({ path: institution.rectorPhoto }).catch(e => console.warn("No se pudo borrar foto antigua", e));
-                    }
-                } catch (moveError) {
-                    setErrors({ form: "Error al procesar la foto del rector." });
-                    setUploading(false);
-                    return;
-                }
-            }
+            let currentPortadaKey = await processTempFile({
+                currentKey: portadaPhotoKey,
+                oldKey: institution?.portadaPhoto,
+                fileNamePrefix: "portada",
+                errorKey: "portadaPhoto",
+                setKey: setPortadaPhotoKey,
+                TEMP_FOLDER,
+                setErrors,
+                setUploading,
+                allowedExtensions: ["webp"]
+            });
 
-            // procesar portada
-            let currentPortadaKey = portadaPhotoKey;
-            if(currentPortadaKey && currentPortadaKey.includes(TEMP_FOLDER)) {
-                try {
-                    const newKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, currentPortadaKey, `portada-${Date.now()}`);
-                    currentPortadaKey = newKey;
-                    setPortadaPhotoKey(newKey);
-                    if (institution?.portadaPhoto && institution.portadaPhoto !== newKey) {
-                        await remove({ path: institution.portadaPhoto }).catch(e => console.warn("No se pudo borrar foto antigua", e));
-                    }
-                } catch (moveError) {
-                    setErrors({ form: "Error al procesar la foto de la portada." });
-                    setUploading(false);
-                    return;
-                }
-            }
+            const admisiones =
+                typeof institution?.admisiones === "string"
+                    ? JSON.parse(institution.admisiones)
+                    : institution?.admisiones || {};
 
-            // procesar foto persona de admisiones
-            let currentPhotoAdmisionesKey = photoAdmisionesKey;
-            if(currentPhotoAdmisionesKey && currentPhotoAdmisionesKey.includes(TEMP_FOLDER)) {
-                try {
-                    const newKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, currentPhotoAdmisionesKey, `photo-admisiones-${Date.now()}`);
-                    currentPhotoAdmisionesKey = newKey;
-                    setPhotoAdmisionesKey(newKey);
-                    const admisiones = typeof institution.admisiones === 'string' ? JSON.parse(institution.admisiones) : institution.admisiones || {};
-                    if (admisiones?.photo && admisiones?.photo !== newKey) {
-                        await remove({ path: admisiones?.photo }).catch(e => console.warn("No se pudo borrar foto antigua", e));
-                    }
-                } catch (moveError) {
-                    setErrors({ form: "Error al procesar la foto de la portada." });
-                    setUploading(false);
-                    return;
-                }
-            }
+            let currentPhotoAdmisionesKey = await processTempFile({
+                currentKey: photoAdmisionesKey,
+                oldKey: admisiones?.photo,
+                fileNamePrefix: "photo-admisiones",
+                setKey: setPhotoAdmisionesKey,
+                errorKey: "photoAdmisiones",
+                TEMP_FOLDER,
+                setErrors,
+                setUploading,
+                allowedExtensions: ["webp"]
+            });
 
-            // procesar audio admisiones
-            let currentAudioAdmisionesKey = audioAdmisionesKey;
-            if(currentAudioAdmisionesKey && currentAudioAdmisionesKey.includes(TEMP_FOLDER)) {
-                try {
-                    const newKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, currentAudioAdmisionesKey, `audio-admisiones-${Date.now()}`);
-                    currentAudioAdmisionesKey = newKey;
-                    setAudioAdmisionesKey(newKey);
-                    const admisiones = typeof institution.admisiones === 'string' ? JSON.parse(institution.admisiones) : institution.admisiones || {};
-                    if (admisiones?.audio && admisiones?.audio !== newKey) {
-                        await remove({ path: admisiones?.audio }).catch(e => console.warn("No se pudo borrar foto antigua", e));
-                    }
-                } catch (moveError) {
-                    setErrors({ form: "Error al procesar la foto de la portada." });
-                    setUploading(false);
-                    return;
-                }
-            }
+            let currentAudioAdmisionesKey = await processTempFile({
+                currentKey: audioAdmisionesKey,
+                oldKey: admisiones?.audio,
+                fileNamePrefix: "audio-admisiones",
+                setKey: setAudioAdmisionesKey,
+                errorKey: "audioAdmisiones",
+                TEMP_FOLDER,
+                setErrors,
+                setUploading,
+                allowedExtensions: ["mp3"]
+            });
 
             // 3. Preparar JSONs
-            const rectorSocialPayload = JSON.stringify({ linkedin: rectorLinkedin, website: rectorWeb, instagram: rectorInstagram, facebook: rectorFacebook, youtube: rectorYoutube  });
+            const rectorSocialPayload = JSON.stringify({ linkedin: rectorLinkedin, website: rectorWeb, instagram: rectorInstagram, facebook: rectorFacebook, youtube: rectorYoutube, cvlac: rectorCV  });
             const socialMediaPayload = JSON.stringify({
                 facebook: socialFacebook,
                 instagram: socialInstagram,
@@ -373,6 +357,8 @@ export function InstitutionForm({ onClose, institution, store }) {
                 languages: languagesArray
             });
 
+            console.log({apiErrors, errors});
+
             if (apiErrors) {
                 setErrors(apiErrors);
             } else if (instDB) {
@@ -380,8 +366,14 @@ export function InstitutionForm({ onClose, institution, store }) {
             }
 
         } catch (error) {
-            console.error("Error crítico saving institution:", error);
-            setErrors({ form: "Error inesperado al guardar. Revisa la consola." });
+            /* console.error("Error crítico saving institution:", error);
+            setErrors({ form: "Error inesperado al guardar. Revisa la consola." }); */
+            console.error("Error saving institution:", error);
+            if (error?.type === "VALIDATION_ERROR") return
+            setErrors((prev) => ({
+                ...prev,
+                form: "Revisar los campos que falla.",
+            }));
         } finally {
             setUploading(false);
         }
@@ -501,13 +493,14 @@ export function InstitutionForm({ onClose, institution, store }) {
                     <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
                         Logo Institucional
                     </InputLabel>
+                    <p className="text-blue-700">Solo se permite formato .webp y se recomienda el siguiente tamaño: </p>
                     {logoPreview && (
                         <div className="mb-2 max-w-20">
                             <img src={logoPreview} alt="Logo" className="w-full object-contain border rounded" />
                         </div>
                     )}
                     <FileUploader
-                        acceptedFileTypes={["image/*"]}
+                        acceptedFileTypes={["image/*", ".webp"]}
                         path={TEMP_FOLDER}
                         maxFileCount={1}
                         onUploadStart={handleUploadStart}
@@ -523,6 +516,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                     <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
                         Foto de Portada
                     </InputLabel>
+                    <p className="text-blue-700">Solo se permite formato .webp y se recomienda el siguiente tamaño: </p>
                     {portadaPhotoPreview && (
                         <div className="mb-2 max-w-20">
                             <img src={portadaPhotoPreview} alt="Portada" className="w-full object-contain border rounded" />
@@ -585,6 +579,13 @@ export function InstitutionForm({ onClose, institution, store }) {
                         fullWidth
                         placeholder="https://youtube.com/....."
                     />
+                    <TextField
+                        label="CVLAC Rector"
+                        value={rectorCV}
+                        onChange={(e) => setRectorCV(e.target.value)}
+                        fullWidth
+                        placeholder="https://scienti.minciencias.gov.co/cvlac/....."
+                    />
                 </div>
                 <TextField
                     label="Descripción del rector e invitación"
@@ -594,8 +595,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                     multiline
                     rows={3}
                 />
-
-                <FormControl fullWidth>
+                <FormControl fullWidth error={!!errors.photoRector}>
                     <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
                         Foto del Rector
                     </InputLabel>
@@ -604,6 +604,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                             <img src={rectorPhotoPreview} alt="Rector" className="w-full object-cover border rounded" />
                         </div>
                     )}
+                    <p className="text-blue-700">Solo se permite formato .webp y se recomienda el siguiente tamaño: </p>
                     <FileUploader
                         acceptedFileTypes={["image/*"]}
                         path={TEMP_FOLDER}
@@ -614,6 +615,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                         showThumbnails={false}
                         processFile={({ file }) => ({ file, key: `rector-${Date.now()}-${file.name}` })}
                     />
+                     {errors.photoRector && <FormHelperText>{errors.photoRector}</FormHelperText>}
                 </FormControl>
 
                 <h3 className="font-bold text-gray-700 mt-2 border-b">Admisiones</h3>
@@ -681,6 +683,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                                 <img src={photoAdmisionesPreview} alt="Portada" className="w-full object-contain border rounded" />
                             </div>
                         )}
+                        <p className="text-blue-700">Solo se permite formato .webp y se recomienda el siguiente tamaño: </p>
                         <FileUploader
                             acceptedFileTypes={["image/*"]}
                             path={TEMP_FOLDER}
@@ -697,6 +700,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                         <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
                             Audio mp3 de admisiones (puede ser un mensaje del encargado)
                         </InputLabel>
+                        <p className="text-blue-700">Solo se permite formato .mp3</p>
                         {audioAdmisionesPreview && (
                             <div className="mb-2 w-full">
                                 <audio controls className="w-full rounded border">
