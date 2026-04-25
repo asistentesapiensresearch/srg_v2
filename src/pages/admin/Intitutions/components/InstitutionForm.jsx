@@ -227,11 +227,6 @@ export function InstitutionForm({ onClose, institution, store }) {
         setUploading(false);
     }
 
-    useEffect(() => {
-      console.log({errors});
-    }, [errors])
-    
-
     // --- GUARDAR ---
     const handleSave = async () => {
         try {
@@ -356,8 +351,6 @@ export function InstitutionForm({ onClose, institution, store }) {
                 admisiones: admisionesPayload,
                 languages: languagesArray
             });
-
-            console.log({apiErrors, errors});
 
             if (apiErrors) {
                 setErrors(apiErrors);

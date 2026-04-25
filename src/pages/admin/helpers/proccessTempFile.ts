@@ -28,7 +28,6 @@ export const processTempFile = async ({
       allowedExtensions.length > 0 &&
       !validateFileTypeByKey(currentKey, allowedExtensions)
     ) {
-      console.log({errorKey});
       setErrors({
         [errorKey]: `Formato no permitido. Solo: ${allowedExtensions.join(", ")}`,
       });
