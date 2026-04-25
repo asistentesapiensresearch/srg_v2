@@ -72,10 +72,12 @@ const InstitutionHighlights = ({
             }}
             className="bg-primary"
         >
-            <div 
+            <Box
                 className="w-full max-w-[1440px] mx-auto md:w-[90%] grid grid-cols-2 gap-[1px] bg-white/20"
-                style={{
-                    gridTemplateColumns: `repeat(${desktopCols}, minmax(0, 1fr))`,
+                sx={{
+                    gridTemplateColumns: {
+                    md: `repeat(${desktopCols || 1}, minmax(0, 1fr))`,
+                    },
                 }}
             >
                 {
@@ -102,7 +104,7 @@ const InstitutionHighlights = ({
                         return container(`${el.label}-${el.value}`, el.label, el.value);
                     })
                 }
-            </div>
+            </Box>
         </Box>
     )
 }
