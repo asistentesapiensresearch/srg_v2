@@ -4,6 +4,17 @@ export default {
     isContainer: false,
     fields: [
         {
+            name: "typePage",
+            label: "Seleccione para que tipo de página es el Header",
+            type: "select",
+            default: "micro-col",
+            options: [
+                { label: "Investigaciones", value: "investigation" },
+                { label: "Micrositios Colegio", value: "micro-col" },
+                { label: "Micrositios Universidad", value: "micro-uni" },
+            ],
+        },
+        {
             name: "excelSource",
             label: "Seleccionar Fuente de Datos Archivo Excel",
             type: "select",
@@ -29,6 +40,25 @@ export default {
                 { label: "Micrositios / Universidades / Encuentra / Revistas", value: "E-Revistas"},
                 { label: "Micrositios / Colegios / Posiciones", value: "Micro-Posionamiento"}
             ],
+            condition: "typePage === 'micro-col' || typePage === 'micro-uni'"
+        },
+        {
+            name: "itemsHighlights",
+            label: "Items para el detallado de Highlights. Se recomienda no poner más de 8 items, si pone más de 8 que sea un número para, ejemplo 10,12,14 .... items",
+            type: "list",
+            fields: [
+                {
+                    name: "label",
+                    label: "Título",
+                    type: "text"
+                },
+                {
+                    name: "value",
+                    label: "Texto",
+                    type: "text"
+                }
+            ],
+            condition: "typePage === 'investigation'"
         },
     ]
 }

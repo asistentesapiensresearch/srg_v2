@@ -6,16 +6,50 @@ import PageRenderer from "../../../builder/Renderer";
 import InstitutionHighlights from "../InstitutionHighlights";
 import { fieldsSection } from "./fields";
 import { MapPin } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getUrl } from "aws-amplify/storage";
 
 const HeaderPortada = ({
-  excelSource = "COL",
+  typePage,
+  excelSource,
+  // Propiedades que aplican solo para investigación "Para cuando es 100% dependiente del administrador y no de BD o excel"
+  src = "",
+  country,
+  title,
+  subtitle,
+  shortDescription,
+  itemsHighlights = [],
   // Estilos
   height = "400px",
   children = []
 }) => {
 
+    const [imageSrc, setImageSrc] = useState(src);
+
+    useEffect(() => {
+      if(typePage === "investigation") {
+        const loadImage = async () => {
+            if (src && src.startsWith('builder/')) {
+                try {
+                    const result = await getUrl({ path: src });
+                    setImageSrc(result.url.toString());
+                } catch (error) {
+                    console.error('Error loading image from S3:', error);
+                    setImageSrc("");
+                }
+            } else if (src) {
+                setImageSrc(src);
+            } else {
+                setImageSrc("");
+            }
+        };
+
+        loadImage();
+      }
+    }, [src, typePage]);
+
     const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
+
     const dataExcels = useSelector((state) => state.sections.fetchData.sheets[excelSource]);
 
     const fieldsDB = fieldsSection.db?.[model];
@@ -23,36 +57,51 @@ const HeaderPortada = ({
 
     // merge y guardo los datos en useMemo
     const mergedData = useMemo(() => {
-      const excelData = dataExcels?.data || {};
-      const portadaPhoto = data?.[fieldsDB?.portadaPhoto] || "";
-      const slogan = data?.[fieldsDB?.slogan] || "";
-      const city = fieldsExcel?.ciudad
-        ? String(excelData[fieldsExcel.ciudad] || "").toUpperCase()
-        : "";
+      if(typePage != "investigation") {
+        const excelData = dataExcels?.data || {};
+        const portadaPhoto = data?.[fieldsDB?.portadaPhoto] || "";
+        const slogan = data?.[fieldsDB?.slogan] || "";
+        const city = fieldsExcel?.ciudad
+          ? String(excelData[fieldsExcel.ciudad] || "").toUpperCase()
+          : "";
+  
+        const dept = fieldsExcel?.departamento
+          ? String(excelData[fieldsExcel.departamento] || "").toUpperCase()
+          : "";
+  
+        const fullLocation =
+          dept && dept !== city && !city.includes(dept)
+            ? `${city}, ${dept}`
+            : city;
+  
+        const nameValue = data?.[fieldsDB?.name] || "";
+        const words = nameValue ? nameValue.split(" ") : [];
+  
+        const lastWordTitle = words.length ? words.pop() : "";
+        const title = words.join(" ");
+  
+        return {
+          title,
+          lastWordTitle,
+          portadaPhoto,
+          slogan,
+          fullLocation,
+        };
+      }
+      // Para cuando es personalizado "la info biene del administrador"
 
-      const dept = fieldsExcel?.departamento
-        ? String(excelData[fieldsExcel.departamento] || "").toUpperCase()
-        : "";
-
-      const fullLocation =
-        dept && dept !== city && !city.includes(dept)
-          ? `${city}, ${dept}`
-          : city;
-
-      const nameValue = data?.[fieldsDB?.name] || "";
-      const words = nameValue ? nameValue.split(" ") : [];
-
+      const words = title ? title.split(" ") : [];
       const lastWordTitle = words.length ? words.pop() : "";
-      const title = words.join(" ");
 
       return {
-        title,
+        title: words.join(" "),
         lastWordTitle,
-        portadaPhoto,
-        slogan,
-        fullLocation,
-      };
-    }, [data, dataExcels, fieldsDB, fieldsExcel]);
+        subtitle,
+        portadaPhoto: imageSrc,
+        slogan: shortDescription,
+        fullLocation: country.toUpperCase(),
+      }
+    }, [data, dataExcels, fieldsDB, fieldsExcel, typePage, title, subtitle, shortDescription, country, imageSrc]);
 
     const backgroundImage = useImageUrl(mergedData?.portadaPhoto || "");
 
@@ -64,7 +113,7 @@ const HeaderPortada = ({
           color: "#fff",
           backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: (typePage === "investigation") ? "init" : "center",
           position: "relative", // Ensures all underlying relative children size correctly
           display: "flex",
           flexDirection: "column",
@@ -131,6 +180,10 @@ const HeaderPortada = ({
                     {` ${mergedData.lastWordTitle}`}
                   </span>
                 </h1>
+                {
+                  (typePage === "investigation") &&
+                  <h5 style={{color: "#fff", lineHeight: 1.2 }}>{mergedData.subtitle}</h5>
+                }
                 <p 
                   style={{color:"#fff", fontSize: "clamp(1rem, 2.5vw, 1.8rem)", lineHeight: 1.4}}
                   className="text-center md:text-left mt-2"  
@@ -197,14 +250,16 @@ const HeaderPortada = ({
             }
           </Box>
           {/* Aquí va el contenido info colegio asegurándose de ir hasta el fondo */}
-          <InstitutionHighlights 
-            excelSource={excelSource} 
+          <InstitutionHighlights
+            typePage={typePage}
+            excelSource={excelSource}
+            itemsHighlights={itemsHighlights}
           />
 
         </Box>
 
         {/* Estado en caso de no encontrar registros */}
-        {!data && (
+        {!data && itemsHighlights.length === 0 && (
           <Box sx={{ position: "relative", zIndex: 2, mt: 2 }}>
             <span>No se encontró el registro solicitado.</span>
           </Box>

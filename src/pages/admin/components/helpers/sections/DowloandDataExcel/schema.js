@@ -3,10 +3,21 @@ export default {
     icon: "Database",
     isContainer: false,
     fields: [
+         {
+            name: "typePage",
+            label: "Seleccione para que tipo de página es el Header",
+            type: "select",
+            default: "micro-col",
+            options: [
+                { label: "Investigaciones", value: "investigation" },
+                { label: "Micrositios Colegio", value: "micro-col" },
+                { label: "Micrositios Universidad", value: "micro-uni" },
+            ],
+        },
         {
             name: "data_settings",
             label: "🔌 CONEXIÓN Y BÚSQUEDA",
-            type: "separator"
+            type: "separator",
         },
         {
             name: "sourceConfig",
@@ -19,14 +30,16 @@ export default {
             label: "Columna de Búsqueda (Alias)",
             type: "text",
             default: "Colegio",
-            help: "Alias de la columna para buscar la entidad (ej: Colegios, ID, etc)"
+            help: "Alias de la columna para buscar la entidad (ej: Colegios, ID, etc)",
+            condition: "typePage === 'micro-col' || typePage === 'micro-uni'"
         },
         {
             name: "filterValue",
             label: "Valor a Buscar",
             type: "text",
             default: "Colegio Boston Internacional",
-            help: "El valor exacto de la entidad que deseas mostrar."
+            help: "El valor exacto de la entidad que deseas mostrar.",
+            condition: "typePage === 'micro-col' || typePage === 'micro-uni'"
         },
         {
             name: "identifierExcel",

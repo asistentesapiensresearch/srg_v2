@@ -13,6 +13,7 @@ const cleanString = (val) => {
 };
 
 const DowloandDataExcel = ({
+    typePage,
     sourceConfig,
     filterField,
     filterValue,
@@ -38,22 +39,32 @@ const DowloandDataExcel = ({
                     sourceConfig.sheetId,
                     sourceConfig.selectedSheet
                 );
-
-                const targetValueClean = cleanString(filterValue);
-
-                const found = rawRows.filter((row) => {
-                    const cell = row[filterField];
-                    if (cell === undefined || cell === null) return false;
-                    return cleanString(cell) === targetValueClean;
-                })
-
-                if (!found) return;
-
+                if(typePage != "investigation") {
+                    const targetValueClean = cleanString(filterValue);
+    
+                    const found = rawRows.filter((row) => {
+                        const cell = row[filterField];
+                        if (cell === undefined || cell === null) return false;
+                        return cleanString(cell) === targetValueClean;
+                    })
+    
+                    if (!found) return;
+    
+                    dispatch(
+                        setSheetData({
+                            identifierExcel,
+                            data: found.at(-1),
+                            total: found.filter( el => el["(↘↗) Cat"] != "-").length
+                        })
+                    );
+                    return;
+                }
+                
                 dispatch(
                     setSheetData({
                         identifierExcel,
-                        data: found.at(-1),
-                        total: found.filter( el => el["(↘↗) Cat"] != "-").length
+                        data: rawRows,
+                        total: rawRows.length
                     })
                 );
             } catch (err) {

@@ -35,15 +35,34 @@ const container = (key, label, tag) =>  (
     </Box>)
 
 const InstitutionHighlights = ({
+    typePage,
     excelSource = "COL",
+    itemsHighlights = [],
 }) => {
-
+    console.log({
+        typePage,
+        excelSource,
+        itemsHighlights
+    });
     let fieldsKeys;
 
     const dataExcels = useSelector((state) => state.sections.fetchData.sheets[excelSource]);
+
     const fields = fieldsSection.excel[excelSource];
 
     if (fields) fieldsKeys = Object.keys(fields);
+
+    const renderFieldsKeys =
+    typePage !== "investigation"
+        ? (fieldsKeys ?? []).filter((key) => key !== "icfes ind")
+        : [];
+
+    const total =
+    typePage === "investigation"
+        ? itemsHighlights?.length ?? 0
+        : renderFieldsKeys.length;
+
+    const desktopCols = total <= 8 ? total : Math.ceil(total / 2);
 
     return (
         <Box
@@ -54,14 +73,15 @@ const InstitutionHighlights = ({
             className="bg-primary"
         >
             <div 
-              className={`w-full max-w-[1440px] mx-auto md:w-[90%] grid grid-cols-2 ${fieldsKeys?.length === 4 ? 'md:grid-cols-4' : 'md:grid-cols-3 lg:grid-cols-6'} gap-[1px] bg-white/20`}
+                className="w-full max-w-[1440px] mx-auto md:w-[90%] grid grid-cols-2 gap-[1px] bg-white/20"
+                style={{
+                    gridTemplateColumns: `repeat(${desktopCols}, minmax(0, 1fr))`,
+                }}
             >
                 {
-                    dataExcels && fieldsKeys && fieldsKeys.length > 0 && fieldsKeys.map((key) => {
+                    typePage != "investigation" && dataExcels && fieldsKeys && fieldsKeys.length > 0 && fieldsKeys.map((key) => {
                         if (key === 'icfes ind') return null;
-
                         const isIcfes = key === 'icfes cat' || key === 'icfes';
-                        
                         const labelParts = [
                             dataExcels.data[fields[key]],
                             isIcfes ? dataExcels.data[fields['icfes ind']] : undefined
@@ -75,6 +95,11 @@ const InstitutionHighlights = ({
                         const tag = isIcfes ? "ICFES" : key;
 
                         return container(key, label, tag);
+                    })
+                }
+                {
+                    typePage == "investigation"  && itemsHighlights && itemsHighlights.length > 0 && itemsHighlights.map((el) => {
+                        return container(`${el.label}-${el.value}`, el.label, el.value);
                     })
                 }
             </div>
