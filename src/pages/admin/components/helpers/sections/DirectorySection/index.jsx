@@ -17,6 +17,7 @@ import TableList from './results/TableList';
 import { ComparisonProvider } from './comparison/ComparisonContext';
 import ComparisonWidget from './comparison/ComparisonWidget';
 import ComparisonModal from './comparison/ComparisonModal';
+import { CardColSapiens } from './cards/CardColSapiens';
 
 const client = generateClient();
 
@@ -98,6 +99,9 @@ const DirectorySectionContent = ({
     // Data filtrada y lista para paginar
     const [showData, setShowData] = useState([]);
 
+    // Data items Cards Aleatorio
+    const [randomItems, setRandomItems] = useState([]);
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -112,6 +116,14 @@ const DirectorySectionContent = ({
     const activeFilterCount = Object.values(activeFilters).flat().length;
     const quickFiltersData = useMemo(() => parseQuickFilters(quickFilters), [quickFilters]);
     const columnAliases = useMemo(() => sourceConfig?.columnAliases || {}, [sourceConfig]);
+
+
+    // función para obtener items Aleatorios
+    const getRandomItems = (data, count = 3) => {
+        if (!data || data.length === 0) return [];
+        const shuffled = [...data].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    };
 
     // ========================================================================
     // 1. EL GRAN PIPELINE DE DATOS (Fetch -> Alias -> Enrich -> Sort -> Group)
@@ -128,6 +140,7 @@ const DirectorySectionContent = ({
                 // ---------------------------------------------------------
                 const { selectedSheet, sheetId } = sourceConfig;
                 const rawRows = await fetchSheet(sheetId, selectedSheet);
+                console.log({rawRows});
 
                 // ---------------------------------------------------------
                 // PASO 2: AJUSTAR ALIAS (NORMALIZACIÓN TEMPRANA)
@@ -407,6 +420,23 @@ const DirectorySectionContent = ({
         return itemsWithAds.slice(startIndex, endIndex);
     }, [itemsWithAds, page, itemsPerPage]);
 
+    console.log({paginatedData});
+
+    useEffect(() => {
+        if (!masterData || masterData.length === 0) return;
+
+        const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
+
+        // inicial
+        setRandomItems(getRandomItems(aliados));
+
+        const interval = setInterval(() => {
+            setRandomItems(getRandomItems(aliados));
+        }, 30000); // cada 30 segundos
+
+        return () => clearInterval(interval);
+    }, [masterData]);
+
     // --- HANDLERS ---
     const handleApplyPreset = (preset) => {
         setSelectedPreset(preset.label);
@@ -435,8 +465,26 @@ const DirectorySectionContent = ({
     // RENDER
     // ========================================================================
     return (
-        <Container maxWidth="xl" sx={{ py: 6, bgcolor: '#f9fafb', minHeight: '100vh', position: 'relative' }}>
+        <Box sx={{ px: 3, py: 6, bgcolor: '#f9fafb', width:"100%", minHeight: '100vh', position: 'relative' }}>
             {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
+
+            {
+                randomItems && <Box sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                    xs: "1fr",
+                    md: "repeat(2, minmax(0, 1fr))",
+                    lg: "repeat(3, minmax(0, 1fr))",
+                    },
+                    gap: 4,
+                    pb: 6,
+                    alignItems: "stretch",
+                }}>
+                    {
+                        randomItems.map( el => (<CardColSapiens props={el} />))
+                    }
+                </Box>
+            }
 
             {/* HEADER */}
             <Box sx={{ mb: 2, bgcolor: 'white', p: 2, borderRadius: 4, boxShadow: '0 2px 10px rgba(0,0,0,0.03)', display: 'flex', gap: 2, alignItems: 'center' }}>
@@ -534,7 +582,7 @@ const DirectorySectionContent = ({
 
             <ComparisonWidget />
             <ComparisonModal sourceConfig={sourceConfig} />
-        </Container>
+        </Box>
     );
 };
 

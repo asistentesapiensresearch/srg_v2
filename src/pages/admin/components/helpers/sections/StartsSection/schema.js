@@ -4,6 +4,16 @@ export default {
     isContainer: false,
     fields: [
         {
+            name: "typePage",
+            label: "Seleccione si es BD o administrable",
+            type: "select",
+            default: "micro-col",
+            options: [
+                { label: "Base de datos", value: "bd" },
+                { label: "Adminisntrable", value: "admin" },
+            ],
+        },
+        {
             name: "excelSource",
             label: "Seleccionar Fuente de Datos Archivo Excel",
             type: "select",
@@ -29,6 +39,13 @@ export default {
                 { label: "Micrositios / Universidades / Encuentra / Revistas", value: "E-Revistas"},
                 { label: "Micrositios / Colegios / Posiciones", value: "Micro-Posionamiento"}
             ],
+            condition: "typePage === 'bd'"
+        },
+        {
+            name: "stars",
+            label: "Número de estrellas",
+            type: "number",
+            condition: "typePage === 'admin'"
         },
     ]
 }
