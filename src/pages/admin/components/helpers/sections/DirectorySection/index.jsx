@@ -60,6 +60,24 @@ const getInitialConfig = (jsonString) => {
     return { label: defaultItem.label, filters: sanitized };
 };
 
+// función para obtener items Aleatorios
+const getRandomItems = (data, count = 3) => {
+  if (!data || data.length === 0) return [];
+
+  const result = [];
+  const usedIndexes = new Set();
+
+  while (result.length < count && usedIndexes.size < data.length) {
+    const randomIndex = Math.floor(Math.random() * data.length);
+
+    if (!usedIndexes.has(randomIndex)) {
+      usedIndexes.add(randomIndex);
+      result.push(data[randomIndex]);
+    }
+  }
+  return result;
+};
+
 // ========================================================================
 // COMPONENTE PRINCIPAL
 // ========================================================================
@@ -118,12 +136,6 @@ const DirectorySectionContent = ({
     const columnAliases = useMemo(() => sourceConfig?.columnAliases || {}, [sourceConfig]);
 
 
-    // función para obtener items Aleatorios
-    const getRandomItems = (data, count = 3) => {
-        if (!data || data.length === 0) return [];
-        const shuffled = [...data].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, count);
-    };
 
     // ========================================================================
     // 1. EL GRAN PIPELINE DE DATOS (Fetch -> Alias -> Enrich -> Sort -> Group)
@@ -420,7 +432,6 @@ const DirectorySectionContent = ({
         return itemsWithAds.slice(startIndex, endIndex);
     }, [itemsWithAds, page, itemsPerPage]);
 
-    console.log({paginatedData});
 
     useEffect(() => {
         if (!masterData || masterData.length === 0) return;
@@ -432,7 +443,7 @@ const DirectorySectionContent = ({
 
         const interval = setInterval(() => {
             setRandomItems(getRandomItems(aliados));
-        }, 30000); // cada 30 segundos
+        }, 10000); // cada 10 segundos
 
         return () => clearInterval(interval);
     }, [masterData]);
