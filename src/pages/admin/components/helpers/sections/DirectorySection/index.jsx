@@ -437,8 +437,8 @@ const DirectorySectionContent = ({
     useEffect(() => {
         if (!masterData || masterData.length === 0) return;
 
-        //const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
-        const aliados = masterData.filter( el => el["IDV"] === "1");
+        const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
+        //const aliados = masterData.filter( el => el["IDV"] === "1");
         // inicial
         setRandomItems(getRandomItems(aliados));
 
