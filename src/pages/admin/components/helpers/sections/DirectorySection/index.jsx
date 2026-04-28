@@ -84,6 +84,7 @@ const getRandomItems = (data, count = 3) => {
 
 const DirectorySectionContent = ({
     sourceConfig,
+    identifier,
     viewType = 'grid',
     itemsPerAds = 3,
     itemsPerColumn = 3,
@@ -152,7 +153,6 @@ const DirectorySectionContent = ({
                 // ---------------------------------------------------------
                 const { selectedSheet, sheetId } = sourceConfig;
                 const rawRows = await fetchSheet(sheetId, selectedSheet);
-                console.log({rawRows});
 
                 // ---------------------------------------------------------
                 // PASO 2: AJUSTAR ALIAS (NORMALIZACIÓN TEMPRANA)
@@ -210,6 +210,7 @@ const DirectorySectionContent = ({
                                 // Aplanar para evitar proxies
                                 const dbData = {
                                     logo: dbModel.logo,
+                                    portadaPhoto: dbModel.portadaPhoto,
                                     rectorName: dbModel.rectorName,
                                     rectorPhoto: dbModel.rectorPhoto,
                                     rectorSocial: dbModel.rectorSocial,
@@ -436,8 +437,8 @@ const DirectorySectionContent = ({
     useEffect(() => {
         if (!masterData || masterData.length === 0) return;
 
-        const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
-
+        //const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
+        const aliados = masterData.filter( el => el["IDV"] === "1");
         // inicial
         setRandomItems(getRandomItems(aliados));
 
@@ -492,7 +493,11 @@ const DirectorySectionContent = ({
                     alignItems: "stretch",
                 }}>
                     {
-                        randomItems.map( el => (<CardColSapiens props={el} />))
+                        randomItems.map( el => {
+                            if(identifier === "COL") return <CardColSapiens props={el} />
+
+                            return null;
+                        })
                     }
                 </Box>
             }
