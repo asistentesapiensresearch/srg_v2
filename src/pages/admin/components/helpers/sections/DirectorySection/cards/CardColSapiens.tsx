@@ -24,7 +24,7 @@ const headerStyle = (portada: string) => ({
   backgroundPosition: "center",
   backgroundSize: "cover",
   width: "100%",
-  height: 220, // 🔥 misma altura en todas
+  minHeight: 220,
   overflow: "hidden",
 });
 
