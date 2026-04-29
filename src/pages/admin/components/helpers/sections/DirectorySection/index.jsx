@@ -138,7 +138,7 @@ const DirectorySectionContent = ({
     const columnAliases = useMemo(() => sourceConfig?.columnAliases || {}, [sourceConfig]);
 
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm") || theme.breakpoints.down("xs"));
 
 
 
