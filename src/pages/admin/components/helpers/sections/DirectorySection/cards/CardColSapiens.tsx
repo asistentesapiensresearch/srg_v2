@@ -1,510 +1,377 @@
-import { Box, Tooltip, Typography } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
+import { Quote } from "lucide-react";
 import { useImageUrl } from "@src/hooks/useImageUrl";
 import StartSection from "../../StartsSection";
 import DynamicIcon from "@src/pages/admin/components/builder/helpers/DynamicIcon";
-import ImgFlagsCountry from '../results/ImgFlagsCountry';
+
+const cardStyle = {
+  display: "flex",
+  flexDirection: "column",
+  backgroundColor: "#fff",
+  height: "100%",
+  overflow: "hidden",
+  boxShadow: "0 6px 24px rgba(0,0,0,0.1)",
+  borderRadius: "12px",
+  '&:hover': {
+    transform: "scale(1.03)",
+    boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
+  }
+};
+
+const headerStyle = (portada: string) => ({
+  position: "relative",
+  backgroundImage: `url(${portada})`,
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  width: "100%",
+  height: 220, // 🔥 misma altura en todas
+  overflow: "hidden",
+});
+
+const overlayStyle = {
+  position: "absolute",
+  inset: 0,
+  background:
+    "linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.78))",
+  zIndex: 1,
+};
+
+const headerContentStyle = {
+  position: "relative",
+  zIndex: 2,
+  height: "100%",
+  px: { xs: 3, md: 4 },
+  py: 3,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: { xs: "center", md: "stretch" },
+  gap: 1,
+};
+
+const topHeaderStyle = {
+  display: "flex",
+  flexDirection: { xs: "column", md: "row" },
+  justifyContent: { xs: "center", md: "space-between" },
+  alignItems: "center",
+  gap: 2,
+};
+
+const logoAndBadgesStyle = {
+  display: "flex",
+  flexDirection: { xs: "column", md: "row" },
+  justifyContent: { xs: "center", md: "flex-start" },
+  alignItems: "center",
+  gap: 2,
+};
+
+const logoStyle: React.CSSProperties = {
+  width: 70,
+  height: 70,
+  objectFit: "contain",
+};
+
+const badgeGroupStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: 1,
+};
+
+const badgePrimaryStyle = {
+  backgroundColor: "rgba(193, 0, 7, 0.85)",
+  color: "#fff",
+  px: 1.8,
+  py: 0.6,
+  borderRadius: "999px",
+  fontSize: { xs: "14px", md: "20px" },
+  fontWeight: 800,
+  minWidth: "44px",
+  textAlign: "center",
+  backdropFilter: "blur(4px)",
+  border: "1px solid rgba(255,255,255,0.2)",
+  transition: "all 0.2s ease",
+  '&:hover': {
+    fontSize: {
+      md: "24px",
+    }
+  }
+};
+
+const badgeGlassStyle = {
+  backgroundColor: "rgba(255,255,255,0.16)",
+  color: "#fff",
+  px: 1.8,
+  py: 0.6,
+  borderRadius: "999px",
+  fontSize: { xs: "14px", md: "20px" },
+  fontWeight: 700,
+  border: "1px solid rgba(255,255,255,0.35)",
+  backdropFilter: "blur(4px)",
+  minWidth: "58px",
+  textAlign: "center",
+  transition: "all 0.2s ease",
+  '&:hover': {
+    fontSize: {
+      md: "24px",
+    }
+  }
+};
+
+const titleStyle: React.CSSProperties = {
+  margin: 0,
+  lineHeight: 1.2,
+  color: "#fff",
+  fontWeight: "bold",
+  textDecoration: "none",
+};
+
+const locationStyle = {
+  color: "rgba(255,255,255,0.75)",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "4px",
+};
 
 const iconInfoStyle = {
   width: 38,
   height: 38,
   borderRadius: "50%",
-  backgroundColor: "#f5f5f5",
+  backgroundColor: "#fff5f5",
   border: "1px solid #f1d0d2",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
 };
 
-const infoRowStyle = {
+const infoSectionStyle = {
+  backgroundColor: "#fff",
+  px: { xs: 3, md: 4 },
+  py: 3,
+};
+
+const iconsWrapperStyle = {
   display: "flex",
-  flexDirection: {
-    xs: "column",
-    md: "row",
-  },
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: 2,
-  py: 2,
-  borderBottom: "1px solid #eee",
-};
-
-const infoLabelStyle = {
-  fontSize: "13px",
-  fontWeight: 700,
-  letterSpacing: "4px",
-  color: "#aaa",
-  textTransform: "uppercase",
-};
-
-const infoValueStyle = {
-  fontWeight: 800,
-  fontSize: "18px",
-  color: "#111",
-};
-
-const socialIconStyle = {
-  width: 38,
-  height: 38,
-  borderRadius: "50%",
-  backgroundColor: "#f2f2f2",
-  display: "flex",
-  alignItems: "center",
+  flexWrap: "wrap",
   justifyContent: "center",
+  alignItems: "center",
+  gap: 1.5,
 };
 
+const footerStyle = {
+  background: "linear-gradient(135deg, #C10007 0%, #9f0006 100%)",
+  width: "100%",
+  minHeight: "128px",
+  display: "grid",
+  gridTemplateColumns: {
+    xs: "1fr",
+    md: "0.9fr 1.4fr",
+  },
+  alignItems: "center",
+  gap: { xs: 2, md: 3 },
+  px: { xs: 2.5, md: 3 },
+  py: { xs: 2.5, md: 2 },
+};
+
+const rectorBoxStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: 1.8,
+  justifyContent: { xs: "center", md: "flex-start" },
+};
+
+const rectorPhotoStyle = (rectorPhoto: string) => ({
+  width: 64,
+  height: 64,
+  flexShrink: 0,
+  backgroundImage: rectorPhoto ? `url(${rectorPhoto})` : "none",
+  backgroundColor: "#e5e7eb",
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
+  borderRadius: "50%",
+  border: "2px solid rgba(255,255,255,0.45)",
+  boxShadow: "0 6px 14px rgba(0,0,0,0.2)",
+});
+
+const rectorLabelStyle = {
+  fontSize: "10px",
+  fontWeight: 700,
+  letterSpacing: "2px",
+  textTransform: "uppercase",
+  opacity: 0.7,
+  mb: 0.4,
+};
+
+const rectorNameStyle = {
+  fontWeight: 800,
+  fontSize: { xs: "15px", md: "17px" },
+  lineHeight: 1.2,
+};
+
+const quoteBoxStyle = {
+  position: "relative",
+  color: "#fff",
+  pl: { xs: 0, md: 2.5 },
+  pt: { xs: 1.5, md: 0 },
+  borderLeft: {
+    xs: "none",
+    md: "1px solid rgba(255,255,255,0.25)",
+  },
+  textAlign: { xs: "center", md: "left" },
+};
+
+const quoteTextStyle = {
+  m: 0,
+  fontSize: { xs: "13px", md: "14px" },
+  lineHeight: 1.45,
+  fontWeight: 500,
+  opacity: 0.95,
+  display: "-webkit-box",
+  WebkitLineClamp: 4,
+  WebkitBoxOrient: "vertical",
+  overflow: "hidden",
+};
 
 export const CardColSapiens = ({ props }) => {
-
   const logo = useImageUrl(props?.logo) || "";
   const portada = useImageUrl(props?.portadaPhoto) || "";
   const rectorPhoto = useImageUrl(props?.rectorPhoto) || "";
 
-  const socialMedia = props?.socialMedia ? JSON.parse(props.socialMedia) : null;
-
-  const hasSocialMedia =
-    socialMedia && Object.values(socialMedia).some(Boolean);
-
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: "#fff",
-        height: "100%",
-        overflow: "hidden",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-        borderRadius: "12px",
+    <a
+      href={props.path}
+      target="_blank"
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+        display: "block",
       }}
     >
+      <Box sx={cardStyle}>
+        <Box sx={headerStyle(portada)}>
+          <Box sx={overlayStyle} />
 
-      {/* Header card */}
-      <Box
-        sx={{
-          position: "relative",
-          backgroundImage: `url(${portada})`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          width: "100%",
-          minHeight: "220px",
-          flex: 1,
-          overflow: "hidden",
-        }}
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(to bottom, rgba(0,0,0,0.45), rgba(0,0,0,0.75))",
-            zIndex: 1,
-          }}
-        />
-        <Box
-          sx={{
-            position: "relative",
-            zIndex: 2,
-            px: 4,
-            py: 3,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: {
-              xs: "center",
-              md: "stretch",
-            },
-            gap: 1,
-            height: "100%",
-          }}
-        >
-          <Box sx={{
-            display: "flex",
-            flexDirection: {
-              xs: "column",
-              md: "row"
-            },
-            justifyContent: {
-              xs: "center",
-              md: "space-between"
-            },
-            gap: 2,
-          }}>
-            <Box sx={{
-              display: "flex",
-              justifyContent: {
-                xs: "center",
-                md: "flex-start",
-              },
-              alignItems: "center",
-              gap: 2,
-            }}>
-              { logo ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: {
-                      xs: "center",
-                      md: "flex-start",
-                    },
-                    alignItems: "center",
-                    width: "auto",
-                  }}
-                >
+          <Box sx={headerContentStyle}>
+            <Box sx={topHeaderStyle}>
+              <Box sx={logoAndBadgesStyle}>
+                {logo ? (
                   <img
                     src={logo}
                     alt={props["Colegios"] || "Logo colegio"}
-                    style={{
-                      width: 70,
-                      height: 70,
-                      objectFit: "contain",
-                    }}
+                    style={logoStyle}
                   />
-                </Box>
-              ) : (
-                <Box
-                  sx={{
-                    fontWeight: 700,
-                    fontSize: "14px",
-                    lineHeight: 1.4,
-                    textAlign: {
-                      xs: "center",
-                      md: "left",
-                    },
-                  }}
-                >
-                  Sin logo
-                </Box>
-              )}
-              {/* categoria */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: {
-                    xs: "center",
-                    md: "flex-end",
-                  },
-                  flexDirection: "column",
-                  gap: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: {
-                      xs: "center",
-                      md: "space-between",
-                    },
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  {/* D1 activo */}
-                  <Box
-                    sx={{
-                      backgroundColor: "#C10007",
-                      color: "#fff",
-                      px: 1.8,
-                      py: 0.6,
-                      borderRadius: "999px",
-                      fontSize: "12px",
-                      fontWeight: 700,
-                      minWidth: "44px",
-                      textAlign: "center",
-                    }}
-                  >
-                    D{props["Categoría"]}
+                ) : (
+                  <Box sx={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>
+                    Sin logo
                   </Box>
+                )}
+              </Box>
 
-                  {/* AAA+ más suave */}
-                  <Box
-                    sx={{
-                      backgroundColor: "rgba(255,255,255,0.12)",
-                      color: "#fff",
-                      px: 1.8,
-                      py: 0.6,
-                      borderRadius: "999px",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      border: "1px solid rgba(255,255,255,0.3)",
-                      backdropFilter: "blur(4px)",
-                      minWidth: "58px",
-                      textAlign: "center",
-                    }}
-                  >
-                    {props["Calificación"]}
-                  </Box>
-                </Box>
+              <Box sx={badgeGroupStyle}>
+                <Box sx={badgePrimaryStyle}>D{props["Categoría"]}</Box>
+                <Box sx={badgeGlassStyle}>{props["Calificación"]}</Box>
               </Box>
             </Box>
-            {/* años */}
-            <Box sx={{
-              display:"flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}>
-              <Box
-                sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 0.8,
-                  backgroundColor: "rgba(255,255,255,0.12)",
-                  color: "#fff",
-                  px: 1.5,
-                  py: 0.5,
-                  borderRadius: "999px",
-                  fontSize: "12px",
-                  border: "1px solid rgba(255,255,255,0.3)",
-                  backdropFilter: "blur(4px)",
-                }}
-              >
-                <DynamicIcon name="Flag" color="#fff" size={14} />
-                {props["Aniversario"]} años
+
+            <h5 style={titleStyle}>{props["Colegios"]}</h5>
+
+            <Box sx={locationStyle}>
+              <DynamicIcon name="MapPin" color="rgba(255,255,255,0.75)" size={26} />
+              {props["Ciudad"]}, {props["Departamento"]} | <DynamicIcon name="Flag" color="#fff" size={14} /> {props["Aniversario"]} años
+            </Box>
+
+            <Box sx={{ ml: { xs: 0, md: 1 } }}>
+              <StartSection
+                excelSource=""
+                stars={props["Stars"]}
+                typePage="admin"
+                size={20}
+                gap={8}
+              />
+            </Box>
+          </Box>
+        </Box>
+
+        <Box sx={infoSectionStyle}>
+          <Box sx={iconsWrapperStyle}>
+            {props["Sec"]?.length > 0 && (
+              <Tooltip title={props["Sec"]} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="Building2" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Cal"]?.length > 0 && (
+              <Tooltip title={`Calendario ${props["Cal"]}`} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="CalendarDays" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Orientación religiosa"]?.length > 0 && (
+              <Tooltip title={props["Orientación religiosa"]} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="Church" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Género"]?.length > 0 && (
+              <Tooltip title={props["Género"]} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="Users" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Zon"]?.length > 0 && (
+              <Tooltip title={props["Zon"]} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="MapPinned" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Doble titulación"] === "Sí" && (
+              <Tooltip title="Doble Titulación" arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="GraduationCap" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Intercambios o salidas internacionales"] === "Sí" && (
+              <Tooltip title="Intercambios o salidas internacionales" arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="Plane" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+          </Box>
+        </Box>
+
+        <Box sx={footerStyle}>
+          <Box sx={rectorBoxStyle}>
+            <Box sx={rectorPhotoStyle(rectorPhoto)} />
+
+            <Box sx={{ color: "#fff" }}>
+              <Box sx={rectorLabelStyle}>Rectoría</Box>
+              <Box sx={rectorNameStyle}>
+                {props.rectorName || "Sin rector registrado"}
               </Box>
             </Box>
           </Box>
-         {/* title, location, stars */} 
-          <h5 style={{ margin: 0, lineHeight: 1.2, color: "#fff", fontWeight: "bold"}}>
-            {props["Colegios"]}
-          </h5>
 
-          <Box
-            sx={{
-              color: "#bdc3c7",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "4px",
-            }}
-          >
-            <DynamicIcon name="MapPin" color="#bdc3c7" size={28} />
-            {props["Ciudad"]}, {props["Departamento"]}
-          </Box>
-          {/* stars */}
-          <Box sx={{marginLeft: "10px"}}>
-            <StartSection
-              excelSource=""
-              stars={props["Stars"]}
-              typePage="admin"
-              size={15}
-            />
+          <Box sx={quoteBoxStyle}>
+            <Box component="p" sx={quoteTextStyle}>
+              Ser miembros de Sapiens ha sido una de las mejores decisiones de
+              nuestra institución.
+            </Box>
           </Box>
         </Box>
       </Box>
-
-      {/* info card */}
-      <Box
-        sx={{
-          backgroundColor: "#fff",
-          px: { xs: 3, md: 4 },
-          py: 3,
-        }}
-      >
-        {/* Iconos de características */}
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 1.5,
-            pb: 2.5,
-            borderBottom: "1px solid #eee",
-          }}
-        >
-          {props["Sec"]?.length > 0 && (
-            <Tooltip title={props["Sec"]} arrow>
-              <Box sx={iconInfoStyle}>
-                <DynamicIcon name="Building2" color="#C10007" size={20} />
-              </Box>
-            </Tooltip>
-          )}
-
-          {props["Cal"]?.length > 0 && (
-            <Tooltip title={`Calendario ${props["Cal"]}`} arrow>
-              <Box sx={iconInfoStyle}>
-                <DynamicIcon name="CalendarDays" color="#C10007" size={20} />
-              </Box>
-            </Tooltip>
-          )}
-
-          {props["Orientación religiosa"]?.length > 0 && (
-            <Tooltip title={props["Orientación religiosa"]} arrow>
-              <Box sx={iconInfoStyle}>
-                <DynamicIcon name="Church" color="#C10007" size={20} />
-              </Box>
-            </Tooltip>
-          )}
-
-          {props["Género"]?.length > 0 && (
-            <Tooltip title={props["Género"]} arrow>
-              <Box sx={iconInfoStyle}>
-                <DynamicIcon name="Users" color="#C10007" size={20} />
-              </Box>
-            </Tooltip>
-          )}
-
-          {props["Zon"]?.length > 0 && (
-            <Tooltip title={props["Zon"]} arrow>
-              <Box sx={iconInfoStyle}>
-                <DynamicIcon name="MapPinned" color="#C10007" size={20} />
-              </Box>
-            </Tooltip>
-          )}
-
-          {props["Doble titulación"] === "Sí" && (
-            <Tooltip title="Doble Titulación" arrow>
-              <Box sx={iconInfoStyle}>
-                <DynamicIcon name="GraduationCap" color="#C10007" size={20} />
-              </Box>
-            </Tooltip>
-          )}
-
-          {props["Intercambios o salidas internacionales"] === "Sí" && (
-            <Tooltip title="Intercambios o salidas internacionales" arrow>
-              <Box sx={iconInfoStyle}>
-                <DynamicIcon name="Plane" color="#C10007" size={20} />
-              </Box>
-            </Tooltip>
-          )}
-        </Box>
-
-        {props["Siglas certificación"] && (
-          <Box sx={infoRowStyle}>
-            <Typography sx={infoLabelStyle}>Certificado por</Typography>
-            <Typography sx={infoValueStyle}>
-              {props["Siglas certificación"]}
-            </Typography>
-          </Box>
-        )}
-
-        {props.languages && (
-          <Box sx={infoRowStyle}>
-            <Typography sx={infoLabelStyle}>Idiomas</Typography>
-            <ImgFlagsCountry languages={props.languages} size={24} />
-          </Box>
-        )}
-
-        {hasSocialMedia && (
-          <Box sx={{ ...infoRowStyle, borderBottom: "none" }}>
-            <Typography sx={infoLabelStyle}>Redes</Typography>
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
-              {socialMedia.facebook && (
-                <a href={socialMedia.facebook} target="_blank" rel="noopener noreferrer">
-                  <Box sx={socialIconStyle}>
-                    <DynamicIcon name="Facebook" color="#111" size={20} />
-                  </Box>
-                </a>
-              )}
-
-              {socialMedia.twitter && (
-                <a href={socialMedia.twitter} target="_blank" rel="noopener noreferrer">
-                  <Box sx={socialIconStyle}>
-                    <DynamicIcon name="Twitter" color="#111" size={20} />
-                  </Box>
-                </a>
-              )}
-
-              {socialMedia.youtube && (
-                <a href={socialMedia.youtube} target="_blank" rel="noopener noreferrer">
-                  <Box sx={socialIconStyle}>
-                    <DynamicIcon name="Youtube" color="#111" size={20} />
-                  </Box>
-                </a>
-              )}
-
-              {socialMedia.instagram && (
-                <a href={socialMedia.instagram} target="_blank" rel="noopener noreferrer">
-                  <Box sx={socialIconStyle}>
-                    <DynamicIcon name="Instagram" color="#111" size={20} />
-                  </Box>
-                </a>
-              )}
-            </Box>
-          </Box>
-        )}
-      </Box>
-
-      {/* footer card */}
-      <Box
-        sx={{
-          backgroundColor: "var(--color-primary)",
-          borderTop: "1px solid #bdc3c7",
-          width: "100%",
-          minHeight: "88px",
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            md: "60px 1fr auto",
-          },
-          alignItems: "center",
-          gap: 2,
-          px: 2,
-          py: 1.5,
-        }}
-      >
-        <Box
-          sx={{
-            width: 60,
-            height: 60,
-            mx: {
-              xs: "auto",
-              md: 0,
-            },
-            backgroundImage: rectorPhoto ? `url(${rectorPhoto})` : "none",
-            backgroundColor: "#e5e7eb",
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-            borderRadius: "50%",
-          }}
-        />
-
-        <Box
-          component="p"
-          sx={{
-            color: "#fff",
-            m: 0,
-            fontWeight: 800,
-            fontSize: "18px",
-            textAlign: {
-              xs: "center",
-              md: "left",
-            },
-          }}
-        >
-          {props.rectorName || "Sin rector registrado"}
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: {
-              xs: "center",
-              md: "flex-end",
-            },
-          }}
-        >
-          <a
-            href={props.path ? props.path : undefined}
-            target={"_blank"}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#fff",
-              color: "#000",
-              padding: "10px 18px",
-              borderRadius: "999px",
-              fontWeight: "bold",
-              fontSize: "14px",
-              textDecoration: "none",
-              lineHeight: 1,
-              whiteSpace: "nowrap",
-              width: "fit-content",
-            }}
-          >
-            Ver detalles
-          </a>
-        </Box>
-      </Box>
-    </Box>
+    </a>
   );
 };

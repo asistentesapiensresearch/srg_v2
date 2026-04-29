@@ -437,8 +437,8 @@ const DirectorySectionContent = ({
     useEffect(() => {
         if (!masterData || masterData.length === 0) return;
 
-        const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
-        //const aliados = masterData.filter( el => el["IDV"] === "1");
+        //const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
+        const aliados = masterData.filter( el => el["IDV"] === "1");
         // inicial
         setRandomItems(getRandomItems(aliados));
 
@@ -494,7 +494,7 @@ const DirectorySectionContent = ({
                 }}>
                     {
                         randomItems.map( el => {
-                            if(identifier === "COL") return <CardColSapiens props={el} />
+                            if(identifier === "COL") return <CardColSapiens key={`card_school_${el["DANE"]}`} props={el} />
 
                             return null;
                         })

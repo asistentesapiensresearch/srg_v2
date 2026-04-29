@@ -44,6 +44,7 @@ export function InstitutionForm({ onClose, institution, store }) {
 
     // 🔥 NUEVOS ESTADOS
     const [path, setPath] = useState(institution?.path || "");
+    const [dane, setDane] = useState(institution?.dane || "");
     const [isLinked, setIsLinked] = useState(institution?.isLinked || false);
 
     const [type, setType] = useState(institution?.type || InstitutionType.Educational);
@@ -76,6 +77,7 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [admisionesSchedule, setAdmisionesSchedule] = useState("");
     const [admisionesMonth, setAdmisionesMonth] = useState("");
     const [admisionesInformationLink, setAdmisionesInformationLink] = useState("");
+    const [admisionesTestimonial, setAdmisionesTestimonial] = useState("");
 
     // Imágenes
     const [logoKey, setLogoKey] = useState(institution?.logo || "");
@@ -119,6 +121,7 @@ export function InstitutionForm({ onClose, institution, store }) {
 
             // 🔥 Cargar nuevos campos
             setPath(institution.path || "");
+            setDane(institution.dane || "");
             setIsLinked(institution.isLinked || false);
 
             setType(institution.type || InstitutionType.Educational);
@@ -155,6 +158,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 setAdmisionesSchedule(admisiones.schedule || "");
                 setAdmisionesMonth(admisiones.monthAdmision || "");
                 setAdmisionesInformationLink(admisiones.informationLink || "");
+                setAdmisionesTestimonial(admisiones.testimonial || "");
                 
                 // Aquí debo poner la imagen de admisiones
                 if(admisiones.photo) {
@@ -321,6 +325,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 schedule: admisionesSchedule,
                 monthAdmision: admisionesMonth,
                 informationLink: admisionesInformationLink,
+                testimonial: admisionesTestimonial,
                 photo: currentPhotoAdmisionesKey,
                 audio: currentAudioAdmisionesKey
             });
@@ -332,6 +337,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 name,
                 slogan,
                 description,
+                dane: dane.trim(),
                 website: website.trim() === "" ? null : website,
 
                 // 🔥 NUEVOS CAMPOS EN EL PAYLOAD
@@ -432,6 +438,15 @@ export function InstitutionForm({ onClose, institution, store }) {
                         value={website}
                         onChange={(e) => setWebsite(e.target.value)}
                         fullWidth
+                    />
+
+                    <TextField
+                        label="Número DANE de la institución"
+                        value={dane}
+                        onChange={(e) => setDane(e.target.value)}
+                        fullWidth
+                        placeholder="Ej: 54223445..."
+                        helperText="Identificador único de la institución"
                     />
 
                     <TextField
@@ -667,6 +682,15 @@ export function InstitutionForm({ onClose, institution, store }) {
                     />
                 </div>
                 <div className="flex flex-col gap-2">
+                    <TextField
+                        label="Testimonial del rector respeto a SRG máximo 18 palabras"
+                        value={admisionesTestimonial}
+                        onChange={(e) => setAdmisionesTestimonial(e.target.value)}
+                        helperText="Ej: Ser miembros de Sapiens ha sido una de las mejores decisiones de nuestra institución."
+                        fullWidth
+                        multiline
+                        rows={2}
+                    />
                     <FormControl fullWidth error={!!errors.photoAdmisiones}>
                         <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
                             Foto de la persona encargada de admisiones
