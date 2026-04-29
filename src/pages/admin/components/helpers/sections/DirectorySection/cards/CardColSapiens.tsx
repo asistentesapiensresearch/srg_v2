@@ -366,8 +366,7 @@ export const CardColSapiens = ({ props }) => {
 
           <Box sx={quoteBoxStyle}>
             <Box component="p" sx={quoteTextStyle}>
-              Ser miembros de Sapiens ha sido una de las mejores decisiones de
-              nuestra institución.
+              {props.testimonial || "El rector no agregado testimonial"}
             </Box>
           </Box>
         </Box>

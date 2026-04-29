@@ -10,11 +10,12 @@ export const Institution = a.model({
     website: a.url(),
     path: a.string(),
     isLinked: a.boolean(),
-
+    
     // Información del Rector
     rectorName: a.string(),
     rectorPhoto: a.string(),
     rectorSocial: a.json(), // Ej: { linkedin: "...", x: "..." }
+    rectorTestimonial: a.string(),
     rectorDescription: a.string(),
 
     // Admisiones lo cambio a json

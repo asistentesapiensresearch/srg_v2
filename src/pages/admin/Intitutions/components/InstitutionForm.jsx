@@ -46,7 +46,7 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [path, setPath] = useState(institution?.path || "");
     const [dane, setDane] = useState(institution?.dane || "");
     const [isLinked, setIsLinked] = useState(institution?.isLinked || false);
-
+    
     const [type, setType] = useState(institution?.type || InstitutionType.Educational);
     const [subtype, setSubtype] = useState(institution?.subtype || InstitutionSubtype.University);
     const [rectorName, setRectorName] = useState(institution?.rectorName || "");
@@ -57,6 +57,7 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [rectorYoutube, setRectorYoutube] = useState("");
     const [rectorCV, setRectorCV] = useState("");
     const [rectorDescription, setRectorDescription] = useState(institution?.rectorDescription || "");
+    const [rectorTestimonial, setRectorTestimonial] = useState(institution?.dane || "");
     const [socialFacebook, setSocialFacebook] = useState("");
     const [socialInstagram, setSocialInstagram] = useState("");
     const [socialTwitter, setSocialTwitter] = useState("");
@@ -77,7 +78,6 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [admisionesSchedule, setAdmisionesSchedule] = useState("");
     const [admisionesMonth, setAdmisionesMonth] = useState("");
     const [admisionesInformationLink, setAdmisionesInformationLink] = useState("");
-    const [admisionesTestimonial, setAdmisionesTestimonial] = useState("");
 
     // Imágenes
     const [logoKey, setLogoKey] = useState(institution?.logo || "");
@@ -128,6 +128,7 @@ export function InstitutionForm({ onClose, institution, store }) {
             setSubtype(institution.subtype || InstitutionSubtype.University);
             setRectorName(institution.rectorName || "");
             setRectorDescription(institution.rectorDescription || "");
+            setRectorTestimonial(institution.rectorTestimonial || "");
 
             try {
                 const rSocial = typeof institution.rectorSocial === 'string' ? JSON.parse(institution.rectorSocial) : institution.rectorSocial || {};
@@ -158,7 +159,6 @@ export function InstitutionForm({ onClose, institution, store }) {
                 setAdmisionesSchedule(admisiones.schedule || "");
                 setAdmisionesMonth(admisiones.monthAdmision || "");
                 setAdmisionesInformationLink(admisiones.informationLink || "");
-                setAdmisionesTestimonial(admisiones.testimonial || "");
                 
                 // Aquí debo poner la imagen de admisiones
                 if(admisiones.photo) {
@@ -325,7 +325,6 @@ export function InstitutionForm({ onClose, institution, store }) {
                 schedule: admisionesSchedule,
                 monthAdmision: admisionesMonth,
                 informationLink: admisionesInformationLink,
-                testimonial: admisionesTestimonial,
                 photo: currentPhotoAdmisionesKey,
                 audio: currentAudioAdmisionesKey
             });
@@ -352,6 +351,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 rectorPhoto: currentRectorKey,
                 rectorSocial: rectorSocialPayload,
                 rectorDescription,
+                rectorTestimonial,
                 socialMedia: socialMediaPayload,
                 embed: embedPayload,
                 admisiones: admisionesPayload,
@@ -596,6 +596,15 @@ export function InstitutionForm({ onClose, institution, store }) {
                     />
                 </div>
                 <TextField
+                    label="Testimonial del rector respeto a SRG máximo 18 palabras"
+                    value={rectorTestimonial}
+                    onChange={(e) => setRectorTestimonial(e.target.value)}
+                    helperText="Ej: Ser miembros de Sapiens ha sido una de las mejores decisiones de nuestra institución."
+                    fullWidth
+                    multiline
+                    rows={2}
+                />
+                <TextField
                     label="Descripción del rector e invitación"
                     value={rectorDescription}
                     onChange={(e) => setRectorDescription(e.target.value)}
@@ -682,15 +691,6 @@ export function InstitutionForm({ onClose, institution, store }) {
                     />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <TextField
-                        label="Testimonial del rector respeto a SRG máximo 18 palabras"
-                        value={admisionesTestimonial}
-                        onChange={(e) => setAdmisionesTestimonial(e.target.value)}
-                        helperText="Ej: Ser miembros de Sapiens ha sido una de las mejores decisiones de nuestra institución."
-                        fullWidth
-                        multiline
-                        rows={2}
-                    />
                     <FormControl fullWidth error={!!errors.photoAdmisiones}>
                         <InputLabel style={{ position: 'relative', transform: 'none', marginBottom: '8px' }}>
                             Foto de la persona encargada de admisiones
