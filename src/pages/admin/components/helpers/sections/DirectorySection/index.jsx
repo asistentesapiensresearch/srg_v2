@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useTheme, useMediaQuery } from "@mui/material";
 import {
     Box, Container, Grid, Skeleton, Alert, Button,
     InputAdornment, TextField, Badge,
@@ -135,6 +136,9 @@ const DirectorySectionContent = ({
     const activeFilterCount = Object.values(activeFilters).flat().length;
     const quickFiltersData = useMemo(() => parseQuickFilters(quickFilters), [quickFilters]);
     const columnAliases = useMemo(() => sourceConfig?.columnAliases || {}, [sourceConfig]);
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 
 
@@ -435,20 +439,23 @@ const DirectorySectionContent = ({
     }, [itemsWithAds, page, itemsPerPage]);
 
 
+
     useEffect(() => {
         if (!masterData || masterData.length === 0) return;
+        
+        const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
+        //const aliados = masterData.filter(el => el["IDV"] === "1");
 
-        //const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
-        const aliados = masterData.filter( el => el["IDV"] === "1");
-        // inicial
-        setRandomItems(getRandomItems(aliados));
+        const count = isMobile ? 1 : 3;
+
+        setRandomItems(getRandomItems(aliados, count));
 
         const interval = setInterval(() => {
-            setRandomItems(getRandomItems(aliados));
-        }, 10000); // cada 10 segundos
+            setRandomItems(getRandomItems(aliados, count));
+        }, 10000);
 
         return () => clearInterval(interval);
-    }, [masterData]);
+    }, [masterData, isMobile]);
 
     // --- HANDLERS ---
     const handleApplyPreset = (preset) => {
