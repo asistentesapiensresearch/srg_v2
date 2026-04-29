@@ -47,7 +47,7 @@ const DowloandDataExcel = ({
                         if (cell === undefined || cell === null) return false;
                         return cleanString(cell) === targetValueClean;
                     })
-    
+
                     if (!found) return;
     
                     dispatch(

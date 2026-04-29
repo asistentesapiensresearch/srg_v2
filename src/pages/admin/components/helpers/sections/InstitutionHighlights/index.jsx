@@ -39,11 +39,7 @@ const InstitutionHighlights = ({
     excelSource = "COL",
     itemsHighlights = [],
 }) => {
-    console.log({
-        typePage,
-        excelSource,
-        itemsHighlights
-    });
+
     let fieldsKeys;
 
     const dataExcels = useSelector((state) => state.sections.fetchData.sheets[excelSource]);
@@ -88,7 +84,7 @@ const InstitutionHighlights = ({
                             dataExcels.data[fields[key]],
                             isIcfes ? dataExcels.data[fields['icfes ind']] : undefined
                         ];
-
+                        if(!labelParts) return;
                         const label = labelParts
                             .filter(Boolean)
                             .map(v => String(v).toUpperCase())

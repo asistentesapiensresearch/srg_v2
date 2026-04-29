@@ -204,7 +204,7 @@ const rectorLabelStyle = {
 
 const rectorNameStyle = {
   fontWeight: 800,
-  fontSize: { xs: "15px", md: "17px" },
+  fontSize: { xs: "13px", md: "15px" },
   lineHeight: 1.2,
 };
 
@@ -233,6 +233,7 @@ const quoteTextStyle = {
 };
 
 export const CardColSapiens = ({ props }) => {
+
   const logo = useImageUrl(props?.logo) || "";
   const portada = useImageUrl(props?.portadaPhoto) || "";
   const rectorPhoto = useImageUrl(props?.rectorPhoto) || "";
@@ -366,7 +367,7 @@ export const CardColSapiens = ({ props }) => {
 
           <Box sx={quoteBoxStyle}>
             <Box component="p" sx={quoteTextStyle}>
-              {props.testimonial || "El rector no agregado testimonial"}
+              {props.rectorTestimonial || "El rector no agregado testimonial"}
             </Box>
           </Box>
         </Box>

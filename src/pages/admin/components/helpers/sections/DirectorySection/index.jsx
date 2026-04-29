@@ -214,6 +214,7 @@ const DirectorySectionContent = ({
                                     rectorName: dbModel.rectorName,
                                     rectorPhoto: dbModel.rectorPhoto,
                                     rectorSocial: dbModel.rectorSocial,
+                                    rectorTestimonial: dbModel.rectorTestimonial,
                                     socialMedia: dbModel.socialMedia,
                                     website: dbModel.website,
                                     isLinked: dbModel.isLinked,
