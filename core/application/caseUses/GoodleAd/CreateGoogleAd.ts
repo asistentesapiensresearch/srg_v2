@@ -1,7 +1,7 @@
 import { GoogleAdRepository } from "@core/domain/repositories/repositories/GoogleAdRepository";
 import { GoogleAd } from "@core/domain/repositories/entities";
 
-export class CreateInstitution {
+export class CreateGoogleAd {
     constructor(private googleAdRepository: GoogleAdRepository) { }
 
     async execute(data: GoogleAd) {
