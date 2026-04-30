@@ -302,9 +302,10 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
           </text>
 
           {/* Categoría fondo y texto */}
+          <g transform="translate(0, 8)">
           <text
             x="340"
-            y="272"
+            y="280"
             textAnchor="middle"
             fontFamily="Arial Black, Arial, sans-serif"
             fontSize="75"
@@ -317,7 +318,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
           </text>
           <text
             x="340"
-            y="272"
+            y="280"
             textAnchor="middle"
             fontFamily="Arial Black, Arial, sans-serif"
             fontSize="75"
@@ -325,7 +326,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
             fill="#CC0000"
             letterSpacing="-4"
             className="transition-transform duration-300 group-hover:scale-110"
-            style={{ transformOrigin: "340px 240px" }}
+            style={{ transformOrigin: "340px 248px" }}
           >
             {mergedData.categoryValue}
           </text>
@@ -368,17 +369,17 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
           {/* Calificación */}
           <rect
             x="272"
-            y="286"
+            y="294"
             width="136"
             height="28"
             rx="14"
             fill="#CC0000"
             className="transition-transform duration-300 group-hover:scale-105"
-            style={{ transformOrigin: "340px 300px" }}
+            style={{ transformOrigin: "340px 308px" }}
           />
           <text
             x="340"
-            y="307"
+            y="315"
             textAnchor="middle"
             fontFamily="Arial Black, Arial, sans-serif"
             fontSize="22"
@@ -386,7 +387,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
             fill="#ffffff"
             letterSpacing="4"
             className="transition-transform duration-300 group-hover:scale-105"
-            style={{ transformOrigin: "340px 300px" }}
+            style={{ transformOrigin: "340px 308px" }}
           >
             {mergedData.calificationValue}
           </text>
@@ -486,6 +487,7 @@ const CalificationAndCategory = ({ excelSource = "COL", maxStars = 5 }) => {
             >
               DESDE 2024-2025
             </text>
+          </g>
           </g>
 
           <polyline

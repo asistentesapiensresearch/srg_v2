@@ -94,7 +94,7 @@ const InstitutionHighlights = ({
                             .map(v => String(v).toUpperCase())
                             .join(" | ");
 
-                        const tag = isIcfes ? "ICFES" : key;
+                        const tag = isIcfes ? "CATEGORIA | INDICE" : key;
 
                         return container(key, label, tag);
                     })
