@@ -14,6 +14,16 @@ export class GoogleAdAmplifyRepository {
         }
     }
 
+    async findById(id: string): Promise<GoogleAd> {
+        try {
+            const data = await apiSyncService.getById('GoogleAd', id);
+            return (data || []) as GoogleAd;
+        } catch (error) {
+            console.error('Error al obtener la lista de GoogleAd:', error);
+            throw error;
+        }
+    }
+
     async create(googleAd: any) {
         try {
             const data = await apiSyncService.create('GoogleAd', googleAd);
