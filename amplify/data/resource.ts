@@ -10,6 +10,7 @@ import { manageUserGroup } from '../functions/manageUserGroup/resource';
 import { Gallery } from './schemas/Gallery';
 import { Testimonial } from './schemas/Testimonial';
 import { Article } from './schemas/Article';
+import { GoogleAd } from './schemas/GoogleAd';
 
 const schema = a.schema({
   Institution,
@@ -20,6 +21,7 @@ const schema = a.schema({
   Gallery,
   Testimonial,
   Article,
+  GoogleAd,
   listCognitoUsers: a.query()
     .returns(a.json()) // Retornará el array de usuarios como JSON
     .handler(a.handler.function(listUsersFunction))
