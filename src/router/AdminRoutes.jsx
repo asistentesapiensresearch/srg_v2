@@ -6,6 +6,7 @@ const Layout = lazy(() => import("../pages/admin/Layout"));
 const Home = lazy(() => import('../pages/admin/Home'));
 const Research = lazy(() => import("../pages/admin/Research/Research"));
 const Brands = lazy(() => import("../pages/admin/Brand/Brands"));
+const Ads = lazy(() => import("../pages/admin/Ads/Ads"));
 const Institutions = lazy(() => import("../pages/admin/Intitutions/Institutions"));
 const Articles = lazy(() => import("../pages/admin/Articles/Articles"));
 const Testimonial = lazy(() => import("../pages/admin/Testimonials/TestimonialManager"));
@@ -61,6 +62,11 @@ export const AdminRoutes = [
                 path: 'institutions', // /admin/institutions
                 element: <Institutions />,
                 title: "Instituciones"
+            },
+            {
+                path: 'ads', // /admin/institutions
+                element: <Ads />,
+                title: "Anuncios"
             },
             {
                 path: 'articles', // /admin/institutions

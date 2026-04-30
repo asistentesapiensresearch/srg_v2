@@ -17,6 +17,7 @@ import {
     ImageIcon,
     LayoutDashboard,
     MessageSquareTextIcon,
+    Presentation,
     Settings,
     SquareChartGantt,
     UsersIcon
@@ -54,6 +55,16 @@ export const Sidebar = ({
                     path: 'institutions',
                     label: 'Lista instituciones',
                     icon: <Building2Icon size={20} />
+                }
+            ]
+        },
+        {
+            label: 'Anuncios',
+            items: [
+                {
+                    path: 'ads',
+                    label: 'Lista de anuncios',
+                    icon: <Presentation size={20} />
                 }
             ]
         },
