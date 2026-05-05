@@ -9,12 +9,12 @@ export const useAds = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const fetchGoogleAds = useCallback(async () => {
+    const fetchGoogleAds = useCallback(async (filter = {}) => {
         setLoading(true);
         setError(null);
     
         try {
-            const data = await googleAdRepository.get();
+            const data = await googleAdRepository.get(filter);
             setGoogleAds(data || []);
         } catch (err) {
             console.error(err);

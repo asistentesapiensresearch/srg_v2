@@ -19,6 +19,8 @@ import { ComparisonProvider } from './comparison/ComparisonContext';
 import ComparisonWidget from './comparison/ComparisonWidget';
 import ComparisonModal from './comparison/ComparisonModal';
 import { CardColSapiens } from './cards/CardColSapiens';
+import { useAds } from '@src/pages/admin/Ads/hooks/useAds';
+import GoogleAd from '@src/pages/admin/Ads/components/GoogleAd';
 
 const client = generateClient();
 
@@ -129,6 +131,7 @@ const DirectorySectionContent = ({
     const [page, setPage] = useState(1);
     const [order, setOrder] = useState('');
     const [viewListType, setViewListType] = useState(viewType === 'grid' ? 'grid' : 'list');
+    const [adsSessionKey, setAdsSessionKey] = useState("0");
 
     // --- MEMOS DE CONFIG ---
     const gridSize = Math.floor(12 / Math.max(1, itemsPerColumn));
@@ -140,6 +143,16 @@ const DirectorySectionContent = ({
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+    /* consulta de anuncios */
+    const { googleAds, fetchGoogleAds } = useAds();
+
+    // traigo los activos nada más
+    useEffect(() => {
+        // get anuncios
+        fetchGoogleAds({
+                enabled: { eq: true }
+        })
+    }, [fetchGoogleAds])
 
 
     // ========================================================================
@@ -438,6 +451,54 @@ const DirectorySectionContent = ({
         return itemsWithAds.slice(startIndex, endIndex);
     }, [itemsWithAds, page, itemsPerPage]);
 
+    const dataWithAds = useMemo(() => {
+        if (!paginatedData?.length && !googleAds?.length) return [];
+
+        const result = [];
+        const ads = googleAds || [];
+
+        let adIndex = 0;
+        const adsPerBlock = 3;
+
+        const addAdsBlock = (renderKey) => {
+            if (adIndex >= ads.length) return;
+
+            const adsBlock = ads.slice(adIndex, adIndex + adsPerBlock);
+
+            result.push({
+                _isAd: true,
+                _renderId: `ad-block-${renderKey}-${adIndex}`,
+                ads: adsBlock,
+            });
+
+            adIndex += adsBlock.length;
+        };
+
+        paginatedData.forEach((item, index) => {
+            result.push(item);
+
+            const shouldInsertAdBlock = (index + 1) % 2 === 0;
+
+            if (shouldInsertAdBlock) {
+                addAdsBlock(index);
+            }
+        });
+
+        while (adIndex < ads.length) {
+            addAdsBlock(`extra-${adIndex}`);
+        }
+
+        return result;
+    }, [paginatedData, googleAds]);
+
+    const filtersKey = useMemo(() => {
+        return JSON.stringify(activeFilters || {});
+    }, [activeFilters]);
+
+    useEffect(() => {
+        setAdsSessionKey(`${page}-${filtersKey}`);
+    }, [page, filtersKey]);
+
 
 
     useEffect(() => {
@@ -584,11 +645,42 @@ const DirectorySectionContent = ({
                         <TableList data={itemsWithAds.filter(i => !i._isAd)} columns={sourceConfig?.columns || []} aliases={columnAliases} />
                     ) : (
                         <Grid container spacing={3}>
-                            {paginatedData.map((item, index) => {
-                                if (item._isAd) return <Grid size={{ xs: 12, sm: 6, md: gridSize }} key={item._renderId} className="flex justify-center"><AdCard primaryColor={primaryColor} title={item.title} desc={item.desc} /></Grid>;
+                            {dataWithAds.map((item) => {
+                                if (item._isAd) {
+                                    return (
+                                        <Grid size={{ xs: 12 }} key={`${adsSessionKey}-${item._renderId}`}>
+                                             <Box
+                                                sx={{
+                                                    display: "grid",
+                                                    gridTemplateColumns: {
+                                                        xs: "1fr",
+                                                        sm: "1fr 1fr",
+                                                        md: "1fr 1fr 1fr",
+                                                    },
+                                                    gap: 3,
+                                                    width: "100%",
+                                                }}
+                                            >
+                                                 {item.ads.map((ad, index) => {
+                                                    const instanceSlotId = `directory-${adsSessionKey}-${item._renderId}-${index}-${ad.id}`;
+                                                    console.log({instanceSlotId});
+                                                    return (
+                                                        <Box key={instanceSlotId} display="flex" justifyContent="center">
+                                                            <GoogleAd
+                                                                slotId={instanceSlotId}
+                                                                adUnitPath={ad.adUnitPath}
+                                                            />
+                                                        </Box>
+                                                    );
+                                                })}
+                                            </Box>
+                                        </Grid>
+                                    );
+                                }
 
                                 return (
                                     <Grid size={{ xs: 12, sm: 6, md: gridSize }} key={item._renderId}>
+                                    {/* HTB */}
                                         <DirectoryCard item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} />
                                     </Grid>
                                 );

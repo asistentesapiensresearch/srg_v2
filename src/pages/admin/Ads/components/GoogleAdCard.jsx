@@ -55,7 +55,7 @@ const GoogleAdCard = ({ ad, onEdit, onDelete }) => {
       {/* Placeholder para imagen/gif */}
       <div className="mt-2 border border-dashed border-gray-300 rounded-xl  flex items-center justify-center">
         <GoogleAd
-            slotId={`div-gpt-${ad.id}`}
+            slotId={ad.slotId}
             adUnitPath={ad.adUnitPath}
         />
       </div>
