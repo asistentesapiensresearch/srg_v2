@@ -91,7 +91,7 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [rectorPhotoPreview, setRectorPhotoPreview] = useState("");
 
     const [photoAdmisionesKey, setPhotoAdmisionesKey] = useState(
-        typeof institution.admisiones === "string"
+        typeof institution?.admisiones === "string"
         ? JSON.parse(institution.admisiones)?.photo || ""
         : ""
     );
@@ -99,7 +99,7 @@ export function InstitutionForm({ onClose, institution, store }) {
 
     //Audio mp3 admisiones
     const [audioAdmisionesKey, setAudioAdmisionesKey] = useState(
-        typeof institution.admisiones === "string"
+        typeof institution?.admisiones === "string"
         ? JSON.parse(institution.admisiones)?.audio || ""
         : ""
     );
