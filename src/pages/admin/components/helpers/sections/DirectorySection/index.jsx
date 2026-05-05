@@ -10,7 +10,6 @@ import { LayoutGridIcon, LayoutListIcon, Search, SlidersHorizontal } from "lucid
 
 import { generateClient } from "aws-amplify/data";
 import { DirectoryCard } from './results/DirectoryCard';
-import { AdCard } from './results/AdCard';
 import { FilterDrawer } from './filters/FilterDrawer';
 import { fetchSheet } from './fetchSheet';
 import TableList from './results/TableList';
@@ -459,6 +458,7 @@ const DirectorySectionContent = ({
 
         let adIndex = 0;
         const adsPerBlock = 3;
+        const itemsPerAdBlock = 4;
 
         const addAdsBlock = (renderKey) => {
             if (adIndex >= ads.length) return;
@@ -477,10 +477,10 @@ const DirectorySectionContent = ({
         paginatedData.forEach((item, index) => {
             result.push(item);
 
-            const shouldInsertAdBlock = (index + 1) % 2 === 0;
+            const shouldInsertAdBlock = (index + 1) % itemsPerAdBlock === 0;
 
             if (shouldInsertAdBlock) {
-                addAdsBlock(index);
+            addAdsBlock(index);
             }
         });
 
@@ -681,7 +681,7 @@ const DirectorySectionContent = ({
                                 return (
                                     <Grid size={{ xs: 12, sm: 6, md: gridSize }} key={item._renderId}>
                                     {/* HTB */}
-                                        <DirectoryCard item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} />
+                                        <DirectoryCard item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} type={identifier} />
                                     </Grid>
                                 );
                             })}
