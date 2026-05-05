@@ -11,16 +11,15 @@ class DataSourceManager {
     }
 
     // Métodos para buscar en la BD usando Amplify DataStore
-    static async findByField(modelName, searchField, searchValue, limit = 1) {
+    static async findByField(modelName, searchField, searchValue) {
 
-        const key = this.getCacheKey("db-field", { modelName, searchField, searchValue, limit });
+        const key = this.getCacheKey("db-field", { modelName, searchField, searchValue });
         if (this.cache[key]) {
             return this.cache[key];
         }
 
         const promise =  client.models[modelName].list({
-            filter: { [searchField]: { eq: searchValue } },
-            limit
+            filter: { [searchField]: { eq: searchValue }},
         });
 
 
