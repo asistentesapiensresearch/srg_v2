@@ -663,7 +663,6 @@ const DirectorySectionContent = ({
                                             >
                                                  {item.ads.map((ad, index) => {
                                                     const instanceSlotId = `directory-${adsSessionKey}-${item._renderId}-${index}-${ad.id}`;
-                                                    console.log({instanceSlotId});
                                                     return (
                                                         <Box key={instanceSlotId} display="flex" justifyContent="center">
                                                             <GoogleAd

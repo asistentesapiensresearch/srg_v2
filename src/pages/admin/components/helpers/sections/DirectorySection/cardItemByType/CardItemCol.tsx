@@ -72,9 +72,6 @@ export const CardItemCol = ({ item, primaryColor }) => {
     }
     const directorWeb = socialR?.linkedin ?? getAlias('DirectorWeb');
 
-    console.log({socialR});
-
-
     // 🔥 IMPORTANTE: El return que faltaba
     return (
         <Card sx={{
@@ -235,7 +232,16 @@ export const CardItemCol = ({ item, primaryColor }) => {
                     />
                 }
                 <Box sx={{ 
-                    display: 'flex', justifyContent: 'space-between', alignItems: "flex-start", gap: 1 }}>
+                    display: 'flex',
+                    flexDirection: {
+                        xs: "column",
+                        lg: "row"
+                    }, 
+                    justifyContent: 'space-between', 
+                    alignItems: "center", 
+                    gap: 2, 
+                    width: "100%", 
+                }}>
                     <Box>
                         <Box className='flex gap-3'>
                             <Typography
@@ -270,6 +276,46 @@ export const CardItemCol = ({ item, primaryColor }) => {
                             </Typography>
                         </Stack>
                     </Box>
+                    {/* Boton de comparar */}
+                    {
+                        Vinculada &&
+                        <Button
+                            size="small"
+                            variant={isSelected ? "contained" : "outlined"}
+                            onClick={() => toggleItem(item)}
+                            startIcon={
+                                isSelected ? <Check size={12} /> : <ArrowLeftRight size={12} />
+                            }
+                            sx={{
+                                borderRadius: 50,
+                                textTransform: "none",
+                                fontWeight: 600,
+                                px: 1.5,
+                                py: 0.3,
+                                minHeight: "unset",
+                                height: "auto",
+                                fontSize: "0.7rem",
+                                borderColor: isSelected ? primaryColor : "#ccc",
+                                color: isSelected ? "white" : "white",
+                                bgcolor: isSelected ? primaryColor : "transparent",
+                                transition: "all 0.2s",
+                                "& .MuiButton-startIcon": {
+                                    mr: 0.4,
+                                    ml: 0,
+                                },
+                                "&:hover": {
+                                    bgcolor: isSelected ? primaryColor : "#f5f5f5",
+                                    color: "#000",
+                                    borderColor: primaryColor,
+                                    transform: "scale(1.05)",
+                                },
+                                zIndex: 2,
+                                mb: 2,
+                            }}
+                        >
+                                {isSelected ? "Añadido" : "Comparar"}
+                        </Button>
+                    }
                 </Box>
                 {Vinculada && (
                     <Box sx={{
@@ -385,46 +431,6 @@ export const CardItemCol = ({ item, primaryColor }) => {
                 >
                     {/* CONTENEDOR RELATIVO */}
                     <Box sx={{ position: "relative", width: "auto", height: "auto", mb: 1, display: "flex", flexDirection: "column", alignItems: "center" }}> 
-                        {/* Boton de comparar */}
-                    {
-                        Vinculada &&
-                            <Button
-                                size="small"
-                                variant={isSelected ? "contained" : "outlined"}
-                                onClick={() => toggleItem(item)}
-                                startIcon={
-                                    isSelected ? <Check size={12} /> : <ArrowLeftRight size={12} />
-                                }
-                                sx={{
-                                    borderRadius: 50,
-                                    textTransform: "none",
-                                    fontWeight: 600,
-                                    px: 1.5,
-                                    py: 0.3,
-                                    minHeight: "unset",
-                                    height: "auto",
-                                    fontSize: "0.7rem",
-                                    borderColor: isSelected ? primaryColor : "#ccc",
-                                    color: isSelected ? "white" : "#000",
-                                    bgcolor: isSelected ? primaryColor : "transparent",
-                                    transition: "all 0.2s",
-                                    "& .MuiButton-startIcon": {
-                                        mr: 0.4,
-                                        ml: 0,
-                                    },
-                                    "&:hover": {
-                                        bgcolor: isSelected ? primaryColor : "#f5f5f5",
-                                        color: "#000",
-                                        borderColor: primaryColor,
-                                        transform: "scale(1.05)",
-                                    },
-                                    mb: 2,
-                                }}
-                            >
-                                    {isSelected ? "Añadido" : "Comparar"}
-                            </Button>
-                        }
-                        
                         {/* FOTO DIRECTOR */}
                         {directorPhoto ? (
                             <Box
@@ -492,26 +498,26 @@ export const CardItemCol = ({ item, primaryColor }) => {
                         {directorName}
                     </Typography>
                     {/* redes sociales */}
-                    <Stack direction="row" spacing={0}>
+                    <Stack direction="row" spacing={0} mt={1}>
                         {
                             socialR?.facebook && 
-                            <IconButton size="small"><Facebook size={16} color="#C10007" /></IconButton>
+                            <IconButton size="small"><Facebook size={18} color="#C10007" /></IconButton>
                         }
                         {
                             socialR?.youtube && 
-                            <IconButton size="small"><Youtube size={16} color="#C10007" /></IconButton>
+                            <IconButton size="small"><Youtube size={18} color="#C10007" /></IconButton>
                         }
                         {
                             socialR?.instagram && 
-                            <IconButton size="small"><Instagram size={16} color="#C10007" /></IconButton>
+                            <IconButton size="small"><Instagram size={18} color="#C10007" /></IconButton>
                         }
                         {
                             socialR?.linkedin && 
-                            <IconButton size="small"><Linkedin size={16} color="#C10007" /></IconButton>
+                            <IconButton size="small"><Linkedin size={18} color="#C10007" /></IconButton>
                         }
                         {
                             socialR?.cvlac && 
-                            <IconButton size="small"><FileSpreadsheet size={16} color="#C10007" /></IconButton>
+                            <IconButton size="small"><FileSpreadsheet size={18} color="#C10007" /></IconButton>
                         }
                     </Stack>
                 </Box>
