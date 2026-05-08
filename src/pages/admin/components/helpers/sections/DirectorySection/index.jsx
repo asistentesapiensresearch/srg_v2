@@ -213,7 +213,7 @@ const DirectorySectionContent = ({
                         // Crear mapa de búsqueda
                         const institutionMap = new Map();
                         institutionsDB.forEach(inst => {
-                            if (inst.name) institutionMap.set(cleanString(inst.name), inst);
+                            if (inst.dane) institutionMap.set(cleanString(inst.dane), inst);
                         });
 
                         // Merge

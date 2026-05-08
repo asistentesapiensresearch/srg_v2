@@ -74,7 +74,7 @@ export default {
             label: "Columna de Coincidencia (Excel)",
             type: "text",
             default: "Institucion",
-            help: "Nombre exacto de la columna en el Excel que contiene el nombre de la institución para buscarla en la BD (ej: 'Nombre Colegio').",
+            help: "Nombre exacto de la columna en el Excel que contiene dane de la institución para buscarla en la BD (ej: '34005121...').",
         },
 
         // 🔥 UPDATE: CAMPO TIPO (SELECT) BASADO EN ENUM InstitutionType
