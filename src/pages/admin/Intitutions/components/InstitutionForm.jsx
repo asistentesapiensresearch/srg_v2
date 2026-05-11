@@ -775,7 +775,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                     value={languagesStr}
                     onChange={(e) => setLanguagesStr(e.target.value)}
                     fullWidth
-                    helperText="Ej: Español, Inglés, Francés"
+                    helperText="Ej: Español, Inglés-A, Inglés-B, Francés, Alemán, Portugués, Italiano, Mandarín"
                 />
 
                 <h3 className="font-bold text-gray-700 mt-2 border-b">Redes y ubicación Embebida</h3>

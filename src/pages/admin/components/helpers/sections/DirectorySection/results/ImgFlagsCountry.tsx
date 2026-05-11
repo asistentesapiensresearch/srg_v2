@@ -5,9 +5,13 @@ const flagsIdioms = {
         url: "https://flagcdn.com/w20/es.png",
         alt: "Bandera de idioma Español"
     },
-    "Inglés" : {
+    "Inglés-B" : {
         url: "https://flagcdn.com/w20/gb.png",
-        alt: "Bandera de idioma Inglés"
+        alt: "Bandera de idioma Inglés Británico"
+    },
+    "Inglés-A" : {
+        url: "https://flagcdn.com/w20/us.png",
+        alt: "Bandera de idioma Inglés Americano"
     },
     "Francés" : {
         url: "https://flagcdn.com/w20/fr.png",
@@ -24,6 +28,10 @@ const flagsIdioms = {
     "Italiano" : {
         url: "https://flagcdn.com/w20/it.png",
         alt: "Bandera de idioma Italiano"
+    },
+    "Mandarín" : {
+        url: "https://flagcdn.com/w20/cn.png",
+        alt: "Bandera de idioma Mandarín"
     },
 }
 
