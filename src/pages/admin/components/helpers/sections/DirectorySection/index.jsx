@@ -429,6 +429,22 @@ const DirectorySectionContent = ({
         return filters;
     }, [masterData, sourceConfig, columnAliases]);
 
+    const categoryOptions = useMemo(() => {
+        return [...new Set(
+            masterData
+                .map(item => item["Categoría"])
+                .filter(Boolean)
+        )].sort();
+    }, [masterData]);
+
+    const qualificationOptions = useMemo(() => {
+        return [...new Set(
+            masterData
+                .map(item => item["Calificación"])
+                .filter(Boolean)
+        )].sort();
+    }, [masterData]);
+
     const itemsWithAds = useMemo(() => {
         if (!showAds || showData.length === 0) return showData;
         const result = [];
@@ -532,6 +548,20 @@ const DirectorySectionContent = ({
         setActiveFilters(sanitizedFilters);
     };
 
+    const handleCategoryChange = (value) => {
+    setActiveFilters(prev => ({
+        ...prev,
+        "Categoría": value ? [value] : []
+        }));
+    };
+
+    const handleQualificationChange = (value) => {
+        setActiveFilters(prev => ({
+            ...prev,
+            "Calificación": value ? [value] : []
+        }));
+    };
+
     // Inicializar filtros rápidos
     useEffect(() => {
         const config = getInitialConfig(quickFilters);
@@ -615,6 +645,7 @@ const DirectorySectionContent = ({
                 </Stack>
             )}
 
+
             {/* CONTENIDO */}
             {loading ? (
                 <Grid container spacing={3}>
@@ -625,19 +656,73 @@ const DirectorySectionContent = ({
                     <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
                         <Typography variant="body2" color="text.secondary">Mostrando <strong>{itemsWithAds.filter(x => !x._isAd).length}</strong> resultados</Typography>
                         {!isList && (
-                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                <InputLabel>Ordenar por</InputLabel>
-                                <Select value={order} label="Ordenar por" onChange={(e) => setOrder(e.target.value)}>
-                                    <MenuItem value=""><em>Defecto</em></MenuItem>
-                                    {(sourceConfig?.orderColumns || []).map(col => {
-                                        const alias = columnAliases[col] || col;
-                                        return [
-                                            <MenuItem key={`${alias}_asc`} value={`${alias}_ascendente`}>{alias} (Asc)</MenuItem>,
-                                            <MenuItem key={`${alias}_desc`} value={`${alias}_descendente`}>{alias} (Desc)</MenuItem>
-                                        ]
-                                    })}
-                                </Select>
-                            </FormControl>
+                            <Box>
+                                {
+                                    (identifier === "COL" || identifier === "M-TOP") && (
+                                        <>
+                                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                                                <InputLabel>Categoría</InputLabel>
+
+                                                <Select
+                                                    value={activeFilters["Categoría"]?.[0] || ""}
+                                                    label="Categoría"
+                                                    onChange={(e) => handleCategoryChange(e.target.value)}
+                                                    sx={{
+                                                        borderRadius: 3,
+                                                        bgcolor: "white"
+                                                    }}
+                                                >
+                                                    <MenuItem value="">
+                                                        <em>---Sin valor---</em>
+                                                    </MenuItem>
+                                                    {categoryOptions.map((option) => (
+                                                        <MenuItem key={option} value={option}>
+                                                            D{option}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+
+                                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                                                <InputLabel>Calificación</InputLabel>
+
+                                                <Select
+                                                    value={activeFilters["Calificación"]?.[0] || ""}
+                                                    label="Calificación"
+                                                    onChange={(e) => handleQualificationChange(e.target.value)}
+                                                    sx={{
+                                                        borderRadius: 3,
+                                                        bgcolor: "white"
+                                                    }}
+                                                >
+                                                    <MenuItem value="">
+                                                        <em>---Sin valor---</em>
+                                                    </MenuItem>
+
+                                                    {qualificationOptions.map((option) => (
+                                                        <MenuItem key={option} value={option}>
+                                                            {option}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </>
+                                    )
+                                }
+                                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                                    <InputLabel>Ordenar por</InputLabel>
+                                    <Select value={order} label="Ordenar por" onChange={(e) => setOrder(e.target.value)}>
+                                        <MenuItem value=""><em>Defecto</em></MenuItem>
+                                        {(sourceConfig?.orderColumns || []).map(col => {
+                                            const alias = columnAliases[col] || col;
+                                            return [
+                                                <MenuItem key={`${alias}_asc`} value={`${alias}_ascendente`}>{alias} (Asc)</MenuItem>,
+                                                <MenuItem key={`${alias}_desc`} value={`${alias}_descendente`}>{alias} (Desc)</MenuItem>
+                                            ]
+                                        })}
+                                    </Select>
+                                </FormControl>
+                            </Box>
                         )}
                     </Box>
 
