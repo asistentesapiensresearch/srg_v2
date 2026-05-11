@@ -6,6 +6,7 @@ import { StorageImage } from "@aws-amplify/ui-react-storage";
 import DynamicIcon from "@src/pages/admin/components/builder/helpers/DynamicIcon";
 import { useImageUrl } from "@src/hooks/useImageUrl";
 import StartSection from "../../StartsSection";
+import ImgFlagsCountry from "../results/ImgFlagsCountry";
 
 
 const iconInfoStyle = {
@@ -59,6 +60,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
     const zona = getAlias('Zon');
     const dtitulacion = getAlias('Doble titulación');
     const intercambioSalidas = getAlias('Intercambios o salidas internacionales');
+    const languages = getAlias('languages');
 
     // Director
     const directorName = getValue(item, ['rectorName']);
@@ -207,6 +209,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
                 width: "100%",
                 minHeight: 220,
                 overflow: "hidden",
+                gap: 1,
                 ...(Vinculada
                 ? {
                     backgroundImage: `url(${portada})`,
@@ -381,13 +384,17 @@ export const CardItemCol = ({ item, primaryColor }) => {
                                 </Box>
                             </Tooltip>
                         )}
+                        {
+                            languages && languages.length > 0 && (
+                                <ImgFlagsCountry languages={languages} size={25} gap={1.5} />
+                            )
+                        }
                     </Box>
                 )}
 
                 {Vinculada && (
                     <Stack direction="row" justifyContent="space-between" alignItems="center" mt="10px">
                         <Box sx={{
-                            width: { md: 140 },
                             p: 2,
                             display: 'flex',
                             flexDirection: 'column',
@@ -402,11 +409,8 @@ export const CardItemCol = ({ item, primaryColor }) => {
                                 }
                             )
                         }}>
-                            <Typography variant="caption" sx={{ textDecoration: 'underline', fontWeight: 'bold', display: 'block' }}>
-                                {accreditationMain}
-                            </Typography>
-                            <Typography variant="caption" color="rgba(255,255,255,0.75">
-                                / {accreditationSec}
+                            <Typography variant="caption" sx={{ textDecoration: 'underline', fontWeight: 'bold', }}>
+                                {accreditationMain} / {accreditationSec}
                             </Typography>
                         </Box>
                     </Stack>
@@ -498,7 +502,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
                         {directorName}
                     </Typography>
                     {/* redes sociales */}
-                    <Stack direction="row" spacing={0} mt={1}>
+                    {/* <Stack direction="row" spacing={0} mt={1}>
                         {
                             socialR?.facebook && 
                             <IconButton size="small"><Facebook size={18} color="#C10007" /></IconButton>
@@ -519,7 +523,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
                             socialR?.cvlac && 
                             <IconButton size="small"><FileSpreadsheet size={18} color="#C10007" /></IconButton>
                         }
-                    </Stack>
+                    </Stack> */}
                 </Box>
             )}
         </Card>

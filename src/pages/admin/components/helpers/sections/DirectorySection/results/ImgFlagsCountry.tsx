@@ -13,6 +13,18 @@ const flagsIdioms = {
         url: "https://flagcdn.com/w20/fr.png",
         alt: "Bandera de idioma Frances"
     },
+    "Alemán" : {
+        url: "https://flagcdn.com/w20/de.png",
+        alt: "Bandera de idioma Alemán"
+    },
+    "Portugués" : {
+        url: "https://flagcdn.com/w20/pt.png",
+        alt: "Bandera de idioma Portugués"
+    },
+    "Italiano" : {
+        url: "https://flagcdn.com/w20/it.png",
+        alt: "Bandera de idioma Italiano"
+    },
 }
 
 const ImgFlagsCountry = ({ languages, size = 20, center = false, gap = 0.5 }) => {
@@ -41,6 +53,7 @@ const ImgFlagsCountry = ({ languages, size = 20, center = false, gap = 0.5 }) =>
                     width: size,
                     height: "auto",
                     cursor: "pointer",
+                    borderRadius: "50%",
                 }}
               />
             </Tooltip>
