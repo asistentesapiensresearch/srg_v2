@@ -41,7 +41,6 @@ const ImgFlagsCountry = ({ languages, size = 20, center = false, gap = 0.5 }) =>
       sx={{
         display: "flex",
         gap,
-        px: 1,
         justifyContent: center ? "center" : "flex-start",
       }}
     >
@@ -59,9 +58,10 @@ const ImgFlagsCountry = ({ languages, size = 20, center = false, gap = 0.5 }) =>
                 alt={flag.alt}
                 sx={{
                     width: size,
-                    height: "auto",
+                    height: size,
                     cursor: "pointer",
                     borderRadius: "50%",
+                    border: "1px solid #fff"
                 }}
               />
             </Tooltip>

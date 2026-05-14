@@ -23,6 +23,8 @@ const iconInfoStyle = {
 // Componente interno para renderizar la tarjeta individual
 export const CardItemCol = ({ item, primaryColor }) => {
 
+    console.log({item});
+
     const { toggleItem, selectedItems } = useComparison();
 
     const itemId = item.id || item._id || JSON.stringify(item);
@@ -61,6 +63,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
     const dtitulacion = getAlias('Doble titulación');
     const intercambioSalidas = getAlias('Intercambios o salidas internacionales');
     const languages = getAlias('languages');
+    const nuevo = getAlias('Nuevos');
 
     // Director
     const directorName = getValue(item, ['rectorName']);
@@ -484,6 +487,29 @@ export const CardItemCol = ({ item, primaryColor }) => {
                             />
                             </Box>
                         )}
+                        {/* Si es nuevo */}
+                        {
+                            (nuevo && nuevo.length > 0) && (
+                                <Box sx={{
+                                    mb: 2,
+                                    position: "absolute",
+                                    top: -17,
+                                    right: -15,
+                                    p: "2px 4px",
+                                    backgroundColor: "#c00007",
+                                    border: "2px solid #fff",
+                                    borderRadius: "12px",
+                                    color: "#fff",
+                                    fontWeight: "bold",
+                                    fontSize: "12px",
+                                    '&:hover': {
+                                        scale: 1.1,
+                                    }
+                                }}>
+                                        {nuevo}
+                                </Box>
+                            )
+                        }
                     </Box>
                     {/* NOMBRE */}
                     <Typography
