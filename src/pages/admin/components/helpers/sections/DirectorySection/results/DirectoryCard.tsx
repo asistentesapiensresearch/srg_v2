@@ -17,7 +17,7 @@ const cardByType = {
 };
 
 export const DirectoryCard = ({ item, primaryColor = '#337ab7', type}) => {
-    console.log({item})
+    
     const Vinculada = item.isLinked;
     const CardComponent = cardByType[type] || CardItemCol;
     return (
