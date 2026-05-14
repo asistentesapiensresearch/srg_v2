@@ -160,7 +160,7 @@ const iconsWrapperStyle = {
 const footerStyle = {
   background: "linear-gradient(135deg, #C10007 0%, #9f0006 100%)",
   width: "100%",
-  minHeight: "128px",
+  height: "100%",
   display: "grid",
   gridTemplateColumns: {
     xs: "1fr",
