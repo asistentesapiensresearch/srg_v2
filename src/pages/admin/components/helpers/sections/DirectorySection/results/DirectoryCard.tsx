@@ -17,6 +17,7 @@ const cardByType = {
 };
 
 export const DirectoryCard = ({ item, primaryColor = '#337ab7', type}) => {
+    console.log({item})
     const Vinculada = item.isLinked;
     const CardComponent = cardByType[type] || CardItemCol;
     return (
@@ -47,7 +48,7 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type}) => {
                     <AccordionDetails sx={{ p: 2, bgcolor: '#fafafa' }}>
                         {item.history.map((histItem, index) => (
                             // Renderizamos recursivamente, pero quizás quieras un diseño más simple para el historial
-                            <CardComponent item={item} primaryColor={primaryColor} />
+                            <CardComponent key={`history-${histItem.path}_${index}`} item={histItem} primaryColor={primaryColor} />
                         ))}
                     </AccordionDetails>
                 </Accordion>
