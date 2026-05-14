@@ -23,8 +23,6 @@ const iconInfoStyle = {
 // Componente interno para renderizar la tarjeta individual
 export const CardItemCol = ({ item, primaryColor }) => {
 
-    console.log({item});
-
     const { toggleItem, selectedItems } = useComparison();
 
     const itemId = item.id || item._id || JSON.stringify(item);

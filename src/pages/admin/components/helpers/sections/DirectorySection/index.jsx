@@ -17,7 +17,7 @@ import TableList from './results/TableList';
 import { ComparisonProvider } from './comparison/ComparisonContext';
 import ComparisonWidget from './comparison/ComparisonWidget';
 import ComparisonModal from './comparison/ComparisonModal';
-import { CardColSapiens } from './cards/CardColSapiens';
+import { cardByType } from './helpers/cardsByType';
 import { useAds } from '@src/pages/admin/Ads/hooks/useAds';
 import GoogleAd from '@src/pages/admin/Ads/components/GoogleAd';
 
@@ -141,6 +141,9 @@ const DirectorySectionContent = ({
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+    /* cardRandom */
+    const CardComponent = cardByType[identifier]?.cardRandom || cardByType["COL"]?.cardRandom;
 
     /* consulta de anuncios */
     const { googleAds, fetchGoogleAds } = useAds();
@@ -592,11 +595,7 @@ const DirectorySectionContent = ({
                     alignItems: "stretch",
                 }}>
                     {
-                        randomItems.map( el => {
-                            if(identifier === "COL") return <CardColSapiens key={`card_school_${el["DANE"]}`} props={el} />
-
-                            return null;
-                        })
+                        randomItems.map( el => <CardComponent key={`card_school_${el["DANE"]}`} props={el} />)
                     }
                 </Box>
             }

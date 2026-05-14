@@ -7,19 +7,12 @@ import {
 import {
     ArrowDown as ArrowDownIcon, // Corregido nombre común en lucide
 } from "lucide-react";
-import { CardItemCol } from "../cardItemByType/CardItemCol";
-import CardItemMtop from "../cardItemByType/CardItemMtop";
-
-
-const cardByType = {
-  "COL": CardItemCol,
-  "M-TOP": CardItemMtop
-};
+import { cardByType } from "../helpers/cardsByType";
 
 export const DirectoryCard = ({ item, primaryColor = '#337ab7', type}) => {
     
     const Vinculada = item.isLinked;
-    const CardComponent = cardByType[type] || CardItemCol;
+    const CardComponent = cardByType[type]?.cardDirectory || cardByType["COL"]?.cardDirectory;
     return (
         <>
 
