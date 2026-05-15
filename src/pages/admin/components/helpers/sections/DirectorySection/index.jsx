@@ -785,28 +785,36 @@ const DirectorySectionContent = ({
 
             <ComparisonWidget />
             <ComparisonModal sourceConfig={sourceConfig} />
+            <Box sx={{
+                px: 2,
+                pt: 2,
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "end",
+            }}>
+                <FormControl sx={{ minWidth: 100, mt: 4 }} size="small">
+                    <InputLabel>Registros</InputLabel>
 
-            <FormControl sx={{ minWidth: 100, mt: 4 }} size="small">
-                <InputLabel>Registros</InputLabel>
-
-                <Select
-                    value={itemsPerPage || 50}
-                    label="itemsPerPage"
-                    onChange={(e) => setItemsPerPage(e.target.value)}
-                    sx={{
-                        borderRadius: 3,
-                        bgcolor: "white"
-                    }}
-                >
-                    <MenuItem value="">
-                    </MenuItem>
-                    {[10, 25, 50, 100].map((option) => (
-                        <MenuItem key={option} value={option}>
-                            {option}
+                    <Select
+                        value={itemsPerPage || 50}
+                        label="itemsPerPage"
+                        onChange={(e) => setItemsPerPage(e.target.value)}
+                        sx={{
+                            borderRadius: 3,
+                            bgcolor: "white"
+                        }}
+                    >
+                        <MenuItem value="">
                         </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                        {[10, 25, 50, 100].map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Box>
+
         </Box>
     );
 };
