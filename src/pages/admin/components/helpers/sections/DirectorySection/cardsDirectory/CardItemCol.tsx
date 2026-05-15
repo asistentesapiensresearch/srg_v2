@@ -177,9 +177,9 @@ export const CardItemCol = ({ item, primaryColor }) => {
                     minHeight: 220,
                     overflow: "hidden",
                     gap: 1,
-                    /* backgroundImage: `url(${portada})`,
+                    backgroundImage: `url(${portada})`,
                     backgroundPosition: "center",
-                    backgroundSize: "cover", */
+                    backgroundSize: "cover",
                 }}>
                     {/* Overlay */}
                     <Box
