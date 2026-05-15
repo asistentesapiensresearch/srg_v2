@@ -49,6 +49,8 @@ const DowloandDataExcel = ({
                     })
 
                     if (!found) return;
+
+                    console.log("Datos filtrados encontrados:", found);
     
                     dispatch(
                         setSheetData({
