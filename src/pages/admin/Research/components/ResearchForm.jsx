@@ -61,7 +61,6 @@ export function ResearchForm({ research, onClose, store }) {
     }, []);
 
     useEffect(() => {
-        console.log("entro a form Investigacion");
         const loadInitialData = async () => {
             try {
                 const { data: list } = await client.models.Research.list();
@@ -128,7 +127,6 @@ export function ResearchForm({ research, onClose, store }) {
             setUploading(true);
             const path = `${TEMP_FOLDER}${Date.now()}-${file.name}`;
             const result = await uploadData({ path, data: file }).result;
-            console.log({result});
             const objectUrl = URL.createObjectURL(file);
             setIconPreview(objectUrl);
             handleFieldChange("icon", result.path);
@@ -158,7 +156,6 @@ export function ResearchForm({ research, onClose, store }) {
         }
 
         try {
-            console.log("entro a guardar investigación");
             setUploading(true);
             let finalIcon = form.icon;
 
@@ -182,8 +179,6 @@ export function ResearchForm({ research, onClose, store }) {
                 researchData,
                 research?.id
             );
-
-            console.log("errores investigación ", saveErrors);
 
             if (saveErrors) {
                 setErrors(saveErrors);
