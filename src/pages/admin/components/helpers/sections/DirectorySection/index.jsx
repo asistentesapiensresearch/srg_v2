@@ -438,10 +438,11 @@ const DirectorySectionContent = ({
     const categoryOptions = useMemo(() => {
         return [...new Set(
             masterData
-                .map(item => item["Categoría"])
+                .map(item => Number(item["Categoría"]))
                 .filter(Boolean)
-        )].sort();
+        )].sort((a, b) => a - b);
     }, [masterData]);
+
 
     const qualificationOptions = useMemo(() => {
         return [...new Set(
