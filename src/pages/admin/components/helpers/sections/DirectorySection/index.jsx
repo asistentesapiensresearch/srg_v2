@@ -470,7 +470,6 @@ const DirectorySectionContent = ({
     const paginatedData = useMemo(() => {
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        console.log({startIndex, endIndex});
         return itemsWithAds.slice(startIndex, endIndex);
     }, [itemsWithAds, page, itemsPerPage]);
 
@@ -482,7 +481,7 @@ const DirectorySectionContent = ({
 
         let adIndex = 0;
         const adsPerBlock = 3;
-        const itemsPerAdBlock = 2;
+        const itemsPerAdBlock = 6;
 
         const addAdsBlock = (renderKey) => {
             if (adIndex >= ads.length) return;
