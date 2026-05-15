@@ -380,7 +380,6 @@ const DirectorySectionContent = ({
 
         // C. Ordenamiento Visual (Grid/List sorting)
         if (order) {
-            console.log({order})
             const parts = order.split('_');
             const direction = parts.pop(); // 'ascendente' | 'descendente'
             const column = parts.join('_'); // Alias
