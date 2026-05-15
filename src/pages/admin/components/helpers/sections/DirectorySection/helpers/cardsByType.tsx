@@ -1,5 +1,5 @@
-import { CardItemCol, CardItemMtop } from "../cardsRandom";
-import { CardColSapiens } from "../cardsDirectory";
+import { CardItemCol, CardItemMtop } from "../cardsDirectory";
+import { CardColSapiens } from "../cardsRandomm";
 
 export const cardByType = {
   "COL": {

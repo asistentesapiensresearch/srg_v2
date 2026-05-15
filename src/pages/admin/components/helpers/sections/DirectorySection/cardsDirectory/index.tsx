@@ -1,5 +1,7 @@
-import { CardColSapiens } from "./CardColSapiens";
+import { CardItemCol } from "./CardItemCol";
+import { CardItemMtop } from "./CardItemMtop"
 
 export {
-    CardColSapiens
+    CardItemCol,
+    CardItemMtop
 }
