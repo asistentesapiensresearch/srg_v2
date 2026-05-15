@@ -373,7 +373,8 @@ export const CardItemCol = ({ item, primaryColor }) => {
                 Vinculada === "Sí" && (
                 <Box
                     sx={{
-                        width: 140,
+                        minWidth: 150,
+                        width: { md: "auto" },
                         p: 2,
                         display: "flex",
                         flexDirection: "column",
