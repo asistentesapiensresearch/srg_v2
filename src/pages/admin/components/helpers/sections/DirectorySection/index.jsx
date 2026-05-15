@@ -109,6 +109,7 @@ const DirectorySectionContent = ({
     enrichmentSubtype = ""
 }) => {
 
+
     // --- ESTADOS ---
     const [activeFilters, setActiveFilters] = useState(() => getInitialConfig(quickFilters).filters);
     const [selectedPreset, setSelectedPreset] = useState(() => getInitialConfig(quickFilters).label);
@@ -131,7 +132,7 @@ const DirectorySectionContent = ({
     const [searchTerm, setSearchTerm] = useState('');
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [page, setPage] = useState(1);
-    const [order, setOrder] = useState('');
+    const [order, setOrder] = useState('IDV_ascendente');
     const [viewListType, setViewListType] = useState(viewType === 'grid' ? 'grid' : 'list');
     const [adsSessionKey, setAdsSessionKey] = useState("0");
 
@@ -379,6 +380,7 @@ const DirectorySectionContent = ({
 
         // C. Ordenamiento Visual (Grid/List sorting)
         if (order) {
+            console.log({order})
             const parts = order.split('_');
             const direction = parts.pop(); // 'ascendente' | 'descendente'
             const column = parts.join('_'); // Alias
@@ -387,12 +389,24 @@ const DirectorySectionContent = ({
                 let valA = a[column] || "";
                 let valB = b[column] || "";
 
+                // Orden numérico para IDV
+                if (column === "IDV") {
+                    valA = Number(valA);
+                    valB = Number(valB);
+
+                    return direction === 'ascendente'
+                        ? valA - valB
+                        : valB - valA;
+                }
+
+                // Strings
                 if (typeof valA === 'string' && typeof valB === 'string') {
                     return direction === 'ascendente'
                         ? valA.localeCompare(valB)
                         : valB.localeCompare(valA);
                 }
-                // Fallback simple
+
+                // Fallback
                 return direction === 'ascendente'
                     ? (valA > valB ? 1 : -1)
                     : (valA < valB ? 1 : -1);
@@ -712,19 +726,6 @@ const DirectorySectionContent = ({
                                         </>
                                     )
                                 }
-                                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                    <InputLabel>Ordenar por</InputLabel>
-                                    <Select value={order} label="Ordenar por" onChange={(e) => setOrder(e.target.value)}>
-                                        <MenuItem value=""><em>Defecto</em></MenuItem>
-                                        {(sourceConfig?.orderColumns || []).map(col => {
-                                            const alias = columnAliases[col] || col;
-                                            return [
-                                                <MenuItem key={`${alias}_asc`} value={`${alias}_ascendente`}>{alias} (Asc)</MenuItem>,
-                                                <MenuItem key={`${alias}_desc`} value={`${alias}_descendente`}>{alias} (Desc)</MenuItem>
-                                            ]
-                                        })}
-                                    </Select>
-                                </FormControl>
                             </Box>
                         )}
                     </Box>

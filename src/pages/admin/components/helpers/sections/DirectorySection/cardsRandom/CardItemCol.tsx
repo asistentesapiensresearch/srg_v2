@@ -38,7 +38,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
     };
 
     // Lógica de variables
-    const Vinculada = getValue(item, ['isLinked']);
+    const Vinculada = getValue(item, ['Vinculada']);
     const portada = useImageUrl(getAlias('portadaPhoto') || "");
     const Stars = getAlias('Stars');
     const city = getAlias('Ciudad');
@@ -88,142 +88,100 @@ export const CardItemCol = ({ item, primaryColor }) => {
             transition: 'all 0.2s',
             '&:hover': { boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }
         }}>
-
-            {/* COLUMNA 1: CATEGORÍA Y ESTRELLAS */}
-            <Box sx={{
-                minWidth: 120,
-                width: { md: "auto" },
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: '#fcfcfc',
-                borderRight: '1px solid #eee',
-                ...(
-                    Vinculada ? {
-                        backgroundColor: "#c00007",
-                        
-                    } : {
-                        backgroundColor: "#fff",
-                    }
-                )
-            }}>
-                {
-                    Vinculada ? 
-                    <Box
-                        sx={{
-                            background: "linear-gradient(135deg, #ffffff, #f3f4f6)",
-                            width: 90,
-                            borderRadius: "18px",
-                            py: 1,
-                            px: 1,
-                            textAlign: "center",
-                            boxShadow: "0 6px 18px rgba(0,0,0,0.15)",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                        }}
-                        >
-                        <Typography
-                            sx={{
-                            fontSize: "1.8rem",
-                            fontWeight: 900,
-                            color: "#c00007",
-                            lineHeight: 1,
-                            letterSpacing: "0.5px",
-                            }}
-                        >
-                            D{category}
-                        </Typography>
-
-                        <Typography
-                            sx={{
-                            fontSize: "1rem",
-                            fontWeight: 600,
-                            color: "#c00007",
-                            textTransform: "uppercase",
-                            letterSpacing: "1px",
-                            }}
-                        >
-                            {qualification}
-                        </Typography>
-                    </Box>
-                    :
-                    <Box>
-                        <Typography
-                            sx={{
-                            fontSize: "1.4rem",
-                            fontWeight: 900,
-                            color: "#a09a9a",
-                            lineHeight: 1,
-                            letterSpacing: "0.5px",
-                            }}
-                        >
-                            D{category}
-                        </Typography>
-
-                        <Typography
-                            sx={{
-                                fontSize: "1.2rem",
-                                fontWeight: 600,
-                                color: "#a09a9a",
-                                textTransform: "uppercase",
-                                letterSpacing: "1px",
-                            }}
-                        >
-                            {qualification}
-                        </Typography>
-
-                    </Box>
-
-                }
-
-                {Vinculada && (
+            {/* COLUMNA 1 vinculada "Sí": Calificación */}
+            {
+                Vinculada === "Sí" && 
                     <Box sx={{
-                        display: 'flex', alignItems: 'center', gap: 0.5,
-                        mt: 1,
-                        px: 1, borderRadius: 1
+                        minWidth: 120,
+                        width: { md: "auto" },
+                        p: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bgcolor: '#fcfcfc',
+                        borderRight: '1px solid #eee',
+                        backgroundColor: "#c00007",
                     }}>
-                        <StartSection
-                            excelSource=""
-                            stars={Stars}
-                            typePage="admin"
-                            size={18}
-                            gap={2}
-                        />
-                    </Box>
-                )}
-            </Box>
+                        {
+                            <Box
+                                sx={{
+                                    background: "linear-gradient(135deg, #ffffff, #f3f4f6)",
+                                    width: 90,
+                                    borderRadius: "18px",
+                                    py: 1,
+                                    px: 1,
+                                    textAlign: "center",
+                                    boxShadow: "0 6px 18px rgba(0,0,0,0.15)",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                }}
+                                >
+                                <Typography
+                                    sx={{
+                                    fontSize: "1.8rem",
+                                    fontWeight: 900,
+                                    color: "#c00007",
+                                    lineHeight: 1,
+                                    letterSpacing: "0.5px",
+                                    }}
+                                >
+                                    D{category}
+                                </Typography>
 
-            {/* COLUMNA 2: INFO, REDES Y COMPARAR */}
-            <Box sx={{
-                flex: 1,
-                p: 2,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: {
-                    xs: "center",
-                    lg: "flex-start"
-                },
-                position: "relative",
-                width: "100%",
-                minHeight: 220,
-                overflow: "hidden",
-                gap: 1,
-                ...(Vinculada
-                ? {
+                                <Typography
+                                    sx={{
+                                    fontSize: "1rem",
+                                    fontWeight: 600,
+                                    color: "#c00007",
+                                    textTransform: "uppercase",
+                                    letterSpacing: "1px",
+                                    }}
+                                >
+                                    {qualification}
+                                </Typography>
+                            </Box>
+                        }
+
+                        <Box sx={{
+                            display: 'flex', alignItems: 'center', gap: 0.5,
+                            mt: 1,
+                            px: 1, borderRadius: 1
+                        }}>
+                            <StartSection
+                                excelSource=""
+                                stars={Stars}
+                                typePage="admin"
+                                size={18}
+                                gap={2}
+                            />
+                        </Box>
+                    </Box>
+            }
+
+            {/* COLUMNA 2 vinculada "Sí":: INFO, REDES Y COMPARAR */}
+            {
+                Vinculada === "Sí" && (
+                <Box sx={{
+                    flex: 1,
+                    p: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: {
+                        xs: "center",
+                        lg: "flex-start"
+                    },
+                    position: "relative",
+                    width: "100%",
+                    minHeight: 220,
+                    overflow: "hidden",
+                    gap: 1,
                     backgroundImage: `url(${portada})`,
                     backgroundPosition: "center",
                     backgroundSize: "cover",
-                }
-                : {
-                    backgroundColor: "#fff",
-                }),
-            }}>
-                {/* Overlay */}
-                {
-                    Vinculada &&
+                }}>
+                    {/* Overlay */}
                     <Box
                         sx={{
                         position: "absolute",
@@ -234,55 +192,52 @@ export const CardItemCol = ({ item, primaryColor }) => {
                         pointerEvents: "none",
                         }}
                     />
-                }
-                <Box sx={{ 
-                    display: 'flex',
-                    flexDirection: {
-                        xs: "column",
-                        lg: "row"
-                    }, 
-                    justifyContent: 'space-between', 
-                    alignItems: "center", 
-                    gap: 2, 
-                    width: "100%", 
-                }}>
-                    <Box>
-                        <Box className='flex gap-3'>
-                            <Typography
-                                variant="subtitle1"
-                                fontWeight="800"
-                                // 2. Si hay link es 'a', si no, es un 'div' (o 'span')
-                                component={hasLink ? "a" : "div"}
-                                // 3. Propiedades condicionales: si no hay link, se pasan como undefined
-                                href={hasLink ? link : undefined}
-                                target={hasLink ? "_blank" : undefined}
-                                rel={hasLink ? "noopener noreferrer" : undefined} // Buena práctica de seguridad
-                                sx={{
-                                    color: hasLink ? (Vinculada) ? "#fff" : '#a09a9a' : "#a09a9a",
-                                    fontWeight: "bold",
-                                    textDecoration: 'none',
-                                    // 4. Estilos visuales condicionales
-                                    cursor: hasLink ? 'pointer' : 'default',
-                                    '&:hover': {
-                                        textDecoration: hasLink ? 'underline' : 'none'
-                                    },
-                                    zIndex: 2,
-                                }}
-                            >
-                                {item.Nombre || item.Colegio || 'Sin Nombre'}
-                            </Typography>
-                        </Box>
+                    <Box sx={{ 
+                        display: 'flex',
+                        flexDirection: {
+                            xs: "column",
+                            lg: "row"
+                        }, 
+                        justifyContent: 'space-between', 
+                        alignItems: "center", 
+                        gap: 2, 
+                        width: "100%", 
+                    }}>
+                        <Box>
+                            <Box className='flex gap-3'>
+                                <Typography
+                                    variant="subtitle1"
+                                    fontWeight="800"
+                                    // 2. Si hay link es 'a', si no, es un 'div' (o 'span')
+                                    component={hasLink ? "a" : "div"}
+                                    // 3. Propiedades condicionales: si no hay link, se pasan como undefined
+                                    href={hasLink ? link : undefined}
+                                    target={hasLink ? "_blank" : undefined}
+                                    rel={hasLink ? "noopener noreferrer" : undefined} // Buena práctica de seguridad
+                                    sx={{
+                                        color: hasLink ? (Vinculada) ? "#fff" : '#a09a9a' : "#a09a9a",
+                                        fontWeight: "bold",
+                                        textDecoration: 'none',
+                                        // 4. Estilos visuales condicionales
+                                        cursor: hasLink ? 'pointer' : 'default',
+                                        '&:hover': {
+                                            textDecoration: hasLink ? 'underline' : 'none'
+                                        },
+                                        zIndex: 2,
+                                    }}
+                                >
+                                    {item.Nombre || item.Colegio || 'Sin Nombre'}
+                                </Typography>
+                            </Box>
 
-                        <Stack position="relative" zIndex={2} direction="row" spacing={0.5} alignItems="center" mb={1}>
-                            <MapPin size={14} color={`${Vinculada ? "rgba(255,255,255,0.75)" : "#a09a9a"}`} />
-                            <Typography variant="caption" color={`${Vinculada ? "rgba(255,255,255,0.75)" : "#a09a9a"}`}>
-                                {city}{department ? `, ${department}` : ''}
-                            </Typography>
-                        </Stack>
-                    </Box>
-                    {/* Boton de comparar */}
-                    {
-                        Vinculada &&
+                            <Stack position="relative" zIndex={2} direction="row" spacing={0.5} alignItems="center" mb={1}>
+                                <MapPin size={14} color={`${Vinculada ? "rgba(255,255,255,0.75)" : "#a09a9a"}`} />
+                                <Typography variant="caption" color={`${Vinculada === "Sí" ? "rgba(255,255,255,0.75)" : "#a09a9a"}`}>
+                                    {city}{department ? `, ${department}` : ''}
+                                </Typography>
+                            </Stack>
+                        </Box>
+                        {/* Boton de comparar */}
                         <Button
                             size="small"
                             variant={isSelected ? "contained" : "outlined"}
@@ -319,9 +274,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
                         >
                                 {isSelected ? "Añadido" : "Comparar"}
                         </Button>
-                    }
-                </Box>
-                {Vinculada && (
+                    </Box>
                     <Box sx={{
                         display: "flex",
                         flexWrap: "wrap",
@@ -391,9 +344,6 @@ export const CardItemCol = ({ item, primaryColor }) => {
                             )
                         }
                     </Box>
-                )}
-
-                {Vinculada && (
                     <Stack direction="row" justifyContent="space-between" alignItems="center" mt="10px">
                         <Box sx={{
                             p: 2,
@@ -415,11 +365,12 @@ export const CardItemCol = ({ item, primaryColor }) => {
                             </Typography>
                         </Box>
                     </Stack>
-                )}
-            </Box>
+                </Box>
+            )}
 
-            {/* COLUMNA 3: DIRECTOR - ya quedo */}
-            {Vinculada && (
+            {/* COLUMNA 3 vinculada "Sí":: DIRECTOR - ya quedo */}
+            {
+                Vinculada === "Sí" && (
                 <Box
                     sx={{
                         minWidth: 120,
@@ -525,31 +476,68 @@ export const CardItemCol = ({ item, primaryColor }) => {
                     >
                         {directorName}
                     </Typography>
-                    {/* redes sociales */}
-                    {/* <Stack direction="row" spacing={0} mt={1}>
-                        {
-                            socialR?.facebook && 
-                            <IconButton size="small"><Facebook size={18} color="#C10007" /></IconButton>
-                        }
-                        {
-                            socialR?.youtube && 
-                            <IconButton size="small"><Youtube size={18} color="#C10007" /></IconButton>
-                        }
-                        {
-                            socialR?.instagram && 
-                            <IconButton size="small"><Instagram size={18} color="#C10007" /></IconButton>
-                        }
-                        {
-                            socialR?.linkedin && 
-                            <IconButton size="small"><Linkedin size={18} color="#C10007" /></IconButton>
-                        }
-                        {
-                            socialR?.cvlac && 
-                            <IconButton size="small"><FileSpreadsheet size={18} color="#C10007" /></IconButton>
-                        }
-                    </Stack> */}
                 </Box>
             )}
+
+            {/* COLUMNA 1 vinculada "No": Calificación * */}
+            {
+                Vinculada === "No" && (
+                    <Box sx={{
+                        padding: 2,
+                    }}>
+                        <Typography
+                            sx={{
+                            fontSize: "16px",
+                            color: "#a09a9a",
+                            lineHeight: 1,
+                            letterSpacing: "0.5px",
+                            }}
+                        >
+                            D{category}
+                        </Typography>
+
+                        <Typography
+                            sx={{
+                                fontSize: "16px",
+                                color: "#a09a9a",
+                                textTransform: "uppercase",
+                                letterSpacing: "1px",
+                            }}
+                        >
+                            {qualification}
+                        </Typography>
+
+                    </Box>
+            )}
+            {/* COLUMNA 1 vinculada "No":: INFO * */}
+            {
+                Vinculada === "No" && (
+                     <Box sx={{ 
+                        p: 2,
+                    }}>
+                        <Typography
+                            sx={{
+                                    fontSize: "16px",
+                                    color: "#a09a9a",
+                                    lineHeight: 1,
+                                    letterSpacing: "0.5px",
+                                }}
+                            >
+                                {item.Nombre || item.Colegio || 'Sin Nombre'}
+                        </Typography>
+                        <Stack position="relative" direction="row" spacing={0.5} alignItems="center" mb={1}>
+                            <Typography variant="caption" color={"#a09a9a"}>
+                                {city}{department ? `, ${department}` : ''}
+                            </Typography>
+                        </Stack>
+                    </Box>
+            )}
+
         </Card>
     );
 };
+
+/* 
+
+
+*/
