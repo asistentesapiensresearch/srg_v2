@@ -95,7 +95,6 @@ const DirectorySectionContent = ({
     adTitle = "Publicidad",
     adText = "Tu marca aquí.",
     research,
-    itemsPerPage = 12,
     quickFilters = "[]",
 
     // Configuración Agrupación
@@ -113,6 +112,10 @@ const DirectorySectionContent = ({
     // --- ESTADOS ---
     const [activeFilters, setActiveFilters] = useState(() => getInitialConfig(quickFilters).filters);
     const [selectedPreset, setSelectedPreset] = useState(() => getInitialConfig(quickFilters).label);
+    
+    // Agrego items paginate
+    const [itemsPerPage, setItemsPerPage] = useState(50);
+    
 
     // Almacena la data YA normalizada, enriquecida y agrupada (Lista maestra)
     const [masterData, setMasterData] = useState([]);
@@ -466,6 +469,7 @@ const DirectorySectionContent = ({
     const paginatedData = useMemo(() => {
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
+        console.log({startIndex, endIndex});
         return itemsWithAds.slice(startIndex, endIndex);
     }, [itemsWithAds, page, itemsPerPage]);
 
@@ -781,6 +785,28 @@ const DirectorySectionContent = ({
 
             <ComparisonWidget />
             <ComparisonModal sourceConfig={sourceConfig} />
+
+            <FormControl sx={{ minWidth: 100, mt: 4 }} size="small">
+                <InputLabel>Registros</InputLabel>
+
+                <Select
+                    value={itemsPerPage || 50}
+                    label="itemsPerPage"
+                    onChange={(e) => setItemsPerPage(e.target.value)}
+                    sx={{
+                        borderRadius: 3,
+                        bgcolor: "white"
+                    }}
+                >
+                    <MenuItem value="">
+                    </MenuItem>
+                    {[10, 25, 50, 100].map((option) => (
+                        <MenuItem key={option} value={option}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
         </Box>
     );
 };
