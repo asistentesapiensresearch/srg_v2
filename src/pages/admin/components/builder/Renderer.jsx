@@ -1,5 +1,33 @@
 import { SECTION_REGISTRY } from './sectionRegistry';
 import { Box, Typography } from '@mui/material';
+import React from 'react';
+
+class ComponentErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        console.error('ComponentErrorBoundary caught:', error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <Typography color="error" sx={{ p: 2 }}>
+                    Error al renderizar componente: {this.props.componentName}
+                </Typography>
+            );
+        }
+
+        return this.props.children;
+    }
+}
 
 const PageRenderer = ({ sections, research }) => {
     if (!sections || sections.length === 0) {
@@ -23,13 +51,14 @@ const PageRenderer = ({ sections, research }) => {
                 }
 
                 return (
-                    <Component
-                        key={section.id}
-                        id={section.id}
-                        research={research}
-                        {...section.props}
-                        children={section.children}
-                    />
+                    <ComponentErrorBoundary key={section.id} componentName={section.type}>
+                        <Component
+                            id={section.id}
+                            research={research}
+                            {...section.props}
+                            children={section.children}
+                        />
+                    </ComponentErrorBoundary>
                 );
             })}
         </Box>

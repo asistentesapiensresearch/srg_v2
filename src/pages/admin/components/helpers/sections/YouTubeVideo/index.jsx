@@ -74,6 +74,7 @@ export default function YouTubeVideo({
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
+                        sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
                         style={{
                             position: 'absolute',
                             top: 0,
