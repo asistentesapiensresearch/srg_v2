@@ -8,6 +8,7 @@ import highchartsMap from 'highcharts/modules/map';
 import Highcharts3D from 'highcharts/highcharts-3d';
 
 import { fetchSheet } from '@src/pages/admin/components/helpers/sections/DirectorySection/fetchSheet';
+import ChartErrorBoundary from '@src/pages/admin/components/builder/helpers/ChartErrorBoundary';
 
 const initHighchartsModule = (module, H) => {
     if (typeof module === 'function') module(H);
@@ -17,6 +18,15 @@ initHighchartsModule(highchartsMore, Highcharts);
 initHighchartsModule(highchartsMap, Highcharts);
 
 initHighchartsModule(Highcharts3D, Highcharts);
+
+// Tipos de gráficos válidos
+const VALID_CHART_TYPES = [
+    'line', 'spline', 'area', 'areaspline', 'column', 'bar', 'pie', 'scatter',
+    'arearange', 'areasplinerange', 'columnrange', 'bubble', 'gauge', 'boxplot',
+    'errorbar', 'waterfall', 'polygon', 'packedbubble',
+    'column_stacked', 'column_spline', 'column_spline_3d', 'multi_combo', 'min_max_marker',
+    'map'
+];
 
 // 🔥 HOOK DE RESIZE (Funciona para Alto y Ancho)
 const useChartResize = (chartRef, wrapperRef) => {
@@ -122,6 +132,12 @@ export default function ChartSection({
         if (!data || !chartConfig) return null;
 
         let { type, xAxis, series: seriesCols } = chartConfig;
+
+        // Validar que el tipo sea válido
+        if (!VALID_CHART_TYPES.includes(type)) {
+            console.warn(`Tipo de gráfico inválido: "${type}". Usando "column" como predeterminado.`);
+            type = 'column';
+        }
 
         // Añado seriesFromChartConfig and propertiesData para obtener la propiedad de xAxis y garantizar el valor de las etiquetas, ya sea "", o cualquier valor definido en el excel
         //  año  |  col-sapiens | sapiens | .....   -> ese año sera xLabel {año: valor} o  lo siguiente las series   ""  |  col-sapiens | sapiens |  -> "" tomara el valor de los objetos {"": valor}
@@ -534,95 +550,97 @@ export default function ChartSection({
     if (!charts || charts.length === 0) return null;
 
     return (
-        <Container maxWidth="xl" disableGutters sx={{ pt: 2 }}>
-            {sectionTitle && (
-                <Typography variant="h4" fontWeight={700} textAlign="center" gutterBottom sx={{ mb: 4 }}>
-                    {sectionTitle}
-                </Typography>
-            )}
+        <ChartErrorBoundary>
+            <Container maxWidth="xl" disableGutters sx={{ pt: 2 }}>
+                {sectionTitle && (
+                    <Typography variant="h4" fontWeight={700} textAlign="center" gutterBottom sx={{ mb: 4 }}>
+                        {sectionTitle}
+                    </Typography>
+                )}
 
-            {!loading && mainOptions ? (
-                <div className='flex items-center justify-center'>
-                    <Paper
-                        ref={resizablePaperRef}
-                        elevation={0}
-                        sx={{
-                            p: 3, border: '1px solid #e0e0e0', borderRadius: 4, mb: 2,
-                            position: 'relative',
-                            // 🔥🔥🔥 CAMBIO PRINCIPAL PARA RESIZE TOTAL 🔥🔥🔥
-                            resize: 'both',       // Permite redimensionar ancho y alto
-                            overflow: 'hidden',   // Necesario para que resize funcione
-                            width: "100%",
-                            minHeight: {
-                                xs: 650,
-                                md: height
-                            },    // Altura inicial/mínima
-                            maxWidth: '100%',     // Evita que se salga del contenedor padre
-                            minWidth: 0,    // Evita que se haga diminuto
-                            height: 'auto',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            '&:hover .resize-handle': { opacity: 1 }
-                        }}
-                    >
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexShrink={0}>
-                            <Typography variant="h6" fontWeight="bold">{activeChartConfig.alias}</Typography>
-                            {charts.length > 1 && <Typography variant="caption" color="text.secondary">{activeIndex + 1} / {charts.length}</Typography>}
-                        </Box>
-
-                        <Box sx={{ flexGrow: 1, minHeight: 0, position: 'relative' }}>
-                            <HighchartsReact
-                                key={`${activeIndex}-${activeChartConfig.type}`}
-                                ref={chartComponentRef}
-                                highcharts={Highcharts}
-                                options={mainOptions}
-                                constructorType={activeChartConfig.type === 'map' ? 'mapChart' : 'chart'}
-                                containerProps={{ style: { height: '100%', width: '100%', position: 'absolute' } }}
-                            />
-                        </Box>
-
-                        {/* Indicador visual de resize diagonal */}
-                        <Box
-                            className="resize-handle"
+                {!loading && mainOptions ? (
+                    <div className='flex items-center justify-center'>
+                        <Paper
+                            ref={resizablePaperRef}
+                            elevation={0}
                             sx={{
-                                position: 'absolute', bottom: 4, right: 4, opacity: 0.3, transition: 'opacity 0.2s',
-                                pointerEvents: 'none', color: '#888', zIndex: 10
+                                p: 3, border: '1px solid #e0e0e0', borderRadius: 4, mb: 2,
+                                position: 'relative',
+                                // 🔥🔥🔥 CAMBIO PRINCIPAL PARA RESIZE TOTAL 🔥🔥🔥
+                                resize: 'both',       // Permite redimensionar ancho y alto
+                                overflow: 'hidden',   // Necesario para que resize funcione
+                                width: "100%",
+                                minHeight: {
+                                    xs: 650,
+                                    md: height
+                                },    // Altura inicial/mínima
+                                maxWidth: '100%',     // Evita que se salga del contenedor padre
+                                minWidth: 0,    // Evita que se haga diminuto
+                                height: 'auto',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                '&:hover .resize-handle': { opacity: 1 }
                             }}
                         >
-                            <Scaling size={20} />
-                        </Box>
-                    </Paper>
-                </div>
-            ) : (
-                loading && !activeData && <Box height={height} width={"100%"} display="flex" justifyContent="center" alignItems="center" bgcolor="#f9fafb" borderRadius={4}><CircularProgress /></Box>
-            )}
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexShrink={0}>
+                                <Typography variant="h6" fontWeight="bold">{activeChartConfig.alias}</Typography>
+                                {charts.length > 1 && <Typography variant="caption" color="text.secondary">{activeIndex + 1} / {charts.length}</Typography>}
+                            </Box>
 
-            {showThumbnails && (
-                <Box sx={{ position: 'relative', px: { xs: 0, md: 6 } }}>
-                    <IconButton onClick={handlePrev} sx={{ display: { xs: 'none', md: 'flex' }, position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 2, bgcolor: 'white', border: '1px solid #ddd' }}><ChevronLeft size={20} /></IconButton>
-                    <Grid ref={scrollRef} container spacing={2} wrap="nowrap" sx={{ overflowX: 'auto', pb: 2, scrollBehavior: 'smooth', '&::-webkit-scrollbar': { height: 6 } }}>
-                        {charts.map((chart, idx) => {
-                            const data = allChartsData[chart.sheetId || chart.sheetName];
-                            const thumbOptions = getChartOptions(chart, data, true);
-                            const isActive = idx === activeIndex;
-                            return (
-                                <Grid key={idx} item sx={{ minWidth: 200, maxWidth: 220, flexShrink: 0 }}>
-                                    <Paper
-                                        elevation={isActive ? 3 : 0} onClick={() => setActiveIndex(idx)}
-                                        sx={{ p: 1.5, cursor: 'pointer', border: isActive ? `2px solid ${chart.color || '#1976d2'}` : '1px solid #eee', borderRadius: 3, opacity: isActive ? 1 : 0.7, transition: 'all 0.3s ease' }}
-                                    >
-                                        <Box height={80} mb={1} bgcolor="#f9fafb" borderRadius={2} overflow="hidden">
-                                            {data ? <HighchartsReact key={`${idx}-${chart.type}`} highcharts={Highcharts} options={thumbOptions} constructorType={chart.type === 'map' ? 'mapChart' : 'chart'} /> : <Box height="100%" display="flex" justifyContent="center" alignItems="center">{chart.type === 'map' ? <MapIcon size={20} color="#ddd" /> : <BarChart2 size={20} color="#ddd" />}</Box>}
-                                        </Box>
-                                        <Typography variant="caption" fontWeight="bold" noWrap display="block">{chart.alias}</Typography>
-                                    </Paper>
-                                </Grid>
-                            );
-                        })}
-                    </Grid>
-                    <IconButton onClick={handleNext} sx={{ display: { xs: 'none', md: 'flex' }, position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 2, bgcolor: 'white', border: '1px solid #ddd' }}><ChevronRight size={20} /></IconButton>
-                </Box>
-            )}
-        </Container>
+                            <Box sx={{ flexGrow: 1, minHeight: 0, position: 'relative' }}>
+                                <HighchartsReact
+                                    key={`${activeIndex}-${activeChartConfig.type}`}
+                                    ref={chartComponentRef}
+                                    highcharts={Highcharts}
+                                    options={mainOptions}
+                                    constructorType={activeChartConfig.type === 'map' ? 'mapChart' : 'chart'}
+                                    containerProps={{ style: { height: '100%', width: '100%', position: 'absolute' } }}
+                                />
+                            </Box>
+
+                            {/* Indicador visual de resize diagonal */}
+                            <Box
+                                className="resize-handle"
+                                sx={{
+                                    position: 'absolute', bottom: 4, right: 4, opacity: 0.3, transition: 'opacity 0.2s',
+                                    pointerEvents: 'none', color: '#888', zIndex: 10
+                                }}
+                            >
+                                <Scaling size={20} />
+                            </Box>
+                        </Paper>
+                    </div>
+                ) : (
+                    loading && !activeData && <Box height={height} width={"100%"} display="flex" justifyContent="center" alignItems="center" bgcolor="#f9fafb" borderRadius={4}><CircularProgress /></Box>
+                )}
+
+                {showThumbnails && (
+                    <Box sx={{ position: 'relative', px: { xs: 0, md: 6 } }}>
+                        <IconButton onClick={handlePrev} sx={{ display: { xs: 'none', md: 'flex' }, position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 2, bgcolor: 'white', border: '1px solid #ddd' }}><ChevronLeft size={20} /></IconButton>
+                        <Grid ref={scrollRef} container spacing={2} wrap="nowrap" sx={{ overflowX: 'auto', pb: 2, scrollBehavior: 'smooth', '&::-webkit-scrollbar': { height: 6 } }}>
+                            {charts.map((chart, idx) => {
+                                const data = allChartsData[chart.sheetId || chart.sheetName];
+                                const thumbOptions = getChartOptions(chart, data, true);
+                                const isActive = idx === activeIndex;
+                                return (
+                                    <Grid key={idx} item sx={{ minWidth: 200, maxWidth: 220, flexShrink: 0 }}>
+                                        <Paper
+                                            elevation={isActive ? 3 : 0} onClick={() => setActiveIndex(idx)}
+                                            sx={{ p: 1.5, cursor: 'pointer', border: isActive ? `2px solid ${chart.color || '#1976d2'}` : '1px solid #eee', borderRadius: 3, opacity: isActive ? 1 : 0.7, transition: 'all 0.3s ease' }}
+                                        >
+                                            <Box height={80} mb={1} bgcolor="#f9fafb" borderRadius={2} overflow="hidden">
+                                                {data ? <HighchartsReact key={`${idx}-${chart.type}`} highcharts={Highcharts} options={thumbOptions} constructorType={chart.type === 'map' ? 'mapChart' : 'chart'} /> : <Box height="100%" display="flex" justifyContent="center" alignItems="center">{chart.type === 'map' ? <MapIcon size={20} color="#ddd" /> : <BarChart2 size={20} color="#ddd" />}</Box>}
+                                            </Box>
+                                            <Typography variant="caption" fontWeight="bold" noWrap display="block">{chart.alias}</Typography>
+                                        </Paper>
+                                    </Grid>
+                                );
+                            })}
+                        </Grid>
+                        <IconButton onClick={handleNext} sx={{ display: { xs: 'none', md: 'flex' }, position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 2, bgcolor: 'white', border: '1px solid #ddd' }}><ChevronRight size={20} /></IconButton>
+                    </Box>
+                )}
+            </Container>
+        </ChartErrorBoundary>
     );
 }
