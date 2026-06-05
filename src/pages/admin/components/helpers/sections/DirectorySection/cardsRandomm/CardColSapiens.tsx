@@ -1,252 +1,377 @@
+import { Box, Tooltip } from "@mui/material";
+import { Quote } from "lucide-react";
 import { useImageUrl } from "@src/hooks/useImageUrl";
 import StartSection from "../../StartsSection";
 import DynamicIcon from "@src/pages/admin/components/builder/helpers/DynamicIcon";
 
-export const CardColSapiens = ({ props }) => {
-  const logo        = useImageUrl(props?.logo)        || "";
-  const portada     = useImageUrl(props?.portadaPhoto) || "";
-  const rectorPhoto = useImageUrl(props?.rectorPhoto)  || "";
+const cardStyle = {
+  display: "flex",
+  flexDirection: "column",
+  backgroundColor: "#fff",
+  height: "100%",
+  overflow: "hidden",
+  boxShadow: "0 6px 24px rgba(0,0,0,0.1)",
+  borderRadius: "12px",
+  '&:hover': {
+    transform: "scale(1.03)",
+    boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
+  }
+};
 
-  const ciudad      = props["Ciudad"]      || "";
-  const departamento = props["Departamento"] || "";
-  const categoria   = props["Categoría"]   || "";
-  const calificacion = props["Calificación"] || "";
-  const nombre      = props["Colegios"]    || "Sin nombre";
-  const stars       = props["Stars"];
-  const path        = props.path           || "#";
-  const rectorName  = props.rectorName     || "";
+const headerStyle = (portada: string) => ({
+  position: "relative",
+  backgroundImage: `url(${portada})`,
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  width: "100%",
+  minHeight: 220,
+  overflow: "hidden",
+});
+
+const overlayStyle = {
+  position: "absolute",
+  inset: 0,
+  background:
+    "linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.78))",
+  zIndex: 1,
+};
+
+const headerContentStyle = {
+  position: "relative",
+  zIndex: 2,
+  height: "100%",
+  px: { xs: 3, md: 4 },
+  py: 3,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: { xs: "center", md: "stretch" },
+  gap: 1,
+};
+
+const topHeaderStyle = {
+  display: "flex",
+  flexDirection: { xs: "column", md: "row" },
+  justifyContent: { xs: "center", md: "space-between" },
+  alignItems: "center",
+  gap: 2,
+};
+
+const logoAndBadgesStyle = {
+  display: "flex",
+  flexDirection: { xs: "column", md: "row" },
+  justifyContent: { xs: "center", md: "flex-start" },
+  alignItems: "center",
+  gap: 2,
+};
+
+const logoStyle: React.CSSProperties = {
+  width: 70,
+  height: 70,
+  objectFit: "contain",
+};
+
+const badgeGroupStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: 1,
+};
+
+const badgePrimaryStyle = {
+  backgroundColor: "rgba(193, 0, 7, 0.85)",
+  color: "#fff",
+  px: 1.8,
+  py: 0.6,
+  borderRadius: "999px",
+  fontSize: { xs: "14px", md: "20px" },
+  fontWeight: 800,
+  minWidth: "44px",
+  textAlign: "center",
+  backdropFilter: "blur(4px)",
+  border: "1px solid rgba(255,255,255,0.2)",
+  transition: "all 0.2s ease",
+  '&:hover': {
+    fontSize: {
+      md: "24px",
+    }
+  }
+};
+
+const badgeGlassStyle = {
+  backgroundColor: "rgba(255,255,255,0.16)",
+  color: "#fff",
+  px: 1.8,
+  py: 0.6,
+  borderRadius: "999px",
+  fontSize: { xs: "14px", md: "20px" },
+  fontWeight: 700,
+  border: "1px solid rgba(255,255,255,0.35)",
+  backdropFilter: "blur(4px)",
+  minWidth: "58px",
+  textAlign: "center",
+  transition: "all 0.2s ease",
+  '&:hover': {
+    fontSize: {
+      md: "24px",
+    }
+  }
+};
+
+const titleStyle: React.CSSProperties = {
+  margin: 0,
+  lineHeight: 1.2,
+  color: "#fff",
+  fontWeight: "bold",
+  textDecoration: "none",
+};
+
+const locationStyle = {
+  color: "rgba(255,255,255,0.75)",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "4px",
+};
+
+const iconInfoStyle = {
+  width: 38,
+  height: 38,
+  borderRadius: "50%",
+  backgroundColor: "#fff5f5",
+  border: "1px solid #f1d0d2",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const infoSectionStyle = {
+  backgroundColor: "#fff",
+  px: { xs: 3, md: 4 },
+  py: 3,
+};
+
+const iconsWrapperStyle = {
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: 1.5,
+};
+
+const footerStyle = {
+  background: "linear-gradient(135deg, #C10007 0%, #9f0006 100%)",
+  width: "100%",
+  height: "100%",
+  display: "grid",
+  gridTemplateColumns: {
+    xs: "1fr",
+    md: "0.9fr 1.4fr",
+  },
+  alignItems: "center",
+  gap: { xs: 2, md: 3 },
+  px: { xs: 2.5, md: 3 },
+  py: { xs: 2.5, md: 2 },
+};
+
+const rectorBoxStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: 1.8,
+  justifyContent: { xs: "center", md: "flex-start" },
+};
+
+const rectorPhotoStyle = (rectorPhoto: string) => ({
+  width: 64,
+  height: 64,
+  flexShrink: 0,
+  backgroundImage: rectorPhoto ? `url(${rectorPhoto})` : "none",
+  backgroundColor: "#e5e7eb",
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
+  borderRadius: "50%",
+  border: "2px solid rgba(255,255,255,0.45)",
+  boxShadow: "0 6px 14px rgba(0,0,0,0.2)",
+});
+
+const rectorLabelStyle = {
+  fontSize: "10px",
+  fontWeight: 700,
+  letterSpacing: "2px",
+  textTransform: "uppercase",
+  opacity: 0.7,
+  mb: 0.4,
+};
+
+const rectorNameStyle = {
+  fontWeight: 800,
+  fontSize: { xs: "13px", md: "15px" },
+  lineHeight: 1.2,
+};
+
+const quoteBoxStyle = {
+  position: "relative",
+  color: "#fff",
+  pl: { xs: 0, md: 2.5 },
+  pt: { xs: 1.5, md: 0 },
+  borderLeft: {
+    xs: "none",
+    md: "1px solid rgba(255,255,255,0.25)",
+  },
+  textAlign: { xs: "center", md: "left" },
+};
+
+const quoteTextStyle = {
+  m: 0,
+  fontSize: { xs: "13px", md: "14px" },
+  lineHeight: 1.45,
+  fontWeight: 500,
+  opacity: 0.95,
+  display: "-webkit-box",
+  WebkitLineClamp: 4,
+  WebkitBoxOrient: "vertical",
+  overflow: "hidden",
+};
+
+export const CardColSapiens = ({ props }) => {
+
+  const logo = useImageUrl(props?.logo) || "";
+  const portada = useImageUrl(props?.portadaPhoto) || "";
+  const rectorPhoto = useImageUrl(props?.rectorPhoto) || "";
 
   return (
     <a
-      href={path}
+      href={props.path}
       target="_blank"
-      rel="noopener noreferrer"
-      style={{ textDecoration: "none", color: "inherit", display: "block" }}
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+        display: "block",
+      }}
     >
-      <div
-        style={{
-          position: "relative",
-          borderRadius: 20,
-          overflow: "hidden",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.28)",
-          transition: "transform 0.25s ease, box-shadow 0.25s ease",
-          aspectRatio: "4 / 3",
-          minHeight: 240,
-          cursor: "pointer",
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = "scale(1.025)";
-          e.currentTarget.style.boxShadow = "0 16px 48px rgba(0,0,0,0.38)";
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = "scale(1)";
-          e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.28)";
-        }}
-      >
+      <Box sx={cardStyle}>
+        <Box sx={headerStyle(portada)}>
+          <Box sx={overlayStyle} />
 
-        {/* ── Background image ───────────────────────────────────── */}
-        {portada ? (
-          <img
-            src={portada}
-            alt={nombre}
-            style={{
-              position: "absolute", inset: 0,
-              width: "100%", height: "100%",
-              objectFit: "cover", zIndex: 0,
-            }}
-          />
-        ) : (
-          <div style={{
-            position: "absolute", inset: 0, zIndex: 0,
-            background: "linear-gradient(160deg, #1a1a2e 0%, #16213e 100%)",
-          }} />
-        )}
+          <Box sx={headerContentStyle}>
+            <Box sx={topHeaderStyle}>
+              <Box sx={logoAndBadgesStyle}>
+                {logo ? (
+                  <img
+                    src={logo}
+                    alt={props["Colegios"] || "Logo colegio"}
+                    style={logoStyle}
+                  />
+                ) : (
+                  <Box sx={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>
+                    Sin logo
+                  </Box>
+                )}
+              </Box>
 
-        {/* ── Overlay gradient ───────────────────────────────────── */}
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 1,
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.10) 40%, rgba(0,0,0,0.75) 100%)",
-        }} />
+              <Box sx={badgeGroupStyle}>
+                <Box sx={badgePrimaryStyle}>D{props["Categoría"]}</Box>
+                <Box sx={badgeGlassStyle}>{props["Calificación"]}</Box>
+              </Box>
+            </Box>
 
-        {/* ══════════════════════════════════════════════════════════
-            TOP ROW — Micrositio + D1 + AAA+
-        ══════════════════════════════════════════════════════════ */}
-        <div style={{
-          position: "absolute", top: 0, left: 0, right: 0,
-          zIndex: 3,
-          padding: "12px 12px 0",
-          display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap",
-        }}>
+            <h5 style={titleStyle}>{props["Colegios"]}</h5>
 
-          {/* Micrositio pill */}
-          <div style={{
-            backgroundColor: "#c10007",
-            color: "#fff",
-            fontSize: 10,
-            fontWeight: 700,
-            padding: "5px 13px",
-            borderRadius: 999,
-            border: "1px solid rgba(255,255,255,0.2)",
-            backdropFilter: "blur(6px)",
-            letterSpacing: "0.03em",
-            lineHeight: 1,
-            textTransform: "uppercase",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          }}>
-            Micrositio
-          </div>
+            <Box sx={locationStyle}>
+              <DynamicIcon name="MapPin" color="rgba(255,255,255,0.75)" size={26} />
+              {props["Ciudad"]}, {props["Departamento"]} | <DynamicIcon name="Flag" color="#fff" size={14} /> {props["Aniversario"]} años
+            </Box>
 
-          {/* D1 / CATEGORÍA */}
-          <div style={{
-            backgroundColor: "#c10007",
-            color: "#fff",
-            borderRadius: 10,
-            padding: "4px 11px",
-            minWidth: 50,
-            border: "1px solid rgba(255,255,255,0.18)",
-            backdropFilter: "blur(6px)",
-            lineHeight: 1.15,
-            textAlign: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          }}>
-            <div style={{ fontSize: 15, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
-              D{categoria}
-            </div>
-            <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", opacity: 0.85 }}>
-              Categoría
-            </div>
-          </div>
-
-          {/* AAA+ / CALIFICACIÓN — gold */}
-          <div style={{
-            background: "linear-gradient(135deg, #f5c518 0%, #c8960c 100%)",
-            color: "#2d1a00",
-            borderRadius: 10,
-            padding: "4px 11px",
-            minWidth: 54,
-            border: "1px solid rgba(255,255,255,0.25)",
-            backdropFilter: "blur(6px)",
-            lineHeight: 1.15,
-            textAlign: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
-          }}>
-            <div style={{ fontSize: 15, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
-              {calificacion}
-            </div>
-            <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", opacity: 0.72 }}>
-              Calificación
-            </div>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            BOTTOM ZONE — Stars+Name+Location (left) | Rector (right)
-        ══════════════════════════════════════════════════════════ */}
-        <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0,
-          zIndex: 3,
-          padding: "0 12px 14px",
-          display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "space-between",
-          gap: 10,
-        }}>
-
-          {/* Left: Stars + Name + Location */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ marginBottom: 5 }}>
+            <Box sx={{ ml: { xs: 0, md: 1 } }}>
               <StartSection
                 excelSource=""
-                stars={stars}
+                stars={props["Stars"]}
                 typePage="admin"
-                size={18}
-                gap={4}
+                size={20}
+                gap={8}
               />
-            </div>
-            <div style={{
-              fontSize: "clamp(14px, 3.5vw, 19px)",
-              fontWeight: 800,
-              color: "#fff",
-              lineHeight: 1.2,
-              letterSpacing: "-0.01em",
-              marginBottom: 4,
-              textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-            }}>
-              {nombre}
-            </div>
-            <div style={{
-              display: "flex", alignItems: "center", gap: 4,
-              color: "rgba(255,255,255,0.75)", fontSize: 11,
-            }}>
-              <DynamicIcon name="MapPin" color="rgba(255,255,255,0.65)" size={12} />
-              <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {ciudad}{departamento ? `, ${departamento}` : ""}
-              </span>
-            </div>
-          </div>
+            </Box>
+          </Box>
+        </Box>
 
-          {/* Right: Rector photo + label + name */}
-          <div style={{
-            display: "flex", flexDirection: "column", alignItems: "center",
-            flexShrink: 0, gap: 3,
-          }}>
-            {/* Photo with logo badge */}
-            <div style={{ position: "relative" }}>
-              {rectorPhoto ? (
-                <img
-                  src={rectorPhoto}
-                  alt={rectorName}
-                  style={{
-                    width: 62, height: 62,
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    border: "2.5px solid rgba(255,255,255,0.55)",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
-                    display: "block",
-                  }}
-                />
-              ) : (
-                <div style={{
-                  width: 62, height: 62, borderRadius: "50%",
-                  backgroundColor: "#4b5563",
-                  border: "2.5px solid rgba(255,255,255,0.4)",
-                  boxShadow: "0 4px 16px rgba(0,0,0,0.35)",
-                }} />
-              )}
+        <Box sx={infoSectionStyle}>
+          <Box sx={iconsWrapperStyle}>
+            {props["Sec"]?.length > 0 && (
+              <Tooltip title={props["Sec"]} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="Building2" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
 
-              {/* School logo badge */}
-              {logo && (
-                <div style={{
-                  position: "absolute", bottom: -3, right: -4,
-                  width: 22, height: 22, borderRadius: "50%", overflow: "hidden",
-                  border: "2px solid rgba(255,255,255,0.55)",
-                  backgroundColor: "#fff",
-                  boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-                }}>
-                  <img src={logo} alt="logo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-              )}
-            </div>
+            {props["Cal"]?.length > 0 && (
+              <Tooltip title={`Calendario ${props["Cal"]}`} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="CalendarDays" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
 
-            {/* Label + Name */}
-            <div style={{ textAlign: "center" }}>
-              <div style={{
-                fontSize: 9, color: "rgba(255,255,255,0.58)",
-                fontWeight: 500, letterSpacing: "0.04em", lineHeight: 1,
-              }}>
-                Rectoría
-              </div>
-              <div style={{
-                fontSize: 11, fontWeight: 700, color: "#fff",
-                lineHeight: 1.25, maxWidth: 80, textAlign: "center",
-                textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-              }}>
-                {rectorName}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            {props["Orientación religiosa"]?.length > 0 && (
+              <Tooltip title={props["Orientación religiosa"]} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="Church" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Género"]?.length > 0 && (
+              <Tooltip title={props["Género"]} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="Users" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Zon"]?.length > 0 && (
+              <Tooltip title={props["Zon"]} arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="MapPinned" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Doble titulación"] === "Sí" && (
+              <Tooltip title="Doble Titulación" arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="GraduationCap" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+
+            {props["Intercambios o salidas internacionales"] === "Sí" && (
+              <Tooltip title="Intercambios o salidas internacionales" arrow>
+                <Box sx={iconInfoStyle}>
+                  <DynamicIcon name="Plane" color="#C10007" size={20} />
+                </Box>
+              </Tooltip>
+            )}
+          </Box>
+        </Box>
+
+        <Box sx={footerStyle}>
+          <Box sx={rectorBoxStyle}>
+            <Box sx={rectorPhotoStyle(rectorPhoto)} />
+
+            <Box sx={{ color: "#fff" }}>
+              <Box sx={rectorLabelStyle}>Rectoría</Box>
+              <Box sx={rectorNameStyle}>
+                {props.rectorName || "Sin rector registrado"}
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={quoteBoxStyle}>
+            <Box component="p" sx={quoteTextStyle}>
+              {props.rectorTestimonial || "El rector no agregado testimonial"}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
     </a>
   );
 };

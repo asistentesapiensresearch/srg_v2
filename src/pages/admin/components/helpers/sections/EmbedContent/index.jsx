@@ -75,8 +75,6 @@ export default function EmbedContent({
                   display: "block"
               }}
               allowFullScreen
-              sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-presentation"
-              title="Embedded Content"
           />
         </EmbedWrapper>
   );
