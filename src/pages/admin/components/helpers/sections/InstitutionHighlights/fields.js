@@ -9,10 +9,10 @@ export const fieldsSection = {
             "sector": "Sec",
             "calendario": "Cal",
             "género": "Gén",
-            "estudiantes": "ESTUDIANTES",
-            "profesores": "PROFESORES",
-            "icfes cat": "CATEGORIA ICFES",
-            "icfes ind": "INDICE TOTAL ACTUAL ICFES",
+            "estudiantes": "Estudiantes",
+            "profesores": "Profesores",
+            "icfes cat": "Nivel ICFES",
+            "icfes ind": "Índice ICFES",
         }
     }
 }
