@@ -1,548 +1,474 @@
-import { Avatar, Box, Button, Card, IconButton, Rating, Stack, Tooltip, Typography } from "@mui/material";
+import { Avatar, Card, Tooltip, useMediaQuery } from "@mui/material";
 import { useComparison } from "../comparison/ComparisonContext";
 import { getValue } from "../results/utils";
-import { ArrowLeftRight, CalendarDays, Check, Flag, GraduationCap, MapPin, Plane, Facebook, Instagram, Linkedin, Twitter, Youtube, FileSpreadsheet } from "lucide-react";
 import { StorageImage } from "@aws-amplify/ui-react-storage";
-import DynamicIcon from "@src/pages/admin/components/builder/helpers/DynamicIcon";
 import { useImageUrl } from "@src/hooks/useImageUrl";
 import StartSection from "../../StartsSection";
 import ImgFlagsCountry from "../results/ImgFlagsCountry";
+import DynamicIcon from "@src/pages/admin/components/builder/helpers/DynamicIcon";
 
-
-const iconInfoStyle = {
-  width: 25,
-  height: 25,
-  borderRadius: "50%",
-  backgroundColor: "#c00007",
-  border: "1px solid #f1d0d2",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-};
-
-// Componente interno para renderizar la tarjeta individual
 export const CardItemCol = ({ item, primaryColor }) => {
+    const { selectedItems, toggleItem } = useComparison();
+    const isXs = useMediaQuery("(max-width:380px)");
 
-    const { toggleItem, selectedItems } = useComparison();
+    const RED = primaryColor || "#c00007";
 
-    const itemId = item.id || item._id || JSON.stringify(item);
-    const isSelected = selectedItems.some(i => (i.id || i._id || JSON.stringify(i)) === itemId);
+    const itemId   = item.id || item._id || JSON.stringify(item);
+    const isSelected = selectedItems.some(
+        (i) => (i.id || i._id || JSON.stringify(i)) === itemId
+    );
 
     const getAlias = (column) => {
-        // Validación segura: si existe y no es null/undefined
-        if (item[column] !== undefined && item[column] !== null) {
-            return item[column];
-        }
-        // Retornamos un fallback visual o 0 si prefieres
+        if (item[column] !== undefined && item[column] !== null) return item[column];
         return "";
     };
 
-    // Lógica de variables
-    const Vinculada = getValue(item, ['Vinculada']);
-    const portada = useImageUrl(getAlias('portadaPhoto') || "");
-    const Stars = getAlias('Stars');
-    const city = getAlias('Ciudad');
-    const department = getAlias('Departamento');
-    const years = getAlias('Antiguedad');
-    const dateRange = getAlias('Año');
-    const category = getAlias('Categoría'); // D1
-    const qualification = getAlias('Calificación'); // AAA+
-    const accreditationMain = getAlias('Siglas acreditación');
-    const accreditationSec = getAlias('Siglas certificación');
-    const link = getValue(item, ['path']);
-    const hasLink = Boolean(link) && Vinculada;
-    const logoColegio = getValue(item, ['logo', 'imagen_institucion']);
-    
-    const gender = getAlias('Género');
-    const sector = getAlias('Sec');
-    const calendar = getAlias('Jornada');
-    const orientacion = getAlias('Orientación religiosa');
-    const zona = getAlias('Zon');
-    const dtitulacion = getAlias('Doble titulación');
-    const intercambioSalidas = getAlias('Intercambios o salidas internacionales');
-    const languages = getAlias('languages');
-    const nuevo = getAlias('Nuevos');
+    const Vinculada         = getValue(item, ["Vinculada"]);
+    const Stars             = getAlias("Stars");
+    const city              = getAlias("Ciudad");
+    const department        = getAlias("Departamento");
+    const category          = getAlias("Categoría");
+    const qualification     = getAlias("Calificación");
+    const accreditationMain = getAlias("Siglas acreditación");
+    const accreditationSec  = getAlias("Siglas certificación");
+    const link              = getValue(item, ["path"]);
+    const hasLink           = Boolean(link) && Vinculada;
+    const logoColegio       = getValue(item, ["logo", "imagen_institucion"]);
+    const portadaPath       = getValue(item, ["portadaPhoto", "portada"]);
+    const languages         = getAlias("languages");
+    const nuevo             = getAlias("Nuevos");
+    const directorName      = getValue(item, ["rectorName"]);
+    const directorPhoto     = getValue(item, ["director_foto", "foto_rector", "rectorPhoto"]);
+    const socialRector      = getValue(item, ["rectorSocial"]);
 
-    // Director
-    const directorName = getValue(item, ['rectorName']);
-    const directorPhoto = getValue(item, ['director_foto', 'foto_rector', 'rectorPhoto']);
-    const socialRector = getValue(item, ['rectorSocial']);
+    // Info icons data
+    const sec               = getAlias("Sec");
+    const cal               = getAlias("Cal");
+    const religion          = getAlias("Orientación religiosa");
+    const genero            = getAlias("Género");
+    const zona              = getAlias("Zon");
+    const dobleTitulacion   = getAlias("Doble titulación");
+    const intercambios      = getAlias("Intercambios o salidas internacionales");
+    const bilingue          = getAlias("Bilingüe");
+
     let socialR;
     if (socialRector) {
-        if (typeof socialRector == 'string') {
-            socialR = JSON.parse(socialRector);
-        }
+        socialR = typeof socialRector === "string" ? JSON.parse(socialRector) : socialRector;
     }
-    const directorWeb = socialR?.linkedin ?? getAlias('DirectorWeb');
+    const directorWeb = socialR?.linkedin ?? getAlias("DirectorWeb");
 
-    // 🔥 IMPORTANTE: El return que faltaba
+    const accreditations = [
+        ...(accreditationMain
+            ? accreditationMain.split(/\s*[\+\/]\s*/).map((s) => s.trim()).filter(Boolean)
+            : []),
+        ...(accreditationSec
+            ? accreditationSec.split(/\s*[\+\/]\s*/).map((s) => s.trim()).filter(Boolean)
+            : []),
+    ];
+
+    const infoIcons = [
+        sec       && { icon: "Building2",    label: sec },
+        cal       && { icon: "CalendarDays", label: `Calendario ${cal}` },
+        religion  && { icon: "Church",       label: religion },
+        genero    && { icon: "Users",        label: genero },
+        zona      && { icon: "MapPinned",    label: zona },
+        dobleTitulacion === "Sí" && { icon: "GraduationCap", label: "Doble Titulación" },
+        intercambios    === "Sí" && { icon: "Plane",         label: "Intercambios internacionales" },
+        bilingue        === "Sí" && { icon: "Globe",         label: "Bilingüe" },
+    ].filter(Boolean);
+
+    // ── NOT LINKED ───────────────────────────────────────────────────────────────
+    if (Vinculada !== "Sí") {
+        return (
+            <Card sx={{
+                borderRadius: "14px",
+                border: "1px solid #e5e7eb",
+                overflow: "hidden",
+                opacity: 0.5,
+                p: "10px 12px",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "4px 8px",
+                alignItems: "center",
+            }}>
+                <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 700 }}>D{category}</span>
+                <span style={{ fontSize: 11, color: "#9ca3af" }}>{qualification}</span>
+                <span style={{ fontSize: 12, color: "#9ca3af" }}>{item.Nombre || item.Colegio || "Sin Nombre"}</span>
+                <span style={{ fontSize: 10, color: "#9ca3af" }}>{city}{department ? `, ${department}` : ""}</span>
+            </Card>
+        );
+    }
+
+    // ── LINKED ───────────────────────────────────────────────────────────────────
     return (
         <Card sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', lg: 'row' },
-            mb: 2,
-            borderRadius: 2,
-            overflow: 'hidden',
-            border: isSelected ? `2px solid ${primaryColor}` : '1px solid #e0e0e0',
-            position: 'relative',
-            transition: 'all 0.2s',
-            '&:hover': { boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }
+            borderRadius: "18px",
+            overflow: "hidden",
+            border: isSelected ? `2px solid ${RED}` : "1px solid #e5e7eb",
+            boxShadow: isSelected ? `0 0 0 3px ${RED}22` : "0 4px 16px rgba(0,0,0,0.09)",
+            transition: "all 0.25s ease",
+            "&:hover": {
+                boxShadow: "0 12px 32px rgba(0,0,0,0.14)",
+                transform: "translateY(-2px)",
+            },
+            display: "flex",
+            flexDirection: "column",
+            backgroundColor: "#fff",
+            width: "100%",
         }}>
-            {/* COLUMNA 1 vinculada "Sí": Calificación */}
-            {
-                Vinculada === "Sí" && 
-                    <Box sx={{
-                        minWidth: 120,
-                        width: { md: "auto" },
-                        p: 2,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        bgcolor: '#fcfcfc',
-                        borderRight: '1px solid #eee',
-                        backgroundColor: "#c00007",
-                    }}>
-                        {
-                            <Box
-                                sx={{
-                                    background: "linear-gradient(135deg, #ffffff, #f3f4f6)",
-                                    width: 90,
-                                    borderRadius: "18px",
-                                    py: 1,
-                                    px: 1,
-                                    textAlign: "center",
-                                    boxShadow: "0 6px 18px rgba(0,0,0,0.15)",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                }}
-                                >
-                                <Typography
-                                    sx={{
-                                    fontSize: "1.8rem",
-                                    fontWeight: 900,
-                                    color: "#c00007",
-                                    lineHeight: 1,
-                                    letterSpacing: "0.5px",
-                                    }}
-                                >
-                                    D{category}
-                                </Typography>
 
-                                <Typography
-                                    sx={{
-                                    fontSize: "1rem",
-                                    fontWeight: 600,
-                                    color: "#c00007",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "1px",
-                                    }}
-                                >
-                                    {qualification}
-                                </Typography>
-                            </Box>
-                        }
+            {/* ══════════════════════════════════════════
+                IMAGE ZONE — portada with overlay
+            ══════════════════════════════════════════ */}
+            <div style={{ position: "relative", overflow: "hidden", minHeight: isXs ? 210 : 240 }}>
 
-                        <Box sx={{
-                            display: 'flex', alignItems: 'center', gap: 0.5,
-                            mt: 1,
-                            px: 1, borderRadius: 1
-                        }}>
-                            <StartSection
-                                excelSource=""
-                                stars={Stars}
-                                typePage="admin"
-                                size={18}
-                                gap={2}
-                            />
-                        </Box>
-                    </Box>
-            }
+                {/* Portada background */}
+                {portadaPath ? (
+                    <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+                        <StorageImage
+                            alt={item.Nombre || item.Colegio || "portada"}
+                            path={portadaPath}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                    </div>
+                ) : (
+                    <div style={{
+                        position: "absolute", inset: 0, zIndex: 0,
+                        background: `linear-gradient(160deg, rgba(15,10,30,0.92) 0%, rgba(${hexToRgb(RED)},0.55) 50%, rgba(10,8,20,0.97) 100%)`,
+                    }} />
+                )}
 
-            {/* COLUMNA 2 vinculada "Sí":: INFO, REDES Y COMPARAR */}
-            {
-                Vinculada === "Sí" && (
-                <Box sx={{
-                    flex: 1,
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: {
-                        xs: "center",
-                        lg: "flex-start"
-                    },
-                    position: "relative",
-                    width: "100%",
-                    minHeight: 220,
-                    overflow: "hidden",
-                    gap: 1,
-                    backgroundImage: `url(${portada})`,
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
+                {/* Overlay gradient */}
+                <div style={{
+                    position: "absolute", inset: 0, zIndex: 1,
+                    background: "linear-gradient(to bottom, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.18) 38%, rgba(0,0,0,0.78) 100%)",
+                }} />
+
+                {/* ── TOP ROW: Comparar + Micrositio (left) | D1 + AAA+ (right) ── */}
+                <div style={{
+                    position: "absolute", top: 0, left: 0, right: 0,
+                    zIndex: 3, padding: "12px 12px 0",
+                    display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8,
                 }}>
-                    {/* Overlay */}
-                    <Box
-                        sx={{
-                        position: "absolute",
-                        inset: 0,
-                        background:
-                            "linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.78))",
-                        zIndex: 1,
-                        pointerEvents: "none",
-                        }}
-                    />
-                    <Box sx={{ 
-                        display: 'flex',
-                        flexDirection: {
-                            xs: "column",
-                            lg: "row"
-                        }, 
-                        justifyContent: 'space-between', 
-                        alignItems: "center", 
-                        gap: 2, 
-                        width: "100%", 
-                    }}>
-                        <Box>
-                            <Box className='flex gap-3'>
-                                <Typography
-                                    variant="subtitle1"
-                                    fontWeight="800"
-                                    // 2. Si hay link es 'a', si no, es un 'div' (o 'span')
-                                    component={hasLink ? "a" : "div"}
-                                    // 3. Propiedades condicionales: si no hay link, se pasan como undefined
-                                    href={hasLink ? link : undefined}
-                                    target={hasLink ? "_blank" : undefined}
-                                    rel={hasLink ? "noopener noreferrer" : undefined} // Buena práctica de seguridad
-                                    sx={{
-                                        color: hasLink ? (Vinculada) ? "#fff" : '#a09a9a' : "#a09a9a",
-                                        fontWeight: "bold",
-                                        textDecoration: 'none',
-                                        // 4. Estilos visuales condicionales
-                                        cursor: hasLink ? 'pointer' : 'default',
-                                        '&:hover': {
-                                            textDecoration: hasLink ? 'underline' : 'none'
-                                        },
-                                        zIndex: 2,
-                                    }}
-                                >
-                                    {item.Nombre || item.Colegio || 'Sin Nombre'}
-                                </Typography>
-                            </Box>
-
-                            <Stack position="relative" zIndex={2} direction="row" spacing={0.5} alignItems="center" mb={1}>
-                                <MapPin size={14} color={`${Vinculada ? "rgba(255,255,255,0.75)" : "#a09a9a"}`} />
-                                <Typography variant="caption" color={`${Vinculada === "Sí" ? "rgba(255,255,255,0.75)" : "#a09a9a"}`}>
-                                    {city}{department ? `, ${department}` : ''}
-                                </Typography>
-                            </Stack>
-                        </Box>
-                        {/* Boton de comparar */}
-                        <Button
-                            size="small"
-                            variant={isSelected ? "contained" : "outlined"}
-                            onClick={() => toggleItem(item)}
-                            startIcon={
-                                isSelected ? <Check size={12} /> : <ArrowLeftRight size={12} />
-                            }
-                            sx={{
-                                borderRadius: 50,
-                                textTransform: "none",
-                                fontWeight: 600,
-                                px: 1.5,
-                                py: 0.3,
-                                minHeight: "unset",
-                                height: "auto",
-                                fontSize: "0.7rem",
-                                borderColor: isSelected ? primaryColor : "#ccc",
-                                color: isSelected ? "white" : "white",
-                                bgcolor: isSelected ? primaryColor : "transparent",
-                                transition: "all 0.2s",
-                                "& .MuiButton-startIcon": {
-                                    mr: 0.4,
-                                    ml: 0,
-                                },
-                                "&:hover": {
-                                    bgcolor: isSelected ? primaryColor : "#f5f5f5",
-                                    color: "#000",
-                                    borderColor: primaryColor,
-                                    transform: "scale(1.05)",
-                                },
-                                zIndex: 2,
-                                mb: 2,
+                    {/* Left pills */}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                        {/* Comparar */}
+                        <button
+                            onClick={() => toggleItem?.(item)}
+                            className="flex items-center gap-1 font-semibold no-underline transition-all duration-200 hover:opacity-90 flex-shrink-0"
+                            style={{
+                                backgroundColor: isSelected ? `${RED}cc` : "rgba(255,255,255,0.18)",
+                                color: "#fff",
+                                fontSize: isXs ? 9 : 10,
+                                padding: "5px 10px",
+                                borderRadius: 999,
+                                border: "1px solid rgba(255,255,255,0.35)",
+                                backdropFilter: "blur(6px)",
+                                cursor: "pointer",
+                                letterSpacing: "0.01em",
+                                lineHeight: 1,
                             }}
                         >
-                                {isSelected ? "Añadido" : "Comparar"}
-                        </Button>
-                    </Box>
-                    <Box sx={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        alignItems: "center",
-                        gap: 1.5,
-                        zIndex: 2,
-                        mt: 1,
-                    }}>
-                        {sector?.length > 0 && (
-                            <Tooltip title={sector} arrow>
-                                <Box sx={iconInfoStyle}>
-                                    <DynamicIcon name="Building2" color="#fff" size={15} />
-                                </Box>
-                            </Tooltip>
-                        )}
+                            <DynamicIcon name="AlignJustify" color="#fff" size={10} />
+                            Comparar
+                        </button>
 
-                        {calendar?.length > 0 && (
-                            <Tooltip title={`Calendario ${calendar}`} arrow>
-                                <Box sx={iconInfoStyle}>
-                                    <DynamicIcon name="CalendarDays" color="#fff" size={15} />
-                                </Box>
-                            </Tooltip>
-                        )}
-
-                        {orientacion?.length > 0 && (
-                            <Tooltip title={orientacion} arrow>
-                                <Box sx={iconInfoStyle}>
-                                    <DynamicIcon name="Church" color="#fff" size={15} />
-                                </Box>
-                            </Tooltip>
-                        )}
-
-                        {gender?.length > 0 && (
-                            <Tooltip title={gender} arrow>
-                                <Box sx={iconInfoStyle}>
-                                    <DynamicIcon name="Users" color="#fff" size={15} />
-                                </Box>
-                            </Tooltip>
-                        )}
-
-                        {zona?.length > 0 && (
-                            <Tooltip title={zona} arrow>
-                                <Box sx={iconInfoStyle}>
-                                    <DynamicIcon name="MapPinned" color="#fff" size={15} />
-                                </Box>
-                            </Tooltip>
-                        )}
-
-                        {dtitulacion === "Sí" && (
-                            <Tooltip title="Doble Titulación" arrow>
-                                <Box sx={iconInfoStyle}>
-                                    <DynamicIcon name="GraduationCap" color="#fff" size={15} />
-                                </Box>
-                            </Tooltip>
-                        )}
-
-                        {intercambioSalidas === "Sí" && (
-                            <Tooltip title="Intercambios o salidas internacionales" arrow>
-                                <Box sx={iconInfoStyle}>
-                                    <DynamicIcon name="Plane" color="#fff" size={15} />
-                                </Box>
-                            </Tooltip>
-                        )}
-                        {
-                            languages && languages.length > 0 && (
-                                <ImgFlagsCountry languages={languages} size={25} gap={1.5} />
-                            )
-                        }
-                    </Box>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" mt="10px">
-                        <Box sx={{
-                            p: 2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            textAlign: { md: 'left' },
-                            zIndex: 2,
-                            ...(
-                                Vinculada ? {
-                                    color: "#fff"
-                                } : {
-                                    color: "#000"
-                                }
-                            )
-                        }}>
-                            <Typography variant="caption" sx={{ textDecoration: 'underline', fontWeight: 'bold', }}>
-                                {accreditationMain} / {accreditationSec}
-                            </Typography>
-                        </Box>
-                    </Stack>
-                </Box>
-            )}
-
-            {/* COLUMNA 3 vinculada "Sí":: DIRECTOR - ya quedo */}
-            {
-                Vinculada === "Sí" && (
-                <Box
-                    sx={{
-                        minWidth: 150,
-                        width: { md: "auto" },
-                        p: 2,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        bgcolor: "#fff",
-                        borderLeft: "1px solid #eee",
-                        borderRight: "1px solid #eee",
-                    }}
-                >
-                    {/* CONTENEDOR RELATIVO */}
-                    <Box sx={{ position: "relative", width: "auto", height: "auto", mb: 1, display: "flex", flexDirection: "column", alignItems: "center" }}> 
-                        {/* FOTO DIRECTOR */}
-                        {directorPhoto ? (
-                            <Box
-                                sx={{
-                                    width: 80,
-                                    height: 80,
-                                    borderRadius: "50%",
-                                    overflow: "hidden",
-                                    "& img": {
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                    }
+                        {/* Micrositio */}
+                        {hasLink && (
+                            <a
+                                href={link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center font-semibold no-underline transition-all duration-200 hover:opacity-90 flex-shrink-0"
+                                style={{
+                                    backgroundColor: RED,
+                                    color: "#fff",
+                                    fontSize: isXs ? 9 : 10,
+                                    padding: "5px 12px",
+                                    borderRadius: 999,
+                                    border: "1px solid rgba(255,255,255,0.2)",
+                                    backdropFilter: "blur(4px)",
+                                    letterSpacing: "0.01em",
+                                    lineHeight: 1,
                                 }}
                             >
+                                Micrositio
+                            </a>
+                        )}
+                    </div>
+
+                    {/* Right badges: D1 + AAA+ stacked */}
+                    <div className="flex flex-col gap-1 items-end flex-shrink-0">
+                        <BadgeCategoria category={category} RED={RED} />
+                        {qualification && <BadgeCalificacion qualification={qualification} />}
+                    </div>
+                </div>
+
+                {/* ── CONTENT BOTTOM (stars, name, location, icons) ── */}
+                <div style={{
+                    position: "absolute", bottom: 0, left: 0, right: 0,
+                    zIndex: 3, padding: "0 12px 12px",
+                    display: "flex", flexDirection: "column", gap: 6,
+                }}>
+                    {/* Stars */}
+                    <StartSection
+                        excelSource=""
+                        stars={Stars}
+                        typePage="admin"
+                        size={isXs ? 15 : 18}
+                        gap={3}
+                    />
+
+                    {/* School name */}
+                    <span
+                        onClick={() => hasLink && window.open(link, "_blank")}
+                        style={{
+                            fontSize: isXs ? "1.05rem" : "1.2rem",
+                            fontWeight: 800,
+                            color: "#fff",
+                            lineHeight: 1.2,
+                            letterSpacing: "-0.01em",
+                            cursor: hasLink ? "pointer" : "default",
+                            display: "block",
+                        }}
+                    >
+                        {item.Nombre || item.Colegio || "Sin Nombre"}
+                        {nuevo && nuevo.length > 0 && (
+                            <span style={{
+                                marginLeft: 6,
+                                backgroundColor: RED,
+                                color: "#fff",
+                                fontSize: 8,
+                                fontWeight: 700,
+                                padding: "2px 5px",
+                                borderRadius: 6,
+                                verticalAlign: "middle",
+                            }}>{nuevo}</span>
+                        )}
+                    </span>
+
+                    {/* Location + flags */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-1">
+                            <DynamicIcon name="MapPin" color="rgba(255,255,255,0.70)" size={12} />
+                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.75)", lineHeight: 1 }}>
+                                {city}{department ? ` , ${department}` : ""}
+                            </span>
+                        </div>
+                        {languages && languages.length > 0 && (
+                            <div className="flex items-center gap-1">
+                                <DynamicIcon name="Globe" color="rgba(255,255,255,0.55)" size={12} />
+                                <ImgFlagsCountry languages={languages} size={14} gap={3} />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Info icons row */}
+                    {infoIcons.length > 0 && (
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                            {infoIcons.map((info, i) => (
+                                <Tooltip key={i} title={info.label} arrow>
+                                    <div style={{
+                                        width: 30, height: 30,
+                                        borderRadius: "50%",
+                                        backgroundColor: "rgba(255,255,255,0.15)",
+                                        border: "1px solid rgba(255,255,255,0.28)",
+                                        backdropFilter: "blur(6px)",
+                                        display: "flex", alignItems: "center", justifyContent: "center",
+                                        cursor: "pointer",
+                                        transition: "background 0.2s",
+                                    }}
+                                        onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.28)"}
+                                        onMouseLeave={e => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.15)"}
+                                    >
+                                        <DynamicIcon name={info.icon} color="rgba(255,255,255,0.90)" size={14} />
+                                    </div>
+                                </Tooltip>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* ══════════════════════════════════════════
+                BOTTOM — white zone: Rector + Respaldos
+            ══════════════════════════════════════════ */}
+            <div style={{
+                backgroundColor: "#fff",
+                padding: "14px 14px 14px",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 12,
+            }}>
+                {/* Rector photo + label + name (centered column) */}
+                <div className="flex flex-col items-center flex-shrink-0" style={{ minWidth: isXs ? 64 : 80 }}>
+                    <div className="relative" style={{ marginBottom: 6 }}>
+                        {directorPhoto ? (
+                            <div style={{
+                                width: isXs ? 56 : 68,
+                                height: isXs ? 56 : 68,
+                                borderRadius: "50%",
+                                overflow: "hidden",
+                                border: `2.5px solid ${RED}44`,
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                            }}>
                                 <StorageImage
                                     alt={directorName}
                                     path={directorPhoto}
-                                    className="w-full h-full object-cover"
+                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                 />
-                            </Box>
+                            </div>
                         ) : (
-                            <Avatar
-                                src={directorPhoto}
-                                sx={{
-                                    width: 120,
-                                    height: 120,
-                                    border: "2px solid white",
-                                    boxShadow: 2,
-                                }}
-                            />
+                            <Avatar sx={{
+                                width: isXs ? 56 : 68,
+                                height: isXs ? 56 : 68,
+                                border: `2.5px solid ${RED}44`,
+                            }} />
                         )}
-                        {/* LOGO OVERLAY */}
+
+                        {/* School logo badge bottom-right of photo */}
                         {logoColegio && (
-                            <Box
-                            sx={{
+                            <div style={{
                                 position: "absolute",
-                                bottom: -8,
-                                left: -20,
-                                width: 50,
-                                height: 50,
+                                bottom: -4, right: -4,
+                                width: 22, height: 22,
                                 borderRadius: "50%",
                                 overflow: "hidden",
-                                border: "2px solid white",
+                                border: "2px solid #fff",
                                 backgroundColor: "#fff",
-                            }}
-                            >
-                            <StorageImage
-                                alt="logo"
-                                path={logoColegio}
-                                className="w-full h-full object-cover"
-                            />
-                            </Box>
+                                boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                            }}>
+                                <StorageImage
+                                    alt="logo"
+                                    path={logoColegio}
+                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                />
+                            </div>
                         )}
-                        {/* Si es nuevo */}
-                        {
-                            (nuevo && nuevo.length > 0) && (
-                                <Box sx={{
-                                    mb: 2,
-                                    position: "absolute",
-                                    top: -17,
-                                    right: -15,
-                                    p: "2px 4px",
-                                    backgroundColor: "#c00007",
-                                    border: "2px solid #fff",
-                                    borderRadius: "12px",
-                                    color: "#fff",
-                                    fontWeight: "bold",
-                                    fontSize: "12px",
-                                    '&:hover': {
-                                        scale: 1.1,
-                                    }
-                                }}>
-                                        {nuevo}
-                                </Box>
-                            )
-                        }
-                    </Box>
-                    {/* NOMBRE */}
-                    <Typography
-                        variant="caption"
-                        component="a"
+                    </div>
+
+                    <span style={{ fontSize: 9, color: "#9ca3af", fontWeight: 500, letterSpacing: "0.04em", lineHeight: 1 }}>
+                        Rectoría
+                    </span>
+                    <a
                         href={directorWeb || "#"}
                         target="_blank"
-                        sx={{
-                            fontStyle: "italic",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                            color: "text.primary",
+                        rel="noopener noreferrer"
+                        style={{
+                            fontSize: isXs ? 10 : 11,
+                            fontWeight: 700,
+                            color: "#1f2937",
                             textDecoration: "none",
+                            textAlign: "center",
+                            lineHeight: 1.25,
+                            marginTop: 2,
                         }}
+                        className="hover:underline"
                     >
                         {directorName}
-                    </Typography>
-                </Box>
-            )}
+                    </a>
+                </div>
 
-            {/* COLUMNA 1 vinculada "No": Calificación * */}
-            {
-                Vinculada === "No" && (
-                    <Box sx={{
-                        padding: 2,
-                    }}>
-                        <Typography
-                            sx={{
-                            fontSize: "16px",
-                            color: "#a09a9a",
-                            lineHeight: 1,
-                            letterSpacing: "0.5px",
-                            }}
-                        >
-                            D{category}
-                        </Typography>
+                {/* Vertical divider */}
+                {accreditations.length > 0 && (
+                    <div style={{ width: 1, alignSelf: "stretch", background: "#f0f0f0", flexShrink: 0, margin: "2px 0" }} />
+                )}
 
-                        <Typography
-                            sx={{
-                                fontSize: "16px",
-                                color: "#a09a9a",
-                                textTransform: "uppercase",
-                                letterSpacing: "1px",
-                            }}
-                        >
-                            {qualification}
-                        </Typography>
-
-                    </Box>
-            )}
-            {/* COLUMNA 1 vinculada "No":: INFO * */}
-            {
-                Vinculada === "No" && (
-                     <Box sx={{ 
-                        p: 2,
-                    }}>
-                        <Typography
-                            sx={{
-                                    fontSize: "16px",
-                                    color: "#a09a9a",
-                                    lineHeight: 1,
-                                    letterSpacing: "0.5px",
-                                }}
-                            >
-                                {item.Nombre || item.Colegio || 'Sin Nombre'}
-                        </Typography>
-                        <Stack position="relative" direction="row" spacing={0.5} alignItems="center" mb={1}>
-                            <Typography variant="caption" color={"#a09a9a"}>
-                                {city}{department ? `, ${department}` : ''}
-                            </Typography>
-                        </Stack>
-                    </Box>
-            )}
-
+                {/* Respaldos */}
+                {accreditations.length > 0 && (
+                    <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                        <span style={{ fontSize: 9, color: "#9ca3af", fontWeight: 500, letterSpacing: "0.04em", lineHeight: 1 }}>
+                            Respaldos
+                        </span>
+                        {/* 2-column grid */}
+                        <div style={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr 1fr",
+                            gap: "4px 6px",
+                        }}>
+                            {accreditations.map((acc, i) => (
+                                <span
+                                    key={i}
+                                    style={{
+                                        backgroundColor: "#fef2f2",
+                                        color: "#991b1b",
+                                        border: "1px solid #fecaca",
+                                        borderRadius: 6,
+                                        fontSize: isXs ? 9 : 10,
+                                        fontWeight: 600,
+                                        padding: "3px 7px",
+                                        lineHeight: 1.35,
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    {acc}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
         </Card>
     );
 };
 
-/* 
+/* ─── Helpers ───────────────────────────────────────────────────────────────── */
 
+function hexToRgb(hex) {
+    const clean = hex.replace("#", "");
+    const bigint = parseInt(clean, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `${r},${g},${b}`;
+}
 
-*/
+/* ─── Sub-components ────────────────────────────────────────────────────────── */
+
+const BadgeCategoria = ({ category, RED }) => (
+    <div
+        className="flex flex-col items-center justify-center text-center text-white"
+        style={{
+            backgroundColor: RED,
+            borderRadius: 10,
+            padding: "5px 10px",
+            minWidth: 54,
+            lineHeight: 1.15,
+            border: "1px solid rgba(255,255,255,0.18)",
+            backdropFilter: "blur(4px)",
+        }}
+    >
+        <span style={{ fontSize: 16, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
+            D{category}
+        </span>
+        <span style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", opacity: 0.85 }}>
+            Categoría
+        </span>
+    </div>
+);
+
+const BadgeCalificacion = ({ qualification }) => (
+    <div
+        className="flex flex-col items-center justify-center text-center"
+        style={{
+            background: "linear-gradient(135deg, #f5c518 0%, #d4a017 100%)",
+            color: "#1a1000",
+            borderRadius: 10,
+            padding: "5px 10px",
+            minWidth: 54,
+            lineHeight: 1.15,
+            border: "1px solid rgba(255,255,255,0.25)",
+            backdropFilter: "blur(4px)",
+        }}
+    >
+        <span style={{ fontSize: 14, fontWeight: 900, lineHeight: 1, letterSpacing: "-0.01em" }}>
+            {qualification}
+        </span>
+        <span style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", opacity: 0.75 }}>
+            Calificación
+        </span>
+    </div>
+);
