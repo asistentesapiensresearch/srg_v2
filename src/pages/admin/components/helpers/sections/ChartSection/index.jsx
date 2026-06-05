@@ -24,8 +24,11 @@ const VALID_CHART_TYPES = [
     'line', 'spline', 'area', 'areaspline', 'column', 'bar', 'pie', 'scatter',
     'arearange', 'areasplinerange', 'columnrange', 'bubble', 'gauge', 'boxplot',
     'errorbar', 'waterfall', 'polygon', 'packedbubble',
-    'column_stacked', 'column_spline', 'column_spline_3d', 'multi_combo', 'min_max_marker',
-    'map'
+    'column_stacked', 'column_spline', 'column_spline_3d', 'column_spline_3d_rotated',
+    'multi_combo', 'min_max_marker', 'map',
+    'col_sapiens', 'col_sapiens_comparative', 'col_sapiens_transposed', 'col_sapiens_spline',
+    'col_sapiens_certified', 'col_sapiens_positions', 'column_transposed_no_labels',
+    'col_sapiens_comparative_with_zeros', 'col_sapiens_indices', 'col_sapiens_transposed_with_labels'
 ];
 
 // 🔥 HOOK DE RESIZE (Funciona para Alto y Ancho)
@@ -1669,6 +1672,7 @@ export default function ChartSection({
                 height: isThumbnail ? 80 : null,
                 backgroundColor: isThumbnail ? 'transparent' : '#ffffff',
                 borderRadius: 8,
+                spacingBottom: isThumbnail ? 10 : 35, // Prevent legend text clipping at bottom
                 style: { fontFamily: 'inherit' }
             },
             //subtitle: { text: isThumbnail ? null : `Fuente: ${chartConfig.alias || chartConfig.sheetName}` },
@@ -2233,6 +2237,26 @@ export default function ChartSection({
             };
         }
 
+        if (!isThumbnail) {
+            commonOptions.tooltip = {
+                ...(commonOptions.tooltip || {}),
+                ...(chartSpecificOptions.tooltip || {}),
+                useHTML: true,
+                outside: true,
+                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                borderWidth: 1,
+                borderColor: '#e2e8f0',
+                borderRadius: 12,
+                shadow: false,
+                padding: 12,
+                style: {
+                    boxShadow: '0 10px 20px rgba(0, 0, 0, 0.06), 0 3px 6px rgba(0, 0, 0, 0.03)',
+                    fontFamily: 'inherit',
+                    padding: '0px'
+                }
+            };
+        }
+
         return commonOptions;
     };
 
@@ -2263,7 +2287,11 @@ export default function ChartSection({
                             ref={resizablePaperRef}
                             elevation={0}
                             sx={{
-                                p: 3, border: '1px solid #e0e0e0', borderRadius: 4, mb: 2,
+                                p: 3,
+                                border: '1px solid #f1f5f9',
+                                borderRadius: '16px',
+                                boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05), 0 2px 8px -1px rgba(0,0,0,0.02)',
+                                mb: 2,
                                 position: 'relative',
                                 // 🔥🔥🔥 CAMBIO PRINCIPAL PARA RESIZE TOTAL 🔥🔥🔥
                                 resize: 'both',       // Permite redimensionar ancho y alto
@@ -2281,9 +2309,30 @@ export default function ChartSection({
                                 '&:hover .resize-handle': { opacity: 1 }
                             }}
                         >
-                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexShrink={0}>
-                                <Typography variant="h6" fontWeight="bold">{activeChartConfig.alias}</Typography>
-                                {charts.length > 1 && <Typography variant="caption" color="text.secondary">{activeIndex + 1} / {charts.length}</Typography>}
+                            <Box display="flex" justifyContent="space-between" alignItems="center" gap={2} mb={2} flexShrink={0}>
+                                <Typography variant="h6" fontWeight="bold" sx={{ flexGrow: 1, minWidth: 0 }}>
+                                    {activeChartConfig.alias}
+                                </Typography>
+                                {charts.length > 1 && (
+                                    <Box
+                                        sx={{
+                                            bgcolor: '#f1f5f9',
+                                            px: 1.5,
+                                            py: 0.5,
+                                            borderRadius: '20px',
+                                            fontWeight: 'bold',
+                                            fontSize: '0.85rem',
+                                            color: '#475569',
+                                            whiteSpace: 'nowrap',
+                                            flexShrink: 0,
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}
+                                    >
+                                        {activeIndex + 1} / {charts.length}
+                                    </Box>
+                                )}
                             </Box>
 
                             <Box sx={{ flexGrow: 1, minHeight: 0, position: 'relative' }}>
