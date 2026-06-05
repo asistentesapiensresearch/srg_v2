@@ -27,13 +27,6 @@ export const CHART_TYPES = [
     { value: 'column_spline_3d', label: 'Columnas + Línea Suavizada 3D' },
     { value: 'multi_combo', label: 'Columnas + Múltiples Líneas' },
     { value: 'min_max_marker', label: 'Mínimo - Máximo + Puntaje' },
-    { value: 'col_sapiens', label: 'Histórico Col-Sapiens' },
-    { value: 'col_sapiens_comparative', label: 'Comparativo Col-Sapiens' },
-    { value: 'col_sapiens_transposed', label: 'Comparativo Col-Sapiens Transpuesto' },
-    { value: 'col_sapiens_spline', label: 'Histórico Categorías (Líneas)' },
-    { value: 'col_sapiens_certified', label: 'Certificados/Acreditados Col-Sapiens' },
-    { value: 'col_sapiens_positions', label: 'Posiciones Históricas (Columnas Invertidas)' },
-    { value: 'col_sapiens_comparative_with_zeros', label: 'Comparativo Saber 11 (con Ceros)' },
 
     // mapa
     { value: 'map', label: 'Mapa (Colombia)' },
