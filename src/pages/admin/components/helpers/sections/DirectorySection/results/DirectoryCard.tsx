@@ -5,25 +5,21 @@ import {
     AccordionDetails
 } from "@mui/material";
 import {
-    ArrowDown as ArrowDownIcon,
+    ArrowDown as ArrowDownIcon, // Corregido nombre común en lucide
 } from "lucide-react";
 import { cardByType } from "../helpers/cardsByType";
 
-export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPreset }) => {
-
+export const DirectoryCard = ({ item, primaryColor = '#337ab7', type}) => {
+    
     const Vinculada = item.isLinked;
-    const isCompactMode = selectedPreset === "Todos";
-
-    const CardComponent = isCompactMode
-        ? (cardByType[type]?.cardDirectoryCompact || cardByType["COL"]?.cardDirectoryCompact)
-        : (cardByType[type]?.cardDirectory || cardByType["COL"]?.cardDirectory);
-
+    const CardComponent = cardByType[type]?.cardDirectory || cardByType["COL"]?.cardDirectory;
     return (
         <>
+
             <CardComponent item={item} primaryColor={primaryColor} />
 
-            {/* Sección de Historial (Accordion) - solo en modo normal */}
-            {!isCompactMode && Vinculada && item.history?.length > 0 && (
+            {/* Sección de Historial (Accordion) */}
+            {Vinculada && item.history?.length > 0 && (
                 <Accordion
                     elevation={0}
                     sx={{
@@ -44,6 +40,7 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
                     </AccordionSummary>
                     <AccordionDetails sx={{ p: 2, bgcolor: '#fafafa' }}>
                         {item.history.map((histItem, index) => (
+                            // Renderizamos recursivamente, pero quizás quieras un diseño más simple para el historial
                             <CardComponent key={`history-${histItem.path}_${index}`} item={histItem} primaryColor={primaryColor} />
                         ))}
                     </AccordionDetails>
