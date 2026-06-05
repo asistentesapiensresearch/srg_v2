@@ -735,8 +735,8 @@ const DirectorySectionContent = ({
                     ) : (
                         <Box>
                             {selectedPreset === "Todos" ? (
-                                // Modo Todos: Layout vertical compacto
-                                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                // Modo Todos: Grid layout de 3 columnas
+                                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }, gap: 3, width: "100%" }}>
                                     {dataWithAds.map((item) => {
                                         if (item._isAd) {
                                             return (
@@ -751,6 +751,7 @@ const DirectorySectionContent = ({
                                                         },
                                                         gap: 3,
                                                         width: "100%",
+                                                        gridColumn: "1 / -1"
                                                     }}
                                                 >
                                                     {item.ads.map((ad, index) => {
@@ -769,9 +770,7 @@ const DirectorySectionContent = ({
                                         }
 
                                         return (
-                                            <Box key={item._renderId}>
-                                                <DirectoryCard item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} type={identifier} selectedPreset={selectedPreset} />
-                                            </Box>
+                                            <DirectoryCard key={item._renderId} item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} type={identifier} selectedPreset={selectedPreset} />
                                         );
                                     })}
                                 </Box>
