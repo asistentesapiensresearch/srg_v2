@@ -2287,15 +2287,11 @@ export default function ChartSection({
                             ref={resizablePaperRef}
                             elevation={0}
                             sx={{
-<<<<<<< HEAD
                                 p: 3,
                                 border: '1px solid #f1f5f9',
                                 borderRadius: '16px',
                                 boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05), 0 2px 8px -1px rgba(0,0,0,0.02)',
                                 mb: 2,
-=======
-                                p: 3, border: '1px solid #e0e0e0', borderRadius: 4, mb: 2,
->>>>>>> origin/dev_juan
                                 position: 'relative',
                                 // 🔥🔥🔥 CAMBIO PRINCIPAL PARA RESIZE TOTAL 🔥🔥🔥
                                 resize: 'both',       // Permite redimensionar ancho y alto
