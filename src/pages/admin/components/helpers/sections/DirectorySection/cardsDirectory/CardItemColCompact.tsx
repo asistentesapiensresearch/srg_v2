@@ -4,6 +4,7 @@ import { getValue } from "../results/utils";
 import { StorageImage } from "@aws-amplify/ui-react-storage";
 import { MapPin } from "lucide-react";
 import StartSection from "../../StartsSection";
+import ImgFlagsCountry from "../results/ImgFlagsCountry";
 
 export const CardItemColCompact = ({ item, primaryColor }) => {
     const { selectedItems, toggleItem } = useComparison();
@@ -27,6 +28,7 @@ export const CardItemColCompact = ({ item, primaryColor }) => {
     const directorPhoto = getValue(item, ["director_foto", "foto_rector", "rectorPhoto"]);
     const logoColegio   = getValue(item, ["logo", "imagen_institucion"]);
     const link          = getValue(item, ["path"]);
+    const languages     = getAlias("languages");
     const hasLink       = Boolean(link) && Vinculada;
     const isNotLinked   = Vinculada !== "Sí";
     const nombre        = item.Nombre || item.Colegio || "Sin Nombre";
@@ -66,7 +68,7 @@ export const CardItemColCompact = ({ item, primaryColor }) => {
             style={{
                 position: "relative",
                 overflow: "hidden",
-                background: "linear-gradient(145deg, #5c0008 0%, #8e000e 30%, #780008 60%, #3d0004 100%)",
+                background: "linear-gradient(145deg, rgb(107, 0, 3) 0%, rgb(168, 0, 6) 35%, rgb(144, 0, 5) 65%, rgb(74, 0, 2) 100%)",
                 borderRadius: 16,
                 padding: "12px 12px 10px 12px",
                 display: "flex",

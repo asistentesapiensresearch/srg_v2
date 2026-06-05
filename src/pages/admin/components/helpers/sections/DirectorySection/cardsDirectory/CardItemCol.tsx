@@ -7,13 +7,30 @@ import StartSection from "../../StartsSection";
 import ImgFlagsCountry from "../results/ImgFlagsCountry";
 import DynamicIcon from "@src/pages/admin/components/builder/helpers/DynamicIcon";
 
+/* ─── Keyframes inyectados una sola vez ───────────────────────────────────── */
+if (typeof document !== "undefined" && !document.getElementById("card-animations")) {
+    const style = document.createElement("style");
+    style.id = "card-animations";
+    style.textContent = `
+        @keyframes starShine {
+            0%   { filter: brightness(1) drop-shadow(0 0 0px #f5c518); }
+            50%  { filter: brightness(1.55) drop-shadow(0 0 6px #f5c518cc); }
+            100% { filter: brightness(1) drop-shadow(0 0 0px #f5c518); }
+        }
+        .star-shine {
+            animation: starShine 2.8s ease-in-out infinite;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
 export const CardItemCol = ({ item, primaryColor }) => {
     const { selectedItems, toggleItem } = useComparison();
     const isXs = useMediaQuery("(max-width:380px)");
 
     const RED = primaryColor || "#c00007";
 
-    const itemId   = item.id || item._id || JSON.stringify(item);
+    const itemId     = item.id || item._id || JSON.stringify(item);
     const isSelected = selectedItems.some(
         (i) => (i.id || i._id || JSON.stringify(i)) === itemId
     );
@@ -35,21 +52,32 @@ export const CardItemCol = ({ item, primaryColor }) => {
     const hasLink           = Boolean(link) && Vinculada;
     const logoColegio       = getValue(item, ["logo", "imagen_institucion"]);
     const portadaPath       = getValue(item, ["portadaPhoto", "portada"]);
-    const languages         = getAlias("languages");
+    const rawLanguages      = getAlias("languages");
+
+    const normalizeLanguage = (lang) => {
+        const normalized = lang.trim();
+        if (normalized === "Inglés") return "Inglés-A";
+        return normalized;
+    };
+
+    const languages         = Array.isArray(rawLanguages)
+        ? rawLanguages.map(normalizeLanguage)
+        : (typeof rawLanguages === 'string'
+            ? rawLanguages.split(',').map(l => normalizeLanguage(l))
+            : []);
     const nuevo             = getAlias("Nuevos");
     const directorName      = getValue(item, ["rectorName"]);
     const directorPhoto     = getValue(item, ["director_foto", "foto_rector", "rectorPhoto"]);
     const socialRector      = getValue(item, ["rectorSocial"]);
 
-    // Info icons data
-    const sec               = getAlias("Sec");
-    const cal               = getAlias("Cal");
-    const religion          = getAlias("Orientación religiosa");
-    const genero            = getAlias("Género");
-    const zona              = getAlias("Zon");
-    const dobleTitulacion   = getAlias("Doble titulación");
-    const intercambios      = getAlias("Intercambios o salidas internacionales");
-    const bilingue          = getAlias("Bilingüe");
+    const sec             = getAlias("Sec");
+    const cal             = getAlias("Cal");
+    const religion        = getAlias("Orientación religiosa");
+    const genero          = getAlias("Género");
+    const zona            = getAlias("Zon");
+    const dobleTitulacion = getAlias("Doble titulación");
+    const intercambios    = getAlias("Intercambios o salidas internacionales");
+    const bilingue        = getAlias("Bilingüe");
 
     let socialR;
     if (socialRector) {
@@ -77,14 +105,14 @@ export const CardItemCol = ({ item, primaryColor }) => {
         bilingue        === "Sí" && { icon: "Globe",         label: "Bilingüe" },
     ].filter(Boolean);
 
-    // ── NOT LINKED ───────────────────────────────────────────────────────────────
+    // ── NOT LINKED ───────────────────────────────────────────────────────────
     if (Vinculada !== "Sí") {
         return (
             <Card sx={{
                 borderRadius: "14px",
                 border: "1px solid #e5e7eb",
                 overflow: "hidden",
-                opacity: 0.5,
+                opaciy: 0.5,
                 p: "10px 12px",
                 display: "flex",
                 flexWrap: "wrap",
@@ -99,16 +127,18 @@ export const CardItemCol = ({ item, primaryColor }) => {
         );
     }
 
-    // ── LINKED ───────────────────────────────────────────────────────────────────
+    // ── LINKED ───────────────────────────────────────────────────────────────
+    const photoSize = isXs ? 52 : 62;
+
     return (
         <Card sx={{
-            borderRadius: "18px",
+            borderRadius: "16px",
             overflow: "hidden",
             border: isSelected ? `2px solid ${RED}` : "1px solid #e5e7eb",
-            boxShadow: isSelected ? `0 0 0 3px ${RED}22` : "0 4px 16px rgba(0,0,0,0.09)",
+            boxShadow: isSelected ? `0 0 0 3px ${RED}22` : "0 3px 12px rgba(0,0,0,0.08)",
             transition: "all 0.25s ease",
             "&:hover": {
-                boxShadow: "0 12px 32px rgba(0,0,0,0.14)",
+                boxShadow: "0 10px 28px rgba(0,0,0,0.13)",
                 transform: "translateY(-2px)",
             },
             display: "flex",
@@ -118,11 +148,22 @@ export const CardItemCol = ({ item, primaryColor }) => {
         }}>
 
             {/* ══════════════════════════════════════════
-                IMAGE ZONE — portada with overlay
+                IMAGE ZONE
             ══════════════════════════════════════════ */}
-            <div style={{ position: "relative", overflow: "hidden", minHeight: isXs ? 210 : 240 }}>
+            <div style={{ position: "relative", overflow: "hidden", minHeight: isXs ? 195 : 220 }}>
 
-                {/* Portada background */}
+                {/* Red glow — top-left corner, subtle */}
+                <div style={{
+                    position: "absolute",
+                    top: -30, left: -30,
+                    width: 140, height: 140,
+                    borderRadius: "50%",
+                    background: `radial-gradient(circle, ${RED}55 0%, transparent 68%)`,
+                    zIndex: 2,
+                    pointerEvents: "none",
+                }} />
+
+                {/* Portada / gradient bg */}
                 {portadaPath ? (
                     <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
                         <StorageImage
@@ -138,58 +179,50 @@ export const CardItemCol = ({ item, primaryColor }) => {
                     }} />
                 )}
 
-                {/* Overlay gradient */}
+                {/* Dark overlay */}
                 <div style={{
                     position: "absolute", inset: 0, zIndex: 1,
-                    background: "linear-gradient(to bottom, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.18) 38%, rgba(0,0,0,0.78) 100%)",
+                    background: "linear-gradient(to bottom, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.16) 38%, rgba(0,0,0,0.80) 100%)",
                 }} />
 
-                {/* ── TOP ROW: Comparar + Micrositio (left) | D1 + AAA+ (right) ── */}
+                {/* ── TOP ROW ── */}
                 <div style={{
                     position: "absolute", top: 0, left: 0, right: 0,
-                    zIndex: 3, padding: "12px 12px 0",
-                    display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8,
+                    zIndex: 3, padding: "10px 10px 0",
+                    display: "flex", alignItems: "flex-start",
+                    justifyContent: "space-between", gap: 6,
                 }}>
-                    {/* Left pills */}
+                    {/* Left: Comparar + Micrositio */}
                     <div className="flex items-center gap-1.5 flex-wrap">
-                        {/* Comparar */}
                         <button
                             onClick={() => toggleItem?.(item)}
-                            className="flex items-center gap-1 font-semibold no-underline transition-all duration-200 hover:opacity-90 flex-shrink-0"
+                            className="flex items-center gap-1 font-semibold transition-all duration-200 hover:opacity-90 flex-shrink-0"
                             style={{
                                 backgroundColor: isSelected ? `${RED}cc` : "rgba(255,255,255,0.18)",
                                 color: "#fff",
                                 fontSize: isXs ? 9 : 10,
-                                padding: "5px 10px",
+                                padding: "4px 9px",
                                 borderRadius: 999,
                                 border: "1px solid rgba(255,255,255,0.35)",
                                 backdropFilter: "blur(6px)",
                                 cursor: "pointer",
-                                letterSpacing: "0.01em",
                                 lineHeight: 1,
                             }}
                         >
-                            <DynamicIcon name="AlignJustify" color="#fff" size={10} />
+                            <DynamicIcon name="AlignJustify" color="#fff" size={9} />
                             Comparar
                         </button>
 
-                        {/* Micrositio */}
                         {hasLink && (
                             <a
-                                href={link}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                href={link} target="_blank" rel="noopener noreferrer"
                                 className="flex items-center font-semibold no-underline transition-all duration-200 hover:opacity-90 flex-shrink-0"
                                 style={{
-                                    backgroundColor: RED,
-                                    color: "#fff",
+                                    backgroundColor: RED, color: "#fff",
                                     fontSize: isXs ? 9 : 10,
-                                    padding: "5px 12px",
-                                    borderRadius: 999,
+                                    padding: "4px 10px", borderRadius: 999,
                                     border: "1px solid rgba(255,255,255,0.2)",
-                                    backdropFilter: "blur(4px)",
-                                    letterSpacing: "0.01em",
-                                    lineHeight: 1,
+                                    backdropFilter: "blur(4px)", lineHeight: 1,
                                 }}
                             >
                                 Micrositio
@@ -197,37 +230,34 @@ export const CardItemCol = ({ item, primaryColor }) => {
                         )}
                     </div>
 
-                    {/* Right badges: D1 + AAA+ stacked */}
+                    {/* Right: Badges */}
                     <div className="flex flex-col gap-1 items-end flex-shrink-0">
                         <BadgeCategoria category={category} RED={RED} />
                         {qualification && <BadgeCalificacion qualification={qualification} />}
                     </div>
                 </div>
 
-                {/* ── CONTENT BOTTOM (stars, name, location, icons) ── */}
+                {/* ── BOTTOM CONTENT ── */}
                 <div style={{
                     position: "absolute", bottom: 0, left: 0, right: 0,
-                    zIndex: 3, padding: "0 12px 12px",
-                    display: "flex", flexDirection: "column", gap: 6,
+                    zIndex: 3, padding: "0 10px 12px",
+                    display: "flex", flexDirection: "column", gap: 8,
                 }}>
-                    {/* Stars */}
-                    <StartSection
-                        excelSource=""
-                        stars={Stars}
-                        typePage="admin"
-                        size={isXs ? 15 : 18}
-                        gap={3}
-                    />
+                    {/* Stars con animación de brillo */}
+                    <div className="star-shine" style={{ display: "inline-flex" }}>
+                        <StartSection
+                            excelSource="" stars={Stars} typePage="admin"
+                            size={isXs ? 14 : 17} gap={3}
+                        />
+                    </div>
 
                     {/* School name */}
                     <span
                         onClick={() => hasLink && window.open(link, "_blank")}
                         style={{
-                            fontSize: isXs ? "1.05rem" : "1.2rem",
-                            fontWeight: 800,
-                            color: "#fff",
-                            lineHeight: 1.2,
-                            letterSpacing: "-0.01em",
+                            fontSize: isXs ? "0.95rem" : "1.05rem",
+                            fontWeight: 800, color: "#fff",
+                            lineHeight: 1.2, letterSpacing: "-0.01em",
                             cursor: hasLink ? "pointer" : "default",
                             display: "block",
                         }}
@@ -235,53 +265,56 @@ export const CardItemCol = ({ item, primaryColor }) => {
                         {item.Nombre || item.Colegio || "Sin Nombre"}
                         {nuevo && nuevo.length > 0 && (
                             <span style={{
-                                marginLeft: 6,
-                                backgroundColor: RED,
-                                color: "#fff",
-                                fontSize: 8,
-                                fontWeight: 700,
-                                padding: "2px 5px",
-                                borderRadius: 6,
-                                verticalAlign: "middle",
+                                marginLeft: 6, backgroundColor: RED, color: "#fff",
+                                fontSize: 8, fontWeight: 700, padding: "2px 5px",
+                                borderRadius: 6, verticalAlign: "middle",
                             }}>{nuevo}</span>
                         )}
                     </span>
 
-                    {/* Location + flags */}
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <div className="flex items-center gap-1">
-                            <DynamicIcon name="MapPin" color="rgba(255,255,255,0.70)" size={12} />
-                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.75)", lineHeight: 1 }}>
-                                {city}{department ? ` , ${department}` : ""}
-                            </span>
-                        </div>
+                    {/* ── Ubicación + banderas en la misma fila ── */}
+                    <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 4,
+                        minWidth: 0,
+                        flexWrap: "nowrap",
+                    }}>
+                        <DynamicIcon name="MapPin" color="rgba(255,255,255,0.70)" size={11} />
+                        <span style={{
+                            fontSize: 11, color: "rgba(255,255,255,0.75)",
+                            lineHeight: 1, whiteSpace: "nowrap",
+                            overflow: "hidden", textOverflow: "ellipsis",
+                            flexShrink: 1,
+                        }}>
+                            {city}{department ? ` , ${department}` : ""}
+                        </span>
                         {languages && languages.length > 0 && (
-                            <div className="flex items-center gap-1">
-                                <DynamicIcon name="Globe" color="rgba(255,255,255,0.55)" size={12} />
-                                <ImgFlagsCountry languages={languages} size={14} gap={3} />
-                            </div>
+                            <ImgFlagsCountry
+                                languages={languages}
+                                size={15}
+                                gap="3px"
+                            />
                         )}
                     </div>
 
-                    {/* Info icons row */}
+                    {/* Info icons */}
                     {infoIcons.length > 0 && (
                         <div className="flex items-center gap-1.5 flex-wrap">
                             {infoIcons.map((info, i) => (
                                 <Tooltip key={i} title={info.label} arrow>
                                     <div style={{
-                                        width: 30, height: 30,
-                                        borderRadius: "50%",
+                                        width: 27, height: 27, borderRadius: "50%",
                                         backgroundColor: "rgba(255,255,255,0.15)",
                                         border: "1px solid rgba(255,255,255,0.28)",
                                         backdropFilter: "blur(6px)",
                                         display: "flex", alignItems: "center", justifyContent: "center",
-                                        cursor: "pointer",
-                                        transition: "background 0.2s",
+                                        cursor: "pointer", transition: "background 0.2s",
                                     }}
                                         onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.28)"}
                                         onMouseLeave={e => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.15)"}
                                     >
-                                        <DynamicIcon name={info.icon} color="rgba(255,255,255,0.90)" size={14} />
+                                        <DynamicIcon name={info.icon} color="rgba(255,255,255,0.90)" size={13} />
                                     </div>
                                 </Tooltip>
                             ))}
@@ -291,56 +324,46 @@ export const CardItemCol = ({ item, primaryColor }) => {
             </div>
 
             {/* ══════════════════════════════════════════
-                BOTTOM — white zone: Rector + Respaldos
+                BOTTOM — mitad rector / mitad respaldos
             ══════════════════════════════════════════ */}
             <div style={{
                 backgroundColor: "#fff",
-                padding: "14px 14px 14px",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: 12,
+                padding: "12px 12px",
+                display: "grid",
+                gridTemplateColumns: "1fr 1px 1fr",
+                gap: "0 10px",
+                alignItems: "center",
+                minHeight: 0,
             }}>
-                {/* Rector photo + label + name (centered column) */}
-                <div className="flex flex-col items-center flex-shrink-0" style={{ minWidth: isXs ? 64 : 80 }}>
-                    <div className="relative" style={{ marginBottom: 6 }}>
+
+                {/* ── Rector (mitad izquierda) ── */}
+                <div className="flex flex-col items-center" style={{ gap: 4 }}>
+                    <div className="relative">
                         {directorPhoto ? (
                             <div style={{
-                                width: isXs ? 56 : 68,
-                                height: isXs ? 56 : 68,
-                                borderRadius: "50%",
-                                overflow: "hidden",
-                                border: `2.5px solid ${RED}44`,
-                                boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                                width: photoSize, height: photoSize,
+                                borderRadius: "50%", overflow: "hidden",
+                                border: `2px solid ${RED}44`,
+                                boxShadow: "0 3px 10px rgba(0,0,0,0.11)",
                             }}>
                                 <StorageImage
-                                    alt={directorName}
-                                    path={directorPhoto}
+                                    alt={directorName} path={directorPhoto}
                                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                 />
                             </div>
                         ) : (
-                            <Avatar sx={{
-                                width: isXs ? 56 : 68,
-                                height: isXs ? 56 : 68,
-                                border: `2.5px solid ${RED}44`,
-                            }} />
+                            <Avatar sx={{ width: photoSize, height: photoSize, border: `2px solid ${RED}44` }} />
                         )}
 
-                        {/* School logo badge bottom-right of photo */}
                         {logoColegio && (
                             <div style={{
-                                position: "absolute",
-                                bottom: -4, right: -4,
-                                width: 22, height: 22,
-                                borderRadius: "50%",
-                                overflow: "hidden",
-                                border: "2px solid #fff",
-                                backgroundColor: "#fff",
-                                boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                                position: "absolute", bottom: -3, right: -3,
+                                width: 20, height: 20, borderRadius: "50%",
+                                overflow: "hidden", border: "2px solid #fff",
+                                backgroundColor: "#fff", boxShadow: "0 2px 6px rgba(0,0,0,0.14)",
                             }}>
                                 <StorageImage
-                                    alt="logo"
-                                    path={logoColegio}
+                                    alt="logo" path={logoColegio}
                                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                 />
                             </div>
@@ -351,17 +374,11 @@ export const CardItemCol = ({ item, primaryColor }) => {
                         Rectoría
                     </span>
                     <a
-                        href={directorWeb || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={directorWeb || "#"} target="_blank" rel="noopener noreferrer"
                         style={{
-                            fontSize: isXs ? 10 : 11,
-                            fontWeight: 700,
-                            color: "#1f2937",
-                            textDecoration: "none",
-                            textAlign: "center",
-                            lineHeight: 1.25,
-                            marginTop: 2,
+                            fontSize: isXs ? 10 : 11, fontWeight: 700,
+                            color: "#1f2937", textDecoration: "none",
+                            textAlign: "center", lineHeight: 1.25,
                         }}
                         className="hover:underline"
                     >
@@ -369,23 +386,16 @@ export const CardItemCol = ({ item, primaryColor }) => {
                     </a>
                 </div>
 
-                {/* Vertical divider */}
-                {accreditations.length > 0 && (
-                    <div style={{ width: 1, alignSelf: "stretch", background: "#f0f0f0", flexShrink: 0, margin: "2px 0" }} />
-                )}
+                {/* ── Divider vertical ── */}
+                <div style={{ background: "#f0f0f0", alignSelf: "stretch" }} />
 
-                {/* Respaldos */}
-                {accreditations.length > 0 && (
-                    <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                {/* ── Respaldos (mitad derecha) ── */}
+                {accreditations.length > 0 ? (
+                    <div className="flex flex-col" style={{ gap: 5 }}>
                         <span style={{ fontSize: 9, color: "#9ca3af", fontWeight: 500, letterSpacing: "0.04em", lineHeight: 1 }}>
                             Respaldos
                         </span>
-                        {/* 2-column grid */}
-                        <div style={{
-                            display: "grid",
-                            gridTemplateColumns: "1fr 1fr",
-                            gap: "4px 6px",
-                        }}>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 5px" }}>
                             {accreditations.map((acc, i) => (
                                 <span
                                     key={i}
@@ -399,9 +409,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
                                         padding: "3px 7px",
                                         lineHeight: 1.35,
                                         whiteSpace: "nowrap",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        textAlign: "center",
+                                        display: "inline-block",
                                     }}
                                 >
                                     {acc}
@@ -409,6 +417,8 @@ export const CardItemCol = ({ item, primaryColor }) => {
                             ))}
                         </div>
                     </div>
+                ) : (
+                    <div />
                 )}
             </div>
         </Card>
@@ -428,24 +438,27 @@ function hexToRgb(hex) {
 
 /* ─── Sub-components ────────────────────────────────────────────────────────── */
 
+const BADGE_W = 72;
+const BADGE_H = 46;
+
 const BadgeCategoria = ({ category, RED }) => (
     <div
         className="flex flex-col items-center justify-center text-center text-white"
         style={{
             backgroundColor: RED,
             borderRadius: 10,
-            padding: "5px 10px",
-            minWidth: 54,
+            width: BADGE_W, height: BADGE_H,
             lineHeight: 1.15,
             border: "1px solid rgba(255,255,255,0.18)",
             backdropFilter: "blur(4px)",
+            flexShrink: 0,
         }}
     >
         <span style={{ fontSize: 16, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
             D{category}
         </span>
-        <span style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", opacity: 0.85 }}>
-            Categoría
+        <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.07em", opacity: 0.85 }}>
+            {"C"+"ategoría".toLowerCase()}
         </span>
     </div>
 );
@@ -457,18 +470,18 @@ const BadgeCalificacion = ({ qualification }) => (
             background: "linear-gradient(135deg, #f5c518 0%, #d4a017 100%)",
             color: "#1a1000",
             borderRadius: 10,
-            padding: "5px 10px",
-            minWidth: 54,
+            width: BADGE_W, height: BADGE_H,
             lineHeight: 1.15,
             border: "1px solid rgba(255,255,255,0.25)",
             backdropFilter: "blur(4px)",
+            flexShrink: 0,
         }}
     >
         <span style={{ fontSize: 14, fontWeight: 900, lineHeight: 1, letterSpacing: "-0.01em" }}>
             {qualification}
         </span>
-        <span style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", opacity: 0.75 }}>
-            Calificación
+        <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.07em", opacity: 0.75 }}>
+            {"C"+"alificación".toLowerCase()}
         </span>
     </div>
 );
