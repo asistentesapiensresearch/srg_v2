@@ -1,115 +1,106 @@
-import { Box } from "@mui/material";
 import DynamicIcon from "../../../builder/helpers/DynamicIcon";
 
-const quoteTextStyle = {
-    textAlign: "center",
-    m: 0,
-    fontSize: { xs: "13px", md: "14px" },
-    lineHeight: 1.45,
-    fontWeight: 500,
-    opacity: 0.95,
-    display: "-webkit-box",
-    WebkitLineClamp: 4,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
+const ResourcesNavSection = ({ resources, sizeIcon, colorIcon }) => {
+  if (!resources || resources.length === 0) return null;
+
+  const [featured, ...rest] = resources;
+
+  return (
+    <section className="w-full px-4 py-12 ">
+      {/* Header */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <p className="text-xs font-semibold tracking-widest text-red-700 uppercase flex items-center gap-2 mb-2">
+          <span className="inline-block w-6 h-px bg-red-700" />
+          Explora
+        </p>
+        <h2 className="text-3xl sm:text-4xl font-light text-gray-900 mb-2">
+          Recursos y análisis
+        </h2>
+        <p className="text-sm text-gray-500 max-w-xl">
+          Accede a los informes, metodología y análisis de las instituciones educativas más destacadas de Colombia.
+        </p>
+      </div>
+
+      {/* Cards Grid */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        {/* Featured card (first item) — red background */}
+        <a
+          href={featured.url_resource}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex flex-col rounded-2xl bg-red-700 text-white p-6 no-underline transition-all duration-300 hover:bg-red-800 hover:shadow-xl"
+        >
+          {/* Icon */}
+          <div className="mb-4 w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+            <DynamicIcon name={featured.icon} color="#fff" size={20} />
+          </div>
+
+          {/* Category label */}
+          <p className="text-xs font-semibold tracking-widest uppercase text-white/60 mb-1">
+            {featured.category || "Informe anual"}
+          </p>
+
+          {/* Title */}
+          <h3 className="text-lg font-semibold text-white mb-3 leading-snug">
+            {featured.label}
+          </h3>
+
+          {/* Description */}
+          <p className="text-sm text-white/75 leading-relaxed flex-1">
+            {featured.description}
+          </p>
+
+          {/* Divider + CTA */}
+          <div className="mt-6 pt-4 border-t border-white/20">
+            <span className="text-sm font-semibold text-white flex items-center gap-2 group-hover:gap-3 transition-all duration-200">
+              {featured.cta || "Ver reporte"}
+              <span aria-hidden="true">→</span>
+            </span>
+          </div>
+        </a>
+
+        {/* Rest of cards — white background */}
+        {rest.map((el, index) => (
+          <a
+            key={`resource_${index}`}
+            href={el.url_resource}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex flex-col rounded-2xl bg-white border border-gray-200 p-6 no-underline transition-all duration-300 hover:shadow-md hover:border-gray-300"
+          >
+            {/* Icon */}
+            <div className="mb-4 w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+              <DynamicIcon name={el.icon} color="#c00007" size={20} />
+            </div>
+
+            {/* Category label */}
+            <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-1">
+              {el.category || "Recurso"}
+            </p>
+
+            {/* Title */}
+            <h3 className="text-lg font-semibold text-gray-900 mb-3 leading-snug">
+              {el.label}
+            </h3>
+
+            {/* Description */}
+            <p className="text-sm text-gray-500 leading-relaxed flex-1">
+              {el.description}
+            </p>
+
+            {/* CTA */}
+            <div className="mt-6">
+              <span className="text-sm font-semibold text-red-700 flex items-center gap-2 group-hover:gap-3 transition-all duration-200">
+                {el.cta || "Conocer más"}
+                <span aria-hidden="true">→</span>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
 };
 
-const ResourcesNavSection = ({
-    resources,
-    sizeIcon,
-    colorIcon
-}) => {
-    console.log({resources, sizeIcon, colorIcon});
-    /* <DynamicIcon name={el.icon} color={colorIcon} size={sizeIcon} /> */
-  return (
-    <Box sx={{
-        px: 2,
-        py: 6,
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-        gap: 6,
-    }}>
-      {
-        resources?.map( (el,index) => (<a href={el.url_resource} target="_blank" style={{ textDecoration: "none" }} key={`link_resource_${index}`}>
-            <Box 
-                sx={{
-                    position: "relative",
-                    backgroundColor: "#c00007",
-                    color: "#fff",
-                    px: 2,
-                    pt: 6,
-                    pb: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: "12px",
-                    gap: 1,
-                    '&:hover': {
-                        scale: 1.1,
-                    }
-                }}
-            >
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: -35,
-                        borderRadius: "50%",
-                        p: 1,
-                        overflow: "hidden",
-
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-
-                        "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            inset: 0,
-                            borderRadius: "50%",
-                            padding: "4px",
-                            background:
-                                "conic-gradient(from 0deg, transparent 0deg, transparent 220deg, #f4a3a3 260deg, #ffd1d1 300deg, #f4a3a3 340deg, transparent 360deg)",
-                            animation: "spinBorder 3s linear infinite",
-
-                            WebkitMask:
-                                "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude",
-                        },
-
-                        "@keyframes spinBorder": {
-                            "0%": {
-                                transform: "rotate(0deg)",
-                            },
-                            "100%": {
-                                transform: "rotate(360deg)",
-                            },
-                        },
-                    }}
-                >
-                    <Box
-                        sx={{
-                            position: "relative",
-                            zIndex: 1,
-                            backgroundColor: "#c00007",
-                            borderRadius: "50%",
-                            p: 1,
-                        }}
-                    >
-                        <DynamicIcon name={el.icon} color={"#fff"} size={50} /> 
-                    </Box>
-                </Box>
-                <h5 style={{color: "#fff"}}>{el.label}</h5>
-                <Box component="p" sx={quoteTextStyle}>
-                    {el.description}
-                </Box>
-            </Box>
-        </a>
-        ))
-      }
-    </Box>
-  )
-}
-
-export default ResourcesNavSection
+export default ResourcesNavSection;

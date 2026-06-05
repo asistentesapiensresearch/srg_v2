@@ -733,47 +733,92 @@ const DirectorySectionContent = ({
                     {isList ? (
                         <TableList data={itemsWithAds.filter(i => !i._isAd)} columns={sourceConfig?.columns || []} aliases={columnAliases} />
                     ) : (
-                        <Grid container spacing={3}>
-                            {dataWithAds.map((item) => {
-                                if (item._isAd) {
-                                    return (
-                                        <Grid size={{ xs: 12 }} key={`${adsSessionKey}-${item._renderId}`}>
-                                             <Box
-                                                sx={{
-                                                    display: "grid",
-                                                    gridTemplateColumns: {
-                                                        xs: "1fr",
-                                                        sm: "1fr 1fr",
-                                                        md: "1fr 1fr 1fr",
-                                                    },
-                                                    gap: 3,
-                                                    width: "100%",
-                                                }}
-                                            >
-                                                 {item.ads.map((ad, index) => {
-                                                    const instanceSlotId = `directory-${adsSessionKey}-${item._renderId}-${index}-${ad.id}`;
-                                                    return (
-                                                        <Box key={instanceSlotId} display="flex" justifyContent="center">
-                                                            <GoogleAd
-                                                                slotId={instanceSlotId}
-                                                                adUnitPath={ad.adUnitPath}
-                                                            />
-                                                        </Box>
-                                                    );
-                                                })}
-                                            </Box>
-                                        </Grid>
-                                    );
-                                }
+                        <Box>
+                            {selectedPreset === "Todos" ? (
+                                // Modo Todos: Layout vertical compacto
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                    {dataWithAds.map((item) => {
+                                        if (item._isAd) {
+                                            return (
+                                                <Box
+                                                    key={`${adsSessionKey}-${item._renderId}`}
+                                                    sx={{
+                                                        display: "grid",
+                                                        gridTemplateColumns: {
+                                                            xs: "1fr",
+                                                            sm: "1fr 1fr",
+                                                            md: "1fr 1fr 1fr",
+                                                        },
+                                                        gap: 3,
+                                                        width: "100%",
+                                                    }}
+                                                >
+                                                    {item.ads.map((ad, index) => {
+                                                        const instanceSlotId = `directory-${adsSessionKey}-${item._renderId}-${index}-${ad.id}`;
+                                                        return (
+                                                            <Box key={instanceSlotId} display="flex" justifyContent="center">
+                                                                <GoogleAd
+                                                                    slotId={instanceSlotId}
+                                                                    adUnitPath={ad.adUnitPath}
+                                                                />
+                                                            </Box>
+                                                        );
+                                                    })}
+                                                </Box>
+                                            );
+                                        }
 
-                                return (
-                                    <Grid size={{ xs: 12, sm: 6, md: gridSize }} key={item._renderId}>
-                                    {/* HTB */}
-                                        <DirectoryCard item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} type={identifier} />
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
+                                        return (
+                                            <Box key={item._renderId}>
+                                                <DirectoryCard item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} type={identifier} selectedPreset={selectedPreset} />
+                                            </Box>
+                                        );
+                                    })}
+                                </Box>
+                            ) : (
+                                // Modo Aliados: Grid layout original
+                                <Grid container spacing={3}>
+                                    {dataWithAds.map((item) => {
+                                        if (item._isAd) {
+                                            return (
+                                                <Grid size={{ xs: 12 }} key={`${adsSessionKey}-${item._renderId}`}>
+                                                     <Box
+                                                        sx={{
+                                                            display: "grid",
+                                                            gridTemplateColumns: {
+                                                                xs: "1fr",
+                                                                sm: "1fr 1fr",
+                                                                md: "1fr 1fr 1fr",
+                                                            },
+                                                            gap: 3,
+                                                            width: "100%",
+                                                        }}
+                                                    >
+                                                         {item.ads.map((ad, index) => {
+                                                            const instanceSlotId = `directory-${adsSessionKey}-${item._renderId}-${index}-${ad.id}`;
+                                                            return (
+                                                                <Box key={instanceSlotId} display="flex" justifyContent="center">
+                                                                    <GoogleAd
+                                                                        slotId={instanceSlotId}
+                                                                        adUnitPath={ad.adUnitPath}
+                                                                    />
+                                                                </Box>
+                                                            );
+                                                        })}
+                                                    </Box>
+                                                </Grid>
+                                            );
+                                        }
+
+                                        return (
+                                            <Grid size={{ xs: 12, sm: 6, md: gridSize }} key={item._renderId}>
+                                                <DirectoryCard item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} type={identifier} selectedPreset={selectedPreset} />
+                                            </Grid>
+                                        );
+                                    })}
+                                </Grid>
+                            )}
+                        </Box>
                     )}
 
                     {!isList && itemsWithAds.length > itemsPerPage && (
