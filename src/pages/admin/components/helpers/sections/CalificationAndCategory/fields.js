@@ -16,6 +16,13 @@ export const fieldsSection = {
             "stars": "Star",
             "pais": "Pais",
             "fecha": "Año"
+        },
+        "Rk-ver": {
+            "stars": "Stars",
+            "ranking": "Ranking",
+            "reciente": "Reciente",
+            "versiones": "Versiones",
+            "desde": "Desde"
         }
     }
 }
