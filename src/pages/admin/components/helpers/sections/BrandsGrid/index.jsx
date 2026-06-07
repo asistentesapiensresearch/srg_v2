@@ -25,67 +25,91 @@ export default function BrandsGrid({
     hover_scale = true
 }) {
     const brands = brands_list || [];
-
+    const [hoveredBrand, setHoveredBrand] = React.useState(null);
     // Cálculo para Grilla
     const calculateGrid = (cols) => Math.max(1, Math.floor(12 / Number(cols)));
 
     // Tarjeta individual reutilizable para ambos modos
     const renderBrandItem = (brand, index, isMarquee, isBackground) => (
-        <Tooltip title={brand.name || "Marca"} key={brand.id || index}>
-            <Box
-                sx={{
-                    // Si está en marquee, le damos margen horizontal para separarlos. Si está en grid, el spacing lo hace MUI.
-                    mx: isMarquee ? 4 : 0,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease-in-out',
+      <Tooltip title={brand.name || "Marca"} key={brand.id || index}>
+        <Box
+          sx={{
+            // Si está en marquee, le damos margen horizontal para separarlos. Si está en grid, el spacing lo hace MUI.
+            mx: isMarquee ? 4 : 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            transition: "all 0.3s ease-in-out",
 
-                    // EFECTOS HOVER
-                    '&:hover': {
-                        transform: hover_scale ? 'scale(1.1)' : 'none',
-                        '& img': {
-                            filter: 'grayscale(0%) opacity(1)'
-                        },
-                        '& .brand-name': {
-                            color: 'primary.main',
-                            fontWeight: 600
-                        }
-                    }
-                }}
+            // EFECTOS HOVER
+            "&:hover": {
+              transform: hover_scale ? "scale(1.1)" : "none",
+              "& img": {
+                filter: "grayscale(0%) opacity(1)",
+              },
+              "& .brand-name": {
+                color: "primary.main",
+                fontWeight: 600,
+              },
+            },
+          }}
+        >
+          <Box
+            onMouseEnter={() => setHoveredBrand(brand.id || index)}
+            onMouseLeave={() => setHoveredBrand(null)}
+            sx={{
+              mx: isMarquee ? 4 : 0,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition: "all 0.3s ease-in-out",
+              transform:
+                hoveredBrand === (brand.id || index) && hover_scale
+                  ? "scale(1.1)"
+                  : "scale(1)",
+            }}
+          >
+            <StorageImage
+              alt={brand.name}
+              path={brand.key}
+              style={{
+                height: `${logo_height}px`,
+                  width: "100%",
+                  maxWidth: "180px",
+                objectFit: "contain",
+                // Si grayscale es true, lo pone gris y un poco transparente. Si no, lo deja normal.
+                filter:
+                  hoveredBrand === (brand.id || index)
+                    ? "grayscale(0%) opacity(1)"
+                    : grayscale
+                      ? "grayscale(100%) opacity(0.7)"
+                      : "none",
+                mixBlendMode: !isBackground ? "multiply" : "normal",
+                transition: "all 0.4s ease",
+              }}
+            />
+          </Box>
+
+          {show_names && (
+            <Typography
+              className="brand-name"
+              variant="caption"
+              sx={{
+                mt: 2,
+                fontWeight: 500,
+                color: "text.secondary",
+                transition: "color 0.3s",
+              }}
             >
-                <StorageImage
-                    alt={brand.name}
-                    path={brand.key}
-                    style={{
-                        height: `${logo_height}px`,
-                        width: 'auto',
-                        objectFit: 'contain',
-                        // Si grayscale es true, lo pone gris y un poco transparente. Si no, lo deja normal.
-                        filter: grayscale ? 'grayscale(100%) opacity(0.7)' : 'none',
-                        mixBlendMode: !isBackground ? 'multiply' : 'normal',
-                        transition: 'all 0.4s ease'
-                    }}
-                />
-
-                {show_names && (
-                    <Typography
-                        className="brand-name"
-                        variant="caption"
-                        sx={{
-                            mt: 2,
-                            fontWeight: 500,
-                            color: 'text.secondary',
-                            transition: 'color 0.3s'
-                        }}
-                    >
-                        {brand.name}
-                    </Typography>
-                )}
-            </Box>
-        </Tooltip>
+              {brand.name}
+            </Typography>
+          )}
+        </Box>
+      </Tooltip>
     );
 
     return (
