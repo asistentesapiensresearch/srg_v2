@@ -3,7 +3,7 @@ import { SortableContext } from "@dnd-kit/sortable";
 import { Box, Button, Drawer, List, Typography } from "@mui/material";
 import { useSortableList } from "@src/hooks/useSortableList";
 import { CopyPlusIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { SECTION_SCHEMAS } from './sectionRegistry';
 import { SortableItem } from "@src/components/SortableItem";
@@ -50,6 +50,8 @@ export default function ListSections({
         setSections,
         SECTION_SCHEMAS
     );
+    const [drawerWidth, setDrawerWidth] = useState(240);
+    const [isResizing, setIsResizing] = useState(false);
 
     console.log("Dbg - temporal para ver los componentes y sus hijos ->",{sections});
 
@@ -139,101 +141,209 @@ export default function ListSections({
         }
     };
 
+    const startResize = useCallback((e) => {
+      e.preventDefault();
+      setIsResizing(true);
+    }, []);
+
+    useEffect(() => {
+      const handleMouseMove = (e) => {
+        if (!isResizing) return;
+
+        const newWidth = Math.max(220, Math.min(700, e.clientX));
+
+        setDrawerWidth(newWidth);
+      };
+
+      const handleMouseUp = () => {
+        setIsResizing(false);
+      };
+
+      if (isResizing) {
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+      }
+
+      return () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+    }, [isResizing]);
+
     return (
-        <>
-            <Drawer
-                variant="permanent"
-                sx={{ width: 240, flexShrink: 0, '& .MuiDrawer-paper': { width: 240, boxSizing: 'border-box', position: 'relative' } }}
+      <>
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+              position: "relative",
+              overflow: "visible",
+              transition: isResizing ? "none" : "width 0.15s ease",
+            },
+          }}
+        >
+          {/* HANDLE PARA REDIMENSIONAR */}
+          <Box
+            onMouseDown={startResize}
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: -4,
+              width: 8,
+              height: "100%",
+              cursor: "col-resize",
+              zIndex: 9999,
+
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                left: "50%",
+                top: 0,
+                transform: "translateX(-50%)",
+                width: "2px",
+                height: "100%",
+                backgroundColor: "#d0d0d0",
+                transition: "background-color 0.2s",
+              },
+
+              "&:hover::before": {
+                backgroundColor: "#1976d2",
+              },
+            }}
+          />
+
+          <Box
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+            onMouseEnter={() => onSectionHover(sections.id)}
+            onMouseLeave={() => onSectionHover(null)}
+          >
+            <Box
+              sx={{
+                p: 2,
+                borderBottom: "1px solid #e0e0e0",
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
             >
-                <Box
-                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                    onMouseEnter={() => onSectionHover(sections.id)}
-                    onMouseLeave={() => onSectionHover(null)}
+              <Typography
+                variant="subtitle2"
+                fontWeight="bold"
+                color="text.secondary"
+              >
+                CAPAS
+              </Typography>
+
+              <Button
+                onClick={handlePrepareAddRoot}
+                variant="outlined"
+                size="small"
+                fullWidth
+                startIcon={<CopyPlusIcon size={14} />}
+              >
+                Añadir a raíz
+              </Button>
+            </Box>
+
+            <Box
+              sx={{
+                flexGrow: 1,
+                overflowY: "auto",
+                p: 1,
+              }}
+            >
+              <DndContext {...dndContextProps}>
+                <SortableContext {...sortableContextProps}>
+                  <List disablePadding>{renderLayerTree(sections)}</List>
+                </SortableContext>
+
+                <DragOverlay>
+                  {activeId ? (
+                    <Box
+                      sx={{
+                        bgcolor: "white",
+                        border: "2px solid #1976d2",
+                        borderRadius: 1,
+                        p: 1,
+                        boxShadow: 3,
+                        opacity: 0.9,
+                      }}
+                    >
+                      <Typography variant="body2" fontWeight={600}>
+                        {(() => {
+                          const activeNode = findNodeById(sections, activeId);
+
+                          return (
+                            SECTION_SCHEMAS[activeNode?.type]?.label ||
+                            "Elemento"
+                          );
+                        })()}
+                      </Typography>
+                    </Box>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+
+              {sections.length === 0 && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "block",
+                    textAlign: "center",
+                    mt: 4,
+                    color: "text.secondary",
+                  }}
                 >
-                    <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        <Typography variant="subtitle2" fontWeight="bold" color="text.secondary">CAPAS</Typography>
-                        <Button
-                            onClick={handlePrepareAddRoot}
-                            variant="outlined"
-                            size="small"
-                            fullWidth
-                            startIcon={<CopyPlusIcon size={14} />}
-                        >
-                            Añadir a raíz
-                        </Button>
-                    </Box>
+                  No hay secciones.
+                  <br />
+                  Añade una para comenzar.
+                </Typography>
+              )}
 
-                    <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 1 }}>
-                        <DndContext {...dndContextProps}>
-                            <SortableContext {...sortableContextProps}>
-                                <List disablePadding>
-                                    {renderLayerTree(sections)}
-                                </List>
-                            </SortableContext>
+              {sections.length > 0 && (
+                <Button
+                  onClick={handleSave}
+                  variant="contained"
+                  size="small"
+                  fullWidth
+                  disabled={isSaving}
+                  color="primary"
+                  sx={{ mt: 2 }}
+                >
+                  {isSaving ? "Guardando..." : "💾 Guardar"}
+                </Button>
+              )}
 
-                            {/* 🔥 DragOverlay para preview durante el arrastre */}
-                            <DragOverlay>
-                                {activeId ? (
-                                    <Box
-                                        sx={{
-                                            bgcolor: 'white',
-                                            border: '2px solid #1976d2',
-                                            borderRadius: 1,
-                                            p: 1,
-                                            boxShadow: 3,
-                                            opacity: 0.9
-                                        }}
-                                    >
-                                        <Typography variant="body2" fontWeight={600}>
-                                            {(() => {
-                                                const activeNode = findNodeById(sections, activeId);
-                                                return SECTION_SCHEMAS[activeNode?.type]?.label || 'Elemento';
-                                            })()}
-                                        </Typography>
-                                    </Box>
-                                ) : null}
-                            </DragOverlay>
-                        </DndContext>
-
-                        {sections.length === 0 && (
-                            <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 4, color: 'text.secondary' }}>
-                                No hay secciones.<br />Añade una para comenzar.
-                            </Typography>
-                        )}
-
-                        {sections.length > 0 && (
-                            <Button
-                                onClick={handleSave}
-                                variant="contained"
-                                size="small"
-                                fullWidth
-                                disabled={isSaving}
-                                color='primary'
-                                style={{ marginTop: 15 }}
-                            >
-                                {isSaving ? 'Guardando...' : '💾 Guardar'}
-                            </Button>
-                        )}
-                        {sections.length > 0 && (
-                            <Button
-                                onClick={handleExport}
-                                variant="contained"
-                                size="small"
-                                fullWidth
-                                disabled={isSaving}
-                                color='primary'
-                                style={{ marginTop: 15 }}
-                            >
-                                Exportar
-                            </Button>
-                        )}
-                    </Box>
-                </Box>
-            </Drawer>
-            <ExportTemplate
-                sections={sections}
-                openExport={openExport}
-                setOpenExport={setOpenExport} />
-        </>
+              {sections.length > 0 && (
+                <Button
+                  onClick={handleExport}
+                  variant="contained"
+                  size="small"
+                  fullWidth
+                  disabled={isSaving}
+                  color="primary"
+                  sx={{ mt: 2 }}
+                >
+                  Exportar
+                </Button>
+              )}
+            </Box>
+          </Box>
+        </Drawer>
+        <ExportTemplate
+          sections={sections}
+          openExport={openExport}
+          setOpenExport={setOpenExport}
+        />
+      </>
     );
 }
