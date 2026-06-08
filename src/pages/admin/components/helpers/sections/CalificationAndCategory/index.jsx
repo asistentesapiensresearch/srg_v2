@@ -7,34 +7,27 @@ import letraLogos from "../../../../../../assets/images/letras_logo.png";
 import logoSapiens from "../../../../../../assets/images/logo_sapiens.png";
 
 const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
-  const { model, data } = useSelector(
-    (state) => state.sections.fetchData.databaseDownload,
-  );
-  const dataExcels = useSelector(
-    (state) => state.sections.fetchData.sheets?.[excelSource],
-  );
-
+  const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
+  const dataExcels = useSelector((state) => state.sections.fetchData.sheets?.[excelSource]);
   const fieldsDB = fieldsSection.db?.[model];
-  const fieldsExcel = fieldsSection.excel?.[excelSource];
 
   const mergedData = useMemo(() => {
     const logo = data?.[fieldsDB?.logo] || "";
-    const excelData = dataExcels?.data || {};
-    const rankingValue = String(excelData?.[fieldsExcel?.ranking] ?? "-");
 
-    const recentValue = String(excelData?.[fieldsExcel?.reciente] ?? "-");
+    const excelRow = dataExcels?.data?.[0] || {};
 
-    const totalVersions = String(excelData?.[fieldsExcel?.versiones] ?? "-");
+    const rankingValue = excelRow?.Ranking ?? "";
+    const recentValue = excelRow?.Reciente ?? "";
+    const totalVersions = excelRow?.Versiones ?? "";
+    const sinceValue = excelRow?.Desde ?? "";
 
-    const sinceValue = String(excelData?.[fieldsExcel?.desde] ?? "-");
-    let totalStars = 0;
-    if (excelData && fieldsExcel?.stars) {
-      const rawValue = excelData[fieldsExcel.stars];
-      const parsed = Number(rawValue);
-      if (!Number.isNaN(parsed)) {
-        totalStars = Math.max(0, Math.min(parsed, maxStars));
-      }
+    let totalStars = Number(excelRow?.Stars ?? 0);
+
+    if (Number.isNaN(totalStars)) {
+      totalStars = 0;
     }
+
+    totalStars = Math.max(0, Math.min(totalStars, maxStars));
 
     return {
       logo,
@@ -44,7 +37,8 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
       sinceValue,
       totalStars,
     };
-  }, [data, dataExcels, fieldsExcel, fieldsDB, maxStars]);
+  }, [data, dataExcels, fieldsDB, maxStars]);
+
 
   const logoUrl = useImageUrl(mergedData.logo) || "";
 
@@ -252,41 +246,29 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
 
           <text
             x="340"
-            y="83"
+            y="98"
             textAnchor="middle"
             fontFamily="Arial, sans-serif"
-            fontSize="12"
+            fontSize="16"
             fontWeight="700"
             fill="#ffffff"
             letterSpacing="2"
             opacity="0.9"
           >
-            RANKING COL-SAPIENS
+            {mergedData.rankingValue}
           </text>
           <text
             x="340"
-            y="125"
-            textAnchor="middle"
-            fontFamily="Arial Black, Arial, sans-serif"
-            fontSize="15.5"
-            fontWeight="900"
-            fill="#ffffff"
-            letterSpacing="8"
-          >
-            {mergedData.countryValue}
-          </text>
-          <text
-            x="340"
-            y="100"
+            y="118"
             textAnchor="middle"
             fontFamily="Arial, sans-serif"
-            fontSize="12"
+            fontSize="15.5"
             fontWeight="600"
             fill="#ffcccc"
             letterSpacing="3"
             opacity="0.85"
           >
-            {mergedData.dateValue}
+            {mergedData.recentValue}
           </text>
 
           <g transform="translate(0, 8)">
@@ -295,24 +277,10 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
               href={letraLogos}
               x="215"
               y="210"
-              width="250"
-              height="80"
+              width="270"
+              height="110"
               preserveAspectRatio="xMidYMid meet"
-              opacity="0.06"
             />
-
-            {/* Categoría principal — imagen letra_logos.png con hover */}
-            <image
-              href={letraLogos}
-              x="215"
-              y="210"
-              width="250"
-              height="80"
-              preserveAspectRatio="xMidYMid meet"
-              className="transition-transform duration-300 group-hover:scale-110"
-              style={{ transformOrigin: "340px 248px" }}
-            />
-
             {/* Líneas decorativas */}
             <line
               x1="182"
@@ -336,10 +304,10 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
             {/* Logo Sapiens centrado entre las dos líneas */}
             <image
               href={logoSapiens}
-              x="310"
-              y="155"
-              width="80"
-              height="55"
+              x="300"
+              y="152"
+              width="90"
+              height="56"
               preserveAspectRatio="xMidYMid meet"
               style={{ filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.2))" }}
             />
@@ -360,21 +328,6 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
                 className="transition-transform duration-300 group-hover:scale-105"
               />
             )}
-
-            <text
-              x="340"
-              y="315"
-              textAnchor="middle"
-              fontFamily="Arial Black, Arial, sans-serif"
-              fontSize="22"
-              fontWeight="900"
-              fill="#ffffff"
-              letterSpacing="4"
-              className="transition-transform duration-300 group-hover:scale-105"
-              style={{ transformOrigin: "340px 308px" }}
-            >
-              {mergedData.calificationValue}
-            </text>
 
             <line
               x1="215"
@@ -409,7 +362,7 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
                 x="248"
                 y="348"
                 width="184"
-                height="62"
+                height="50"
                 rx="6"
                 ry="18"
                 fill="#CC0000"
@@ -418,7 +371,7 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
                 x="250"
                 y="350"
                 width="180"
-                height="58"
+                height="46"
                 rx="5"
                 ry="16"
                 fill="none"
@@ -426,30 +379,18 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
                 strokeWidth="0.5"
                 opacity="0.15"
               />
-              <text
-                x="340"
-                y="365"
-                textAnchor="middle"
-                fontFamily="Arial, sans-serif"
-                fontSize="11.5"
-                fontWeight="700"
-                fill="#ffaaaa"
-                letterSpacing="3"
-              >
-                VERSIÓN
-              </text>
               <line
                 x1="240"
-                y1="370"
+                y1="362"
                 x2="440"
-                y2="370"
+                y2="362"
                 stroke="#ffffff"
                 strokeWidth="0.5"
                 opacity="0.2"
               />
               <text
                 x="340"
-                y="384"
+                y="370"
                 textAnchor="middle"
                 fontFamily="Arial Black, Arial, sans-serif"
                 fontSize="15.5"
@@ -457,11 +398,11 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
                 fill="#ffffff"
                 letterSpacing="2"
               >
-                #{mergedData.totalVersions}
+                VERSIÓN {mergedData.totalVersions}
               </text>
               <text
                 x="340"
-                y="399"
+                y="385"
                 textAnchor="middle"
                 fontFamily="Arial, sans-serif"
                 fontSize="11.5"
@@ -473,21 +414,6 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
               </text>
             </g>
           </g>
-
-          <polyline
-            points="170,80 170,50 208,40"
-            fill="none"
-            stroke="#CC0000"
-            strokeWidth="2.5"
-          />
-          <polyline
-            points="510,80 510,50 472,40"
-            fill="none"
-            stroke="#CC0000"
-            strokeWidth="2.5"
-          />
-          <circle cx="208" cy="40" r="3" fill="#CC0000" />
-          <circle cx="472" cy="40" r="3" fill="#CC0000" />
         </svg>
       </div>
     </div>
