@@ -17,7 +17,7 @@ const container = (key, label, tag) =>  (
             style={{
                 color: "#fff",
             }}
-            className="mb-1 font-bold text-lg leading-tight"
+            className="mb-1 font-bold text-[20px] leading-tight"
         >
             {label}
         </h4>
@@ -69,7 +69,7 @@ const InstitutionHighlights = ({
             className="bg-primary"
         >
             <Box
-                className="w-full max-w-[1440px] mx-auto md:w-[90%] grid grid-cols-2 gap-[1px] bg-white/20"
+                className="w-full max-w-[1440px] mx-auto md:w-[90%] grid grid-cols-2 gap-px bg-white/20"
                 sx={{
                     gridTemplateColumns: {
                     md: `repeat(${desktopCols || 1}, minmax(0, 1fr))`,

@@ -231,6 +231,7 @@ const HeaderPortada = ({
                       padding: "18px",
                       width: "90%",
                       margin: "0 auto",
+                      marginTop: "2rem",
                       gap: "16px"
                     }}
                     key={child.id}

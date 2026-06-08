@@ -94,10 +94,10 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
         `}
       </style>
 
-      <div className="relative w-[210px] h-[300px] md:w-[280px] md:h-[390px] animate-glow-pulse group">
+      <div className="relative w-[210px] h-[275px] md:w-[280px] md:h-[360px] animate-glow-pulse group">
         <svg
           className="absolute inset-0 w-full h-full"
-          viewBox="160 20 360 510"
+          viewBox="160 20 360 490"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -272,16 +272,7 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
           </text>
 
           <g transform="translate(0, 8)">
-            {/* Categoría fondo — imagen letra_logos.png opacidad baja */}
-            <image
-              href={letraLogos}
-              x="215"
-              y="210"
-              width="270"
-              height="110"
-              preserveAspectRatio="xMidYMid meet"
-            />
-            {/* Líneas decorativas */}
+            {/* Líneas decorativas — definen el centro y=175 */}
             <line
               x1="182"
               y1="175"
@@ -301,18 +292,18 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
             <circle cx="282" cy="175" r="3" fill="#CC0000" />
             <circle cx="398" cy="175" r="3" fill="#CC0000" />
 
-            {/* Logo Sapiens centrado entre las dos líneas */}
+            {/* Logo Sapiens — centrado en x=340, y=175 */}
             <image
               href={logoSapiens}
-              x="300"
-              y="152"
-              width="90"
-              height="56"
+              x="285"
+              y="137"
+              width="110"
+              height="76"
               preserveAspectRatio="xMidYMid meet"
               style={{ filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.2))" }}
             />
 
-            {/* Logo del equipo */}
+            {/* Logo del equipo — encima del logoSapiens, mismo centro */}
             {logoUrl && (
               <image
                 href={logoUrl}
@@ -329,49 +320,60 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
               />
             )}
 
+            {/* letraLogos — debajo del logo, centrado, con margen */}
+            <image
+              href={letraLogos}
+              x="235"
+              y="222"
+              width="210"
+              height="60"
+              preserveAspectRatio="xMidYMid meet"
+            />
+
+            {/* Separador con diamante */}
             <line
               x1="215"
-              y1="334"
+              y1="295"
               x2="316"
-              y2="334"
+              y2="295"
               stroke="#CC0000"
               strokeWidth="1"
               opacity="0.25"
             />
             <polygon
-              points="340,328 347,334 340,340 333,334"
+              points="340,289 347,295 340,301 333,295"
               fill="#CC0000"
               opacity="0.4"
             />
             <line
               x1="364"
-              y1="334"
+              y1="295"
               x2="465"
-              y2="334"
+              y2="295"
               stroke="#CC0000"
               strokeWidth="1"
               opacity="0.25"
             />
 
-            {/* Contenedor CLASIFICADO */}
+            {/* Contenedor VERSIÓN */}
             <g
               className="transition-transform duration-300 hover:-translate-y-1"
-              style={{ transformOrigin: "340px 370px" }}
+              style={{ transformOrigin: "340px 351px" }}
             >
               <rect
                 x="248"
-                y="348"
+                y="324"
                 width="184"
-                height="50"
+                height="62"
                 rx="6"
                 ry="18"
                 fill="#CC0000"
               />
               <rect
                 x="250"
-                y="350"
+                y="326"
                 width="180"
-                height="46"
+                height="58"
                 rx="5"
                 ry="16"
                 fill="none"
@@ -381,16 +383,16 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
               />
               <line
                 x1="240"
-                y1="362"
+                y1="338"
                 x2="440"
-                y2="362"
+                y2="338"
                 stroke="#ffffff"
                 strokeWidth="0.5"
                 opacity="0.2"
               />
               <text
                 x="340"
-                y="370"
+                y="348"
                 textAnchor="middle"
                 fontFamily="Arial Black, Arial, sans-serif"
                 fontSize="15.5"
@@ -402,7 +404,7 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
               </text>
               <text
                 x="340"
-                y="385"
+                y="368"
                 textAnchor="middle"
                 fontFamily="Arial, sans-serif"
                 fontSize="11.5"
