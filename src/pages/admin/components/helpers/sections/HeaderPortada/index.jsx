@@ -115,7 +115,7 @@ const HeaderPortada = ({
           }}
         >
           {/* Top content */}
-          <Box sx={{ flexGrow: 1, py: { xs: 6, md: 8 }, pb: { xs: 3, md: 5 } }}>
+          <Box sx={{ flexGrow: 1 }}>
             <Box className="grid grid-cols-1 md:grid-cols-2 md:w-[90%] gap-4 w-[90%] mx-auto">
 
               <Box className="flex flex-col justify-center gap-2 md:gap-3 mt-4 md:mt-0">
