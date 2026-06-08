@@ -325,31 +325,31 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
               href={letraLogos}
               x="235"
               y="222"
-              width="210"
-              height="60"
+              width="230"
+              height="80"
               preserveAspectRatio="xMidYMid meet"
             />
 
             {/* Separador con diamante */}
             <line
               x1="215"
-              y1="295"
+              y1="310"
               x2="316"
-              y2="295"
+              y2="310"
               stroke="#CC0000"
               strokeWidth="1"
               opacity="0.25"
             />
             <polygon
-              points="340,289 347,295 340,301 333,295"
+              points="340,304 347,310 340,316 333,310"
               fill="#CC0000"
               opacity="0.4"
             />
             <line
               x1="364"
-              y1="295"
+              y1="310"
               x2="465"
-              y2="295"
+              y2="310"
               stroke="#CC0000"
               strokeWidth="1"
               opacity="0.25"
@@ -358,11 +358,11 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
             {/* Contenedor VERSIÓN */}
             <g
               className="transition-transform duration-300 hover:-translate-y-1"
-              style={{ transformOrigin: "340px 351px" }}
+              style={{ transformOrigin: "340px 366px" }}
             >
               <rect
                 x="248"
-                y="324"
+                y="339"
                 width="184"
                 height="62"
                 rx="6"
@@ -371,7 +371,7 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
               />
               <rect
                 x="250"
-                y="326"
+                y="341"
                 width="180"
                 height="58"
                 rx="5"
@@ -383,16 +383,16 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
               />
               <line
                 x1="240"
-                y1="338"
+                y1="353"
                 x2="440"
-                y2="338"
+                y2="353"
                 stroke="#ffffff"
                 strokeWidth="0.5"
                 opacity="0.2"
               />
               <text
                 x="340"
-                y="348"
+                y="363"
                 textAnchor="middle"
                 fontFamily="Arial Black, Arial, sans-serif"
                 fontSize="15.5"
@@ -404,7 +404,7 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
               </text>
               <text
                 x="340"
-                y="368"
+                y="383"
                 textAnchor="middle"
                 fontFamily="Arial, sans-serif"
                 fontSize="11.5"
