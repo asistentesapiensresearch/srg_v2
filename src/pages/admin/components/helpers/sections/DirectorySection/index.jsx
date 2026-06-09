@@ -733,12 +733,22 @@ const DirectorySectionContent = ({
         />
 
         {/* PRESETS */}
-        {parseQuickFilters(quickFilters).length > 0 && (
+        {/* PRESETS + FILTROS */}
+        <Box
+          sx={{
+            mb: 3,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 2,
+          }}
+        >
+          {/* BOTONES TODOS / ALIADOS */}
           <Stack
             direction="row"
             spacing={2}
             sx={{
-              mb: 3,
               overflowX: "auto",
               pb: 1,
             }}
@@ -757,16 +767,13 @@ const DirectorySectionContent = ({
                     borderRadius: 3,
                     textTransform: "none",
                     fontWeight: 400,
-
                     borderColor: active ? primaryColor : "#e0e0e0",
-                    backgroundColor: active ? primaryColor : "#fff",
+                    bgcolor: active ? primaryColor : "#fff",
                     color: active ? "#fff" : "text.primary",
 
                     "&:hover": {
                       borderColor: primaryColor,
-                      backgroundColor: active
-                        ? primaryColor
-                        : "rgba(220,38,38,0.04)",
+                      bgcolor: active ? primaryColor : "rgba(220,38,38,0.04)",
                     },
                   }}
                 >
@@ -775,7 +782,103 @@ const DirectorySectionContent = ({
               );
             })}
           </Stack>
-        )}
+
+          {/* CATEGORÍA Y CALIFICACIÓN */}
+          {!isList && (identifier === "COL" || identifier === "M-TOP") && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                flexWrap: "wrap",
+              }}
+            >
+              <FormControl
+                size="small"
+                sx={{
+                  minWidth: 150,
+
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 3,
+                    bgcolor: "#fff",
+
+                    "& fieldset": {
+                      borderColor: "#e5e7eb",
+                    },
+
+                    "&:hover fieldset": {
+                      borderColor: "#d1d5db",
+                    },
+
+                    "&.Mui-focused fieldset": {
+                      borderColor: primaryColor,
+                    },
+                  },
+                }}
+              >
+                <InputLabel>Categoría</InputLabel>
+
+                <Select
+                  value={activeFilters["Categoría"]?.[0] || ""}
+                  label="Categoría"
+                  onChange={(e) => handleCategoryChange(e.target.value)}
+                >
+                  <MenuItem value="">
+                    <em>Todas</em>
+                  </MenuItem>
+
+                  {categoryOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      D{option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl
+                size="small"
+                sx={{
+                  minWidth: 170,
+
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 3,
+                    bgcolor: "#fff",
+
+                    "& fieldset": {
+                      borderColor: "#e5e7eb",
+                    },
+
+                    "&:hover fieldset": {
+                      borderColor: "#d1d5db",
+                    },
+
+                    "&.Mui-focused fieldset": {
+                      borderColor: primaryColor,
+                    },
+                  },
+                }}
+              >
+                <InputLabel>Calificación</InputLabel>
+
+                <Select
+                  value={activeFilters["Calificación"]?.[0] || ""}
+                  label="Calificación"
+                  onChange={(e) => handleQualificationChange(e.target.value)}
+                >
+                  <MenuItem value="">
+                    <em>Todas</em>
+                  </MenuItem>
+
+                  {qualificationOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
+        </Box>
 
         {/* CONTENIDO */}
         {loading ? (
@@ -793,69 +896,18 @@ const DirectorySectionContent = ({
         ) : (
           <Box>
             <Box
-              sx={{ mb: 2, display: "flex", justifyContent: "space-between" }}
+              sx={{
+                mb: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
               <Typography variant="body2" color="text.secondary">
                 Mostrando{" "}
                 <strong>{itemsWithAds.filter((x) => !x._isAd).length}</strong>{" "}
                 resultados
               </Typography>
-              {!isList && (
-                <Box>
-                  {(identifier === "COL" || identifier === "M-TOP") && (
-                    <>
-                      <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                        <InputLabel>Categoría</InputLabel>
-
-                        <Select
-                          value={activeFilters["Categoría"]?.[0] || ""}
-                          label="Categoría"
-                          onChange={(e) => handleCategoryChange(e.target.value)}
-                          sx={{
-                            borderRadius: 3,
-                            bgcolor: "white",
-                          }}
-                        >
-                          <MenuItem value="">
-                            <em>---Sin valor---</em>
-                          </MenuItem>
-                          {categoryOptions.map((option) => (
-                            <MenuItem key={option} value={option}>
-                              D{option}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-
-                      <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                        <InputLabel>Calificación</InputLabel>
-
-                        <Select
-                          value={activeFilters["Calificación"]?.[0] || ""}
-                          label="Calificación"
-                          onChange={(e) =>
-                            handleQualificationChange(e.target.value)
-                          }
-                          sx={{
-                            borderRadius: 3,
-                            bgcolor: "white",
-                          }}
-                        >
-                          <MenuItem value="">
-                            <em>---Sin valor---</em>
-                          </MenuItem>
-
-                          {qualificationOptions.map((option) => (
-                            <MenuItem key={option} value={option}>
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </>
-                  )}
-                </Box>
-              )}
             </Box>
 
             {isList ? (
