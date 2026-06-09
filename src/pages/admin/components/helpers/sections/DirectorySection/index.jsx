@@ -955,13 +955,35 @@ const DirectorySectionContent = ({
                               return (
                                 <Box
                                   key={instanceSlotId}
-                                  display="flex"
-                                  justifyContent="center"
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    width: "100%",
+                                  }}
                                 >
-                                  <GoogleAd
-                                    slotId={instanceSlotId}
-                                    adUnitPath={ad.adUnitPath}
-                                  />
+                                  <Box
+                                    sx={{
+                                      width: "100%",
+                                      maxWidth: 360,
+                                      borderRadius: 4,
+                                      overflow: "hidden",
+                                      border: "1px solid #e5e7eb",
+                                      backgroundColor: "#fff",
+                                      boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
+                                      p: 1.5,
+                                      transition: "all 0.2s ease",
+                                      "&:hover": {
+                                        boxShadow:
+                                          "0 8px 20px rgba(0,0,0,0.12)",
+                                        transform: "translateY(-2px)",
+                                      },
+                                    }}
+                                  >
+                                    <GoogleAd
+                                      slotId={instanceSlotId}
+                                      adUnitPath={ad.adUnitPath}
+                                    />
+                                  </Box>
                                 </Box>
                               );
                             })}
@@ -1010,13 +1032,36 @@ const DirectorySectionContent = ({
                                 return (
                                   <Box
                                     key={instanceSlotId}
-                                    display="flex"
-                                    justifyContent="center"
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      width: "100%",
+                                    }}
                                   >
-                                    <GoogleAd
-                                      slotId={instanceSlotId}
-                                      adUnitPath={ad.adUnitPath}
-                                    />
+                                    <Box
+                                      sx={{
+                                        width: "100%",
+                                        maxWidth: 360,
+                                        borderRadius: 4,
+                                        overflow: "hidden",
+                                        border: "1px solid #e5e7eb",
+                                        backgroundColor: "#fff",
+                                        boxShadow:
+                                          "0 2px 10px rgba(0,0,0,0.06)",
+                                        p: 1.5,
+                                        transition: "all 0.2s ease",
+                                        "&:hover": {
+                                          boxShadow:
+                                            "0 8px 20px rgba(0,0,0,0.12)",
+                                          transform: "translateY(-2px)",
+                                        },
+                                      }}
+                                    >
+                                      <GoogleAd
+                                        slotId={instanceSlotId}
+                                        adUnitPath={ad.adUnitPath}
+                                      />
+                                    </Box>
                                   </Box>
                                 );
                               })}
