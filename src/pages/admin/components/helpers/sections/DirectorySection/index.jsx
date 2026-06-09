@@ -914,6 +914,7 @@ const DirectorySectionContent = ({
               <TableList
                 data={itemsWithAds.filter((i) => !i._isAd)}
                 columns={sourceConfig?.columns || []}
+                historyColumns={sourceConfig?.historyColumns || []}
                 aliases={columnAliases}
               />
             ) : (

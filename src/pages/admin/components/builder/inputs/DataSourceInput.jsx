@@ -7,18 +7,21 @@ import { fetchSheet } from '@src/pages/admin/components/helpers/sections/Directo
 export default function DataSourceInput({ value, onChange }) {
 
     // Inicialización del estado local
-    const [localState, setLocalState] = useState(value || {
-        type: 'api',
-        url: '',
-        sheetId: '',
-        sheetName: '',
-        selectedSheet: '', // Aquí guardaremos el GID (ID de la hoja)
-        token: '',
+    const [localState, setLocalState] = useState(
+      value || {
+        type: "api",
+        url: "",
+        sheetId: "",
+        sheetName: "",
+        selectedSheet: "", // Aquí guardaremos el GID (ID de la hoja)
+        token: "",
         filters: [],
-        columns: [],        
-        columnAliases: {},  
-        orderColumns: []
-    });
+        columns: [],
+        historyColumns: [],
+        columnAliases: {},
+        orderColumns: [],
+      },
+    );
 
     const [headers, setHeaders] = useState([]);
     const [availableSheets, setAvailableSheets] = useState([]);
@@ -136,13 +139,14 @@ export default function DataSourceInput({ value, onChange }) {
                 setHeaders([]);
 
                 updateState({
-                    sheetId: file.id,
-                    sheetName: file.name,
-                    selectedSheet: '', // Reset hoja al cambiar archivo
-                    token: authToken,
-                    filters: [],
-                    columns: [],
-                    columnAliases: {}
+                  sheetId: file.id,
+                  sheetName: file.name,
+                  selectedSheet: "",
+                  token: authToken,
+                  filters: [],
+                  columns: [],
+                  historyColumns: [],
+                  columnAliases: {},
                 });
                 setAuthError(false);
             }
@@ -159,10 +163,11 @@ export default function DataSourceInput({ value, onChange }) {
         
         // Actualizamos estado visual inmediatamente
         updateState({
-            selectedSheet: newSheetGid,
-            filters: [],
-            columns: [],
-            columnAliases: {}
+          selectedSheet: newSheetGid,
+          filters: [],
+          columns: [],
+          historyColumns: [],
+          columnAliases: {},
         });
 
         // Cargamos los datos (headers)
@@ -191,149 +196,283 @@ export default function DataSourceInput({ value, onChange }) {
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1, p: 1, border: '1px dashed #ccc', borderRadius: 2 }}>
-            
-            <TextField
-                select fullWidth size="small" label="Fuente de Datos"
-                value={localState.type}
-                onChange={(e) => updateState({ type: e.target.value })}
-            >
-                <MenuItem value="sheet">Google Drive / Excel</MenuItem>
-            </TextField>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          mt: 1,
+          p: 1,
+          border: "1px dashed #ccc",
+          borderRadius: 2,
+        }}
+      >
+        <TextField
+          select
+          fullWidth
+          size="small"
+          label="Fuente de Datos"
+          value={localState.type}
+          onChange={(e) => updateState({ type: e.target.value })}
+        >
+          <MenuItem value="sheet">Google Drive / Excel</MenuItem>
+        </TextField>
 
-            {localState.type === 'sheet' && (
-                <Box>
-                    {!localState.sheetId ? (
-                        <Button fullWidth variant="outlined" startIcon={<FileSpreadsheet size={18} />} onClick={handleGoogleConnect} sx={{ color: '#2e7d32', borderColor: '#2e7d32' }}>
-                            Seleccionar Archivo
-                        </Button>
-                    ) : (
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                            {authError && (
-                                <Alert 
-                                    severity="warning" 
-                                    icon={<AlertCircle size={20}/>}
-                                    action={<Button color="inherit" size="small" onClick={handleRefreshToken}>RECONECTAR</Button>}
-                                    sx={{ mb: 1 }}
-                                >
-                                    Token vencido.
-                                </Alert>
-                            )}
+        {localState.type === "sheet" && (
+          <Box>
+            {!localState.sheetId ? (
+              <Button
+                fullWidth
+                variant="outlined"
+                startIcon={<FileSpreadsheet size={18} />}
+                onClick={handleGoogleConnect}
+                sx={{ color: "#2e7d32", borderColor: "#2e7d32" }}
+              >
+                Seleccionar Archivo
+              </Button>
+            ) : (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                {authError && (
+                  <Alert
+                    severity="warning"
+                    icon={<AlertCircle size={20} />}
+                    action={
+                      <Button
+                        color="inherit"
+                        size="small"
+                        onClick={handleRefreshToken}
+                      >
+                        RECONECTAR
+                      </Button>
+                    }
+                    sx={{ mb: 1 }}
+                  >
+                    Token vencido.
+                  </Alert>
+                )}
 
-                            <Box sx={{ bgcolor: authError ? '#fff3e0' : '#e8f5e9', p: 1.5, borderRadius: 1, border: `1px solid ${authError ? '#ffb74d' : '#c8e6c9'}` }}>
-                                <Box display="flex" justifyContent="space-between" alignItems="center">
-                                    <Box display="flex" gap={1} alignItems="center" overflow="hidden">
-                                        <FileSpreadsheet size={20} color={authError ? "#f57c00" : "#2e7d32"} />
-                                        <Box>
-                                            <Typography variant="body2" noWrap fontWeight="bold">
-                                                {localState.sheetName || "Archivo"}
-                                            </Typography>
-                                            <Chip label={authError ? "OFFLINE" : "ONLINE"} size="small" color={authError ? "warning" : "success"} sx={{ height: 20, fontSize: '0.6rem' }} />
-                                        </Box>
-                                    </Box>
-                                    
-                                    <Box display="flex" gap={1}>
-                                        {!authError && (
-                                            <IconButton size="small" onClick={handleRefreshToken} title="Refrescar">
-                                                <RefreshCw size={14} />
-                                            </IconButton>
-                                        )}
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => {
-                                                updateState({ sheetId: '', sheetName: '', selectedSheet: '', token: '', filters: [], columns: [], columnAliases: {} });
-                                                setAvailableSheets([]);
-                                                setHeaders([]);
-                                                setAuthError(false);
-                                            }}
-                                        >
-                                            <X size={16} />
-                                        </IconButton>
-                                    </Box>
-                                </Box>
-                            </Box>
-                        </Box>
-                    )}
-                </Box>
-            )}
-
-            {/* SELECTOR DE HOJA (CORREGIDO: Sin Key Dinámico que rompe foco) */}
-            {localState.sheetId && (
-                <TextField
-                    select 
-                    fullWidth 
-                    size="small"
-                    label={loadingSheets ? "Cargando hojas..." : "Hoja del documento"}
-                    value={localState.selectedSheet !== undefined ? localState.selectedSheet : ''}
-                    onChange={handleSheetChange}
-                    disabled={authError || loadingSheets}
-                    InputProps={{
-                        endAdornment: loadingSheets ? <CircularProgress size={20} sx={{ mr: 2 }} /> : null
-                    }}
+                <Box
+                  sx={{
+                    bgcolor: authError ? "#fff3e0" : "#e8f5e9",
+                    p: 1.5,
+                    borderRadius: 1,
+                    border: `1px solid ${authError ? "#ffb74d" : "#c8e6c9"}`,
+                  }}
                 >
-                    {/* Renderizamos las hojas disponibles. Usamos sheetId (GID) como valor */}
-                    {availableSheets.map((sheet, idx) => (
-                        <MenuItem key={idx} value={sheet.sheetId}>{sheet.title}</MenuItem>
-                    ))}
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Box
+                      display="flex"
+                      gap={1}
+                      alignItems="center"
+                      overflow="hidden"
+                    >
+                      <FileSpreadsheet
+                        size={20}
+                        color={authError ? "#f57c00" : "#2e7d32"}
+                      />
+                      <Box>
+                        <Typography variant="body2" noWrap fontWeight="bold">
+                          {localState.sheetName || "Archivo"}
+                        </Typography>
+                        <Chip
+                          label={authError ? "OFFLINE" : "ONLINE"}
+                          size="small"
+                          color={authError ? "warning" : "success"}
+                          sx={{ height: 20, fontSize: "0.6rem" }}
+                        />
+                      </Box>
+                    </Box>
 
-                    {/* Estado vacío */}
-                    {!loadingSheets && availableSheets.length === 0 && !localState.selectedSheet && (
-                        <MenuItem disabled value="">
-                            <em>No se encontraron hojas</em>
-                        </MenuItem>
-                    )}
-                    
-                    {/* Fallback si tenemos un valor guardado pero la lista aún no carga */}
-                    {localState.selectedSheet !== '' && !availableSheets.find(s => s.sheetId === localState.selectedSheet) && (
-                         <MenuItem value={localState.selectedSheet} sx={{ display: 'none' }}>
-                            {/* Hidden item to prevent Select complaining about out-of-range value */}
-                         </MenuItem>
-                    )}
-                </TextField>
+                    <Box display="flex" gap={1}>
+                      {!authError && (
+                        <IconButton
+                          size="small"
+                          onClick={handleRefreshToken}
+                          title="Refrescar"
+                        >
+                          <RefreshCw size={14} />
+                        </IconButton>
+                      )}
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          updateState({
+                            sheetId: "",
+                            sheetName: "",
+                            selectedSheet: "",
+                            token: "",
+                            filters: [],
+                            columns: [],
+                            historyColumns: [],
+                            columnAliases: {},
+                          });
+                          setAvailableSheets([]);
+                          setHeaders([]);
+                          setAuthError(false);
+                        }}
+                      >
+                        <X size={16} />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
             )}
+          </Box>
+        )}
 
-            <Divider sx={{ my: 1 }} />
+        {/* SELECTOR DE HOJA (CORREGIDO: Sin Key Dinámico que rompe foco) */}
+        {localState.sheetId && (
+          <TextField
+            select
+            fullWidth
+            size="small"
+            label={loadingSheets ? "Cargando hojas..." : "Hoja del documento"}
+            value={
+              localState.selectedSheet !== undefined
+                ? localState.selectedSheet
+                : ""
+            }
+            onChange={handleSheetChange}
+            disabled={authError || loadingSheets}
+            InputProps={{
+              endAdornment: loadingSheets ? (
+                <CircularProgress size={20} sx={{ mr: 2 }} />
+              ) : null,
+            }}
+          >
+            {/* Renderizamos las hojas disponibles. Usamos sheetId (GID) como valor */}
+            {availableSheets.map((sheet, idx) => (
+              <MenuItem key={idx} value={sheet.sheetId}>
+                {sheet.title}
+              </MenuItem>
+            ))}
 
-            {/* CONFIGURACIÓN DE COLUMNAS */}
-            {!authError && headers.length > 0 && (
-                <>
-                    <Typography variant="subtitle2" color="text.secondary">Configuración de Columnas</Typography>
-                    
-                    <Autocomplete
-                        multiple
-                        id="columns-select"
-                        options={headers}
-                        getOptionLabel={(option) => option}
-                        filterSelectedOptions
-                        value={localState.columns || []}
-                        onChange={(event, newValue) => updateState({ columns: newValue })}
-                        renderInput={(params) => (
-                            <TextField {...params} label="Columnas visibles" size="small" />
-                        )}
+            {/* Estado vacío */}
+            {!loadingSheets &&
+              availableSheets.length === 0 &&
+              !localState.selectedSheet && (
+                <MenuItem disabled value="">
+                  <em>No se encontraron hojas</em>
+                </MenuItem>
+              )}
+
+            {/* Fallback si tenemos un valor guardado pero la lista aún no carga */}
+            {localState.selectedSheet !== "" &&
+              !availableSheets.find(
+                (s) => s.sheetId === localState.selectedSheet,
+              ) && (
+                <MenuItem
+                  value={localState.selectedSheet}
+                  sx={{ display: "none" }}
+                >
+                  {/* Hidden item to prevent Select complaining about out-of-range value */}
+                </MenuItem>
+              )}
+          </TextField>
+        )}
+
+        <Divider sx={{ my: 1 }} />
+
+        {/* CONFIGURACIÓN DE COLUMNAS */}
+        {!authError && headers.length > 0 && (
+          <>
+            <Typography variant="subtitle2" color="text.secondary">
+              Configuración de Columnas
+            </Typography>
+
+            <Autocomplete
+              multiple
+              id="columns-select"
+              options={headers}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              value={localState.columns || []}
+              onChange={(event, newValue) => updateState({ columns: newValue })}
+              renderInput={(params) => (
+                <TextField {...params} label="Columnas visibles tabla principal" size="small" />
+              )}
+            />
+            <Autocomplete
+              multiple
+              id="history-columns-select"
+              options={headers}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              value={localState.historyColumns || []}
+              onChange={(event, newValue) => {
+                updateState({ historyColumns: newValue });
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Columnas visibles en Historial"
+                  size="small"
+                />
+              )}
+            />
+
+            {localState.columns && localState.columns.length > 0 && (
+              <Box
+                sx={{
+                  bgcolor: "#f5f5f5",
+                  p: 2,
+                  borderRadius: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  fontWeight="bold"
+                  color="text.secondary"
+                >
+                  ALIAS DE COLUMNAS
+                </Typography>
+                {localState.columns.map((col) => (
+                  <Box
+                    key={col}
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <Box sx={{ width: "40%", minWidth: 0 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                        noWrap
+                      >
+                        Original:
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        fontWeight={500}
+                        noWrap
+                        title={col}
+                      >
+                        {col}
+                      </Typography>
+                    </Box>
+                    <ArrowRight size={16} color="#999" />
+                    <TextField
+                      size="small"
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Alias"
+                      value={localState.columnAliases?.[col] || ""}
+                      onChange={(e) => handleAliasChange(col, e.target.value)}
+                      sx={{ bgcolor: "white" }}
                     />
-
-                    {localState.columns && localState.columns.length > 0 && (
-                        <Box sx={{ bgcolor: '#f5f5f5', p: 2, borderRadius: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <Typography variant="caption" fontWeight="bold" color="text.secondary">ALIAS DE COLUMNAS</Typography>
-                            {localState.columns.map((col) => (
-                                <Box key={col} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Box sx={{ width: '40%', minWidth: 0 }}>
-                                        <Typography variant="caption" color="text.secondary" display="block" noWrap>Original:</Typography>
-                                        <Typography variant="body2" fontWeight={500} noWrap title={col}>{col}</Typography>
-                                    </Box>
-                                    <ArrowRight size={16} color="#999" />
-                                    <TextField
-                                        size="small" fullWidth variant="outlined" placeholder="Alias"
-                                        value={localState.columnAliases?.[col] || ''}
-                                        onChange={(e) => handleAliasChange(col, e.target.value)}
-                                        sx={{ bgcolor: 'white' }}
-                                    />
-                                </Box>
-                            ))}
-                        </Box>
-                    )}
-                </>
+                  </Box>
+                ))}
+              </Box>
             )}
-        </Box>
+          </>
+        )}
+      </Box>
     );
 }

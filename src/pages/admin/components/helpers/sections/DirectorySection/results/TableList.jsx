@@ -43,25 +43,24 @@ function stableSort(array, comparator) {
 
 // --- ROW COMPONENT ---
 function Row(props) {
-  const { row, columns, aliases, rowIndex } = props;
+  const {
+    row,
+    columns,
+    historyColumns,
+    aliases,
+    rowIndex
+  } = props;
   const [open, setOpen] = React.useState(false);
 
   // Verificamos si existe historial para habilitar el botón de expandir
   const hasHistory = row.history && row.history.length > 0;
-  const historyColumns = [
-    "Año",
-    ...columns.filter(
-      (col) =>
-        col !== "Año" &&
-        col !== "Colegios" &&
-        col !== "Ciudad" &&
-        col !== "Departamento",
-    ),
-  ];
+  const displayHistoryColumns = React.useMemo(() => {
+    const cols = [...(historyColumns || [])];
 
-  if (!historyColumns.includes("Año")) {
-    historyColumns.push("Año");
-  }
+
+
+    return cols;
+  }, [historyColumns]);
     
   return (
     <React.Fragment>
@@ -172,7 +171,7 @@ function Row(props) {
               <Table size="small" aria-label="history">
                 <TableHead>
                   <TableRow>
-                    {historyColumns.map((colKey) => (
+                    {displayHistoryColumns.map((colKey) => (
                       <TableCell
                         key={colKey}
                         sx={{
@@ -197,7 +196,7 @@ function Row(props) {
                           "&:last-child td, &:last-child th": { border: 0 },
                         }}
                       >
-                        {historyColumns.map((colKey) => (
+                        {displayHistoryColumns.map((colKey) => (
                           <TableCell
                             key={colKey}
                             component="th"
@@ -261,7 +260,7 @@ Row.propTypes = {
 };
 
 // --- TABLELIST COMPONENT ---
-export default function TableList({ data = [], columns = [], aliases = {} }) {
+export default function TableList({ data = [], columns = [], historyColumns = [], aliases = {} }) {
   // ========================================================================
   // 1. TODOS LOS ESTADOS (HOOKS) PRIMERO
   // ========================================================================
@@ -382,6 +381,7 @@ export default function TableList({ data = [], columns = [], aliases = {} }) {
                 row={row}
                 rowIndex={index}
                 columns={displayColumns}
+                historyColumns={historyColumns}
                 aliases={aliases}
               />
             ))}
