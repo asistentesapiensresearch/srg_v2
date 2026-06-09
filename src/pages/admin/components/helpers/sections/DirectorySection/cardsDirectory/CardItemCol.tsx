@@ -112,7 +112,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
                 borderRadius: "14px",
                 border: "1px solid #e5e7eb",
                 overflow: "hidden",
-                opaciy: 0.5,
+                opacity: 0.5,
                 p: "10px 12px",
                 display: "flex",
                 flexWrap: "wrap",
@@ -261,7 +261,6 @@ export const CardItemCol = ({ item, primaryColor }) => {
                             cursor: hasLink ? "pointer" : "default",
                             display: "block",
                         }}
-                        className="hover:underline"
                     >
                         {item.Nombre || item.Colegio || "Sin Nombre"}
                         {nuevo && nuevo.length > 0 && (
@@ -458,8 +457,8 @@ const BadgeCategoria = ({ category, RED }) => (
         <span style={{ fontSize: 16, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
             D{category}
         </span>
-        <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.07em", opacity: 0.85 }}>
-            {"C"+"ategoría".toLowerCase()}
+        <span style={{ fontSize: 7.5, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", opacity: 0.85 }}>
+            Categoría
         </span>
     </div>
 );
@@ -481,8 +480,8 @@ const BadgeCalificacion = ({ qualification }) => (
         <span style={{ fontSize: 14, fontWeight: 900, lineHeight: 1, letterSpacing: "-0.01em" }}>
             {qualification}
         </span>
-        <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.07em", opacity: 0.75 }}>
-            {"C"+"alificación".toLowerCase()}
+        <span style={{ fontSize: 7.5, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", opacity: 0.75 }}>
+            Calificación
         </span>
     </div>
 );
