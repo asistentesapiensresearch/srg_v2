@@ -1072,22 +1072,6 @@ const DirectorySectionContent = ({
                 )}
               </Box>
             )}
-
-            {!isList && itemsWithAds.length > itemsPerPage && (
-              <Stack spacing={2} sx={{ mt: 5, mb: 2, alignItems: "center" }}>
-                <Pagination
-                  count={Math.ceil(itemsWithAds.length / itemsPerPage)}
-                  page={page}
-                  onChange={(e, v) => {
-                    setPage(v);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                  color="primary"
-                  size="large"
-                  shape="rounded"
-                />
-              </Stack>
-            )}
           </Box>
         )}
 
@@ -1095,33 +1079,80 @@ const DirectorySectionContent = ({
         <ComparisonModal sourceConfig={sourceConfig} />
         <Box
           sx={{
-            px: 2,
-            pt: 2,
-            display: "flex",
-            justifyContent: "end",
-            alignItems: "end",
+            mt: 5,
+            pt: 3,
+            borderTop: "1px solid #e5e7eb",
+            display: "grid",
+            gridTemplateColumns: "1fr auto 1fr",
+            alignItems: "center",
           }}
         >
-          <FormControl sx={{ minWidth: 100, mt: 4 }} size="small">
-            <InputLabel>Registros</InputLabel>
+          {/* Espacio izquierdo */}
+          <Box />
 
-            <Select
-              value={itemsPerPage || 50}
-              label="itemsPerPage"
-              onChange={(e) => setItemsPerPage(e.target.value)}
-              sx={{
-                borderRadius: 3,
-                bgcolor: "white",
-              }}
-            >
-              <MenuItem value=""></MenuItem>
-              {[10, 25, 50, 100].map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {/* Paginación centrada */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {!isList && itemsWithAds.length > itemsPerPage && (
+              <Pagination
+                count={Math.ceil(itemsWithAds.length / itemsPerPage)}
+                page={page}
+                onChange={(e, v) => {
+                  setPage(v);
+                  window.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
+                  });
+                }}
+                size="large"
+                shape="rounded"
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "#555",
+                    fontWeight: 500,
+                  },
+
+                  "& .Mui-selected": {
+                    backgroundColor: "#c10009 !important",
+                    color: "#fff",
+                    fontWeight: 700,
+                  },
+
+                  "& .Mui-selected:hover": {
+                    backgroundColor: "#a00008 !important",
+                  },
+                }}
+              />
+            )}
+          </Box>
+
+          {/* Registros a la derecha */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Registros</InputLabel>
+
+              <Select
+                value={itemsPerPage || 50}
+                label="Registros"
+                onChange={(e) => setItemsPerPage(e.target.value)}
+              >
+                {[10, 25, 50, 100].map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </Box>
       </Box>
     );
