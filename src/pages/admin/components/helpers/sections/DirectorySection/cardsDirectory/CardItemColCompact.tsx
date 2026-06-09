@@ -50,13 +50,13 @@ export const CardItemColCompact = ({ item, primaryColor }) => {
             }}>
                 <Avatar sx={{ width: 44, height: 44, border: "2px solid #d1d5db" }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#374151", lineHeight: 1.25, marginBottom: 2 }}>{nombre}</div>
+                    <div style={{ fontSize: 13, fontWeight: 400, color: "#9ca3af", lineHeight: 1.25, marginBottom: 2 }}>{nombre}</div>
                     <div style={{ fontSize: 11, color: "#9ca3af", display: "flex", alignItems: "center", gap: 3 }}>
                         <MapPin size={10} />{city}{department ? `, ${department}` : ""}
                     </div>
                 </div>
-                {category && <span style={{ fontSize: 12, fontWeight: 700, color: "#9ca3af", backgroundColor: "#e5e7eb", borderRadius: 6, padding: "3px 8px" }}>D{category}</span>}
-                {qualification && <span style={{ fontSize: 12, fontWeight: 700, color: "#9ca3af", backgroundColor: "#e5e7eb", borderRadius: 6, padding: "3px 8px" }}>{qualification}</span>}
+                {category && <span style={{ fontSize: 12, fontWeight: 400, color: "#9ca3af", backgroundColor: "#e5e7eb", borderRadius: 6, padding: "3px 8px" }}>D{category}</span>}
+                {qualification && <span style={{ fontSize: 12, fontWeight: 400, color: "#9ca3af", backgroundColor: "#e5e7eb", borderRadius: 6, padding: "3px 8px" }}>{qualification}</span>}
             </div>
         );
     }
