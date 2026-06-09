@@ -494,7 +494,7 @@ const DirectorySectionContent = ({
 
         let adIndex = 0;
         const adsPerBlock = 3;
-        const itemsPerAdBlock = 6;
+        const itemsPerAdBlock = 15;
         
 
         const addAdsBlock = (renderKey) => {
