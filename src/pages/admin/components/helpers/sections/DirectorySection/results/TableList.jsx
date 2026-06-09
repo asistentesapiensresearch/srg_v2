@@ -100,10 +100,38 @@ function Row(props) {
           )}
         </TableCell>
         {columns.map((colKey) => (
-          <TableCell key={colKey} component="th" scope="row">
+          <TableCell
+            key={colKey}
+            component="th"
+            scope="row"
+            sx={{
+              color: !hasHistory ? "#9ca3af" : "inherit",
+            }}
+          >
             {colKey === "Star" ? (
               row[colKey] ? (
                 <Rating value={Number(row[colKey])} readOnly size="small" />
+              ) : (
+                "-"
+              )
+            ) : colKey === "Siglas certificación" ||
+              colKey === "Siglas acreditación" ? (
+              row[colKey] ? (
+                <Box
+                  component="span"
+                  sx={{
+                    display: "inline-block",
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: "999px",
+                    backgroundColor: "#dc2626",
+                    color: "#fff",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                  }}
+                >
+                  {row[colKey]}
+                </Box>
               ) : (
                 "-"
               )
@@ -147,25 +175,13 @@ function Row(props) {
                     {historyColumns.map((colKey) => (
                       <TableCell
                         key={colKey}
-                        component="th"
-                        scope="row"
-                        sx={{ fontSize: "0.8rem" }}
+                        sx={{
+                          fontWeight: "bold",
+                          fontSize: "0.75rem",
+                          color: "#666",
+                        }}
                       >
-                        {colKey === "Star" ? (
-                          row[colKey] ? (
-                            <Rating
-                              value={Number(row[colKey])}
-                              readOnly
-                              size="small"
-                            />
-                          ) : (
-                            "-"
-                          )
-                        ) : typeof row[colKey] === "object" ? (
-                          JSON.stringify(row[colKey])
-                        ) : (
-                          row[colKey] || "-"
-                        )}
+                        {aliases[colKey] || colKey}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -195,6 +211,27 @@ function Row(props) {
                                   readOnly
                                   size="small"
                                 />
+                              ) : (
+                                "-"
+                              )
+                            ) : colKey === "Siglas certificación" ||
+                              colKey === "Siglas acreditación" ? (
+                              historyRow[colKey] ? (
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    display: "inline-block",
+                                    px: 1.5,
+                                    py: 0.5,
+                                    borderRadius: "999px",
+                                    backgroundColor: "#dc2626",
+                                    color: "#fff",
+                                    fontSize: "0.75rem",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  {historyRow[colKey]}
+                                </Box>
                               ) : (
                                 "-"
                               )
