@@ -151,7 +151,7 @@ export const CardItemColCompact = ({ item, primaryColor }) => {
                 marginBottom: 6,
               }}
             >
-              ¿Quieres destacar tu institución?
+              Tu colegio todavía no es aliado a Sapiens research
             </div>
 
             <div
@@ -161,8 +161,7 @@ export const CardItemColCompact = ({ item, primaryColor }) => {
                 maxWidth: 220,
               }}
             >
-              Certifícate y conviértete en un Aliado
-              destacado.
+              Conoce los beneficios de vincularse.
             </div>
           </div>
         </div>
