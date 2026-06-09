@@ -13,8 +13,8 @@ import TablePagination from "@mui/material/TablePagination";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 import { visuallyHidden } from "@mui/utils";
 
 // --- HELPERS DE ORDENAMIENTO ---
@@ -42,7 +42,7 @@ function stableSort(array, comparator) {
 
 // --- ROW COMPONENT ---
 function Row(props) {
-  const { row, columns, aliases } = props;
+  const { row, columns, aliases, rowIndex } = props;
   const [open, setOpen] = React.useState(false);
 
   // Verificamos si existe historial para habilitar el botón de expandir
@@ -64,18 +64,38 @@ function Row(props) {
     
   return (
     <React.Fragment>
-      <TableRow hover sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow
+        hover
+        sx={{
+          backgroundColor: rowIndex % 2 === 0 ? "#ffffff" : "#f5f5f5",
+          "& > *": { borderBottom: "unset" },
+        }}
+      >
         <TableCell width={50}>
           {hasHistory && row.isLinked ? (
             <IconButton
               aria-label="expand row"
               size="small"
               onClick={() => setOpen(!open)}
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                backgroundColor: "#dc2626",
+                color: "#fff",
+                "&:hover": {
+                  backgroundColor: "#b91c1c",
+                },
+              }}
             >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              {open ? (
+                <RemoveIcon fontSize="small" />
+              ) : (
+                <AddIcon fontSize="small" />
+              )}
             </IconButton>
           ) : (
-            <Box sx={{ width: 24 }} />
+            <Box sx={{ width: 32 }} />
           )}
         </TableCell>
         {columns.map((colKey) => (
@@ -135,6 +155,8 @@ function Row(props) {
                       <TableRow
                         key={index}
                         sx={{
+                          backgroundColor:
+                            index % 2 === 0 ? "#ffffff" : "#f5f5f5",
                           "&:last-child td, &:last-child th": { border: 0 },
                         }}
                       >
@@ -288,6 +310,7 @@ export default function TableList({ data = [], columns = [], aliases = {} }) {
               <Row
                 key={row._id || index}
                 row={row}
+                rowIndex={index}
                 columns={displayColumns}
                 aliases={aliases}
               />
