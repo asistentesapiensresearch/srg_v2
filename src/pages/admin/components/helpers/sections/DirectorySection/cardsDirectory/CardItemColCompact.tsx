@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Avatar } from "@mui/material";
 import { useComparison } from "../comparison/ComparisonContext";
 import { getValue } from "../results/utils";
@@ -18,6 +19,8 @@ export const CardItemColCompact = ({ item, primaryColor }) => {
     const getAlias = (col) =>
         item[col] !== undefined && item[col] !== null ? item[col] : "";
 
+    const [hovered, setHovered] = useState(false);
+
     const Vinculada     = getValue(item, ["Vinculada"]);
     const Stars         = getAlias("Stars");
     const city          = getAlias("Ciudad");
@@ -35,30 +38,135 @@ export const CardItemColCompact = ({ item, primaryColor }) => {
 
     // ── NOT LINKED ────────────────────────────────────────────────────────────
     if (isNotLinked) {
-        return (
-            <div style={{
-                backgroundColor: "#f3f4f6",
-                borderRadius: 14,
-                padding: "12px 14px",
+      return (
+        <div
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          style={{
+            position: "relative",
+            backgroundColor: "#f3f4f6",
+            borderRadius: 14,
+            padding: "12px 14px",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            opacity: hovered ? 1 : 0.55,
+            filter: hovered ? "grayscale(20%)" : "grayscale(100%)",
+            border: "1px solid #e5e7eb",
+            boxShadow: hovered
+              ? "0 8px 20px rgba(220,38,38,.15)"
+              : "0 2px 6px rgba(0,0,0,0.05)",
+            transition: "all .25s ease",
+            overflow: "hidden",
+            cursor: "pointer",
+          }}
+        >
+          <Avatar
+            sx={{
+              width: 44,
+              height: 44,
+              border: "2px solid #d1d5db",
+            }}
+          />
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: 13,
+                fontWeight: 400,
+                color: "#9ca3af",
+                lineHeight: 1.25,
+                marginBottom: 2,
+              }}
+            >
+              {nombre}
+            </div>
+
+            <div
+              style={{
+                fontSize: 11,
+                color: "#9ca3af",
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
-                opacity: 0.55,
-                filter: "grayscale(100%)",
-                border: "1px solid #e5e7eb",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-            }}>
-                <Avatar sx={{ width: 44, height: 44, border: "2px solid #d1d5db" }} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 400, color: "#9ca3af", lineHeight: 1.25, marginBottom: 2 }}>{nombre}</div>
-                    <div style={{ fontSize: 11, color: "#9ca3af", display: "flex", alignItems: "center", gap: 3 }}>
-                        <MapPin size={10} />{city}{department ? `, ${department}` : ""}
-                    </div>
-                </div>
-                {category && <span style={{ fontSize: 12, fontWeight: 400, color: "#9ca3af", backgroundColor: "#e5e7eb", borderRadius: 6, padding: "3px 8px" }}>D{category}</span>}
-                {qualification && <span style={{ fontSize: 12, fontWeight: 400, color: "#9ca3af", backgroundColor: "#e5e7eb", borderRadius: 6, padding: "3px 8px" }}>{qualification}</span>}
+                gap: 3,
+              }}
+            >
+              <MapPin size={10} />
+              {city}
+              {department ? `, ${department}` : ""}
             </div>
-        );
+          </div>
+
+          {category && (
+            <span
+              style={{
+                fontSize: 12,
+                color: "#9ca3af",
+                backgroundColor: "#e5e7eb",
+                borderRadius: 6,
+                padding: "3px 8px",
+              }}
+            >
+              D{category}
+            </span>
+          )}
+
+          {qualification && (
+            <span
+              style={{
+                fontSize: 12,
+                color: "#9ca3af",
+                backgroundColor: "#e5e7eb",
+                borderRadius: 6,
+                padding: "3px 8px",
+              }}
+            >
+              {qualification}
+            </span>
+          )}
+
+          {/* Overlay */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundColor: "rgb(254, 242, 242)",
+              backdropFilter: "blur(4px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "rgb(153, 27, 27)",
+              opacity: hovered ? 1 : 0,
+              transition: "all .25s ease",
+              pointerEvents: "none",
+              textAlign: "center",
+              padding: 16,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 700,
+                marginBottom: 6,
+              }}
+            >
+              ¿Quieres destacar tu institución?
+            </div>
+
+            <div
+              style={{
+                fontSize: 12,
+                opacity: 0.95,
+                maxWidth: 220,
+              }}
+            >
+              Certifícate y conviértete en un Aliado
+              destacado.
+            </div>
+          </div>
+        </div>
+      );
     }
 
     // ── LINKED ────────────────────────────────────────────────────────────────
