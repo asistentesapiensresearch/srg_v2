@@ -15,6 +15,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import Rating from "@mui/material/Rating";
 import { visuallyHidden } from "@mui/utils";
 
 // --- HELPERS DE ORDENAMIENTO ---
@@ -100,9 +101,17 @@ function Row(props) {
         </TableCell>
         {columns.map((colKey) => (
           <TableCell key={colKey} component="th" scope="row">
-            {typeof row[colKey] === "object"
-              ? JSON.stringify(row[colKey])
-              : row[colKey] || "-"}
+            {colKey === "Star" ? (
+              row[colKey] ? (
+                <Rating value={Number(row[colKey])} readOnly size="small" />
+              ) : (
+                "-"
+              )
+            ) : typeof row[colKey] === "object" ? (
+              JSON.stringify(row[colKey])
+            ) : (
+              row[colKey] || "-"
+            )}
           </TableCell>
         ))}
       </TableRow>
@@ -138,13 +147,25 @@ function Row(props) {
                     {historyColumns.map((colKey) => (
                       <TableCell
                         key={colKey}
-                        sx={{
-                          fontWeight: "bold",
-                          fontSize: "0.75rem",
-                          color: "#666",
-                        }}
+                        component="th"
+                        scope="row"
+                        sx={{ fontSize: "0.8rem" }}
                       >
-                        {aliases[colKey] || colKey}
+                        {colKey === "Star" ? (
+                          row[colKey] ? (
+                            <Rating
+                              value={Number(row[colKey])}
+                              readOnly
+                              size="small"
+                            />
+                          ) : (
+                            "-"
+                          )
+                        ) : typeof row[colKey] === "object" ? (
+                          JSON.stringify(row[colKey])
+                        ) : (
+                          row[colKey] || "-"
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -167,9 +188,21 @@ function Row(props) {
                             scope="row"
                             sx={{ fontSize: "0.8rem" }}
                           >
-                            {typeof historyRow[colKey] === "object"
-                              ? JSON.stringify(historyRow[colKey])
-                              : historyRow[colKey] || "-"}
+                            {colKey === "Star" ? (
+                              historyRow[colKey] ? (
+                                <Rating
+                                  value={Number(historyRow[colKey])}
+                                  readOnly
+                                  size="small"
+                                />
+                              ) : (
+                                "-"
+                              )
+                            ) : typeof historyRow[colKey] === "object" ? (
+                              JSON.stringify(historyRow[colKey])
+                            ) : (
+                              historyRow[colKey] || "-"
+                            )}
                           </TableCell>
                         ))}
                       </TableRow>
