@@ -597,270 +597,454 @@ const DirectorySectionContent = ({
     // RENDER
     // ========================================================================
     return (
-        <Box sx={{ px: 3, py: 6, bgcolor: '#f9fafb', width:"100%", minHeight: '100vh', position: 'relative' }}>
-            {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
+      <Box
+        sx={{
+          px: 3,
+          py: 6,
+          bgcolor: "#f9fafb",
+          width: "100%",
+          minHeight: "100vh",
+          position: "relative",
+        }}
+      >
+        {error && (
+          <Alert severity="error" sx={{ mb: 4 }}>
+            {error}
+          </Alert>
+        )}
 
-            {
-                randomItems && <Box sx={{
-                    display: "grid",
-                    gridTemplateColumns: {
-                    xs: "1fr",
-                    md: "repeat(2, minmax(0, 1fr))",
-                    lg: "repeat(3, minmax(0, 1fr))",
-                    },
-                    gap: 4,
-                    pb: 6,
-                    alignItems: "stretch",
-                }}>
-                    {
-                        randomItems.map( el => <CardComponent key={`card_school_${el["DANE"]}`} props={el} />)
+        {randomItems && (
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                md: "repeat(2, minmax(0, 1fr))",
+                lg: "repeat(3, minmax(0, 1fr))",
+              },
+              gap: 4,
+              pb: 6,
+              alignItems: "stretch",
+            }}
+          >
+            {randomItems.map((el) => (
+              <CardComponent key={`card_school_${el["DANE"]}`} props={el} />
+            ))}
+          </Box>
+        )}
+
+        {/* HEADER */}
+        <Box
+          sx={{
+            mb: 2,
+            bgcolor: "white",
+            p: 2,
+            borderRadius: 4,
+            boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+          }}
+        >
+          <TextField
+            fullWidth
+            placeholder="Buscar..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search
+                    color={
+                      activeFilterCount > 0 || searchTerm
+                        ? primaryColor
+                        : "#9ca3af"
                     }
-                </Box>
-            }
-
-            {/* HEADER */}
-            <Box sx={{ mb: 2, bgcolor: 'white', p: 2, borderRadius: 4, boxShadow: '0 2px 10px rgba(0,0,0,0.03)', display: 'flex', gap: 2, alignItems: 'center' }}>
-                <TextField
-                    fullWidth placeholder="Buscar..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-                    InputProps={{
-                        startAdornment: (<InputAdornment position="start"><Search color={activeFilterCount > 0 || searchTerm ? primaryColor : "#9ca3af"} /></InputAdornment>),
-                        sx: { borderRadius: 3, bgcolor: '#f9fafb' }
-                    }}
-                    sx={{ flexGrow: 1, '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: 'transparent' } } }}
-                />
-                <Button variant="outlined" onClick={() => setViewListType(isList ? 'grid' : 'list')} sx={{ height: 56, borderRadius: 3, px: 3, borderColor: '#e0e0e0', color: 'text.primary', textTransform: 'none' }} className='hidden md:flex'>
-                    {isList ? <LayoutGridIcon size={20} className='me-2 stroke-red-700' /> : <LayoutListIcon size={20} className='me-2 stroke-red-700' />}
-                    <span className='hidden md:block text-red-700'>{isList ? 'Grilla' : 'Lista'}</span>
-                </Button>
-                <Badge badgeContent={activeFilterCount} color="error">
-                    <Button variant={activeFilterCount > 0 ? "contained" : "outlined"} onClick={() => setIsDrawerOpen(true)} sx={{ height: 56, borderRadius: 3, px: 3, borderColor: activeFilterCount > 0 ? primaryColor : '#e0e0e0', bgcolor: activeFilterCount > 0 ? primaryColor : 'white', color: activeFilterCount > 0 ? 'white' : 'text.primary', textTransform: 'none' }}>
-                        <SlidersHorizontal size={20} className={`me-2 ${activeFilterCount > 0 ? 'stroke-white' : 'stroke-red-700'}`} />
-                        <span className='hidden md:block'>Filtros</span>
-                    </Button>
-                </Badge>
-            </Box>
-
-            <FilterDrawer
-                open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}
-                availableFilters={availableFilters} activeFilters={activeFilters}
-                onFilterChange={(col, vals) => setActiveFilters(prev => ({ ...prev, [col]: vals }))}
-                onClearAll={() => { setActiveFilters({}); setSearchTerm(''); }}
-                aliases={columnAliases}
-            />
-
-            {/* PRESETS */}
-            {parseQuickFilters(quickFilters).length > 0 && (
-                <Stack direction="row" spacing={1} sx={{ mb: 3, overflowX: 'auto', pb: 1 }}>
-                    {parseQuickFilters(quickFilters).map((preset) => (
-                        <Chip
-                            key={preset.label} label={preset.label} onClick={() => handleApplyPreset(preset)}
-                            color={selectedPreset === preset.label ? "primary" : "default"}
-                            variant={selectedPreset === preset.label ? "filled" : "outlined"}
-                            sx={{ fontWeight: 700, borderColor: selectedPreset === preset.label ? primaryColor : '#e0e0e0', bgcolor: selectedPreset === preset.label ? primaryColor : 'white', color: selectedPreset === preset.label ? 'white' : 'text.primary' }}
-                        />
-                    ))}
-                </Stack>
-            )}
-
-
-            {/* CONTENIDO */}
-            {loading ? (
-                <Grid container spacing={3}>
-                    {[1, 2, 3].map(n => (<Grid size={{ xs: 12, sm: 6, md: gridSize }} key={n}><Skeleton variant="rectangular" height={350} sx={{ borderRadius: 4 }} /></Grid>))}
-                </Grid>
+                  />
+                </InputAdornment>
+              ),
+              sx: { borderRadius: 3, bgcolor: "#f9fafb" },
+            }}
+            sx={{
+              flexGrow: 1,
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "transparent" },
+              },
+            }}
+          />
+          <Button
+            variant="outlined"
+            onClick={() => setViewListType(isList ? "grid" : "list")}
+            sx={{
+              height: 56,
+              borderRadius: 3,
+              px: 3,
+              borderColor: "#e0e0e0",
+              color: "text.primary",
+              textTransform: "none",
+            }}
+            className="hidden md:flex"
+          >
+            {isList ? (
+              <LayoutGridIcon size={20} className="me-2 stroke-red-700" />
             ) : (
-                <Box>
-                    <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body2" color="text.secondary">Mostrando <strong>{itemsWithAds.filter(x => !x._isAd).length}</strong> resultados</Typography>
-                        {!isList && (
-                            <Box>
-                                {
-                                    (identifier === "COL" || identifier === "M-TOP") && (
-                                        <>
-                                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                                <InputLabel>Categoría</InputLabel>
-
-                                                <Select
-                                                    value={activeFilters["Categoría"]?.[0] || ""}
-                                                    label="Categoría"
-                                                    onChange={(e) => handleCategoryChange(e.target.value)}
-                                                    sx={{
-                                                        borderRadius: 3,
-                                                        bgcolor: "white"
-                                                    }}
-                                                >
-                                                    <MenuItem value="">
-                                                        <em>---Sin valor---</em>
-                                                    </MenuItem>
-                                                    {categoryOptions.map((option) => (
-                                                        <MenuItem key={option} value={option}>
-                                                            D{option}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-
-                                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                                <InputLabel>Calificación</InputLabel>
-
-                                                <Select
-                                                    value={activeFilters["Calificación"]?.[0] || ""}
-                                                    label="Calificación"
-                                                    onChange={(e) => handleQualificationChange(e.target.value)}
-                                                    sx={{
-                                                        borderRadius: 3,
-                                                        bgcolor: "white"
-                                                    }}
-                                                >
-                                                    <MenuItem value="">
-                                                        <em>---Sin valor---</em>
-                                                    </MenuItem>
-
-                                                    {qualificationOptions.map((option) => (
-                                                        <MenuItem key={option} value={option}>
-                                                            {option}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-                                        </>
-                                    )
-                                }
-                            </Box>
-                        )}
-                    </Box>
-
-                    {isList ? (
-                        <TableList data={itemsWithAds.filter(i => !i._isAd)} columns={sourceConfig?.columns || []} aliases={columnAliases} />
-                    ) : (
-                        <Box>
-                            {selectedPreset === "Todos" ? (
-                                // Modo Todos: Grid layout de 3 columnas
-                                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }, gap: 3, width: "100%" }}>
-                                    {dataWithAds.map((item) => {
-                                        if (item._isAd) {
-                                            return (
-                                                <Box
-                                                    key={`${adsSessionKey}-${item._renderId}`}
-                                                    sx={{
-                                                        display: "grid",
-                                                        gridTemplateColumns: {
-                                                            xs: "1fr",
-                                                            sm: "1fr 1fr",
-                                                            md: "1fr 1fr 1fr",
-                                                        },
-                                                        gap: 3,
-                                                        width: "100%",
-                                                        gridColumn: "1 / -1"
-                                                    }}
-                                                >
-                                                    {item.ads.map((ad, index) => {
-                                                        const instanceSlotId = `directory-${adsSessionKey}-${item._renderId}-${index}-${ad.id}`;
-                                                        return (
-                                                            <Box key={instanceSlotId} display="flex" justifyContent="center">
-                                                                <GoogleAd
-                                                                    slotId={instanceSlotId}
-                                                                    adUnitPath={ad.adUnitPath}
-                                                                />
-                                                            </Box>
-                                                        );
-                                                    })}
-                                                </Box>
-                                            );
-                                        }
-
-                                        return (
-                                            <DirectoryCard key={item._renderId} item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} type={identifier} selectedPreset={selectedPreset} />
-                                        );
-                                    })}
-                                </Box>
-                            ) : (
-                                // Modo Aliados: Grid layout original
-                                <Grid container spacing={3}>
-                                    {dataWithAds.map((item) => {
-                                        if (item._isAd) {
-                                            return (
-                                                <Grid size={{ xs: 12 }} key={`${adsSessionKey}-${item._renderId}`}>
-                                                     <Box
-                                                        sx={{
-                                                            display: "grid",
-                                                            gridTemplateColumns: {
-                                                                xs: "1fr",
-                                                                sm: "1fr 1fr",
-                                                                md: "1fr 1fr 1fr",
-                                                            },
-                                                            gap: 3,
-                                                            width: "100%",
-                                                        }}
-                                                    >
-                                                         {item.ads.map((ad, index) => {
-                                                            const instanceSlotId = `directory-${adsSessionKey}-${item._renderId}-${index}-${ad.id}`;
-                                                            return (
-                                                                <Box key={instanceSlotId} display="flex" justifyContent="center">
-                                                                    <GoogleAd
-                                                                        slotId={instanceSlotId}
-                                                                        adUnitPath={ad.adUnitPath}
-                                                                    />
-                                                                </Box>
-                                                            );
-                                                        })}
-                                                    </Box>
-                                                </Grid>
-                                            );
-                                        }
-
-                                        return (
-                                            <Grid size={{ xs: 12, sm: 6, md: gridSize }} key={item._renderId}>
-                                                <DirectoryCard item={item} viewType={viewListType} primaryColor={primaryColor} sourceConfig={sourceConfig} research={research} type={identifier} selectedPreset={selectedPreset} />
-                                            </Grid>
-                                        );
-                                    })}
-                                </Grid>
-                            )}
-                        </Box>
-                    )}
-
-                    {!isList && itemsWithAds.length > itemsPerPage && (
-                        <Stack spacing={2} sx={{ mt: 5, mb: 2, alignItems: 'center' }}>
-                            <Pagination count={Math.ceil(itemsWithAds.length / itemsPerPage)} page={page} onChange={(e, v) => { setPage(v); window.scrollTo({ top: 0, behavior: 'smooth' }) }} color="primary" size="large" shape="rounded" />
-                        </Stack>
-                    )}
-                </Box>
+              <LayoutListIcon size={20} className="me-2 stroke-red-700" />
             )}
+            <span className="hidden md:block text-red-700">
+              {isList ? "Grilla" : "Lista"}
+            </span>
+          </Button>
+          <Badge badgeContent={activeFilterCount} color="error">
+            <Button
+              variant={activeFilterCount > 0 ? "contained" : "outlined"}
+              onClick={() => setIsDrawerOpen(true)}
+              sx={{
+                height: 56,
+                borderRadius: 3,
+                px: 3,
+                borderColor: activeFilterCount > 0 ? primaryColor : "#e0e0e0",
+                bgcolor: activeFilterCount > 0 ? primaryColor : "white",
+                color: activeFilterCount > 0 ? "white" : "text.primary",
+                textTransform: "none",
+              }}
+            >
+              <SlidersHorizontal
+                size={20}
+                className={`me-2 ${activeFilterCount > 0 ? "stroke-white" : "stroke-red-700"}`}
+              />
+              <span className="hidden md:block">Filtros</span>
+            </Button>
+          </Badge>
+        </Box>
 
-            <ComparisonWidget />
-            <ComparisonModal sourceConfig={sourceConfig} />
-            <Box sx={{
-                px: 2,
-                pt: 2,
-                display: "flex",
-                justifyContent: "end",
-                alignItems: "end",
-            }}>
-                <FormControl sx={{ minWidth: 100, mt: 4 }} size="small">
-                    <InputLabel>Registros</InputLabel>
+        <FilterDrawer
+          open={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          availableFilters={availableFilters}
+          activeFilters={activeFilters}
+          onFilterChange={(col, vals) =>
+            setActiveFilters((prev) => ({ ...prev, [col]: vals }))
+          }
+          onClearAll={() => {
+            setActiveFilters({});
+            setSearchTerm("");
+          }}
+          aliases={columnAliases}
+        />
 
-                    <Select
-                        value={itemsPerPage || 50}
-                        label="itemsPerPage"
-                        onChange={(e) => setItemsPerPage(e.target.value)}
-                        sx={{
+        {/* PRESETS */}
+        {parseQuickFilters(quickFilters).length > 0 && (
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              mb: 3,
+              overflowX: "auto",
+              pb: 1,
+            }}
+          >
+            {parseQuickFilters(quickFilters).map((preset) => {
+              const active = selectedPreset === preset.label;
+
+              return (
+                <Button
+                  key={preset.label}
+                  onClick={() => handleApplyPreset(preset)}
+                  variant={active ? "contained" : "outlined"}
+                  sx={{
+                    height: 56,
+                    px: 3,
+                    borderRadius: 3,
+                    textTransform: "none",
+                    fontWeight: 400,
+
+                    borderColor: active ? primaryColor : "#e0e0e0",
+                    backgroundColor: active ? primaryColor : "#fff",
+                    color: active ? "#fff" : "text.primary",
+
+                    "&:hover": {
+                      borderColor: primaryColor,
+                      backgroundColor: active
+                        ? primaryColor
+                        : "rgba(220,38,38,0.04)",
+                    },
+                  }}
+                >
+                  {preset.label}
+                </Button>
+              );
+            })}
+          </Stack>
+        )}
+
+        {/* CONTENIDO */}
+        {loading ? (
+          <Grid container spacing={3}>
+            {[1, 2, 3].map((n) => (
+              <Grid size={{ xs: 12, sm: 6, md: gridSize }} key={n}>
+                <Skeleton
+                  variant="rectangular"
+                  height={350}
+                  sx={{ borderRadius: 4 }}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Box>
+            <Box
+              sx={{ mb: 2, display: "flex", justifyContent: "space-between" }}
+            >
+              <Typography variant="body2" color="text.secondary">
+                Mostrando{" "}
+                <strong>{itemsWithAds.filter((x) => !x._isAd).length}</strong>{" "}
+                resultados
+              </Typography>
+              {!isList && (
+                <Box>
+                  {(identifier === "COL" || identifier === "M-TOP") && (
+                    <>
+                      <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                        <InputLabel>Categoría</InputLabel>
+
+                        <Select
+                          value={activeFilters["Categoría"]?.[0] || ""}
+                          label="Categoría"
+                          onChange={(e) => handleCategoryChange(e.target.value)}
+                          sx={{
                             borderRadius: 3,
-                            bgcolor: "white"
-                        }}
-                    >
-                        <MenuItem value="">
-                        </MenuItem>
-                        {[10, 25, 50, 100].map((option) => (
+                            bgcolor: "white",
+                          }}
+                        >
+                          <MenuItem value="">
+                            <em>---Sin valor---</em>
+                          </MenuItem>
+                          {categoryOptions.map((option) => (
                             <MenuItem key={option} value={option}>
-                                {option}
+                              D{option}
                             </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                          ))}
+                        </Select>
+                      </FormControl>
+
+                      <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                        <InputLabel>Calificación</InputLabel>
+
+                        <Select
+                          value={activeFilters["Calificación"]?.[0] || ""}
+                          label="Calificación"
+                          onChange={(e) =>
+                            handleQualificationChange(e.target.value)
+                          }
+                          sx={{
+                            borderRadius: 3,
+                            bgcolor: "white",
+                          }}
+                        >
+                          <MenuItem value="">
+                            <em>---Sin valor---</em>
+                          </MenuItem>
+
+                          {qualificationOptions.map((option) => (
+                            <MenuItem key={option} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </>
+                  )}
+                </Box>
+              )}
             </Box>
 
+            {isList ? (
+              <TableList
+                data={itemsWithAds.filter((i) => !i._isAd)}
+                columns={sourceConfig?.columns || []}
+                aliases={columnAliases}
+              />
+            ) : (
+              <Box>
+                {selectedPreset === "Todos" ? (
+                  // Modo Todos: Grid layout de 3 columnas
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "repeat(2, 1fr)",
+                        md: "repeat(3, 1fr)",
+                      },
+                      gap: 3,
+                      width: "100%",
+                    }}
+                  >
+                    {dataWithAds.map((item) => {
+                      if (item._isAd) {
+                        return (
+                          <Box
+                            key={`${adsSessionKey}-${item._renderId}`}
+                            sx={{
+                              display: "grid",
+                              gridTemplateColumns: {
+                                xs: "1fr",
+                                sm: "1fr 1fr",
+                                md: "1fr 1fr 1fr",
+                              },
+                              gap: 3,
+                              width: "100%",
+                              gridColumn: "1 / -1",
+                            }}
+                          >
+                            {item.ads.map((ad, index) => {
+                              const instanceSlotId = `directory-${adsSessionKey}-${item._renderId}-${index}-${ad.id}`;
+                              return (
+                                <Box
+                                  key={instanceSlotId}
+                                  display="flex"
+                                  justifyContent="center"
+                                >
+                                  <GoogleAd
+                                    slotId={instanceSlotId}
+                                    adUnitPath={ad.adUnitPath}
+                                  />
+                                </Box>
+                              );
+                            })}
+                          </Box>
+                        );
+                      }
+
+                      return (
+                        <DirectoryCard
+                          key={item._renderId}
+                          item={item}
+                          viewType={viewListType}
+                          primaryColor={primaryColor}
+                          sourceConfig={sourceConfig}
+                          research={research}
+                          type={identifier}
+                          selectedPreset={selectedPreset}
+                        />
+                      );
+                    })}
+                  </Box>
+                ) : (
+                  // Modo Aliados: Grid layout original
+                  <Grid container spacing={3}>
+                    {dataWithAds.map((item) => {
+                      if (item._isAd) {
+                        return (
+                          <Grid
+                            size={{ xs: 12 }}
+                            key={`${adsSessionKey}-${item._renderId}`}
+                          >
+                            <Box
+                              sx={{
+                                display: "grid",
+                                gridTemplateColumns: {
+                                  xs: "1fr",
+                                  sm: "1fr 1fr",
+                                  md: "1fr 1fr 1fr",
+                                },
+                                gap: 3,
+                                width: "100%",
+                              }}
+                            >
+                              {item.ads.map((ad, index) => {
+                                const instanceSlotId = `directory-${adsSessionKey}-${item._renderId}-${index}-${ad.id}`;
+                                return (
+                                  <Box
+                                    key={instanceSlotId}
+                                    display="flex"
+                                    justifyContent="center"
+                                  >
+                                    <GoogleAd
+                                      slotId={instanceSlotId}
+                                      adUnitPath={ad.adUnitPath}
+                                    />
+                                  </Box>
+                                );
+                              })}
+                            </Box>
+                          </Grid>
+                        );
+                      }
+
+                      return (
+                        <Grid
+                          size={{ xs: 12, sm: 6, md: gridSize }}
+                          key={item._renderId}
+                        >
+                          <DirectoryCard
+                            item={item}
+                            viewType={viewListType}
+                            primaryColor={primaryColor}
+                            sourceConfig={sourceConfig}
+                            research={research}
+                            type={identifier}
+                            selectedPreset={selectedPreset}
+                          />
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                )}
+              </Box>
+            )}
+
+            {!isList && itemsWithAds.length > itemsPerPage && (
+              <Stack spacing={2} sx={{ mt: 5, mb: 2, alignItems: "center" }}>
+                <Pagination
+                  count={Math.ceil(itemsWithAds.length / itemsPerPage)}
+                  page={page}
+                  onChange={(e, v) => {
+                    setPage(v);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  color="primary"
+                  size="large"
+                  shape="rounded"
+                />
+              </Stack>
+            )}
+          </Box>
+        )}
+
+        <ComparisonWidget />
+        <ComparisonModal sourceConfig={sourceConfig} />
+        <Box
+          sx={{
+            px: 2,
+            pt: 2,
+            display: "flex",
+            justifyContent: "end",
+            alignItems: "end",
+          }}
+        >
+          <FormControl sx={{ minWidth: 100, mt: 4 }} size="small">
+            <InputLabel>Registros</InputLabel>
+
+            <Select
+              value={itemsPerPage || 50}
+              label="itemsPerPage"
+              onChange={(e) => setItemsPerPage(e.target.value)}
+              sx={{
+                borderRadius: 3,
+                bgcolor: "white",
+              }}
+            >
+              <MenuItem value=""></MenuItem>
+              {[10, 25, 50, 100].map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
+      </Box>
     );
 };
 
