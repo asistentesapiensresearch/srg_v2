@@ -41,6 +41,45 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+const renderBadges = (value) => {
+  if (!value) return "-";
+
+  const items = String(value)
+    .split("+")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 0.75,
+      }}
+    >
+      {items.map((item, index) => (
+        <Box
+          key={index}
+          component="span"
+          sx={{
+            px: 1.5,
+            py: 0.5,
+            borderRadius: "999px",
+            border: "1px solid rgb(254, 202, 202)",
+            backgroundColor: "rgb(254, 242, 242)",
+            color: "rgb(153, 27, 27)",
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {item}
+        </Box>
+      ))}
+    </Box>
+  );
+};
+
 // --- ROW COMPONENT ---
 function Row(props) {
   const {
@@ -115,25 +154,7 @@ function Row(props) {
               )
             ) : colKey === "Siglas certificación" ||
               colKey === "Siglas acreditación" ? (
-              row[colKey] ? (
-                <Box
-                  component="span"
-                  sx={{
-                    display: "inline-block",
-                    px: 1.5,
-                    py: 0.5,
-                    borderRadius: "999px",
-                    backgroundColor: "#dc2626",
-                    color: "#fff",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                  }}
-                >
-                  {row[colKey]}
-                </Box>
-              ) : (
-                "-"
-              )
+              renderBadges(row[colKey])
             ) : typeof row[colKey] === "object" ? (
               JSON.stringify(row[colKey])
             ) : (
@@ -215,25 +236,7 @@ function Row(props) {
                               )
                             ) : colKey === "Siglas certificación" ||
                               colKey === "Siglas acreditación" ? (
-                              historyRow[colKey] ? (
-                                <Box
-                                  component="span"
-                                  sx={{
-                                    display: "inline-block",
-                                    px: 1.5,
-                                    py: 0.5,
-                                    borderRadius: "999px",
-                                    backgroundColor: "#dc2626",
-                                    color: "#fff",
-                                    fontSize: "0.75rem",
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  {historyRow[colKey]}
-                                </Box>
-                              ) : (
-                                "-"
-                              )
+                              renderBadges(historyRow[colKey])
                             ) : typeof historyRow[colKey] === "object" ? (
                               JSON.stringify(historyRow[colKey])
                             ) : (
