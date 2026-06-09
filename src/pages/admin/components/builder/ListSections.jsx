@@ -37,7 +37,6 @@ export default function ListSections({
     setOpenSections,
     currentTemplate,
     setCurrentTemplate,
-    hoveredSectionId,
     onSectionHover,
     type
 }) {
@@ -50,7 +49,7 @@ export default function ListSections({
         setSections,
         SECTION_SCHEMAS
     );
-    const [drawerWidth, setDrawerWidth] = useState(240);
+    const [drawerWidth, setDrawerWidth] = useState(320);
     const [isResizing, setIsResizing] = useState(false);
 
     console.log("Dbg - temporal para ver los componentes y sus hijos ->",{sections});
@@ -193,26 +192,25 @@ export default function ListSections({
             sx={{
               position: "absolute",
               top: 0,
-              right: -4,
-              width: 8,
+              right: -6,
+              width: 12,
               height: "100%",
               cursor: "col-resize",
               zIndex: 9999,
 
-              "&::before": {
-                content: '""',
-                position: "absolute",
-                left: "50%",
-                top: 0,
-                transform: "translateX(-50%)",
-                width: "2px",
-                height: "100%",
-                backgroundColor: "#d0d0d0",
-                transition: "background-color 0.2s",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+
+              "&::after": {
+                content: '"⋮"',
+                fontSize: "18px",
+                color: "#9ca3af",
+                fontWeight: "bold",
               },
 
-              "&:hover::before": {
-                backgroundColor: "#1976d2",
+              "&:hover::after": {
+                color: "#1976d2",
               },
             }}
           />
@@ -259,6 +257,23 @@ export default function ListSections({
                 flexGrow: 1,
                 overflowY: "auto",
                 p: 1,
+
+                "&::-webkit-scrollbar": {
+                  width: 4,
+                },
+
+                "&::-webkit-scrollbar-track": {
+                  background: "transparent",
+                },
+
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#cbd5e1",
+                  borderRadius: 999,
+                },
+
+                "&::-webkit-scrollbar-thumb:hover": {
+                  backgroundColor: "#94a3b8",
+                },
               }}
             >
               <DndContext {...dndContextProps}>
