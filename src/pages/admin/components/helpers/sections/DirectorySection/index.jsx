@@ -963,20 +963,11 @@ const DirectorySectionContent = ({
                                 >
                                   <Box
                                     sx={{
-                                      width: "100%",
-                                      maxWidth: 360,
+                                      width: "fit-content",
+                                      height: "fit-content",
                                       borderRadius: 4,
                                       overflow: "hidden",
                                       border: "1px solid #e5e7eb",
-                                      backgroundColor: "#fff",
-                                      boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
-                                      p: 1.5,
-                                      transition: "all 0.2s ease",
-                                      "&:hover": {
-                                        boxShadow:
-                                          "0 8px 20px rgba(0,0,0,0.12)",
-                                        transform: "translateY(-2px)",
-                                      },
                                     }}
                                   >
                                     <GoogleAd
@@ -1040,21 +1031,11 @@ const DirectorySectionContent = ({
                                   >
                                     <Box
                                       sx={{
-                                        width: "100%",
-                                        maxWidth: 360,
+                                        width: "fit-content",
+                                        height: "fit-content",
                                         borderRadius: 4,
                                         overflow: "hidden",
                                         border: "1px solid #e5e7eb",
-                                        backgroundColor: "#fff",
-                                        boxShadow:
-                                          "0 2px 10px rgba(0,0,0,0.06)",
-                                        p: 1.5,
-                                        transition: "all 0.2s ease",
-                                        "&:hover": {
-                                          boxShadow:
-                                            "0 8px 20px rgba(0,0,0,0.12)",
-                                          transform: "translateY(-2px)",
-                                        },
                                       }}
                                     >
                                       <GoogleAd
