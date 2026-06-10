@@ -17,6 +17,7 @@ const HeaderPortada = ({
   title,
   subtitle,
   shortDescription,
+  recognitionTitle,
   itemsHighlights = [],
   height = "400px",
   children = []
@@ -95,7 +96,8 @@ const HeaderPortada = ({
           backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none",
           backgroundSize: "contain",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: (typePage === "investigation") ? "center" : "center",
+          backgroundPosition:
+            typePage === "investigation" ? "center" : "center",
           position: "relative",
           display: "flex",
           flexDirection: "column",
@@ -111,48 +113,50 @@ const HeaderPortada = ({
             backgroundColor: "rgba(0, 0, 0, 0.6)",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           {/* Top content */}
           <Box sx={{ flexGrow: 1 }}>
             <Box className="grid grid-cols-1 md:grid-cols-2 md:w-[90%] gap-4 w-[90%] mx-auto">
-
               <Box className="flex flex-col justify-center gap-2 md:gap-3 mt-4 md:mt-0">
-
                 {/* Location pill */}
                 <Box
                   sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    borderRadius: '50px',
-                    padding: '5px 14px 5px 5px',
-                    width: 'fit-content',
-                    gap: '10px',
-                    margin: { xs: '0 auto', md: '0' },
-                    backdropFilter: 'blur(10px)'
+                    display: "inline-flex",
+                    alignItems: "center",
+                    backgroundColor: "rgba(255, 255, 255, 0.15)",
+                    border: "1px solid rgba(255, 255, 255, 0.3)",
+                    borderRadius: "50px",
+                    padding: "5px 14px 5px 5px",
+                    width: "fit-content",
+                    gap: "10px",
+                    margin: { xs: "0 auto", md: "0" },
+                    backdropFilter: "blur(10px)",
                   }}
                 >
-                  <Box sx={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden'
-                  }}>
+                  <Box
+                    sx={{
+                      width: "24px",
+                      height: "24px",
+                      borderRadius: "50%",
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden",
+                    }}
+                  >
                     <MapPin size={13} color="#fff" strokeWidth={2.5} />
                   </Box>
-                  <Typography sx={{
-                    color: '#fff',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    letterSpacing: '0.5px'
-                  }}>
+                  <Typography
+                    sx={{
+                      color: "#fff",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
                     {mergedData.fullLocation}
                   </Typography>
                 </Box>
@@ -169,24 +173,28 @@ const HeaderPortada = ({
                   className="text-center md:text-left mt-1 md:mt-0"
                 >
                   {mergedData.title}
-                  <span style={{
-                    color: "#F0C30E",
-                    fontSize: "clamp(1.8rem, 3vw, 2.6rem)",
-                    whiteSpace: "nowrap",
-                  }}>
+                  <span
+                    style={{
+                      color: "#F0C30E",
+                      fontSize: "clamp(1.8rem, 3vw, 2.6rem)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
                     {` ${mergedData.lastWordTitle}`}
                   </span>
                 </h1>
 
                 {/* Subtitle — solo para investigation */}
                 {typePage === "investigation" && (
-                  <h5 style={{
-                    color: "#fff",
-                    lineHeight: 1.3,
-                    fontSize: "clamp(0.88rem, 1.4vw, 1.05rem)",
-                    margin: 0,
-                    fontWeight: 600,
-                  }}>
+                  <h5
+                    style={{
+                      color: "#fff",
+                      lineHeight: 1.3,
+                      fontSize: "clamp(0.88rem, 1.4vw, 1.05rem)",
+                      margin: 0,
+                      fontWeight: 600,
+                    }}
+                  >
                     {mergedData.subtitle}
                   </h5>
                 )}
@@ -215,7 +223,9 @@ const HeaderPortada = ({
 
           {/* Brands */}
           <Box sx={{ padding: "0 0 36px 0" }}>
-            {children && children.length > 0 && children?.some((child) => child.type === "BrandsGrid") ? (
+            {children &&
+            children.length > 0 &&
+            children?.some((child) => child.type === "BrandsGrid") ? (
               children
                 .filter((child) => child.type === "BrandsGrid")
                 .map((child) => (
@@ -232,30 +242,63 @@ const HeaderPortada = ({
                       width: "90%",
                       margin: "0 auto",
                       marginTop: "2rem",
-                      gap: "16px"
+                      gap: "16px",
                     }}
                     key={child.id}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center", width: "100%", gap: 2 }}>
-                      <Typography sx={{
-                        color: "#fff",
-                        fontSize: "11px",
-                        fontWeight: "bold",
-                        letterSpacing: "1px",
-                        opacity: 0.9,
-                        whiteSpace: "nowrap"
-                      }}>
-                        CERTIFICADO / ACREDITADO POR
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                        gap: 2,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#fff",
+                          fontSize: "11px",
+                          fontWeight: "bold",
+                          letterSpacing: "1px",
+                          opacity: 0.9,
+                          whiteSpace: "nowrap",
+                          toUpperCase: true,
+                        }}
+                      >
+                        {recognitionTitle || "CERTIFICADO / ACREDITADO POR"}
                       </Typography>
-                      <Box sx={{ flexGrow: 1, height: "1px", backgroundColor: "rgba(255,255,255,0.15)" }} />
+                      <Box
+                        sx={{
+                          flexGrow: 1,
+                          height: "1px",
+                          backgroundColor: "rgba(255,255,255,0.15)",
+                        }}
+                      />
                     </Box>
-                    <Box sx={{ display: "flex", alignItems: "center", width: "100%", overflow: "hidden" }}>
-                      <Box sx={{
-                        width: '100%',
-                        '& > div': { py: 0, '& > div': { p: 0, maxWidth: "100%" } },
-                        '& img': { height: '35px !important', objectFit: 'contain' },
-                        '& .MuiTypography-root.brand-name': { display: 'none' }
-                      }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: "100%",
+                          "& > div": {
+                            py: 0,
+                            "& > div": { p: 0, maxWidth: "100%" },
+                          },
+                          "& img": {
+                            height: "35px !important",
+                            objectFit: "contain",
+                          },
+                          "& .MuiTypography-root.brand-name": {
+                            display: "none",
+                          },
+                        }}
+                      >
                         <PageRenderer sections={[child]} />
                       </Box>
                     </Box>
@@ -264,7 +307,8 @@ const HeaderPortada = ({
             ) : (
               <Box className="w-[90%] mx-auto p-12 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50/50">
                 <Typography className="text-gray-400 font-medium text-center">
-                  Marcas vacias: Aquí debe ir el componente de Grilla de Marcas (Brands) (+)
+                  Marcas vacias: Aquí debe ir el componente de Grilla de Marcas
+                  (Brands) (+)
                 </Typography>
               </Box>
             )}

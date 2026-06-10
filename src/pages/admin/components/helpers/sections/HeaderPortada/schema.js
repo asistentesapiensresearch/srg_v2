@@ -50,6 +50,12 @@ export default {
             condition: "typePage === 'micro-col' || typePage === 'micro-uni'"
         },
         {
+            name: "recognitionTitle",
+            label: "Acreditaciones o reconocimientos",
+            type: "text",
+            default: "CERTIFICADO / ACREDITADO POR"
+        },
+        {
             name: "property_header",
             label: "Propiedades para el header",
             type: "separator",
