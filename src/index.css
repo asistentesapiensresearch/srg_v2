@@ -164,3 +164,11 @@
     padding: 30px;
   }
 }
+
+/* ==========================================================================
+   Google Drive Picker Layering Fix (z-index overlay issue)
+   ========================================================================== */
+.picker-dialog,
+.picker-dialog-bg {
+  z-index: 99999 !important;
+}
