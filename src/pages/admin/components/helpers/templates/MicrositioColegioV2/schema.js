@@ -1577,7 +1577,7 @@ export default {
                                     "props": {
                                         "background_color": "transparent",
                                         "padding_y": 20,
-                                        "label": "Índice",
+                                        "label": "Índices",
                                         "padding_x": 20
                                     }
                                 }

@@ -49,13 +49,16 @@ export function useDrivePicker() {
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     "application/vnd.google-apps.spreadsheet",
                 ].join(",")
-            );
+            )
+            .setIncludeFolders(true)
+            .setEnableDrives(true);
 
         // 4) Crear picker SIN API KEY y SIN APP ID
         return new Promise((resolve) => {
             const picker = new google.picker.PickerBuilder()
                 .setOAuthToken(accessToken)
                 .addView(view)
+                .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
                 .setCallback((data) => {
                     if (data.action === google.picker.Action.PICKED) {
                         const file = data.docs[0];
