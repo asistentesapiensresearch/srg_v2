@@ -216,7 +216,10 @@ const HeaderPortada = ({
 
               {/* Escudo / CalificationAndCategory */}
               <Box className="flex flex-col justify-center items-center md:items-end w-full">
-                <CalificationAndCategory excelSource={excelSource} />
+                <CalificationAndCategory
+                  typePage={typePage}
+                  excelSource={excelSource}
+                />
               </Box>
             </Box>
           </Box>
