@@ -33,17 +33,22 @@ export default function BrandsGrid({
     const renderBrandItem = (brand, index, isMarquee, isBackground) => (
       <Tooltip title={brand.name || "Marca"} key={brand.id || index}>
         <Box
+          component={brand.link ? "a" : "div"}
+          href={brand.link || undefined}
+          target={brand.link ? "_blank" : undefined}
+          rel={brand.link ? "noopener noreferrer" : undefined}
           sx={{
-            // Si está en marquee, le damos margen horizontal para separarlos. Si está en grid, el spacing lo hace MUI.
+            textDecoration: "none",
+            color: "inherit",
+
             mx: isMarquee ? 4 : 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            cursor: "pointer",
+            cursor: brand.link ? "pointer" : "default",
             transition: "all 0.3s ease-in-out",
 
-            // EFECTOS HOVER
             "&:hover": {
               transform: hover_scale ? "scale(1.1)" : "none",
               "& img": {
@@ -78,8 +83,8 @@ export default function BrandsGrid({
               path={brand.key}
               style={{
                 height: `${logo_height}px`,
-                  width: "100%",
-                  maxWidth: "180px",
+                width: "100%",
+                maxWidth: "180px",
                 objectFit: "contain",
                 opacity: "0.35",
                 // Si grayscale es true, lo pone gris y un poco transparente. Si no, lo deja normal.
@@ -113,7 +118,7 @@ export default function BrandsGrid({
       </Tooltip>
     );
 
-    return (
+  return (
         <Box sx={{ bgcolor: ((isBackground) ? background_color : 'none'), width: '100%', py: 2, overflow: 'hidden' }}>
             <Container maxWidth="lg" className='px-[0!important]'>
                 {title && (
