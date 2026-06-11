@@ -231,7 +231,7 @@ const HeaderPortada = ({
               </Box>
 
               {/* Escudo / CalificationAndCategory */}
-              <Box className="flex flex-col justify-center items-center md:items-end w-full">
+              <Box className="flex flex-col justify-center items-center md:items-end w-full mt-10">
                 <CalificationAndCategory
                   typePage={typePage}
                   excelSource={excelSource}
@@ -262,6 +262,7 @@ const HeaderPortada = ({
                       margin: "0 auto",
                       marginTop: "2rem",
                       gap: "16px",
+                      height: "9rem",
                     }}
                     key={child.id}
                   >
@@ -310,7 +311,6 @@ const HeaderPortada = ({
                             "& > div": { p: 0, maxWidth: "100%" },
                           },
                           "& img": {
-                            height: "35px !important",
                             objectFit: "contain",
                           },
                           "& .MuiTypography-root.brand-name": {
