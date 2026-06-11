@@ -86,15 +86,20 @@ export default function BrandsGrid({
                 width: "100%",
                 maxWidth: "180px",
                 objectFit: "contain",
-                opacity: "0.35",
+                opacity: hoveredBrand === (brand.id || index) ? 1 : 0.35,
                 // Si grayscale es true, lo pone gris y un poco transparente. Si no, lo deja normal.
                 filter:
                   hoveredBrand === (brand.id || index)
-                    ? "grayscale(0%) brightness(10)"
-                    : grayscale
-                      ? "grayscale(100%) brightness(10)"
-                      : "none",
-                mixBlendMode: !isBackground ? "multiply" : "normal",
+                    ? "none"
+                    : "grayscale(100%) brightness(3)",
+
+                mixBlendMode:
+                  hoveredBrand === (brand.id || index)
+                    ? "normal"
+                    : !isBackground
+                      ? "multiply"
+                      : "normal",
+
                 transition: "all 0.4s ease",
               }}
             />
