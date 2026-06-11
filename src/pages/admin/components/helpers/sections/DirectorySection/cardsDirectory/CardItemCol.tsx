@@ -10,17 +10,6 @@ import DynamicIcon from "@src/pages/admin/components/builder/helpers/DynamicIcon
 /* ─── Keyframes inyectados una sola vez ───────────────────────────────────── */
 if (typeof document !== "undefined" && !document.getElementById("card-animations")) {
     const style = document.createElement("style");
-    style.id = "card-animations";
-    style.textContent = `
-        @keyframes starShine {
-            0%   { filter: brightness(1) drop-shadow(0 0 0px #f5c518); }
-            50%  { filter: brightness(1.55) drop-shadow(0 0 6px #f5c518cc); }
-            100% { filter: brightness(1) drop-shadow(0 0 0px #f5c518); }
-        }
-        .star-shine {
-            animation: starShine 2.8s ease-in-out infinite;
-        }
-    `;
     document.head.appendChild(style);
 }
 
@@ -169,7 +158,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
                         <StorageImage
                             alt={item.Nombre || item.Colegio || "portada"}
                             path={portadaPath}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(0.65) saturate(1.1)" }}
                         />
                     </div>
                 ) : (
@@ -391,8 +380,11 @@ export const CardItemCol = ({ item, primaryColor }) => {
 
                 {/* ── Respaldos (mitad derecha) ── */}
                 {accreditations.length > 0 ? (
-                    <div className="flex flex-col" style={{ gap: 5 }}>
-                        <span style={{ fontSize: 9, color: "#9ca3af", fontWeight: 500, letterSpacing: "0.04em", lineHeight: 1 }}>
+                    <div className="flex flex-col relative" style={{ gap: 5 }}>
+                        <span style={{
+                            fontSize: 9, color: "#9ca3af", fontWeight: 500, letterSpacing: "0.04em", lineHeight: 1,
+                            position: "absolute", top: "-22px", left: 0,
+                        }}>
                             Respaldos
                         </span>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 5px" }}>
@@ -445,7 +437,7 @@ const BadgeCategoria = ({ category, RED }) => (
     <div
         className="flex flex-col items-center justify-center text-center text-white"
         style={{
-            backgroundColor: RED,
+            background: "linear-gradient(135deg, #b91c1c 0%, #ef4444 50%, #b91c1c 100%)",
             borderRadius: 10,
             width: BADGE_W, height: BADGE_H,
             lineHeight: 1.15,
@@ -467,8 +459,8 @@ const BadgeCalificacion = ({ qualification }) => (
     <div
         className="flex flex-col items-center justify-center text-center"
         style={{
-            background: "linear-gradient(135deg, #f5c518 0%, #d4a017 100%)",
-            color: "#1a1000",
+            background: "linear-gradient(135deg, #7c4a03 0%, #d4a843 45%, #f5c842 70%, #7c4a03 100%)",
+            color: "#2d1a00",
             borderRadius: 10,
             width: BADGE_W, height: BADGE_H,
             lineHeight: 1.15,

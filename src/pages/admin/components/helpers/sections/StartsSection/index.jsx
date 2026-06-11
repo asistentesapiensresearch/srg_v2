@@ -47,13 +47,14 @@ const StartSection = ({
                 const isActive = index < totalStars;
 
                 return (
-                <Star
-                    key={index}
-                    size={size}
-                    fill={isActive ? activeColor : inactiveColor}
-                    color={isActive ? activeColor : inactiveColor}
-                    strokeWidth={1.8}
-                />
+                <span key={index} className="sg">
+                    <Star
+                        size={size}
+                        fill={isActive ? activeColor : inactiveColor}
+                        color={isActive ? activeColor : inactiveColor}
+                        strokeWidth={1.8}
+                    />
+                </span>
                 );
             })}
         </Box>
