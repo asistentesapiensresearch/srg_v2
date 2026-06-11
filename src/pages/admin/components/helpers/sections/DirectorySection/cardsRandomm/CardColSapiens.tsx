@@ -17,12 +17,34 @@ export const CardColSapiens = ({ props }) => {
   const rectorName  = props.rectorName     || "";
 
   return (
-    <a
-      href={path}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ textDecoration: "none", color: "inherit", display: "block" }}
-    >
+    <>
+      <style>
+        {`
+          @keyframes starPulse {
+            0%, 100% {
+              filter: drop-shadow(0 0 2px #fbbf24) drop-shadow(0 0 5px #f59e0b);
+              transform: scale(1);
+            }
+            50% {
+              filter: drop-shadow(0 0 5px #fde68a) drop-shadow(0 0 10px #fbbf24);
+              transform: scale(1.2);
+            }
+          }
+          .sg {
+            display: inline-block;
+            animation: starPulse 2.4s ease-in-out infinite;
+          }
+          .sg:nth-child(2) { animation-delay: 0.2s; }
+          .sg:nth-child(3) { animation-delay: 0.4s; }
+          .sg:nth-child(4) { animation-delay: 0.6s; }
+        `}
+      </style>
+      <a
+        href={path}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ textDecoration: "none", color: "inherit", display: "block" }}
+      >
       <div
         style={{
           position: "relative",
@@ -53,6 +75,7 @@ export const CardColSapiens = ({ props }) => {
               position: "absolute", inset: 0,
               width: "100%", height: "100%",
               objectFit: "cover", zIndex: 0,
+              filter: "brightness(0.65) saturate(1.1)",
             }}
           />
         ) : (
@@ -98,7 +121,7 @@ export const CardColSapiens = ({ props }) => {
 
           {/* D1 / CATEGORÍA */}
           <div style={{
-            backgroundColor: "#c10007",
+            background: "linear-gradient(135deg, #b91c1c 0%, #ef4444 50%, #b91c1c 100%)",
             color: "#fff",
             borderRadius: 10,
             padding: "4px 11px",
@@ -119,7 +142,7 @@ export const CardColSapiens = ({ props }) => {
 
           {/* AAA+ / CALIFICACIÓN — gold */}
           <div style={{
-            background: "linear-gradient(135deg, #f5c518 0%, #c8960c 100%)",
+            background: "linear-gradient(135deg, #7c4a03 0%, #d4a843 45%, #f5c842 70%, #7c4a03 100%)",
             color: "#2d1a00",
             borderRadius: 10,
             padding: "4px 11px",
@@ -159,7 +182,7 @@ export const CardColSapiens = ({ props }) => {
                 excelSource=""
                 stars={stars}
                 typePage="admin"
-                size={18}
+                size={28}
                 gap={4}
               />
             </div>
@@ -197,7 +220,7 @@ export const CardColSapiens = ({ props }) => {
                   src={rectorPhoto}
                   alt={rectorName}
                   style={{
-                    width: 62, height: 62,
+                    width: 80, height: 80,
                     borderRadius: "50%",
                     objectFit: "cover",
                     border: "2.5px solid rgba(255,255,255,0.55)",
@@ -207,7 +230,7 @@ export const CardColSapiens = ({ props }) => {
                 />
               ) : (
                 <div style={{
-                  width: 62, height: 62, borderRadius: "50%",
+                  width: 80, height: 80, borderRadius: "50%",
                   backgroundColor: "#4b5563",
                   border: "2.5px solid rgba(255,255,255,0.4)",
                   boxShadow: "0 4px 16px rgba(0,0,0,0.35)",
@@ -247,6 +270,7 @@ export const CardColSapiens = ({ props }) => {
           </div>
         </div>
       </div>
-    </a>
+      </a>
+    </>
   );
 };
