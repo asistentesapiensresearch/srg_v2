@@ -59,7 +59,6 @@ export default {
             name: "property_header",
             label: "Propiedades para el header",
             type: "separator",
-            condition: "typePage === 'investigation'"
         },
         // Imagen
         {
@@ -68,7 +67,6 @@ export default {
             type: "image_uploader", // 🔥 Tipo especial para usar FileUploader
             default: "",
             help: "Sube una imagen desde tu computadora",
-            condition: "typePage === 'investigation'"
         },
         // fin
         {
@@ -77,7 +75,6 @@ export default {
             type: "text",
             default: "Colombia",
             help: "Escriba el país donde corresponda el análisis",
-            condition: "typePage === 'investigation'"
         },
         {
             name: "title",
@@ -85,7 +82,6 @@ export default {
             type: "text",
             default: "Ranking Col-Sapiens 2025-2026",
             help: "Escriba el título del header",
-            condition: "typePage === 'investigation'"
         },
         {
             name: "subtitle",
@@ -93,7 +89,6 @@ export default {
             type: "text",
             default: "versión #13 del 9-sep-2025",
             help: "Escriba el subtitulo del header, ej: versión #13 del  9-sep-2025",
-            condition: "typePage === 'investigation'"
         },
         {
             name: "shortDescription",
@@ -101,7 +96,6 @@ export default {
             type: "text",
             default: "Descripción corta.....",
             help: "Escriba la descrición corta del header...",
-            condition: "typePage === 'investigation'"
         },
         {
             name: "itemsHighlights",
@@ -119,7 +113,6 @@ export default {
                     type: "text"
                 }
             ],
-            condition: "typePage === 'investigation'"
         },
         {
             name: "data_settings",

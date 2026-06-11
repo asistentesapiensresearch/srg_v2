@@ -1,15 +1,15 @@
 export const fieldsSection = {
-    "db": {
-        Institution: {
-            name: "name",
-            slogan: "slogan",
-            portadaPhoto: "portadaPhoto",
-        }
+  db: {
+    Institution: {
+      name: "name",
+      slogan: "slogan",
+      portadaPhoto: "portadaPhoto",
     },
-    "excel": {
-        "COL": {
-            "ciudad": "Ciudad",
-            "departamento": "Departamento",
-        }
-    }
-}
+  },
+  excel: {
+    COL: {
+      ciudad: "Ciudad",
+      departamento: "Departamento",
+    },
+  },
+};

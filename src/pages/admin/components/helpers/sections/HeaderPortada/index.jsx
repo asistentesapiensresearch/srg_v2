@@ -52,25 +52,41 @@ const HeaderPortada = ({
     const fieldsExcel = fieldsSection.excel?.[excelSource];
 
     const mergedData = useMemo(() => {
-      if(typePage != "investigation") {
+      if (typePage != "investigation") {
         const excelData = dataExcels?.data || {};
-        const portadaPhoto = data?.[fieldsDB?.portadaPhoto] || "";
-        const slogan = data?.[fieldsDB?.slogan] || "";
+
+        const portadaPhoto = src || data?.[fieldsDB?.portadaPhoto] || "";
+
+        const slogan =  shortDescription || data?.[fieldsDB?.slogan] || "";
+
         const city = fieldsExcel?.ciudad
           ? String(excelData[fieldsExcel.ciudad] || "").toUpperCase()
           : "";
+
         const dept = fieldsExcel?.departamento
           ? String(excelData[fieldsExcel.departamento] || "").toUpperCase()
           : "";
+
         const fullLocation =
           dept && dept !== city && !city.includes(dept)
             ? `${city}, ${dept}`
             : city;
+
         const nameValue = data?.[fieldsDB?.name] || "";
+
         const words = nameValue ? nameValue.split(" ") : [];
+
         const lastWordTitle = words.length ? words.pop() : "";
+
         const title = words.join(" ");
-        return { title, lastWordTitle, portadaPhoto, slogan, fullLocation };
+
+        return {
+          title,
+          lastWordTitle,
+          portadaPhoto,
+          slogan,
+          fullLocation,
+        };
       }
 
       const words = title ? title.split(" ") : [];
@@ -83,7 +99,7 @@ const HeaderPortada = ({
         slogan: shortDescription,
         fullLocation: country.toUpperCase(),
       };
-    }, [data, dataExcels, fieldsDB, fieldsExcel, typePage, title, subtitle, shortDescription, country, imageSrc]);
+    }, [data, dataExcels, fieldsDB, fieldsExcel, typePage, title, subtitle, shortDescription, country, imageSrc, src ]);
 
     const backgroundImage = useImageUrl(mergedData?.portadaPhoto || "");
 
@@ -94,7 +110,7 @@ const HeaderPortada = ({
           minHeight: { xs: "auto", md: height },
           color: "#fff",
           backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none",
-          backgroundSize: "contain",
+          backgroundSize: typePage === "investigation" ? "contain" : "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition:
             typePage === "investigation" ? "center" : "center",
@@ -185,7 +201,7 @@ const HeaderPortada = ({
                 </h1>
 
                 {/* Subtitle — solo para investigation */}
-                {typePage === "investigation" && (
+                {mergedData.subtitle && (
                   <h5
                     style={{
                       color: "#fff",
