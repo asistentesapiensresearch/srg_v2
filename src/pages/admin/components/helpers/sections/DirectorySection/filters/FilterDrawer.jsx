@@ -17,6 +17,19 @@ export const FilterDrawer = ({
     // Estado local para manejar los resultados filtrados por la caja de búsqueda interna
     const [localFilters, setLocalFilters] = useState({});
 
+    const getOptionLabel = (filterName, option) => {
+        const normalizedName = String(filterName)
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+
+        if (normalizedName === "categoria") {
+            return `D${option}`;
+        }
+
+        return option;
+    };
+
     // Sincronizar estado local cuando cambian los filtros disponibles
     useEffect(() => {
         setLocalFilters(availableFilters);
@@ -116,7 +129,7 @@ export const FilterDrawer = ({
                                                 size="small"
                                             />
                                         }
-                                        label={<Typography variant="body2">{option}</Typography>}
+                                        label={<Typography variant="body2">{getOptionLabel(techName, option)}</Typography>}
                                     />
                                 ))}
                                 

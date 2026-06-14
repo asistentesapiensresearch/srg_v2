@@ -442,10 +442,22 @@ const DirectorySectionContent = ({
                 // Resolvemos si header es un Alias o Nombre Original
                 // Como `masterData` ya tiene los ALIAS inyectados, usamos el Alias si existe.
                 const alias = columnAliases[header] || header;
+                const versionAlias = columnAliases[versionColumn] || versionColumn;
 
+                if (versionColumn && (header === versionColumn || alias === versionAlias)) {
+                    return;
+                }
+
+                const isCategoryFilter = cleanString(alias) === cleanString("Categoría");
                 const uniqueValues = [...new Set(masterData.map(item => item[alias]))]
                     .filter(val => val !== null && val !== undefined && val !== "")
-                    .sort((a, b) => String(a).localeCompare(String(b)));
+                    .sort((a, b) => {
+                        if (isCategoryFilter) {
+                            return Number(a) - Number(b);
+                        }
+
+                        return String(a).localeCompare(String(b));
+                    });
 
                 if (uniqueValues.length > 0) {
                     filters[alias] = { label: alias, values: uniqueValues };
@@ -453,7 +465,7 @@ const DirectorySectionContent = ({
             });
         }
         return filters;
-    }, [masterData, sourceConfig, columnAliases]);
+    }, [masterData, sourceConfig, columnAliases, versionColumn]);
 
     const categoryOptions = useMemo(() => {
         return [...new Set(
