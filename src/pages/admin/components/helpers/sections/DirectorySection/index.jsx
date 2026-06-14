@@ -36,6 +36,35 @@ const cleanString = (val) => {
         .trim();
 };
 
+const isSiglasFilter = (columnName) => {
+    const normalized = cleanString(columnName);
+    return (
+        normalized.includes("siglas") ||
+        normalized.includes("certificacion") ||
+        normalized.includes("acreditacion")
+    );
+};
+
+const splitSiglasValue = (value) => {
+    if (value === null || value === undefined) return [];
+    return String(value)
+        .split(/[+＋]/)
+        .map(item => item.trim())
+        .filter(Boolean);
+};
+
+const uniqueByCleanString = (values) => {
+    const unique = new Map();
+    values.forEach(value => {
+        if (value === null || value === undefined || value === "") return;
+        const key = cleanString(value);
+        if (key && !unique.has(key)) {
+            unique.set(key, value);
+        }
+    });
+    return [...unique.values()];
+};
+
 const parseQuickFilters = (jsonString) => {
     try {
         const parsed = JSON.parse(jsonString || "[]");
@@ -373,6 +402,11 @@ const DirectorySectionContent = ({
 
                     // Buscamos en el item (que ya tiene alias)
                     const itemValue = item[key];
+                    if (isSiglasFilter(key)) {
+                        const itemSiglas = splitSiglasValue(itemValue).map(cleanString);
+                        return selectedValues.some(fVal => itemSiglas.includes(cleanString(fVal)));
+                    }
+
                     return selectedValues.some(fVal => cleanString(fVal) === cleanString(itemValue));
                 });
             });
@@ -449,8 +483,11 @@ const DirectorySectionContent = ({
                 }
 
                 const isCategoryFilter = cleanString(alias) === cleanString("Categoría");
-                const uniqueValues = [...new Set(masterData.map(item => item[alias]))]
-                    .filter(val => val !== null && val !== undefined && val !== "")
+                const rawValues = isSiglasFilter(alias)
+                    ? masterData.flatMap(item => splitSiglasValue(item[alias]))
+                    : masterData.map(item => item[alias]);
+
+                const uniqueValues = uniqueByCleanString(rawValues)
                     .sort((a, b) => {
                         if (isCategoryFilter) {
                             return Number(a) - Number(b);
