@@ -12,6 +12,9 @@ export const Template = a.model({
     articleId: a.id(),
     article: a.belongsTo("Article", "articleId"),
 
+    pageId: a.id(),
+    page: a.belongsTo('Page', 'pageId'),
+
     brands: a.hasMany("TemplateBrand", "templateId"),
 })
     .secondaryIndexes(index => [

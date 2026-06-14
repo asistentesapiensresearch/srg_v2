@@ -48,6 +48,10 @@ export class TemplateAmplifyRepository implements TemplateRepository {
         return await this.getTemplateById({ articleId }, 'listTemplateByArticleId');
     }
 
+    async getByPageId(pageId: string): Promise<Template | null> {
+        return await this.getTemplateById({ pageId }, 'listTemplateByPageId');
+    }
+
     async getTemplateById(inputs: any, query: string) {
         try {
             const { data, errors } = await apiSyncService.query(

@@ -11,6 +11,7 @@ import { Gallery } from './schemas/Gallery';
 import { Testimonial } from './schemas/Testimonial';
 import { Article } from './schemas/Article';
 import { GoogleAd } from './schemas/GoogleAd';
+import { Page } from './schemas/Page';
 
 const schema = a.schema({
   Institution,
@@ -21,6 +22,7 @@ const schema = a.schema({
   Gallery,
   Testimonial,
   Article,
+  Page,
   GoogleAd,
   listCognitoUsers: a.query()
     .returns(a.json()) // Retornará el array de usuarios como JSON

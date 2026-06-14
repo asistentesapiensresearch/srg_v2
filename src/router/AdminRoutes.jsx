@@ -9,6 +9,7 @@ const Brands = lazy(() => import("../pages/admin/Brand/Brands"));
 const Ads = lazy(() => import("../pages/admin/Ads/Ads"));
 const Institutions = lazy(() => import("../pages/admin/Intitutions/Institutions"));
 const Articles = lazy(() => import("../pages/admin/Articles/Articles"));
+const Pages = lazy(() => import("../pages/admin/Pages/Pages"));
 const Testimonial = lazy(() => import("../pages/admin/Testimonials/TestimonialManager"));
 const Builder = lazy(() => import("../pages/admin/components/builder/Editor"));
 const Users = lazy(() => import("../pages/admin/Users/Users"));
@@ -74,19 +75,29 @@ export const AdminRoutes = [
                 title: "Artículos"
             },
             {
+                path: 'pages', // /admin/institutions
+                element: <Pages />,
+                title: "Páginas"
+            },
+            {
                 path: 'institutions/:id/testimonials',
                 element: <Testimonial/>,
                 title: "Testimonios en instituciones"
             },
             {
-                path: 'galleries', // /admin/institutions
+                path: 'galleries',
                 element: <GalleryManager />,
                 title: "Galerías"
             },
             {
-                path: 'migration', // /admin/institutions
-                element: <MigrationDashboard />,
-                title: "Migración"
+                path: 'migration/articles',
+                element: <MigrationDashboard type="article" />,
+                title: "Migración de artículos"
+            },
+            {
+                path: 'migration/pages',
+                element: <MigrationDashboard type="page" />,
+                title: "Migración de páginas"
             },
             {
                 path: '*', // 404 dentro del admin

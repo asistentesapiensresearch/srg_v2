@@ -8,4 +8,5 @@ export interface TemplateRepository {
   getByResearchId(researchId: string): Promise<Template | null>;
   getByInstitutionId(institutionId: string): Promise<Template | null>;
   getByArticlenId(articleId: string): Promise<Template | null>;
+  getByPageId(pageId: string): Promise<Template | null>;
 }

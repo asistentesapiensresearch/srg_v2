@@ -79,6 +79,16 @@ export const Sidebar = ({
             ]
         },
         {
+            label: 'Páginas',
+            items: [
+                {
+                    path: 'pages',
+                    label: 'Lista de páginas',
+                    icon: <SquareChartGantt size={20} />
+                }
+            ]
+        },
+        {
             label: 'Galerias',
             items: [
                 {
@@ -92,8 +102,13 @@ export const Sidebar = ({
             label: 'Migracion',
             items: [
                 {
-                    path: 'migration',
-                    label: 'Lista articulos',
+                    path: 'migration/articles',
+                    label: 'Artículos',
+                    icon: <SquareChartGantt size={20} />
+                },
+                {
+                    path: 'migration/pages',
+                    label: 'Páginas',
                     icon: <SquareChartGantt size={20} />
                 }
             ]
