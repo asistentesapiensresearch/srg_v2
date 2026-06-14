@@ -9,7 +9,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
@@ -429,8 +428,6 @@ export default function TableList({ data = [], columns = [], historyColumns = []
   // ========================================================================
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("");
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   // ========================================================================
   // 2. TODOS LOS MEMOS (DESPUÉS DE ESTADOS, ANTES DE HANDLERS)
@@ -448,15 +445,12 @@ export default function TableList({ data = [], columns = [], historyColumns = []
     return mergeRecognitionColumns(cols, { hideYear: true });
   }, [columns, data]);
 
-  // Memo: Filas visibles (ordenadas y paginadas)
+  // Memo: Filas visibles (ordenadas)
   const visibleRows = React.useMemo(() => {
     if (data.length === 0) return [];
 
-    return stableSort(data, getComparator(order, orderBy)).slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage,
-    );
-  }, [data, order, orderBy, page, rowsPerPage]);
+    return stableSort(data, getComparator(order, orderBy));
+  }, [data, order, orderBy]);
 
   // ========================================================================
   // 3. HANDLERS (DESPUÉS DE MEMOS, ANTES DE RENDER)
@@ -477,15 +471,6 @@ export default function TableList({ data = [], columns = [], historyColumns = []
     },
     [handleRequestSort],
   );
-
-  const handleChangePage = React.useCallback((event, newPage) => {
-    setPage(newPage);
-  }, []);
-
-  const handleChangeRowsPerPage = React.useCallback((event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  }, []);
 
   // ========================================================================
   // 4. RENDER (AL FINAL, CON CONDICIONAL SI ES NECESARIO)
@@ -566,16 +551,6 @@ export default function TableList({ data = [], columns = [], historyColumns = []
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={data.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage="Filas"
-      />
     </Paper>
   );
 }

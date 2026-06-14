@@ -551,6 +551,12 @@ const DirectorySectionContent = ({
         return itemsWithAds.slice(startIndex, endIndex);
     }, [itemsWithAds, page, itemsPerPage]);
 
+    const paginatedListData = useMemo(() => {
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return showData.slice(startIndex, endIndex);
+    }, [showData, page, itemsPerPage]);
+
     const recordsSummary = useMemo(() => {
         const filteredTotal = showData.length;
         const totalRecords = masterData.length;
@@ -565,6 +571,8 @@ const DirectorySectionContent = ({
             totalRecords: formatNumber(totalRecords),
         };
     }, [showData.length, masterData.length, page, itemsPerPage]);
+
+    const paginationTotal = showData.length;
 
     const dataWithAds = useMemo(() => {
         if (!paginatedData?.length && !googleAds?.length) return [];
@@ -986,7 +994,7 @@ const DirectorySectionContent = ({
 
             {isList ? (
               <TableList
-                data={itemsWithAds.filter((i) => !i._isAd)}
+                data={paginatedListData}
                 columns={sourceConfig?.columns || []}
                 historyColumns={sourceConfig?.historyColumns || []}
                 aliases={columnAliases}
@@ -1169,9 +1177,9 @@ const DirectorySectionContent = ({
               justifyContent: { xs: "center", md: "flex-start" },
             }}
           >
-            {!isList && itemsWithAds.length > itemsPerPage && (
+            {paginationTotal > itemsPerPage && (
               <Pagination
-                count={Math.ceil(itemsWithAds.length / itemsPerPage)}
+                count={Math.ceil(paginationTotal / itemsPerPage)}
                 page={page}
                 onChange={(e, v) => {
                   setPage(v);
@@ -1226,7 +1234,10 @@ const DirectorySectionContent = ({
               <Select
                 value={itemsPerPage || 50}
                 label="Registros"
-                onChange={(e) => setItemsPerPage(e.target.value)}
+                onChange={(e) => {
+                  setItemsPerPage(e.target.value);
+                  setPage(1);
+                }}
               >
                 {[10, 25, 50, 100].map((option) => (
                   <MenuItem key={option} value={option}>
