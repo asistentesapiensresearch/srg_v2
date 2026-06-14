@@ -41,6 +41,23 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+const cleanString = (val) => {
+  if (val === null || val === undefined) return "";
+  return String(val)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9+]/g, "")
+    .trim();
+};
+
+const isLinkedValue = (value) => {
+  if (value === true) return true;
+  if (value === false || value === null || value === undefined) return false;
+
+  return ["si", "true", "1", "yes"].includes(cleanString(value));
+};
+
 const renderBadges = (value) => {
   if (!value) return "-";
 
@@ -93,6 +110,7 @@ function Row(props) {
 
   // Verificamos si existe historial para habilitar el botón de expandir
   const hasHistory = row.history && row.history.length > 0;
+  const isLinked = isLinkedValue(row.isLinked) || isLinkedValue(row.Vinculada);
   const displayHistoryColumns = React.useMemo(() => {
     const cols = [...(historyColumns || [])];
 
@@ -111,7 +129,7 @@ function Row(props) {
         }}
       >
         <TableCell width={50}>
-          {hasHistory && row.isLinked ? (
+          {hasHistory && isLinked ? (
             <IconButton
               aria-label="expand row"
               size="small"

@@ -65,6 +65,14 @@ const uniqueByCleanString = (values) => {
     return [...unique.values()];
 };
 
+const isLinkedValue = (value) => {
+    if (value === true) return true;
+    if (value === false || value === null || value === undefined) return false;
+
+    const normalized = cleanString(value);
+    return ["si", "true", "1", "yes"].includes(normalized);
+};
+
 const parseQuickFilters = (jsonString) => {
     try {
         const parsed = JSON.parse(jsonString || "[]");
@@ -80,7 +88,7 @@ const parseQuickFilters = (jsonString) => {
 
 const getInitialConfig = (jsonString) => {
     const list = parseQuickFilters(jsonString);
-    const defaultItem = list.find(p => p.default) || list[0];
+    const defaultItem = list.find(p => p.label === "Todos") || list[0];
     const rawFilters = defaultItem.filters || {};
     const sanitized = {};
     Object.keys(rawFilters).forEach(key => {
@@ -351,6 +359,7 @@ const DirectorySectionContent = ({
 
                         finalGroupedData.push({
                             ...mainRecord,
+                            isLinked: isLinkedValue(mainRecord.isLinked) || isLinkedValue(mainRecord.Vinculada),
                             history: history,
                             _hasHistory: history.length > 0
                         });
