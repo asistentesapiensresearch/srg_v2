@@ -61,7 +61,9 @@ const isLinkedValue = (value) => {
   return ["si", "true", "1", "yes"].includes(cleanString(value));
 };
 
-const isCategoryColumn = (columnName) => cleanString(columnName) === "categoria";
+const isCategoryColumn = (columnName) => cleanString(columnName).includes("categoria");
+
+const isQualificationColumn = (columnName) => cleanString(columnName).includes("calificacion");
 
 const isAccreditationColumn = (columnName) =>
   cleanString(columnName).includes("acreditacion");
@@ -142,6 +144,12 @@ const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
           backgroundColor: "rgb(239, 246, 255)",
           color: "rgb(29, 78, 216)",
         }
+      : tone === "yellow"
+        ? {
+            border: "1px solid rgb(253, 230, 138)",
+            backgroundColor: "rgb(254, 252, 232)",
+            color: "rgb(161, 98, 7)",
+          }
       : {
           border: "1px solid rgb(254, 202, 202)",
           backgroundColor: "rgb(254, 242, 242)",
@@ -184,7 +192,7 @@ const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
   );
 };
 
-const renderCellValue = (row, colKey) => {
+const renderCellValue = (row, colKey, aliases = {}) => {
   if (colKey === RECOGNITIONS_COLUMN) {
     const certificationValue = getFirstColumnValue(row, isCertificationColumn);
     const accreditationValue = getFirstColumnValue(row, isAccreditationColumn);
@@ -216,8 +224,12 @@ const renderCellValue = (row, colKey) => {
     );
   }
 
-  if (isCategoryColumn(colKey)) {
-    return renderCategory(row[colKey]);
+  if (isCategoryColumn(colKey) || isCategoryColumn(aliases[colKey])) {
+    return renderCategory(row[colKey] ?? getFirstColumnValue(row, isCategoryColumn));
+  }
+
+  if (isQualificationColumn(colKey) || isQualificationColumn(aliases[colKey])) {
+    return renderBadges(row[colKey] ?? getFirstColumnValue(row, isQualificationColumn), "yellow");
   }
 
   if (isAccreditationColumn(colKey)) {
@@ -300,7 +312,7 @@ function Row(props) {
               minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
             }}
           >
-            {renderCellValue(row, colKey)}
+            {renderCellValue(row, colKey, aliases)}
           </TableCell>
         ))}
       </TableRow>
@@ -371,7 +383,7 @@ function Row(props) {
                               minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                             }}
                           >
-                            {renderCellValue(historyRow, colKey)}
+                            {renderCellValue(historyRow, colKey, aliases)}
                           </TableCell>
                         ))}
                       </TableRow>
