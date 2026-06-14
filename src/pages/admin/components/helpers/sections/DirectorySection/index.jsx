@@ -551,6 +551,21 @@ const DirectorySectionContent = ({
         return itemsWithAds.slice(startIndex, endIndex);
     }, [itemsWithAds, page, itemsPerPage]);
 
+    const recordsSummary = useMemo(() => {
+        const filteredTotal = showData.length;
+        const totalRecords = masterData.length;
+        const start = filteredTotal === 0 ? 0 : ((page - 1) * itemsPerPage) + 1;
+        const end = Math.min(page * itemsPerPage, filteredTotal);
+        const formatNumber = (value) => Number(value || 0).toLocaleString("en-US");
+
+        return {
+            start: formatNumber(start),
+            end: formatNumber(end),
+            filteredTotal: formatNumber(filteredTotal),
+            totalRecords: formatNumber(totalRecords),
+        };
+    }, [showData.length, masterData.length, page, itemsPerPage]);
+
     const dataWithAds = useMemo(() => {
         if (!paginatedData?.length && !googleAds?.length) return [];
 
@@ -967,13 +982,7 @@ const DirectorySectionContent = ({
                 justifyContent: "space-between",
                 alignItems: "center",
               }}
-            >
-              <Typography variant="body2" color="text.secondary">
-                Mostrando{" "}
-                <strong>{itemsWithAds.filter((x) => !x._isAd).length}</strong>{" "}
-                resultados
-              </Typography>
-            </Box>
+            ></Box>
 
             {isList ? (
               <TableList
@@ -1148,18 +1157,16 @@ const DirectorySectionContent = ({
             pt: 3,
             borderTop: "1px solid #e5e7eb",
             display: "grid",
-            gridTemplateColumns: "1fr auto 1fr",
+            gridTemplateColumns: { xs: "1fr", md: "1fr auto 1fr" },
             alignItems: "center",
+            gap: 2,
           }}
         >
-          {/* Espacio izquierdo */}
-          <Box />
-
-          {/* Paginación centrada */}
+          {/* Paginación izquierda */}
           <Box
             sx={{
               display: "flex",
-              justifyContent: "center",
+              justifyContent: { xs: "center", md: "flex-start" },
             }}
           >
             {!isList && itemsWithAds.length > itemsPerPage && (
@@ -1195,11 +1202,22 @@ const DirectorySectionContent = ({
             )}
           </Box>
 
-          {/* Registros a la derecha */}
+          {/* Resumen centrado */}
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ textAlign: "center" }}
+          >
+            Mostrando registros del <strong>{recordsSummary.start}</strong>{" "}
+            al <strong>{recordsSummary.end}</strong> de un total de{" "}
+            <strong>{recordsSummary.filteredTotal}</strong> registros
+          </Typography>
+
+          {/* Selector de registros derecha */}
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: { xs: "center", md: "flex-end" },
             }}
           >
             <FormControl size="small" sx={{ minWidth: 120 }}>
