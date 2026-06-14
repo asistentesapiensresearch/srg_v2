@@ -12,8 +12,7 @@ export const FilterDrawer = ({
     availableFilters, // Estructura: { tech_name: { label: "Alias", values: [] } }
     activeFilters,    
     onFilterChange,   
-    onClearAll,
-    quickFilters
+    onClearAll
 }) => {
     // Estado local para manejar los resultados filtrados por la caja de búsqueda interna
     const [localFilters, setLocalFilters] = useState({});
@@ -23,23 +22,7 @@ export const FilterDrawer = ({
         setLocalFilters(availableFilters);
     }, [availableFilters]);
 
-    useEffect(() => {
-        if(!quickFilters || Object.keys(quickFilters).length == 0){
-            onClearAll();
-        }
-        Object.keys(quickFilters || {}).map(filter => {
-            if(typeof quickFilters[filter] === 'object'){
-                quickFilters[filter].map(value => {
-                    handleCheckboxChange(filter, value)
-                })
-            } else {
-                handleCheckboxChange(filter, quickFilters[filter])
-            }
-        })
-    },[quickFilters]);
-
     const handleCheckboxChange = (column, value) => {
-        console.log(column,value)
         const currentSelected = activeFilters[column] || [];
         const newSelected = currentSelected.includes(value)
             ? currentSelected.filter(item => item !== value)

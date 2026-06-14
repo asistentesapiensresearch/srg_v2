@@ -430,8 +430,15 @@ const DirectorySectionContent = ({
         if (!masterData.length) return {};
 
         const filters = {};
-        if (sourceConfig?.columns) {
-            sourceConfig.columns.forEach(header => {
+        const filterColumns = [
+            ...(sourceConfig?.columns || []),
+            ...(sourceConfig?.filters || [])
+        ];
+
+        const uniqueFilterColumns = [...new Set(filterColumns)];
+
+        if (uniqueFilterColumns.length) {
+            uniqueFilterColumns.forEach(header => {
                 // Resolvemos si header es un Alias o Nombre Original
                 // Como `masterData` ya tiene los ALIAS inyectados, usamos el Alias si existe.
                 const alias = columnAliases[header] || header;

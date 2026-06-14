@@ -399,6 +399,23 @@ export default function DataSourceInput({ value, onChange }) {
             />
             <Autocomplete
               multiple
+              id="filters-select"
+              options={headers}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              value={localState.filters || []}
+              onChange={(event, newValue) => updateState({ filters: newValue })}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Columnas disponibles como filtro"
+                  size="small"
+                  helperText="Puedes seleccionar columnas aunque no se muestren en la tabla principal."
+                />
+              )}
+            />
+            <Autocomplete
+              multiple
               id="history-columns-select"
               options={headers}
               getOptionLabel={(option) => option}
@@ -416,7 +433,8 @@ export default function DataSourceInput({ value, onChange }) {
               )}
             />
 
-            {localState.columns && localState.columns.length > 0 && (
+            {((localState.columns && localState.columns.length > 0) ||
+              (localState.filters && localState.filters.length > 0)) && (
               <Box
                 sx={{
                   bgcolor: "#f5f5f5",
@@ -434,7 +452,7 @@ export default function DataSourceInput({ value, onChange }) {
                 >
                   ALIAS DE COLUMNAS
                 </Typography>
-                {localState.columns.map((col) => (
+                {[...new Set([...(localState.columns || []), ...(localState.filters || [])])].map((col) => (
                   <Box
                     key={col}
                     sx={{ display: "flex", alignItems: "center", gap: 1 }}
