@@ -15,6 +15,8 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 import Rating from "@mui/material/Rating";
 import { visuallyHidden } from "@mui/utils";
 
@@ -218,7 +220,23 @@ const renderCellValue = (row, colKey, aliases = {}) => {
 
   if (colKey === "Star") {
     return row[colKey] ? (
-      <Rating value={Number(row[colKey])} readOnly size="small" />
+      <Rating
+        value={Number(row[colKey])}
+        readOnly
+        size="small"
+        icon={<StarRoundedIcon fontSize="inherit" />}
+        emptyIcon={<StarBorderRoundedIcon fontSize="inherit" />}
+        sx={{
+          fontSize: "1.25rem",
+          "& .MuiRating-iconFilled": {
+            color: "#facc15",
+          },
+          "& .MuiRating-iconEmpty": {
+            color: "#fbbf24",
+            opacity: 0.45,
+          },
+        }}
+      />
     ) : (
       "-"
     );
@@ -509,6 +527,17 @@ export default function TableList({ data = [], columns = [], historyColumns = []
                     active={orderBy === colKey}
                     direction={orderBy === colKey ? order : "asc"}
                     onClick={createSortHandler(colKey)}
+                    sx={{
+                      gap: 0.5,
+                      "& .MuiTableSortLabel-icon": {
+                        opacity: 1,
+                        color: orderBy === colKey ? "#b91c1c !important" : "#9ca3af !important",
+                        fontSize: "1.15rem",
+                      },
+                      "&:hover .MuiTableSortLabel-icon": {
+                        color: "#b91c1c !important",
+                      },
+                    }}
                   >
                     {colKey === RECOGNITIONS_COLUMN ? "Reconocimientos" : aliases[colKey] || colKey}
                     {orderBy === colKey ? (
