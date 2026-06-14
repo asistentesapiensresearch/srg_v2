@@ -18,6 +18,8 @@ export const storage = defineStorage({
         'shared/*': authorizations(allow),
         'galleries/*': authorizations(allow),
 
+        'articles/*': authorizations(allow),
+
         // 🔥 REGLA CORREGIDA PARA PERFILES
         'profiles/*': [
             // 1. Regla genérica (para usuarios sin grupo)
