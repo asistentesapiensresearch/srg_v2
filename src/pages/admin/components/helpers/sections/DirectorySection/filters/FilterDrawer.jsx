@@ -12,34 +12,30 @@ export const FilterDrawer = ({
     availableFilters, // Estructura: { tech_name: { label: "Alias", values: [] } }
     activeFilters,    
     onFilterChange,   
-    onClearAll,
-    quickFilters
+    onClearAll
 }) => {
     // Estado local para manejar los resultados filtrados por la caja de búsqueda interna
     const [localFilters, setLocalFilters] = useState({});
+
+    const getOptionLabel = (filterName, option) => {
+        const normalizedName = String(filterName)
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+
+        if (normalizedName === "categoria") {
+            return `D${option}`;
+        }
+
+        return option;
+    };
 
     // Sincronizar estado local cuando cambian los filtros disponibles
     useEffect(() => {
         setLocalFilters(availableFilters);
     }, [availableFilters]);
 
-    useEffect(() => {
-        if(!quickFilters || Object.keys(quickFilters).length == 0){
-            onClearAll();
-        }
-        Object.keys(quickFilters || {}).map(filter => {
-            if(typeof quickFilters[filter] === 'object'){
-                quickFilters[filter].map(value => {
-                    handleCheckboxChange(filter, value)
-                })
-            } else {
-                handleCheckboxChange(filter, quickFilters[filter])
-            }
-        })
-    },[quickFilters]);
-
     const handleCheckboxChange = (column, value) => {
-        console.log(column,value)
         const currentSelected = activeFilters[column] || [];
         const newSelected = currentSelected.includes(value)
             ? currentSelected.filter(item => item !== value)
@@ -133,7 +129,7 @@ export const FilterDrawer = ({
                                                 size="small"
                                             />
                                         }
-                                        label={<Typography variant="body2">{option}</Typography>}
+                                        label={<Typography variant="body2">{getOptionLabel(techName, option)}</Typography>}
                                     />
                                 ))}
                                 
