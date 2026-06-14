@@ -27,7 +27,6 @@ const container = (key, label, tag) =>  (
                 fontSize: "0.85rem",
                 letterSpacing: "0.05em",
                 fontWeight: "500",
-                textTransform: "uppercase",
             }}
         >
             {tag}
