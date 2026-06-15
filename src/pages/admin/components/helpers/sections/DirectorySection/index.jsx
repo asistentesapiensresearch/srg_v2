@@ -877,29 +877,50 @@ const DirectorySectionContent = ({
               sx={{
                 display: "flex",
                 alignItems: "center",
-                gap: 1.5,
+                gap: 2,
                 flexWrap: "wrap",
               }}
             >
               <FormControl
-                size="small"
                 sx={{
-                  minWidth: 150,
+                  minWidth: { xs: "100%", sm: 190 },
 
+                  "& .MuiInputLabel-root": {
+                    color: "#6b7280",
+                    fontWeight: 600,
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: primaryColor,
+                  },
                   "& .MuiOutlinedInput-root": {
+                    height: 52,
                     borderRadius: 3,
                     bgcolor: "#fff",
+                    boxShadow: "0 2px 8px rgba(15, 23, 42, 0.06)",
+                    transition: "box-shadow 160ms ease, border-color 160ms ease",
 
                     "& fieldset": {
-                      borderColor: "#e5e7eb",
+                      borderColor: "#d1d5db",
                     },
 
                     "&:hover fieldset": {
-                      borderColor: "#d1d5db",
+                      borderColor: primaryColor,
                     },
 
                     "&.Mui-focused fieldset": {
                       borderColor: primaryColor,
+                      borderWidth: 1.5,
+                    },
+
+                    "&.Mui-focused": {
+                      boxShadow: "0 0 0 3px rgba(193, 0, 9, 0.12)",
+                    },
+
+                    "& .MuiSelect-select": {
+                      display: "flex",
+                      alignItems: "center",
+                      fontWeight: 600,
+                      color: "#111827",
                     },
                   },
                 }}
@@ -924,24 +945,45 @@ const DirectorySectionContent = ({
               </FormControl>
 
               <FormControl
-                size="small"
                 sx={{
-                  minWidth: 170,
+                  minWidth: { xs: "100%", sm: 220 },
 
+                  "& .MuiInputLabel-root": {
+                    color: "#6b7280",
+                    fontWeight: 600,
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: primaryColor,
+                  },
                   "& .MuiOutlinedInput-root": {
+                    height: 52,
                     borderRadius: 3,
                     bgcolor: "#fff",
+                    boxShadow: "0 2px 8px rgba(15, 23, 42, 0.06)",
+                    transition: "box-shadow 160ms ease, border-color 160ms ease",
 
                     "& fieldset": {
-                      borderColor: "#e5e7eb",
+                      borderColor: "#d1d5db",
                     },
 
                     "&:hover fieldset": {
-                      borderColor: "#d1d5db",
+                      borderColor: primaryColor,
                     },
 
                     "&.Mui-focused fieldset": {
                       borderColor: primaryColor,
+                      borderWidth: 1.5,
+                    },
+
+                    "&.Mui-focused": {
+                      boxShadow: "0 0 0 3px rgba(193, 0, 9, 0.12)",
+                    },
+
+                    "& .MuiSelect-select": {
+                      display: "flex",
+                      alignItems: "center",
+                      fontWeight: 600,
+                      color: "#111827",
                     },
                   },
                 }}
