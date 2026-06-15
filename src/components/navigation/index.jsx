@@ -15,7 +15,7 @@ import { Menu } from '../menu';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 export default function Navigation() {
-  const { hasGroup, isAuthenticated, setIsAuthenticated } = useAuthGroups();
+  const { hasGroup, hasAnyGroup, isAuthenticated, setIsAuthenticated } = useAuthGroups();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -85,6 +85,7 @@ export default function Navigation() {
                 {Menu.map((item) => {
                   if (item.auth && !isAuthenticated) return null;
                   if (item.group && !hasGroup(item.group)) return null;
+                  if (item.groups && !hasAnyGroup(item.groups)) return null;
 
                   const active = location.pathname === item.path;
 
@@ -166,6 +167,7 @@ export default function Navigation() {
           setIsMobileMenuOpen={setIsMobileMenuOpen}
           Menu={Menu}
           hasGroup={hasGroup}
+          hasAnyGroup={hasAnyGroup}
           isAuthenticated={isAuthenticated}
         />
       </Drawer>

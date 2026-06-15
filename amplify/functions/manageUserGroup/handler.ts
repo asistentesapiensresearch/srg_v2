@@ -9,7 +9,8 @@ import {
 const client = new CognitoIdentityProviderClient();
 
 export const handler = async (event: any) => {
-    const { username, groupName, action } = event.arguments;
+    const { username, groupName } = event.arguments;
+    const action = event.arguments.action || 'add';
     const userPoolId = process.env.AMPLIFY_AUTH_USERPOOL_ID;
 
     if (!userPoolId) throw new Error("Missing AMPLIFY_AUTH_USERPOOL_ID");

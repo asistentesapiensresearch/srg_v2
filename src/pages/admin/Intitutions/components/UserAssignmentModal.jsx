@@ -96,7 +96,7 @@ export const UserAssignmentModal = ({ open, onClose, institution, onAssign }) =>
                         [1, 2, 3].map(i => <Skeleton key={i} height={60} sx={{ mb: 1, borderRadius: 2 }} variant="rectangular" />)
                     ) : (
                         filteredUsers.map((user, index) => {
-                            const isSelected = selectedUserEmail.email === user.email;
+                            const isSelected = selectedUserEmail?.email === user.email;
                             // Usamos email o username como key única
                             const uniqueKey = user.username || user.email || index;
 
@@ -139,7 +139,7 @@ export const UserAssignmentModal = ({ open, onClose, institution, onAssign }) =>
                 <Button
                     onClick={handleAssign}
                     variant="contained"
-                    disabled={loading}
+                    disabled={loading || !selectedUserEmail?.username || !selectedUserEmail?.email}
                     disableElevation
                     sx={{ textTransform: 'none', borderRadius: 2 }}
                 >

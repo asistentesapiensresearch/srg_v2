@@ -14,6 +14,7 @@ const Sidebar = ({
     setIsMobileMenuOpen,
     Menu,
     hasGroup,
+    hasAnyGroup,
     isAuthenticated
 }) => {
 
@@ -59,7 +60,8 @@ const Sidebar = ({
                     <div className="flex flex-col flex-1">
                         {Menu.map(item => (
                             (!item.auth || isAuthenticated) &&
-                            (!item.group || hasGroup(item.group)) && (
+                            (!item.group || hasGroup(item.group)) &&
+                            (!item.groups || hasAnyGroup(item.groups)) && (
                                 <>
                                     <Divider />
                                     <List style={{ padding: 0 }}>
