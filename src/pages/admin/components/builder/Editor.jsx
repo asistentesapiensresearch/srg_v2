@@ -226,7 +226,7 @@ export default function Builder() {
 
                 {/* CANVAS CENTRAL */}
                 <Box sx={{ flexGrow: 1, bgcolor: '#f0f2f5', p: 4, overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
-                    <Box sx={{ width: '100%', maxWidth: '1200px', bgcolor: 'white', minHeight: '80vh', boxShadow: 3, borderRadius: 1 }}>
+                    <Box sx={{ width: '100%', maxWidth: '1200px', bgcolor: 'white', minHeight: 'calc(100vh - 400px)', boxShadow: 3, borderRadius: 1, overflow: 'auto'}}>
                         <MemoizedPageRenderer
                             sections={sections}
                             hoveredSectionId={hoveredSectionId}

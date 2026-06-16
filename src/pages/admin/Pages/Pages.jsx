@@ -20,8 +20,8 @@ export default function Pages() {
     };
 
     // Abrir modal para editar
-    const handleOpenEdit = (Page) => {
-        setSelectedPage(Page);
+    const handleOpenEdit = (page) => {
+        setSelectedPage(page);
         setIsModalOpen(true);
     };
 
@@ -113,7 +113,7 @@ export default function Pages() {
             {isModalOpen && (
                 <PageForm
                     open={isModalOpen}
-                    Page={selectedPage} // Esta es la prop que recibe el formulario
+                    page={selectedPage} // Esta es la prop que recibe el formulario
                     onClose={() => setIsModalOpen(false)}
                     onSave={onSave}
                 />

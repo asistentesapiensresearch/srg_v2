@@ -3,13 +3,13 @@ import { Edit, Trash2, LayoutTemplate, User, Tag } from 'lucide-react';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const ArticleCard = ({ article, onEdit, handleDelete }) => {
+export const ArticleCard = ({ article, onEdit, onDelete }) => {
     const navigate = useNavigate();
 
     const handleClickDelete = useCallback(async (article) => {
         if (!confirm(`¿Eliminar el artículo "${article.title}"?`)) return;
         try {
-            await handleDelete(article.id);
+            await onDelete(article.id);
         } catch (e) {
             console.error(e);
             alert("Error al eliminar");
