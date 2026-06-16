@@ -10,10 +10,24 @@ import DynamicIcon from "@src/pages/admin/components/builder/helpers/DynamicIcon
 /* ─── Keyframes inyectados una sola vez ───────────────────────────────────── */
 if (typeof document !== "undefined" && !document.getElementById("card-animations")) {
     const style = document.createElement("style");
+    style.id = "card-animations";
+    style.innerHTML = `
+        @keyframes starShineLower {
+            0%, 100% { filter: drop-shadow(0 0 1px rgba(251, 191, 36, 0.3)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.5)); transform: scale(1.08); }
+        }
+        .star-shine > div > span {
+            animation: starShineLower 2.5s ease-in-out infinite;
+        }
+        .star-shine > div > span:nth-child(2) { animation-delay: 0.2s; }
+        .star-shine > div > span:nth-child(3) { animation-delay: 0.4s; }
+        .star-shine > div > span:nth-child(4) { animation-delay: 0.6s; }
+        .star-shine > div > span:nth-child(5) { animation-delay: 0.8s; }
+    `;
     document.head.appendChild(style);
 }
 
-export const CardItemCol = ({ item, primaryColor }) => {
+export const CardItemCol = ({ item, primaryColor, onOpenHistory }) => {
     const { selectedItems, toggleItem } = useComparison();
     const isXs = useMediaQuery("(max-width:380px)");
 
@@ -205,15 +219,17 @@ export const CardItemCol = ({ item, primaryColor }) => {
                         {hasLink && (
                             <a
                                 href={link} target="_blank" rel="noopener noreferrer"
-                                className="flex items-center font-semibold no-underline transition-all duration-200 hover:opacity-90 flex-shrink-0"
+                                className="flex items-center gap-1 font-semibold no-underline transition-all duration-200 hover:opacity-90 flex-shrink-0"
                                 style={{
-                                    backgroundColor: RED, color: "#fff",
+                                    backgroundColor: "rgba(255,255,255,0.18)",
+                                    color: "#fff",
                                     fontSize: isXs ? 9 : 10,
-                                    padding: "4px 10px", borderRadius: 999,
-                                    border: "1px solid rgba(255,255,255,0.2)",
-                                    backdropFilter: "blur(4px)", lineHeight: 1,
+                                    padding: "4px 9px", borderRadius: 999,
+                                    border: "1px solid rgba(255,255,255,0.35)",
+                                    backdropFilter: "blur(6px)", lineHeight: 1,
                                 }}
                             >
+                                <DynamicIcon name="ExternalLink" color="#fff" size={9} />
                                 Micrositio
                             </a>
                         )}
@@ -323,6 +339,7 @@ export const CardItemCol = ({ item, primaryColor }) => {
                 gap: "0 10px",
                 alignItems: "center",
                 minHeight: 0,
+                position: "relative",
             }}>
 
                 {/* ── Rector (mitad izquierda) ── */}
@@ -412,6 +429,26 @@ export const CardItemCol = ({ item, primaryColor }) => {
                 ) : (
                     <div />
                 )}
+
+                {/* ── Historial (esquina absoluta) ── */}
+                {onOpenHistory && item.history?.length > 0 && (
+                    <button
+                        onClick={onOpenHistory}
+                        className="flex items-center justify-center p-1.5 rounded-full transition-all duration-200 hover:bg-gray-100 active:bg-gray-200"
+                        style={{
+                            position: 'absolute',
+                            bottom: 8,
+                            right: 8,
+                            cursor: 'pointer',
+                            backgroundColor: '#fff',
+                            border: '1px solid #e5e7eb',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        }}
+                        title="Ver historial"
+                    >
+                        <DynamicIcon name="History" color="#9ca3af" size={16} />
+                    </button>
+                )}
             </div>
         </Card>
     );
@@ -449,7 +486,7 @@ const BadgeCategoria = ({ category, RED }) => (
         <span style={{ fontSize: 16, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
             D{category}
         </span>
-        <span style={{ fontSize: 7.5, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", opacity: 0.85 }}>
+        <span style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: "0.07em", opacity: 0.85 }}>
             Categoría
         </span>
     </div>
@@ -472,7 +509,7 @@ const BadgeCalificacion = ({ qualification }) => (
         <span style={{ fontSize: 14, fontWeight: 900, lineHeight: 1, letterSpacing: "-0.01em" }}>
             {qualification}
         </span>
-        <span style={{ fontSize: 7.5, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", opacity: 0.75 }}>
+        <span style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: "0.07em", opacity: 0.75 }}>
             Calificación
         </span>
     </div>
