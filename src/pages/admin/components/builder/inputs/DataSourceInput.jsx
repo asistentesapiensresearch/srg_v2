@@ -28,7 +28,7 @@ export default function DataSourceInput({ value, onChange }) {
     const [authError, setAuthError] = useState(false);
     const [loadingSheets, setLoadingSheets] = useState(false);
 
-    const { openPicker, token: globalToken } = useDrivePicker();
+    const { openPicker, token: globalToken, renewToken, getValidToken } = useDrivePicker();
 
     // 🔥 FIX CRÍTICO: Sincronizar Props con Estado Local 🔥
     // Esto detecta cuando cambias de sección (ej: de Directorio a Charts)
@@ -92,18 +92,36 @@ export default function DataSourceInput({ value, onChange }) {
     useEffect(() => {
         let isMounted = true;
         const loadSheets = async () => {
-            if (localState.sheetId && localState.token) {
+            if (localState.sheetId) {
                 try {
                     setLoadingSheets(true);
                     setAuthError(false);
                     
-                    const sheets = await fetchSheetNames(localState.sheetId, localState.token);
+                    let activeToken = null;
+                    try {
+                        activeToken = await getValidToken();
+                    } catch (tokenErr) {
+                        console.warn("No se pudo renovar token silenciosamente, usando el guardado en estado:", tokenErr);
+                        activeToken = localState.token;
+                    }
+
+                    if (!activeToken) {
+                        setAuthError(true);
+                        setLoadingSheets(false);
+                        return;
+                    }
+
+                    const sheets = await fetchSheetNames(localState.sheetId, activeToken);
                     
                     if (isMounted) {
                         setAvailableSheets(sheets);
                         
+                        // Si el token cambió tras la renovación silenciosa, lo actualizamos para guardarlo en la DB
+                        if (activeToken !== localState.token) {
+                            updateState({ token: activeToken });
+                        }
+                        
                         // Si ya hay una hoja seleccionada (Restore de sesión), cargamos sus columnas
-                        // Convertimos a string para asegurar comparación correcta con los values del select
                         if (localState.selectedSheet !== undefined && localState.selectedSheet !== '') {
                             await loadSheetData(localState.sheetId, localState.selectedSheet);
                         }
@@ -112,7 +130,7 @@ export default function DataSourceInput({ value, onChange }) {
                     if (isMounted) {
                         console.error("Error cargando hojas:", error);
                         setAvailableSheets([]);
-                        if (error.message.includes('401')) setAuthError(true);
+                        if (error.message.includes('401') || error.message.includes('expired')) setAuthError(true);
                     }
                 } finally {
                     if (isMounted) setLoadingSheets(false);
@@ -127,7 +145,7 @@ export default function DataSourceInput({ value, onChange }) {
 
         return () => { isMounted = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [localState.sheetId, localState.token]); 
+    }, [localState.sheetId]); 
 
     // --- 2. HANDLER: CONECTAR GOOGLE DRIVE ---
     const handleGoogleConnect = async () => {
@@ -177,15 +195,25 @@ export default function DataSourceInput({ value, onChange }) {
     // --- 4. HANDLER: REFRESH TOKEN ---
     const handleRefreshToken = async () => {
         try {
-            const file = await openPicker(); 
-            if (file) {
-                const newToken = file.token || globalToken;
+            setLoadingSheets(true);
+            const newToken = await renewToken(); 
+            if (newToken) {
                 setAvailableSheets([]); 
                 updateState({ token: newToken });
                 setAuthError(false);
+                
+                // Cargar hojas inmediatamente
+                const sheets = await fetchSheetNames(localState.sheetId, newToken);
+                setAvailableSheets(sheets);
+                
+                if (localState.selectedSheet !== undefined && localState.selectedSheet !== '') {
+                    await loadSheetData(localState.sheetId, localState.selectedSheet);
+                }
             }
         } catch (error) {
             console.error("Error refrescando:", error);
+        } finally {
+            setLoadingSheets(false);
         }
     };
 
