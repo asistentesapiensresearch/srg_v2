@@ -68,7 +68,7 @@ const DataSummaryTable = ({
             setError(null);
             try {
                 // 1. Fetch
-                const rawRows = await fetchSheet(sourceConfig.sheetId, sourceConfig.selectedSheet);
+                const rawRows = await fetchSheet(sourceConfig.sheetId, sourceConfig.selectedSheet, sourceConfig.token);
 
                 // 2. Aplicar Alias a todas las filas
                 let processedData = rawRows.map(row => {

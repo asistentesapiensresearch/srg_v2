@@ -211,8 +211,8 @@ const DirectorySectionContent = ({
                 // ---------------------------------------------------------
                 // PASO 1: FETCH
                 // ---------------------------------------------------------
-                const { selectedSheet, sheetId } = sourceConfig;
-                const rawRows = await fetchSheet(sheetId, selectedSheet);
+                const { selectedSheet, sheetId, token } = sourceConfig;
+                const rawRows = await fetchSheet(sheetId, selectedSheet, token);
 
                 // ---------------------------------------------------------
                 // PASO 2: AJUSTAR ALIAS (NORMALIZACIÓN TEMPRANA)

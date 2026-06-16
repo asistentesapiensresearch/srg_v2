@@ -37,7 +37,8 @@ const DowloandDataExcel = ({
             try {
                 const rawRows = await fetchSheet(
                     sourceConfig.sheetId,
-                    sourceConfig.selectedSheet
+                    sourceConfig.selectedSheet,
+                    sourceConfig.token
                 );
                 if(typePage != "investigation") {
                     const targetValueClean = cleanString(filterValue);
