@@ -2316,21 +2316,51 @@ export default function ChartSection({
                                 {charts.length > 1 && (
                                     <Box
                                         sx={{
-                                            bgcolor: '#f1f5f9',
-                                            px: 1.5,
-                                            py: 0.5,
-                                            borderRadius: '20px',
-                                            fontWeight: 'bold',
-                                            fontSize: '0.85rem',
-                                            color: '#475569',
-                                            whiteSpace: 'nowrap',
-                                            flexShrink: 0,
-                                            display: 'inline-flex',
+                                            display: 'flex',
                                             alignItems: 'center',
-                                            justifyContent: 'center'
+                                            gap: 1,
+                                            flexShrink: 0
                                         }}
                                     >
-                                        {activeIndex + 1} / {charts.length}
+                                        <IconButton
+                                            size="small"
+                                            onClick={handlePrev}
+                                            sx={{
+                                                border: '1px solid #e2e8f0',
+                                                bgcolor: 'white',
+                                                '&:hover': { bgcolor: '#f1f5f9' }
+                                            }}
+                                        >
+                                            <ChevronLeft size={16} />
+                                        </IconButton>
+                                        <Box
+                                            sx={{
+                                                bgcolor: '#f1f5f9',
+                                                px: 1.5,
+                                                py: 0.5,
+                                                borderRadius: '20px',
+                                                fontWeight: 'bold',
+                                                fontSize: '0.85rem',
+                                                color: '#475569',
+                                                whiteSpace: 'nowrap',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}
+                                        >
+                                            {activeIndex + 1} / {charts.length}
+                                        </Box>
+                                        <IconButton
+                                            size="small"
+                                            onClick={handleNext}
+                                            sx={{
+                                                border: '1px solid #e2e8f0',
+                                                bgcolor: 'white',
+                                                '&:hover': { bgcolor: '#f1f5f9' }
+                                            }}
+                                        >
+                                            <ChevronRight size={16} />
+                                        </IconButton>
                                     </Box>
                                 )}
                             </Box>
