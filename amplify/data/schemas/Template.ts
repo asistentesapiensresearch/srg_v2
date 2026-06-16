@@ -12,12 +12,16 @@ export const Template = a.model({
     articleId: a.id(),
     article: a.belongsTo("Article", "articleId"),
 
+    pageId: a.id(),
+    page: a.belongsTo('Page', 'pageId'),
+
     brands: a.hasMany("TemplateBrand", "templateId"),
 })
     .secondaryIndexes(index => [
         index('researchId').queryField('listTemplateByResearchId'),
         index('institutionId').queryField('listTemplateByInstitutionId'),
         index('articleId').queryField('listTemplateByArticleId'),
+        index('pageId').queryField('listTemplateByPageId'),
     ])
     .authorization((allow) => [
         allow.publicApiKey().to(['read']),

@@ -18,6 +18,11 @@ export const storage = defineStorage({
         'shared/*': authorizations(allow),
         'galleries/*': authorizations(allow),
 
+        'articles/*': authorizations(allow),
+
+        // 🔥 NUEVA REGLA PARA PÁGINAS (Hereda tus permisos de Admin)
+        'pages/*': authorizations(allow),
+
         // 🔥 REGLA CORREGIDA PARA PERFILES
         'profiles/*': [
             // 1. Regla genérica (para usuarios sin grupo)
