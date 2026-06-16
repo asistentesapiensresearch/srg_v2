@@ -171,7 +171,7 @@ const CalificationAndCategory = ({ excelSource = "Rk-ver", maxStars = 5 }) => {
       {/* Logo letraLogos superior — letras blancas */}
       <image
         href={letraLogos}
-        x="220"
+        x="210"
         y="48"
         width="260"
         height="78"
