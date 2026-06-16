@@ -49,14 +49,20 @@ const Institutions = () => {
 
     const handleAssignUser = async (institutionId, userObj) => {
         // userObj debe venir del modal: { username: "uuid...", email: "...", ... }
-        if (!userObj || !userObj.username) {
-            alert("Error: No se pudo identificar el Username del usuario.");
+        if (!userObj || !userObj.username || !userObj.email) {
+            alert("Error: No se pudo identificar el usuario o su correo.");
             return;
         }
 
         try {
+            const normalizedEmail = userObj.email.trim().toLowerCase();
+
             // 1. Guardar el adminEmail en la base de datos (para permisos de edición del registro)
-            await updateInstitution(institutionId, { adminEmail: userObj.email });
+            const institutionUpdated = await updateInstitution(institutionId, { adminEmail: normalizedEmail });
+
+            if (!institutionUpdated) {
+                throw new Error("No se pudo actualizar el colegio con el correo del usuario.");
+            }
 
             // 2. Agregar al usuario al grupo 'Allies' en Cognito (para permisos de UI/Rutas)
             await client.mutations.addUserToGroupMutation({

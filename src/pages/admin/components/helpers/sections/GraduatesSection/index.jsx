@@ -20,7 +20,8 @@ const GraduatesSection = ({
             try {
                 const rawRows = await fetchSheet(
                     sourceConfig.sheetId,
-                    sourceConfig.selectedSheet
+                    sourceConfig.selectedSheet,
+                    sourceConfig.token
                 );
 
                 const top3 = rawRows

@@ -14,7 +14,7 @@ export const useAllyInstitutions = () => {
         try {
             // 1. Obtener email del usuario logueado
             const attributes = await fetchUserAttributes();
-            const email = attributes.email;
+            const email = attributes.email?.trim().toLowerCase();
 
             if (!email) {
                 throw new Error("No se pudo identificar el correo del usuario.");

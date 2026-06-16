@@ -9,14 +9,18 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 import Rating from "@mui/material/Rating";
 import { visuallyHidden } from "@mui/utils";
+
+const RECOGNITIONS_COLUMN = "__reconocimientos";
+const RECOGNITIONS_COLUMN_WIDTH = 360;
 
 // --- HELPERS DE ORDENAMIENTO ---
 function descendingComparator(a, b, orderBy) {
@@ -41,7 +45,92 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const renderBadges = (value) => {
+const cleanString = (val) => {
+  if (val === null || val === undefined) return "";
+  return String(val)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9+]/g, "")
+    .trim();
+};
+
+const isLinkedValue = (value) => {
+  if (value === true) return true;
+  if (value === false || value === null || value === undefined) return false;
+
+  return ["si", "true", "1", "yes"].includes(cleanString(value));
+};
+
+const isCategoryColumn = (columnName) => cleanString(columnName).includes("categoria");
+
+const isQualificationColumn = (columnName) => cleanString(columnName).includes("calificacion");
+
+const isAccreditationColumn = (columnName) =>
+  cleanString(columnName).includes("acreditacion");
+
+const isCertificationColumn = (columnName) =>
+  cleanString(columnName).includes("certificacion");
+
+const isRecognitionSourceColumn = (columnName) =>
+  isCertificationColumn(columnName) || isAccreditationColumn(columnName);
+
+const getFirstColumnValue = (row, predicate) => {
+  const key = Object.keys(row || {}).find(predicate);
+  return key ? row[key] : "";
+};
+
+const mergeRecognitionColumns = (cols, options = {}) => {
+  const { hideYear = false } = options;
+  const filteredCols = hideYear
+    ? (cols || []).filter((col) => col !== "Año")
+    : (cols || []);
+  const firstRecognitionIndex = filteredCols.findIndex(isRecognitionSourceColumn);
+
+  if (firstRecognitionIndex === -1) return filteredCols;
+
+  const result = [];
+  filteredCols.forEach((col, index) => {
+    if (index === firstRecognitionIndex) {
+      result.push(RECOGNITIONS_COLUMN);
+    }
+
+    if (!isRecognitionSourceColumn(col)) {
+      result.push(col);
+    }
+  });
+
+  return result;
+};
+
+const renderCategory = (value) => {
+  if (!value) return "-";
+
+  return (
+    <Box
+      component="span"
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minWidth: 34,
+        px: 1.25,
+        py: 0.5,
+        borderRadius: "999px",
+        border: "1px solid rgb(254, 202, 202)",
+        backgroundColor: "rgb(254, 242, 242)",
+        color: "rgb(153, 27, 27)",
+        fontSize: "0.75rem",
+        fontWeight: 700,
+        whiteSpace: "nowrap",
+      }}
+    >
+      {String(value).trim().toLowerCase().startsWith("d") ? value : `D${value}`}
+    </Box>
+  );
+};
+
+const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
   if (!value) return "-";
 
   const items = String(value)
@@ -49,12 +138,34 @@ const renderBadges = (value) => {
     .map((item) => item.trim())
     .filter(Boolean);
 
+  const badgeSx =
+    tone === "blue"
+      ? {
+          border: "1px solid rgb(191, 219, 254)",
+          backgroundColor: "rgb(239, 246, 255)",
+          color: "rgb(29, 78, 216)",
+        }
+      : tone === "yellow"
+        ? {
+            border: "1px solid rgb(253, 230, 138)",
+            backgroundColor: "rgb(254, 252, 232)",
+            color: "rgb(161, 98, 7)",
+          }
+      : {
+          border: "1px solid rgb(254, 202, 202)",
+          backgroundColor: "rgb(254, 242, 242)",
+          color: "rgb(153, 27, 27)",
+        };
+
   return (
     <Box
       sx={{
-        display: "flex",
-        flexWrap: "wrap",
+        display: columns > 1 ? "grid" : "flex",
+        gridTemplateColumns: columns > 1 ? `repeat(${columns}, minmax(0, 1fr))` : undefined,
+        flexDirection: columns > 1 ? undefined : "column",
+        alignItems: columns > 1 ? undefined : fullWidth ? "stretch" : "flex-start",
         gap: 0.75,
+        width: fullWidth ? "100%" : "auto",
       }}
     >
       {items.map((item, index) => (
@@ -65,12 +176,14 @@ const renderBadges = (value) => {
             px: 1.5,
             py: 0.5,
             borderRadius: "999px",
-            border: "1px solid rgb(254, 202, 202)",
-            backgroundColor: "rgb(254, 242, 242)",
-            color: "rgb(153, 27, 27)",
+            ...badgeSx,
             fontSize: "0.75rem",
             fontWeight: 600,
             whiteSpace: "nowrap",
+            width: fullWidth ? "100%" : "auto",
+            textAlign: fullWidth ? "center" : "left",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {item}
@@ -78,6 +191,77 @@ const renderBadges = (value) => {
       ))}
     </Box>
   );
+};
+
+const renderCellValue = (row, colKey, aliases = {}) => {
+  if (colKey === RECOGNITIONS_COLUMN) {
+    const certificationValue = getFirstColumnValue(row, isCertificationColumn);
+    const accreditationValue = getFirstColumnValue(row, isAccreditationColumn);
+
+    if (!certificationValue && !accreditationValue) return "-";
+
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          gap: 0.75,
+          minWidth: RECOGNITIONS_COLUMN_WIDTH - 80,
+          width: "100%",
+        }}
+      >
+        {certificationValue ? renderBadges(certificationValue, "red", true, 3) : null}
+        {accreditationValue ? renderBadges(accreditationValue, "blue", true, 3) : null}
+      </Box>
+    );
+  }
+
+  if (colKey === "Star") {
+    return row[colKey] ? (
+      <Rating
+        value={Number(row[colKey])}
+        readOnly
+        size="small"
+        icon={<StarRoundedIcon fontSize="inherit" />}
+        emptyIcon={<StarBorderRoundedIcon fontSize="inherit" />}
+        sx={{
+          fontSize: "1.25rem",
+          "& .MuiRating-iconFilled": {
+            color: "#facc15",
+          },
+          "& .MuiRating-iconEmpty": {
+            color: "#fbbf24",
+            opacity: 0.45,
+          },
+        }}
+      />
+    ) : (
+      "-"
+    );
+  }
+
+  if (isCategoryColumn(colKey) || isCategoryColumn(aliases[colKey])) {
+    return renderCategory(row[colKey] ?? getFirstColumnValue(row, isCategoryColumn));
+  }
+
+  if (isQualificationColumn(colKey) || isQualificationColumn(aliases[colKey])) {
+    return renderBadges(row[colKey] ?? getFirstColumnValue(row, isQualificationColumn), "yellow");
+  }
+
+  if (isAccreditationColumn(colKey)) {
+    return renderBadges(row[colKey], "blue");
+  }
+
+  if (isCertificationColumn(colKey)) {
+    return renderBadges(row[colKey]);
+  }
+
+  if (typeof row[colKey] === "object") {
+    return JSON.stringify(row[colKey]);
+  }
+
+  return row[colKey] || "-";
 };
 
 // --- ROW COMPONENT ---
@@ -93,12 +277,9 @@ function Row(props) {
 
   // Verificamos si existe historial para habilitar el botón de expandir
   const hasHistory = row.history && row.history.length > 0;
+  const isLinked = isLinkedValue(row.isLinked) || isLinkedValue(row.Vinculada);
   const displayHistoryColumns = React.useMemo(() => {
-    const cols = [...(historyColumns || [])];
-
-
-
-    return cols;
+    return mergeRecognitionColumns(historyColumns || []);
   }, [historyColumns]);
     
   return (
@@ -111,7 +292,7 @@ function Row(props) {
         }}
       >
         <TableCell width={50}>
-          {hasHistory && row.isLinked ? (
+          {hasHistory && isLinked ? (
             <IconButton
               aria-label="expand row"
               size="small"
@@ -144,22 +325,11 @@ function Row(props) {
             scope="row"
             sx={{
               color: !hasHistory ? "#9ca3af" : "inherit",
+              width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
+              minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
             }}
           >
-            {colKey === "Star" ? (
-              row[colKey] ? (
-                <Rating value={Number(row[colKey])} readOnly size="small" />
-              ) : (
-                "-"
-              )
-            ) : colKey === "Siglas certificación" ||
-              colKey === "Siglas acreditación" ? (
-              renderBadges(row[colKey])
-            ) : typeof row[colKey] === "object" ? (
-              JSON.stringify(row[colKey])
-            ) : (
-              row[colKey] || "-"
-            )}
+            {renderCellValue(row, colKey, aliases)}
           </TableCell>
         ))}
       </TableRow>
@@ -185,7 +355,7 @@ function Row(props) {
                 color="primary"
                 fontWeight="bold"
               >
-                Historial y otros años
+                Historial
               </Typography>
 
               {/* TABLA DE HISTORIAL */}
@@ -199,9 +369,11 @@ function Row(props) {
                           fontWeight: "bold",
                           fontSize: "0.75rem",
                           color: "#666",
+                          width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
+                          minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                         }}
                       >
-                        {aliases[colKey] || colKey}
+                        {colKey === RECOGNITIONS_COLUMN ? "Reconocimientos" : aliases[colKey] || colKey}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -222,26 +394,13 @@ function Row(props) {
                             key={colKey}
                             component="th"
                             scope="row"
-                            sx={{ fontSize: "0.8rem" }}
+                            sx={{
+                              fontSize: "0.8rem",
+                              width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
+                              minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
+                            }}
                           >
-                            {colKey === "Star" ? (
-                              historyRow[colKey] ? (
-                                <Rating
-                                  value={Number(historyRow[colKey])}
-                                  readOnly
-                                  size="small"
-                                />
-                              ) : (
-                                "-"
-                              )
-                            ) : colKey === "Siglas certificación" ||
-                              colKey === "Siglas acreditación" ? (
-                              renderBadges(historyRow[colKey])
-                            ) : typeof historyRow[colKey] === "object" ? (
-                              JSON.stringify(historyRow[colKey])
-                            ) : (
-                              historyRow[colKey] || "-"
-                            )}
+                            {renderCellValue(historyRow, colKey, aliases)}
                           </TableCell>
                         ))}
                       </TableRow>
@@ -269,8 +428,6 @@ export default function TableList({ data = [], columns = [], historyColumns = []
   // ========================================================================
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("");
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   // ========================================================================
   // 2. TODOS LOS MEMOS (DESPUÉS DE ESTADOS, ANTES DE HANDLERS)
@@ -285,18 +442,15 @@ export default function TableList({ data = [], columns = [], historyColumns = []
           ? Object.keys(data[0]).slice(0, 5)
           : [];
 
-    return cols.filter((col) => col !== "Año");
+    return mergeRecognitionColumns(cols, { hideYear: true });
   }, [columns, data]);
 
-  // Memo: Filas visibles (ordenadas y paginadas)
+  // Memo: Filas visibles (ordenadas)
   const visibleRows = React.useMemo(() => {
     if (data.length === 0) return [];
 
-    return stableSort(data, getComparator(order, orderBy)).slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage,
-    );
-  }, [data, order, orderBy, page, rowsPerPage]);
+    return stableSort(data, getComparator(order, orderBy));
+  }, [data, order, orderBy]);
 
   // ========================================================================
   // 3. HANDLERS (DESPUÉS DE MEMOS, ANTES DE RENDER)
@@ -317,15 +471,6 @@ export default function TableList({ data = [], columns = [], historyColumns = []
     },
     [handleRequestSort],
   );
-
-  const handleChangePage = React.useCallback((event, newPage) => {
-    setPage(newPage);
-  }, []);
-
-  const handleChangeRowsPerPage = React.useCallback((event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  }, []);
 
   // ========================================================================
   // 4. RENDER (AL FINAL, CON CONDICIONAL SI ES NECESARIO)
@@ -357,14 +502,29 @@ export default function TableList({ data = [], columns = [], historyColumns = []
                 <TableCell
                   key={colKey}
                   sortDirection={orderBy === colKey ? order : false}
-                  sx={{ fontWeight: "bold" }}
+                  sx={{
+                    fontWeight: "bold",
+                    width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
+                    minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
+                  }}
                 >
                   <TableSortLabel
                     active={orderBy === colKey}
                     direction={orderBy === colKey ? order : "asc"}
                     onClick={createSortHandler(colKey)}
+                    sx={{
+                      gap: 0.5,
+                      "& .MuiTableSortLabel-icon": {
+                        opacity: 1,
+                        color: orderBy === colKey ? "#b91c1c !important" : "#9ca3af !important",
+                        fontSize: "1.15rem",
+                      },
+                      "&:hover .MuiTableSortLabel-icon": {
+                        color: "#b91c1c !important",
+                      },
+                    }}
                   >
-                    {aliases[colKey] || colKey}
+                    {colKey === RECOGNITIONS_COLUMN ? "Reconocimientos" : aliases[colKey] || colKey}
                     {orderBy === colKey ? (
                       <Box component="span" sx={visuallyHidden}>
                         {order === "desc"
@@ -391,16 +551,6 @@ export default function TableList({ data = [], columns = [], historyColumns = []
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={data.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage="Filas"
-      />
     </Paper>
   );
 }

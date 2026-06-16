@@ -36,6 +36,43 @@ const cleanString = (val) => {
         .trim();
 };
 
+const isSiglasFilter = (columnName) => {
+    const normalized = cleanString(columnName);
+    return (
+        normalized.includes("siglas") ||
+        normalized.includes("certificacion") ||
+        normalized.includes("acreditacion")
+    );
+};
+
+const splitSiglasValue = (value) => {
+    if (value === null || value === undefined) return [];
+    return String(value)
+        .split(/[+＋]/)
+        .map(item => item.trim())
+        .filter(Boolean);
+};
+
+const uniqueByCleanString = (values) => {
+    const unique = new Map();
+    values.forEach(value => {
+        if (value === null || value === undefined || value === "") return;
+        const key = cleanString(value);
+        if (key && !unique.has(key)) {
+            unique.set(key, value);
+        }
+    });
+    return [...unique.values()];
+};
+
+const isLinkedValue = (value) => {
+    if (value === true) return true;
+    if (value === false || value === null || value === undefined) return false;
+
+    const normalized = cleanString(value);
+    return ["si", "true", "1", "yes"].includes(normalized);
+};
+
 const parseQuickFilters = (jsonString) => {
     try {
         const parsed = JSON.parse(jsonString || "[]");
@@ -51,7 +88,7 @@ const parseQuickFilters = (jsonString) => {
 
 const getInitialConfig = (jsonString) => {
     const list = parseQuickFilters(jsonString);
-    const defaultItem = list.find(p => p.default) || list[0];
+    const defaultItem = list.find(p => p.label === "Todos") || list[0];
     const rawFilters = defaultItem.filters || {};
     const sanitized = {};
     Object.keys(rawFilters).forEach(key => {
@@ -174,8 +211,8 @@ const DirectorySectionContent = ({
                 // ---------------------------------------------------------
                 // PASO 1: FETCH
                 // ---------------------------------------------------------
-                const { selectedSheet, sheetId } = sourceConfig;
-                const rawRows = await fetchSheet(sheetId, selectedSheet);
+                const { selectedSheet, sheetId, token } = sourceConfig;
+                const rawRows = await fetchSheet(sheetId, selectedSheet, token);
 
                 // ---------------------------------------------------------
                 // PASO 2: AJUSTAR ALIAS (NORMALIZACIÓN TEMPRANA)
@@ -322,6 +359,7 @@ const DirectorySectionContent = ({
 
                         finalGroupedData.push({
                             ...mainRecord,
+                            isLinked: isLinkedValue(mainRecord.isLinked) || isLinkedValue(mainRecord.Vinculada),
                             history: history,
                             _hasHistory: history.length > 0
                         });
@@ -373,6 +411,11 @@ const DirectorySectionContent = ({
 
                     // Buscamos en el item (que ya tiene alias)
                     const itemValue = item[key];
+                    if (isSiglasFilter(key)) {
+                        const itemSiglas = splitSiglasValue(itemValue).map(cleanString);
+                        return selectedValues.some(fVal => itemSiglas.includes(cleanString(fVal)));
+                    }
+
                     return selectedValues.some(fVal => cleanString(fVal) === cleanString(itemValue));
                 });
             });
@@ -430,15 +473,37 @@ const DirectorySectionContent = ({
         if (!masterData.length) return {};
 
         const filters = {};
-        if (sourceConfig?.columns) {
-            sourceConfig.columns.forEach(header => {
+        const filterColumns = [
+            ...(sourceConfig?.columns || []),
+            ...(sourceConfig?.filters || [])
+        ];
+
+        const uniqueFilterColumns = [...new Set(filterColumns)];
+
+        if (uniqueFilterColumns.length) {
+            uniqueFilterColumns.forEach(header => {
                 // Resolvemos si header es un Alias o Nombre Original
                 // Como `masterData` ya tiene los ALIAS inyectados, usamos el Alias si existe.
                 const alias = columnAliases[header] || header;
+                const versionAlias = columnAliases[versionColumn] || versionColumn;
 
-                const uniqueValues = [...new Set(masterData.map(item => item[alias]))]
-                    .filter(val => val !== null && val !== undefined && val !== "")
-                    .sort((a, b) => String(a).localeCompare(String(b)));
+                if (versionColumn && (header === versionColumn || alias === versionAlias)) {
+                    return;
+                }
+
+                const isCategoryFilter = cleanString(alias) === cleanString("Categoría");
+                const rawValues = isSiglasFilter(alias)
+                    ? masterData.flatMap(item => splitSiglasValue(item[alias]))
+                    : masterData.map(item => item[alias]);
+
+                const uniqueValues = uniqueByCleanString(rawValues)
+                    .sort((a, b) => {
+                        if (isCategoryFilter) {
+                            return Number(a) - Number(b);
+                        }
+
+                        return String(a).localeCompare(String(b));
+                    });
 
                 if (uniqueValues.length > 0) {
                     filters[alias] = { label: alias, values: uniqueValues };
@@ -446,7 +511,7 @@ const DirectorySectionContent = ({
             });
         }
         return filters;
-    }, [masterData, sourceConfig, columnAliases]);
+    }, [masterData, sourceConfig, columnAliases, versionColumn]);
 
     const categoryOptions = useMemo(() => {
         return [...new Set(
@@ -485,6 +550,29 @@ const DirectorySectionContent = ({
         const endIndex = startIndex + itemsPerPage;
         return itemsWithAds.slice(startIndex, endIndex);
     }, [itemsWithAds, page, itemsPerPage]);
+
+    const paginatedListData = useMemo(() => {
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return showData.slice(startIndex, endIndex);
+    }, [showData, page, itemsPerPage]);
+
+    const recordsSummary = useMemo(() => {
+        const filteredTotal = showData.length;
+        const totalRecords = masterData.length;
+        const start = filteredTotal === 0 ? 0 : ((page - 1) * itemsPerPage) + 1;
+        const end = Math.min(page * itemsPerPage, filteredTotal);
+        const formatNumber = (value) => Number(value || 0).toLocaleString("en-US");
+
+        return {
+            start: formatNumber(start),
+            end: formatNumber(end),
+            filteredTotal: formatNumber(filteredTotal),
+            totalRecords: formatNumber(totalRecords),
+        };
+    }, [showData.length, masterData.length, page, itemsPerPage]);
+
+    const paginationTotal = showData.length;
 
     const dataWithAds = useMemo(() => {
         if (!paginatedData?.length && !googleAds?.length) return [];
@@ -789,29 +877,50 @@ const DirectorySectionContent = ({
               sx={{
                 display: "flex",
                 alignItems: "center",
-                gap: 1.5,
+                gap: 2,
                 flexWrap: "wrap",
               }}
             >
               <FormControl
-                size="small"
                 sx={{
-                  minWidth: 150,
+                  minWidth: { xs: "100%", sm: 190 },
 
+                  "& .MuiInputLabel-root": {
+                    color: "#6b7280",
+                    fontWeight: 600,
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: primaryColor,
+                  },
                   "& .MuiOutlinedInput-root": {
+                    height: 52,
                     borderRadius: 3,
                     bgcolor: "#fff",
+                    boxShadow: "0 2px 8px rgba(15, 23, 42, 0.06)",
+                    transition: "box-shadow 160ms ease, border-color 160ms ease",
 
                     "& fieldset": {
-                      borderColor: "#e5e7eb",
+                      borderColor: "#d1d5db",
                     },
 
                     "&:hover fieldset": {
-                      borderColor: "#d1d5db",
+                      borderColor: primaryColor,
                     },
 
                     "&.Mui-focused fieldset": {
                       borderColor: primaryColor,
+                      borderWidth: 1.5,
+                    },
+
+                    "&.Mui-focused": {
+                      boxShadow: "0 0 0 3px rgba(193, 0, 9, 0.12)",
+                    },
+
+                    "& .MuiSelect-select": {
+                      display: "flex",
+                      alignItems: "center",
+                      fontWeight: 600,
+                      color: "#111827",
                     },
                   },
                 }}
@@ -836,24 +945,45 @@ const DirectorySectionContent = ({
               </FormControl>
 
               <FormControl
-                size="small"
                 sx={{
-                  minWidth: 170,
+                  minWidth: { xs: "100%", sm: 220 },
 
+                  "& .MuiInputLabel-root": {
+                    color: "#6b7280",
+                    fontWeight: 600,
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: primaryColor,
+                  },
                   "& .MuiOutlinedInput-root": {
+                    height: 52,
                     borderRadius: 3,
                     bgcolor: "#fff",
+                    boxShadow: "0 2px 8px rgba(15, 23, 42, 0.06)",
+                    transition: "box-shadow 160ms ease, border-color 160ms ease",
 
                     "& fieldset": {
-                      borderColor: "#e5e7eb",
+                      borderColor: "#d1d5db",
                     },
 
                     "&:hover fieldset": {
-                      borderColor: "#d1d5db",
+                      borderColor: primaryColor,
                     },
 
                     "&.Mui-focused fieldset": {
                       borderColor: primaryColor,
+                      borderWidth: 1.5,
+                    },
+
+                    "&.Mui-focused": {
+                      boxShadow: "0 0 0 3px rgba(193, 0, 9, 0.12)",
+                    },
+
+                    "& .MuiSelect-select": {
+                      display: "flex",
+                      alignItems: "center",
+                      fontWeight: 600,
+                      color: "#111827",
                     },
                   },
                 }}
@@ -902,17 +1032,11 @@ const DirectorySectionContent = ({
                 justifyContent: "space-between",
                 alignItems: "center",
               }}
-            >
-              <Typography variant="body2" color="text.secondary">
-                Mostrando{" "}
-                <strong>{itemsWithAds.filter((x) => !x._isAd).length}</strong>{" "}
-                resultados
-              </Typography>
-            </Box>
+            ></Box>
 
             {isList ? (
               <TableList
-                data={itemsWithAds.filter((i) => !i._isAd)}
+                data={paginatedListData}
                 columns={sourceConfig?.columns || []}
                 historyColumns={sourceConfig?.historyColumns || []}
                 aliases={columnAliases}
@@ -1083,23 +1207,21 @@ const DirectorySectionContent = ({
             pt: 3,
             borderTop: "1px solid #e5e7eb",
             display: "grid",
-            gridTemplateColumns: "1fr auto 1fr",
+            gridTemplateColumns: { xs: "1fr", md: "1fr auto 1fr" },
             alignItems: "center",
+            gap: 2,
           }}
         >
-          {/* Espacio izquierdo */}
-          <Box />
-
-          {/* Paginación centrada */}
+          {/* Paginación izquierda */}
           <Box
             sx={{
               display: "flex",
-              justifyContent: "center",
+              justifyContent: { xs: "center", md: "flex-start" },
             }}
           >
-            {!isList && itemsWithAds.length > itemsPerPage && (
+            {paginationTotal > itemsPerPage && (
               <Pagination
-                count={Math.ceil(itemsWithAds.length / itemsPerPage)}
+                count={Math.ceil(paginationTotal / itemsPerPage)}
                 page={page}
                 onChange={(e, v) => {
                   setPage(v);
@@ -1130,11 +1252,22 @@ const DirectorySectionContent = ({
             )}
           </Box>
 
-          {/* Registros a la derecha */}
+          {/* Resumen centrado */}
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ textAlign: "center" }}
+          >
+            Mostrando registros del <strong>{recordsSummary.start}</strong>{" "}
+            al <strong>{recordsSummary.end}</strong> de un total de{" "}
+            <strong>{recordsSummary.filteredTotal}</strong> registros
+          </Typography>
+
+          {/* Selector de registros derecha */}
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: { xs: "center", md: "flex-end" },
             }}
           >
             <FormControl size="small" sx={{ minWidth: 120 }}>
@@ -1143,7 +1276,10 @@ const DirectorySectionContent = ({
               <Select
                 value={itemsPerPage || 50}
                 label="Registros"
-                onChange={(e) => setItemsPerPage(e.target.value)}
+                onChange={(e) => {
+                  setItemsPerPage(e.target.value);
+                  setPage(1);
+                }}
               >
                 {[10, 25, 50, 100].map((option) => (
                   <MenuItem key={option} value={option}>

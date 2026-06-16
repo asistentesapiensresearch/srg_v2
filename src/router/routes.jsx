@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminRoutes } from './AdminRoutes';
 import { AlliesRoutes } from './AlliesRoutes'; // 🔥 Importante
@@ -60,7 +61,7 @@ export const routes = [
 
   // --- ALLIES (Aliados) ---
   {
-    path: "/allie",
+    path: "/allies",
     element: (
       <Auth>
         <ProtectedRoute allowedGroups={['Allies', 'Admin']} />
@@ -70,6 +71,10 @@ export const routes = [
     // 🔥 CORRECCIÓN: Usamos AlliesRoutes, NO AdminRoutes
     children: AlliesRoutes,
     title: "Aliados"
+  },
+  {
+    path: "/allie",
+    element: <Navigate to="/allies" replace />
   },
 
   // --- CATCH-ALL (Micrositios y 404) ---

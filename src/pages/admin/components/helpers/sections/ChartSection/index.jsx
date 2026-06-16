@@ -135,7 +135,7 @@ export default function ChartSection({
         if (!charts) return false;
         if (thumbnailsMode === 'never') return false;
         if (thumbnailsMode === 'always') return true;
-        return charts.length > 2;
+        return charts.length > 1;
     }, [thumbnailsMode, charts]);
 
     // 1. CARGAR DATOS
@@ -146,12 +146,18 @@ export default function ChartSection({
             const newDataCache = {};
             try {
                 const promises = charts.map(async (chart) => {
-                    const data = await fetchSheet(fileId, chart.sheetId);
-                    newDataCache[chart.sheetId || chart.sheetName] = data;
+                    try {
+                        const data = await fetchSheet(fileId, chart.sheetId, config.token);
+                        if (data && data.length > 0) {
+                            newDataCache[chart.sheetId || chart.sheetName] = data;
+                        }
+                    } catch (singleErr) {
+                        console.error(`Error loading sheet for chart "${chart.alias}" (GID: ${chart.sheetId}):`, singleErr);
+                    }
                 });
                 await Promise.all(promises);
                 setAllChartsData(newDataCache);
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error("Error loading charts data:", err); }
             finally { setLoading(false); }
         };
         loadAllData();
@@ -193,9 +199,20 @@ export default function ChartSection({
 
     // 4. OPCIONES
     const getChartOptions = (chartConfig, data, isThumbnail = false) => {
-        if (!data || !chartConfig) return null;
+        if (!data || data.length === 0 || !chartConfig) return null;
 
         let { type, xAxis, series: seriesCols } = chartConfig;
+
+        // If seriesCols contains mostly years (numeric strings), and the data has been transposed
+        // (so headers are subjects, not years), we should ignore seriesCols from config and use the data keys (subjects)
+        const configSeriesAreYears = seriesCols && seriesCols.length > 0 && seriesCols.every(s => /^\d{4}/.test(String(s).trim()));
+        if (configSeriesAreYears && data && data.length > 0) {
+            const dataKeys = Object.keys(data[0] || {});
+            const dataKeysHaveYears = dataKeys.filter(k => /^\d{4}/.test(k.trim())).length >= 2;
+            if (!dataKeysHaveYears) {
+                seriesCols = dataKeys.filter(k => k !== xAxis && k !== 'Año' && k !== '');
+            }
+        }
 
         // Validar que el tipo sea válido
         if (!VALID_CHART_TYPES.includes(type)) {
@@ -205,8 +222,8 @@ export default function ChartSection({
 
         // Añado seriesFromChartConfig and propertiesData para obtener la propiedad de xAxis y garantizar el valor de las etiquetas, ya sea "", o cualquier valor definido en el excel
         //  año  |  col-sapiens | sapiens | .....   -> ese año sera xLabel {año: valor} o  lo siguiente las series   ""  |  col-sapiens | sapiens |  -> "" tomara el valor de los objetos {"": valor}
-        let seriesFromChartConfig = chartConfig.series;
-        let propertiesData = Object.keys(data[0]);
+        let seriesFromChartConfig = seriesCols || [];
+        let propertiesData = Object.keys(data[0] || {});
         if (seriesFromChartConfig.length > 0 && propertiesData.length > 0 && seriesFromChartConfig.length < propertiesData.length) {
             xAxis = propertiesData.find(
                 prop => !seriesFromChartConfig.includes(prop)
@@ -1382,8 +1399,7 @@ export default function ChartSection({
                 }
             };
         } else if (type === 'col_sapiens_indices') {
-            const firstRow = data[0] || {};
-            const years = Object.keys(firstRow).filter(k => k !== 'Año' && k !== '' && /^\d{4}$/.test(k));
+            const years = data.map(row => String(row[xAxis] || row["Año"] || row[""] || '').trim()).filter(Boolean);
             
             const isVariation = chartConfig.alias?.toLowerCase().includes("variaciones") || chartConfig.sheetName === "2";
             const categories = isVariation ? years.slice(1) : years;
@@ -1415,22 +1431,21 @@ export default function ChartSection({
                 'Inglés': '#d946ef'
             };
 
-            finalSeries = data.map((row) => {
-                const rawSubject = row['Año'] || row[xAxis] || '';
-                const subjectName = getSubjectName(rawSubject);
+            finalSeries = (seriesCols || []).map((colName) => {
+                const subjectName = getSubjectName(colName);
                 const color = subjectColors[subjectName] || undefined;
 
                 let rowData = [];
                 if (isVariation) {
-                    rowData = categories.map((year, idx) => {
-                        const currentVal = parseVal(row[year]);
-                        const prevYear = years[idx]; // years has 2017 at index 0, so years[idx] is the previous year
-                        const prevVal = parseVal(row[prevYear]);
+                    rowData = data.map((row, idx) => {
+                        if (idx === 0) return null;
+                        const currentVal = parseVal(row[colName]);
+                        const prevVal = parseVal(data[idx - 1][colName]);
                         if (currentVal === null || prevVal === null) return null;
                         return Number((currentVal - prevVal).toFixed(4));
-                    });
+                    }).filter((v, idx) => idx > 0);
                 } else {
-                    rowData = categories.map(year => parseVal(row[year]));
+                    rowData = data.map(row => parseVal(row[colName]));
                 }
 
                 return {
@@ -2359,7 +2374,19 @@ export default function ChartSection({
                         </Paper>
                     </div>
                 ) : (
-                    loading && !activeData && <Box height={height} width={"100%"} display="flex" justifyContent="center" alignItems="center" bgcolor="#f9fafb" borderRadius={4}><CircularProgress /></Box>
+                    !loading && !activeData ? (
+                        <Box height={height} width={"100%"} display="flex" flexDirection="column" justifyContent="center" alignItems="center" bgcolor="#f9fafb" borderRadius={4} border="1px dashed #e2e8f0" p={3} mb={2}>
+                            <BarChart2 size={48} color="#94a3b8" style={{ marginBottom: 16 }} />
+                            <Typography variant="subtitle1" fontWeight="bold" color="text.primary" gutterBottom>
+                                Gráfico no disponible
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ maxWidth: 450 }}>
+                                No se encontraron datos para la hoja "{activeChartConfig?.sheetName}". Por favor, asegúrate de que el archivo de Google Drive correcto esté conectado en el panel lateral y que la pestaña contenga los datos correspondientes.
+                            </Typography>
+                        </Box>
+                    ) : (
+                        loading && !activeData && <Box height={height} width={"100%"} display="flex" justifyContent="center" alignItems="center" bgcolor="#f9fafb" borderRadius={4}><CircularProgress /></Box>
+                    )
                 )}
 
                 {showThumbnails && (

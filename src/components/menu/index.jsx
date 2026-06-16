@@ -1,4 +1,4 @@
-import { UserIcon } from "lucide-react";
+import { Building2, UserIcon } from "lucide-react";
 
 export const Menu = [
     {
@@ -10,6 +10,13 @@ export const Menu = [
         path: '/admin',
         label: 'Admin',
         group: 'Admin',
+        auth: true
+    },
+    {
+        path: '/allies',
+        label: 'Mis colegios',
+        icon: <Building2 className='me-2' />,
+        groups: ['Allies', 'Admin'],
         auth: true
     },
     {

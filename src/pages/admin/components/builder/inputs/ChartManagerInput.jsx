@@ -23,7 +23,7 @@ export default function ChartManagerInput({ value, onChange }) {
     // 🔥 NUEVO ESTADO: Error de Autenticación
     const [authError, setAuthError] = useState(false);
 
-    const { openPicker, token: globalToken } = useDrivePicker();
+    const { openPicker, token: globalToken, renewToken, getValidToken } = useDrivePicker();
 
     const updateConfig = (updates) => {
         const newConfig = { ...config, ...updates };
@@ -70,16 +70,50 @@ export default function ChartManagerInput({ value, onChange }) {
 
     // Carga inicial
     useEffect(() => {
-        if (config.fileId && config.token && availableSheets.length === 0) {
-            setLoadingSheets(true);
-            setAuthError(false); // Reset inicial
-            fetchSheetNames(config.fileId, config.token)
-                .then(sheets => {
-                    setAvailableSheets(sheets);
-                    setLoadingSheets(false);
-                });
-        }
-    }, [config.fileId]); // Quitamos config.token de deps para evitar bucles si falla
+        let isMounted = true;
+        const loadSheets = async () => {
+            if (config.fileId && availableSheets.length === 0) {
+                try {
+                    setLoadingSheets(true);
+                    setAuthError(false);
+
+                    let activeToken = null;
+                    try {
+                        activeToken = await getValidToken();
+                    } catch (tokenErr) {
+                        console.warn("No se pudo obtener/renovar el token silenciosamente, usando el guardado en config:", tokenErr);
+                        activeToken = config.token;
+                    }
+
+                    if (!activeToken) {
+                        setAuthError(true);
+                        setLoadingSheets(false);
+                        return;
+                    }
+
+                    const sheets = await fetchSheetNames(config.fileId, activeToken);
+                    if (isMounted) {
+                        setAvailableSheets(sheets);
+
+                        if (activeToken !== config.token) {
+                            updateConfig({ token: activeToken });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error loading sheets in ChartManagerInput:", error);
+                    if (isMounted) {
+                        setAvailableSheets([]);
+                        setAuthError(true);
+                    }
+                } finally {
+                    if (isMounted) setLoadingSheets(false);
+                }
+            }
+        };
+
+        loadSheets();
+        return () => { isMounted = false; };
+    }, [config.fileId]);
 
     // Handler: Conectar nuevo archivo (Borra config previa)
     const handleConnect = async () => {
@@ -103,23 +137,19 @@ export default function ChartManagerInput({ value, onChange }) {
     // 🔥 Handler: REFRESCAR TOKEN (Mantiene config previa)
     const handleRefreshToken = async () => {
         try {
-            // Abrimos el picker solo para renovar credenciales
-            const file = await openPicker();
-            if (file) {
-                const newToken = file.token || globalToken;
-
-                // Actualizamos SOLO el token en el config
+            setLoadingSheets(true);
+            const newToken = await renewToken();
+            if (newToken) {
                 updateConfig({ token: newToken });
 
-                // Reintentamos cargar las hojas
-                setLoadingSheets(true);
                 setAuthError(false);
                 const sheets = await fetchSheetNames(config.fileId, newToken);
                 setAvailableSheets(sheets);
-                setLoadingSheets(false);
             }
         } catch (error) {
             console.error("Error refrescando token:", error);
+        } finally {
+            setLoadingSheets(false);
         }
     };
 
