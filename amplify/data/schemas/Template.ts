@@ -21,6 +21,7 @@ export const Template = a.model({
         index('researchId').queryField('listTemplateByResearchId'),
         index('institutionId').queryField('listTemplateByInstitutionId'),
         index('articleId').queryField('listTemplateByArticleId'),
+        index('pageId').queryField('listTemplateByPageId'),
     ])
     .authorization((allow) => [
         allow.publicApiKey().to(['read']),
