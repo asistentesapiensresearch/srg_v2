@@ -77,12 +77,12 @@ export default function Pages() {
             {/* GRILLA DE ARTÍCULOS (V2) */}
             {pages.length > 0 ? (
                 <Grid container spacing={3}>
-                    {pages.map(Page => (
-                        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={Page.id}>
+                    {pages.map(page => (
+                        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={page.id}>
                             <PageCard
-                                Page={Page}
-                                onEdit={() => handleOpenEdit(Page)}
-                                onDelete={() => handleDelete(Page.id)}
+                                page={page}
+                                onEdit={() => handleOpenEdit(page)}
+                                onDelete={() => handleDelete(page.id)}
                             />
                         </Grid>
                     ))}

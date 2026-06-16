@@ -41,13 +41,22 @@ export default function MigrationDashboard({ type = 'article' }) {
         let s3Key = null;
         if (imageUrl) {
             try {
-                const response = await fetch(imageUrl);
+                // 🔥 EL CAMBIO ESTÁ AQUÍ: Transformar la URL para usar el proxy de Amplify
+                const proxiedUrl = imageUrl.replace(/^https?:\/\/(www\.)?srg\.com\.co/, '/wp-proxy');
+
+                // Ahora hacemos el fetch a la ruta proxy, no al dominio absoluto
+                const response = await fetch(proxiedUrl); 
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
                 const blob = await response.blob();
                 const ext = imageUrl.split('.').pop().split(/#|\?/)[0] || 'jpg';
                 const s3Path = `${type}s/${wpItem.slug}-cover.${ext}`;
                 const result = await uploadData({ path: s3Path, data: blob }).result;
                 s3Key = result.path; 
-            } catch (error) { console.warn(`Error S3 [${wpItem.slug}]:`, error); }
+            } catch (error) { 
+                console.warn(`Error S3 [${wpItem.slug}]:`, error); 
+            }
         }
         return { coverKey: s3Key };
     };
@@ -92,6 +101,8 @@ export default function MigrationDashboard({ type = 'article' }) {
                 articleId: !isPage ? (isUpdate ? wp.dbArticle.id : null) : null,
                 pageId: isPage ? (isUpdate ? wp.dbPage.id : null) : null
             };
+
+            console.log('wp',wp);
 
             await saveTemplate(templateData, isUpdate ? wp.dbTemplate.id : undefined);
             refreshTemplates();

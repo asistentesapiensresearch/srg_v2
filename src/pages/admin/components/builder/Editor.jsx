@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, memo, lazy, Suspense } from 'react'; // 1. Importar memo, lazy, Suspense
+import { useState, useEffect, useMemo, memo, lazy, Suspense } from 'react';
 import { Box, Typography, Chip, Button } from '@mui/material';
 import { Code } from 'lucide-react';
 
@@ -10,23 +10,29 @@ import PageRenderer from './Renderer';
 import { useEditor } from '@src/hooks/builder/useEditor';
 import { useParams } from 'react-router-dom';
 import { TemplateAmplifyRepository } from '@core/infrastructure/repositories/TemplateAmplifyRepository';
+
+// Hooks de Entidades
 import { useResearchs } from '@src/pages/admin/Research/hooks/useResearchs';
+import { useInstitutions } from '../../Intitutions/hooks/useInstitutions';
+import { useArticle } from '../../Articles/hooks/useArticle';
+import { usePage } from '../../Pages/hooks/usePage'; // 🔥 1. Importar el hook de páginas
+
+// Casos de Uso
 import { FindByResearchId, FindByInstitutionId } from '@core/application/caseUses/Template';
+import { FindByArticleId } from '@core/application/caseUses/Template/FindByArticleId';
+import { FindByPageId } from '@core/application/caseUses/Template/FindByPageId'; // 🔥 2. Importar caso de uso de páginas
+
 import { Preloader } from '@src/components/preloader';
 
 // Modales y Paneles
 import AddSections from './AddSections';
 import ListSections from './ListSections';
 import EditSection from './EditSection';
-import { useInstitutions } from '../../Intitutions/hooks/useInstitutions';
-import { useArticle } from '../../Articles/hooks/useArticle';
-import { FindByArticleId } from '@core/application/caseUses/Template/FindByArticleId';
 
-// 2. Carga perezosa del ExportTemplate (Mejora carga inicial)
+// Carga perezosa del ExportTemplate (Mejora carga inicial)
 const ExportTemplate = lazy(() => import('./ExportTemplate'));
 
-// 3. Memorización de componentes pesados
-// Esto evita que se re-rendericen si sus props (sections) no cambian
+// Memorización de componentes pesados
 const MemoizedPageRenderer = memo(PageRenderer);
 const MemoizedListSections = memo(ListSections);
 const MemoizedEditSection = memo(EditSection);
@@ -51,16 +57,21 @@ const findNodeById = (nodes, id) => {
 export default function Builder() {
 
     const { id: dataID, type } = useParams();
+    
+    // 🔥 3. Incluir páginas en la selección dinámica de hooks
     const {
         articles,
         researchs,
         institutions,
+        pages, 
         loading
     } = (
-            type == 'research' ? useResearchs() :
-                type == 'institution' ? useInstitutions() : useArticle()
-        );
-    // useMemo para evitar instanciar el repositorio en cada render (micro-optimización)
+        type === 'research' ? useResearchs() :
+        type === 'institution' ? useInstitutions() : 
+        type === 'page' ? usePage() : 
+        useArticle()
+    );
+
     const templateRepository = useMemo(() => new TemplateAmplifyRepository(), []);
     const [hoveredSectionId, setHoveredSectionId] = useState(null);
 
@@ -79,15 +90,20 @@ export default function Builder() {
     const [currentTemplate, setCurrentTemplate] = useState(null);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-    // ========== CARGAR INVESTIGACIÓN Y TEMPLATE ==========
+    // ========== CARGAR DATOS Y TEMPLATE ==========
     useEffect(() => {
         const loadDataAndTemplate = async () => {
             if (!dataID || loading) return;
 
             setIsLoadingTemplate(true);
             try {
-                const data = (
-                    type == 'research' ? researchs : type == 'institution' ? institutions : articles).find(r => r.id === dataID);
+                // 🔥 4. Determinar la lista de datos a utilizar
+                const dataList = type === 'research' ? researchs : 
+                                 type === 'institution' ? institutions : 
+                                 type === 'page' ? pages : 
+                                 articles;
+
+                const data = dataList?.find(r => r.id === dataID);
 
                 if (!data) {
                     setIsLoadingTemplate(false);
@@ -96,9 +112,13 @@ export default function Builder() {
 
                 setCurrentData(data);
 
-                const templateCommand = new (
-                    type == 'research' ? FindByResearchId :
-                        type == 'institution' ? FindByInstitutionId : FindByArticleId)(templateRepository);
+                // 🔥 5. Determinar la clase del caso de uso a instanciar
+                const CommandClass = type === 'research' ? FindByResearchId :
+                                     type === 'institution' ? FindByInstitutionId : 
+                                     type === 'page' ? FindByPageId : 
+                                     FindByArticleId;
+
+                const templateCommand = new CommandClass(templateRepository);
                 const template = await templateCommand.execute(dataID);
 
                 if (template) {
@@ -124,7 +144,7 @@ export default function Builder() {
         };
 
         loadDataAndTemplate();
-    }, [dataID, articles, researchs, institutions, loading, setSections, templateRepository]); // Dependencias correctas
+    }, [dataID, type, articles, researchs, institutions, pages, loading, setSections, templateRepository]); // 🔥 Actualizadas las dependencias
 
     // Mostrar loader
     if (loading || isLoadingTemplate) {
@@ -139,7 +159,7 @@ export default function Builder() {
     if (!currentData) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 2 }}>
-                <Typography variant="h6" color="error">❌ Investigación no encontrada</Typography>
+                <Typography variant="h6" color="error">❌ {type === 'page' ? 'Página' : 'Investigación'} no encontrada</Typography>
                 <Typography variant="body2" color="text.secondary">ID: {dataID}</Typography>
             </Box>
         );
@@ -187,7 +207,6 @@ export default function Builder() {
 
             <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
 
-                {/* 4. USAR LOS COMPONENTES MEMORIZADOS */}
                 <MemoizedListSections
                     dataID={dataID}
                     sections={sections}
@@ -205,7 +224,7 @@ export default function Builder() {
                     type={type}
                 />
 
-                {/* CANVAS CENTRAL (El más pesado) */}
+                {/* CANVAS CENTRAL */}
                 <Box sx={{ flexGrow: 1, bgcolor: '#f0f2f5', p: 4, overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
                     <Box sx={{ width: '100%', maxWidth: '1200px', bgcolor: 'white', minHeight: '80vh', boxShadow: 3, borderRadius: 1 }}>
                         <MemoizedPageRenderer
@@ -237,7 +256,6 @@ export default function Builder() {
                 setSelectedSectionId={setSelectedSectionId}
             />
 
-            {/* 5. SUSPENSE PARA CARGA PEREZOSA DEL MODAL */}
             {isExportModalOpen && (
                 <Suspense fallback={null}>
                     <ExportTemplate

@@ -18,3 +18,14 @@ frontend:
     paths:
       - .npm/**/*
       - node_modules/**/*
+
+customRules:
+  # 1. Regla Proxy para WordPress (Soluciona el CORS)
+  - source: '/wp-proxy/<*>'
+    target: 'https://www.srg.com.co/<*>'
+    status: '200'
+  # 2. (Opcional pero recomendada) Regla SPA para React Router
+  # Asegura que si recargas la página en una ruta como /admin/migration, no te dé error 404.
+  - source: '</^[^.]+$|\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|woff2|ttf|map|json|webp)$)([^.]+$)/>'
+    target: '/index.html'
+    status: '200'
