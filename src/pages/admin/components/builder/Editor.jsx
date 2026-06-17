@@ -222,6 +222,7 @@ export default function Builder() {
                     hoveredSectionId={hoveredSectionId}
                     onSectionHover={setHoveredSectionId}
                     type={type}
+                    currentData={currentData}
                 />
 
                 {/* CANVAS CENTRAL */}
@@ -229,6 +230,7 @@ export default function Builder() {
                     <Box sx={{ width: '100%', maxWidth: '1200px', bgcolor: 'white', minHeight: 'calc(100vh - 400px)', boxShadow: 3, borderRadius: 1, overflow: 'auto'}}>
                         <MemoizedPageRenderer
                             sections={sections}
+                            research={currentData}
                             hoveredSectionId={hoveredSectionId}
                             onSectionHover={setHoveredSectionId}
                         />

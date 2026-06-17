@@ -12,6 +12,9 @@ import { Create, Update } from "@core/application/caseUses/Template";
 import { TemplateAmplifyRepository } from "@core/infrastructure/repositories/TemplateAmplifyRepository";
 import ExportTemplate from "./ExportTemplate";
 import { useTemplate } from "./hooks/useTemplate";
+import { generateClient } from "aws-amplify/data";
+
+const client = generateClient();
 
 // ==========================================
 // HELPERS RECURSIVOS
@@ -26,6 +29,17 @@ const deleteNodeFromTree = (nodes, idToDelete) => {
         }));
 };
 
+const findSectionByType = (nodes, type) => {
+    for (const node of nodes) {
+        if (node.type === type) return node;
+
+        const found = node.children?.length ? findSectionByType(node.children, type) : null;
+        if (found) return found;
+    }
+
+    return null;
+};
+
 export default function ListSections({
     sections,
     dataID,
@@ -38,7 +52,8 @@ export default function ListSections({
     currentTemplate,
     setCurrentTemplate,
     onSectionHover,
-    type
+    type,
+    currentData
 }) {
 
     const [isSaving, setIsSaving] = useState(false);
@@ -71,6 +86,24 @@ export default function ListSections({
                 themeSettings,
                 ...typeID
             }, currentTemplate?.id)
+
+            if (type === 'institution') {
+                const headerSection = findSectionByType(sections, 'HeaderPortada');
+                const nextSlogan = headerSection?.props?.shortDescription?.trim();
+
+                if (nextSlogan && nextSlogan !== (currentData?.slogan || "")) {
+                    const { errors } = await client.models.Institution.update({
+                        id: dataID,
+                        slogan: nextSlogan
+                    }, {
+                        authMode: 'userPool'
+                    });
+
+                    if (errors?.length) {
+                        throw new Error(errors.map((item) => item.message).join("\n"));
+                    }
+                }
+            }
 
             if (currentTemplate?.id) {
                 console.log('✅ Template actualizado');

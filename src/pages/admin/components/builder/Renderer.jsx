@@ -54,8 +54,8 @@ const PageRenderer = ({ sections, research }) => {
                     <ComponentErrorBoundary key={section.id} componentName={section.type}>
                         <Component
                             id={section.id}
-                            research={research}
                             {...section.props}
+                            research={research}
                             children={section.children}
                         />
                     </ComponentErrorBoundary>

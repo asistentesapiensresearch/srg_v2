@@ -17,13 +17,28 @@ import { moveIconToDefinitiveFolder } from "@src/pages/admin/helpers/moveIconToD
 const client = generateClient();
 const TEMP_FOLDER = "institutions/temp/";
 
+const normalizeOptionalUrl = (value) => {
+    const trimmed = String(value || "").trim();
+    if (!trimmed) return null;
+
+    const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+    try {
+        return new URL(withProtocol).toString();
+    } catch {
+        throw new Error(`La URL "${value}" no es válida.`);
+    }
+};
+
 export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) => {
 
     // --- ESTADOS ---
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
     // Campos Editables
+    const [slogan, setSlogan] = useState("");
     const [description, setDescription] = useState("");
     const [website, setWebsite] = useState("");
     const [languagesStr, setLanguagesStr] = useState("");
@@ -40,12 +55,15 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
     // Imágenes (Keys y Previews)
     const [logoKey, setLogoKey] = useState("");
     const [logoPreview, setLogoPreview] = useState("");
+    const [portadaKey, setPortadaKey] = useState("");
+    const [portadaPreview, setPortadaPreview] = useState("");
     const [rectorKey, setRectorKey] = useState("");
     const [rectorPreview, setRectorPreview] = useState("");
 
     // --- CARGA INICIAL ---
     useEffect(() => {
         if (institution) {
+            setSlogan(institution.slogan || "");
             setDescription(institution.description || "");
             setWebsite(institution.website || "");
             setRectorName(institution.rectorName || "");
@@ -70,6 +88,10 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
                 setLogoKey(institution.logo);
                 getUrl({ path: institution.logo }).then(res => setLogoPreview(res.url.toString()));
             }
+            if (institution.portadaPhoto) {
+                setPortadaKey(institution.portadaPhoto);
+                getUrl({ path: institution.portadaPhoto }).then(res => setPortadaPreview(res.url.toString()));
+            }
             if (institution.rectorPhoto) {
                 setRectorKey(institution.rectorPhoto);
                 getUrl({ path: institution.rectorPhoto }).then(res => setRectorPreview(res.url.toString()));
@@ -84,6 +106,9 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
         if (type === 'logo') {
             setLogoKey(key);
             setLogoPreview(res.url.toString());
+        } else if (type === 'portada') {
+            setPortadaKey(key);
+            setPortadaPreview(res.url.toString());
         } else {
             setRectorKey(key);
             setRectorPreview(res.url.toString());
@@ -94,6 +119,7 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
     const handleSave = async () => {
         setLoading(true);
         setError(null);
+        setSuccess(null);
 
         try {
             // 1. Procesar Imágenes (Mover de temp a final si cambiaron)
@@ -104,6 +130,12 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
                 if (institution.logo && institution.logo !== finalLogoKey) await remove({ path: institution.logo }).catch(() => { });
             }
 
+            let finalPortadaKey = portadaKey;
+            if (portadaKey && portadaKey.includes(TEMP_FOLDER)) {
+                finalPortadaKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, portadaKey, `portada-${Date.now()}`);
+                if (institution.portadaPhoto && institution.portadaPhoto !== finalPortadaKey) await remove({ path: institution.portadaPhoto }).catch(() => { });
+            }
+
             let finalRectorKey = rectorKey;
             if (rectorKey && rectorKey.includes(TEMP_FOLDER)) {
                 finalRectorKey = await moveIconToDefinitiveFolder(TEMP_FOLDER, rectorKey, `rector-${Date.now()}`);
@@ -111,28 +143,62 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
             }
 
             // 2. Preparar Payloads
-            const rectorSocialPayload = JSON.stringify({ linkedin: rectorLinkedin });
-            const socialMediaPayload = JSON.stringify({ facebook: socialFacebook, instagram: socialInstagram, linkedin: socialLinkedin });
+            const rectorSocialPayload = JSON.stringify({ linkedin: rectorLinkedin.trim() });
+            const socialMediaPayload = JSON.stringify({
+                facebook: socialFacebook.trim(),
+                instagram: socialInstagram.trim(),
+                linkedin: socialLinkedin.trim()
+            });
             const languagesArray = languagesStr.split(",").map(s => s.trim()).filter(Boolean);
+            const normalizedWebsite = normalizeOptionalUrl(website);
 
             // 3. Actualizar en Base de Datos (Solo campos permitidos)
-            await client.models.Institution.update({
+            const { data: updatedInstitution, errors } = await client.models.Institution.update({
                 id: institution.id,
-                description,
-                website,
+                slogan: slogan.trim(),
+                description: description.trim(),
+                website: normalizedWebsite,
                 logo: finalLogoKey,
-                rectorName,
+                portadaPhoto: finalPortadaKey,
+                rectorName: rectorName.trim(),
                 rectorPhoto: finalRectorKey,
                 rectorSocial: rectorSocialPayload,
                 socialMedia: socialMediaPayload,
                 languages: languagesArray
+            }, {
+                authMode: 'userPool'
             });
 
-            onSaveSuccess();
+            if (errors?.length) {
+                throw new Error(errors.map((item) => item.message).join("\n"));
+            }
+
+            if (!updatedInstitution?.id) {
+                throw new Error("No se pudo confirmar que la institución haya sido actualizada.");
+            }
+
+            const { data: persistedInstitution, errors: fetchErrors } = await client.models.Institution.get({
+                id: institution.id
+            }, {
+                authMode: 'userPool'
+            });
+
+            if (fetchErrors?.length) {
+                throw new Error(fetchErrors.map((item) => item.message).join("\n"));
+            }
+
+            const savedInstitution = persistedInstitution || updatedInstitution;
+
+            if ((savedInstitution.slogan || "") !== slogan.trim()) {
+                throw new Error("El backend no devolvió el slogan actualizado. Intenta guardar nuevamente.");
+            }
+
+            setSuccess("Información actualizada correctamente.");
+            await onSaveSuccess?.(savedInstitution);
 
         } catch (err) {
             console.error(err);
-            setError("Ocurrió un error al guardar los cambios.");
+            setError(err?.message || "Ocurrió un error al guardar los cambios.");
         } finally {
             setLoading(false);
         }
@@ -155,10 +221,11 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
             </Box>
 
             {error && <Alert severity="error" className="mb-4">{error}</Alert>}
+            {success && <Alert severity="success" className="mb-4">{success}</Alert>}
 
             <Grid container spacing={4}>
 
-                {/* --- SECCIÓN 1: IDENTIDAD --- */}
+                {/* --- SECCIÓN 1: HEADER DEL MICROSITIO --- */}
                 <Grid item xs={12} md={4}>
                     <Typography variant="subtitle2" className="font-bold mb-3 flex items-center gap-2">
                         <ImageIcon size={18} /> Logo Institucional
@@ -182,6 +249,51 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
                 </Grid>
 
                 <Grid item xs={12} md={8}>
+                    <Typography variant="subtitle2" className="font-bold mb-3 flex items-center gap-2">
+                        <ImageIcon size={18} /> Header del micrositio
+                    </Typography>
+
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Slogan del header"
+                                multiline
+                                rows={2}
+                                fullWidth
+                                value={slogan}
+                                onChange={(e) => setSlogan(e.target.value)}
+                                placeholder="Ej: Formamos líderes íntegros con visión global..."
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Box className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
+                                <Typography variant="caption" className="text-gray-500 font-bold block mb-2">
+                                    Imagen de fondo del header
+                                </Typography>
+                                {portadaPreview ? (
+                                    <img src={portadaPreview} alt="Imagen de fondo" className="w-full h-44 object-cover rounded-lg border mb-3" />
+                                ) : (
+                                    <div className="h-44 flex items-center justify-center text-gray-400 border rounded-lg bg-white mb-3">
+                                        Sin imagen de fondo
+                                    </div>
+                                )}
+                                <FileUploader
+                                    acceptedFileTypes={['image/*']}
+                                    path={TEMP_FOLDER}
+                                    maxFileCount={1}
+                                    showThumbnails={false}
+                                    onUploadSuccess={({ key }) => handleUploadSuccess(key, 'portada')}
+                                    displayText={{ dropFilesToUpload: "Subir imagen de fondo", browseFiles: "Buscar" }}
+                                />
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <Grid item xs={12}><Divider /></Grid>
+
+                {/* --- SECCIÓN 2: INFORMACIÓN GENERAL --- */}
+                <Grid item xs={12}>
                     <Typography variant="subtitle2" className="font-bold mb-3 flex items-center gap-2">
                         <Globe size={18} /> Información General
                     </Typography>
@@ -226,7 +338,7 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
 
                 <Grid item xs={12}><Divider /></Grid>
 
-                {/* --- SECCIÓN 2: RECTORÍA --- */}
+                {/* --- SECCIÓN 3: RECTORÍA --- */}
                 <Grid item xs={12} md={12}>
                     <Typography variant="subtitle2" className="font-bold mb-4 flex items-center gap-2">
                         <User size={18} /> Información del Rector(a)
@@ -271,7 +383,7 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
 
                 <Grid item xs={12}><Divider /></Grid>
 
-                {/* --- SECCIÓN 3: REDES SOCIALES --- */}
+                {/* --- SECCIÓN 4: REDES SOCIALES --- */}
                 <Grid item xs={12}>
                     <Typography variant="subtitle2" className="font-bold mb-3">
                         Redes Sociales Institucionales

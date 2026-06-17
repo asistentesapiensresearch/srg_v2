@@ -14,6 +14,9 @@ import { useInstitutions } from '../admin/Intitutions/hooks/useInstitutions';
 import NotFoundPage from './NotFoundPage';
 import { ArrowLeft, Home } from 'lucide-react';
 import { useArticle } from '../admin/Articles/hooks/useArticle';
+import { generateClient } from 'aws-amplify/data';
+
+const client = generateClient();
 
 const TemplateDetail = () => {
     const navigate = useNavigate();
@@ -34,6 +37,9 @@ const TemplateDetail = () => {
 
     /* ================= 1. BUSCAR PATH COMPLETO ================= */
     useEffect(() => {
+        let isMounted = true;
+
+        const resolveData = async () => {
         if (loadingResearch || loadingInstitution) return;
         if (!fullPath) return;
 
@@ -49,6 +55,7 @@ const TemplateDetail = () => {
         });
 
         if (foundResearch) {
+            if (!isMounted) return;
             setData(foundResearch);
             setDataType('research');
             setError(null);
@@ -62,7 +69,14 @@ const TemplateDetail = () => {
         });
 
         if (foundInstitution) {
-            setData(foundInstitution);
+            const { data: currentInstitution } = await client.models.Institution.get({
+                id: foundInstitution.id
+            }, {
+                authMode: 'apiKey'
+            });
+
+            if (!isMounted) return;
+            setData(currentInstitution || foundInstitution);
             setDataType('institution');
             setError(null);
             return;
@@ -75,6 +89,7 @@ const TemplateDetail = () => {
         });
 
         if (foundArticle) {
+            if (!isMounted) return;
             setData(foundArticle);
             setDataType('article');
             setError(null);
@@ -82,11 +97,22 @@ const TemplateDetail = () => {
         }
 
         // 3. No encontrado
+        if (!isMounted) return;
         setData(null);
         setDataType(null);
         setError('Página no encontrada');
+        };
 
-    }, [fullPath, researchs, institutions, loadingResearch, loadingInstitution]);
+        resolveData().catch((error) => {
+            console.error('Error resolving template data', error);
+            if (!isMounted) return;
+            setData(null);
+            setDataType(null);
+            setError('Página no encontrada');
+        });
+
+        return () => { isMounted = false; };
+    }, [fullPath, researchs, institutions, articles, loadingResearch, loadingInstitution]);
 
 
     /* ================= 2. CARGAR TEMPLATE ================= */
