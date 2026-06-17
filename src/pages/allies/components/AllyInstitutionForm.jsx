@@ -17,6 +17,16 @@ import { moveIconToDefinitiveFolder } from "@src/pages/admin/helpers/moveIconToD
 const client = generateClient();
 const TEMP_FOLDER = "institutions/temp/";
 
+const getSafeExtension = (fileName = "") => {
+    const extension = fileName.split(".").pop()?.toLowerCase() || "webp";
+    return extension.replace(/[^a-z0-9]/g, "") || "webp";
+};
+
+const createSafeUploadProcessor = (prefix) => ({ file }) => ({
+    file,
+    key: `${prefix}-${Date.now()}.${getSafeExtension(file.name)}`
+});
+
 const normalizeOptionalUrl = (value) => {
     const trimmed = String(value || "").trim();
     if (!trimmed) return null;
@@ -242,6 +252,7 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
                             path={TEMP_FOLDER}
                             maxFileCount={1}
                             showThumbnails={false}
+                            processFile={createSafeUploadProcessor('logo')}
                             onUploadSuccess={({ key }) => handleUploadSuccess(key, 'logo')}
                             displayText={{ dropFilesToUpload: "Subir nuevo logo", browseFiles: "Buscar" }}
                         />
@@ -282,6 +293,7 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
                                     path={TEMP_FOLDER}
                                     maxFileCount={1}
                                     showThumbnails={false}
+                                    processFile={createSafeUploadProcessor('portada')}
                                     onUploadSuccess={({ key }) => handleUploadSuccess(key, 'portada')}
                                     displayText={{ dropFilesToUpload: "Subir imagen de fondo", browseFiles: "Buscar" }}
                                 />
@@ -352,6 +364,7 @@ export const AllyInstitutionForm = ({ institution, onCancel, onSaveSuccess }) =>
                                 path={TEMP_FOLDER}
                                 maxFileCount={1}
                                 showThumbnails={false}
+                                processFile={createSafeUploadProcessor('rector')}
                                 onUploadSuccess={({ key }) => handleUploadSuccess(key, 'rector')}
                             />
                         </Grid>

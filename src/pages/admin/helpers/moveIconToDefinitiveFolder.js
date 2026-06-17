@@ -12,11 +12,18 @@ export const moveIconToDefinitiveFolder = async (TEMP_FOLDER, iconKey, name) => 
         source: { path: iconKey },
         destination: { path: newKey }
     });
-    await remove({ path: iconKey });
+    await remove({ path: iconKey }).catch((error) => {
+        console.warn("No se pudo borrar el archivo temporal después de copiarlo:", error);
+    });
 
     return newKey;
 };
 
 const sanitizeName = (name) => {
-    return name.toLowerCase().replace(/\s+/g, "_");
+    return String(name || "file")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9._-]+/g, "_")
+        .replace(/^_+|_+$/g, "") || "file";
 };
