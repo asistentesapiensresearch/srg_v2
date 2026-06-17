@@ -92,24 +92,24 @@ export const CardColSapiens = ({ props }) => {
         }} />
 
         {/* ══════════════════════════════════════════════════════════
-            TOP ROW — Micrositio + D1 + AAA+
+            TOP ROW — Micrositio (left) | D1 + AAA+ (right)
         ══════════════════════════════════════════════════════════ */}
         <div style={{
           position: "absolute", top: 0, left: 0, right: 0,
           zIndex: 3,
           padding: "12px 12px 0",
-          display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap",
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6, flexWrap: "wrap",
         }}>
 
           {/* Micrositio pill */}
-          <div style={{
-            backgroundColor: "#c10007",
+          {/* <div style={{
+            backgroundColor: "rgba(255,255,255,0.18)",
             color: "#fff",
             fontSize: 10,
             fontWeight: 700,
             padding: "5px 13px",
             borderRadius: 999,
-            border: "1px solid rgba(255,255,255,0.2)",
+            border: "1px solid rgba(255,255,255,0.35)",
             backdropFilter: "blur(6px)",
             letterSpacing: "0.03em",
             lineHeight: 1,
@@ -117,47 +117,52 @@ export const CardColSapiens = ({ props }) => {
             boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
           }}>
             Micrositio
-          </div>
+          </div> */}
 
-          {/* D1 / CATEGORÍA */}
+          {/* Right group: D1 + AAA+ */}
           <div style={{
-            background: "linear-gradient(135deg, #b91c1c 0%, #ef4444 50%, #b91c1c 100%)",
-            color: "#fff",
-            borderRadius: 10,
-            padding: "4px 11px",
-            minWidth: 50,
-            border: "1px solid rgba(255,255,255,0.18)",
-            backdropFilter: "blur(6px)",
-            lineHeight: 1.15,
-            textAlign: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+            display: "flex", alignItems: "center", gap: 6,
           }}>
-            <div style={{ fontSize: 15, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
-              D{categoria}
+            {/* D1 / CATEGORÍA */}
+            <div style={{
+              background: "linear-gradient(135deg, #b91c1c 0%, #ef4444 50%, #b91c1c 100%)",
+              color: "#fff",
+              borderRadius: 10,
+              padding: "4px 12px",
+              minWidth: 62,
+              border: "1px solid rgba(255,255,255,0.18)",
+              backdropFilter: "blur(6px)",
+              lineHeight: 1.15,
+              textAlign: "center",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+            }}>
+              <div style={{ width: "100%", fontSize: 30, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
+                D{categoria}
+              </div>
+              <div style={{ width: "auto", fontSize: 8.5, fontWeight: 700, letterSpacing: "0.10em", opacity: 0.85 }}>
+                Categoría
+              </div>
             </div>
-            <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", opacity: 0.85 }}>
-              Categoría
-            </div>
-          </div>
 
-          {/* AAA+ / CALIFICACIÓN — gold */}
-          <div style={{
-            background: "linear-gradient(135deg, #7c4a03 0%, #d4a843 45%, #f5c842 70%, #7c4a03 100%)",
-            color: "#2d1a00",
-            borderRadius: 10,
-            padding: "4px 11px",
-            minWidth: 54,
-            border: "1px solid rgba(255,255,255,0.25)",
-            backdropFilter: "blur(6px)",
-            lineHeight: 1.15,
-            textAlign: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
-          }}>
-            <div style={{ fontSize: 15, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
-              {calificacion}
-            </div>
-            <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", opacity: 0.72 }}>
-              Calificación
+            {/* AAA+ / CALIFICACIÓN — gold */}
+            <div style={{
+              background: "linear-gradient(135deg, #7c4a03 0%, #d4a843 45%, #f5c842 70%, #7c4a03 100%)",
+              color: "#2d1a00",
+              borderRadius: 10,
+              padding: "4px 12px",
+              minWidth: 66,
+              border: "1px solid rgba(255,255,255,0.25)",
+              backdropFilter: "blur(6px)",
+              lineHeight: 1.15,
+              textAlign: "center",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+            }}>
+              <div style={{ fontSize: 30, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
+                {calificacion}
+              </div>
+              <div style={{ width: "auto", fontSize: 8.5, fontWeight: 700, letterSpacing: "0.10em", opacity: 0.72 }}>
+                Calificación
+              </div>
             </div>
           </div>
         </div>
@@ -187,7 +192,7 @@ export const CardColSapiens = ({ props }) => {
               />
             </div>
             <div style={{
-              fontSize: "clamp(14px, 3.5vw, 19px)",
+              fontSize: 25,
               fontWeight: 800,
               color: "#fff",
               lineHeight: 1.2,
@@ -254,13 +259,13 @@ export const CardColSapiens = ({ props }) => {
             {/* Label + Name */}
             <div style={{ textAlign: "center" }}>
               <div style={{
-                fontSize: 9, color: "rgba(255,255,255,0.58)",
+                fontSize: 11, color: "rgba(255,255,255,0.58)",
                 fontWeight: 500, letterSpacing: "0.04em", lineHeight: 1,
               }}>
                 Rectoría
               </div>
               <div style={{
-                fontSize: 11, fontWeight: 700, color: "#fff",
+                fontSize: 12, fontWeight: 700, color: "#fff",
                 lineHeight: 1.25, maxWidth: 80, textAlign: "center",
                 textShadow: "0 1px 4px rgba(0,0,0,0.5)",
               }}>

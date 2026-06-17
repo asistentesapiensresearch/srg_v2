@@ -142,43 +142,7 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
 
     return (
         <>
-            <CardComponent item={item} primaryColor={primaryColor} />
-
-            {/* Botón Historia - solo en modo normal */}
-            {!isCompactMode && Vinculada && item.history?.length > 0 && (
-                <Box
-                    sx={{
-                        mt: -1,
-                        mb: 2,
-                        p: 1.5,
-                        bgcolor: '#f9f9f9',
-                        border: '1px solid #eee',
-                        borderTop: 'none',
-                        borderRadius: '0 0 8px 8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: 2,
-                    }}
-                >
-                    <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ flex: 1 }}>
-                        Histórico ({item.history.length})
-                    </Typography>
-                    <button
-                        onClick={() => setOpenModal(true)}
-                        className="flex items-center justify-center p-2 rounded-lg transition-all duration-200 hover:bg-gray-200 active:bg-gray-300"
-                        style={{
-                            backgroundColor: 'transparent',
-                            border: '1px solid #d1d5db',
-                            cursor: 'pointer',
-                            flexShrink: 0,
-                        }}
-                        title="Ver historial"
-                    >
-                        <History size={18} color="#6b7280" strokeWidth={2} />
-                    </button>
-                </Box>
-            )}
+            <CardComponent item={item} primaryColor={primaryColor} onOpenHistory={() => setOpenModal(true)} />
 
             {/* Modal de Historial */}
             {!isCompactMode && Vinculada && item.history?.length > 0 && (
@@ -187,6 +151,9 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
                     onClose={() => setOpenModal(false)}
                     maxWidth="md"
                     fullWidth
+                    BackdropProps={{
+                        className: "backdrop-blur-md bg-black/30"
+                    }}
                     PaperProps={{
                         sx: {
                             borderRadius: 2,
@@ -203,14 +170,14 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
                             borderBottom: '1px solid #e5e7eb',
                         }}
                     >
-                        <Box>
+                        {/* <Box>
                             <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
                                 Historial de Clasificaciones
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
                                 {item.history.length} registros históricos disponibles
                             </Typography>
-                        </Box>
+                        </Box> */}
                         <IconButton
                             onClick={() => setOpenModal(false)}
                             sx={{
@@ -231,10 +198,10 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
                         }}
                     >
                         <ChartSection
-                            sectionTitle="Historial de Clasificaciones"
+                            sectionTitle={null}
                             chartManager={chartManager}
                             height={450}
-                            thumbnailsMode="always"
+                            thumbnailsMode="never"
                         />
                     </DialogContent>
                 </Dialog>
