@@ -46,7 +46,7 @@ const AdmissionsSection = ({
           md: "0.5fr 1fr",
         },
         gap: 2,
-        alignItems: "start",
+        alignItems: "stretch",
       }}
     >
       <Box
@@ -60,6 +60,9 @@ const AdmissionsSection = ({
           width: "100%",
           mx: "auto",
           mt: { xs: 0, md: "3rem" },
+          height: { xs: "auto", md: "calc(100% - 3rem)" },
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <Box
@@ -182,6 +185,7 @@ const AdmissionsSection = ({
             px: 3,
             pt: 10,
             pb: 3,
+            flex: 1,
           }}
         >
           <Box
@@ -219,9 +223,9 @@ const AdmissionsSection = ({
           <Box
             sx={{
               borderTop: "1px solid #e5e7eb",
-              pt: 2.5,
+              pt: 4.5,
               display: "grid",
-              gap: 1.8,
+              gap: 2.8,
             }}
           >
             <InfoRow
@@ -248,7 +252,7 @@ const AdmissionsSection = ({
             sx={{
               borderTop: "1px solid #e5e7eb",
               mt: 3,
-              pt: 2.5,
+              pt: 4.5,
               display: "grid",
               gap: 1.5,
             }}
@@ -292,10 +296,18 @@ const AdmissionsSection = ({
       <Box
         sx={{
           position: "relative",
-          py: { xs: 2, md: 4 },
-          px: 0,
+          mt: { xs: 2, md: "3rem" },
+          p: { xs: 2, md: 4 },
           width: "100%",
+          height: { xs: "auto", md: "calc(100% - 3rem)" },
           overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          borderRadius: "28px",
+          backgroundColor: "#fff",
+          border: "1px solid rgba(229, 231, 235, 0.9)",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+          boxSizing: "border-box",
         }}
       >
         <Box
