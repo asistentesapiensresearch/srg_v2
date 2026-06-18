@@ -44,7 +44,9 @@ export default function TabsSection({
                             maxWidth: { xs: '50%', sm: 'none' },
                             boxSizing: 'border-box',
                             borderBottom: { xs: 2, sm: 0 },
-                            borderColor: { xs: 'transparent', sm: 'transparent' }
+                            borderColor: { xs: 'transparent', sm: 'transparent' },
+                            textTransform: 'none',
+                            fontSize: '1rem'
                         },
                         '& .Mui-selected': {
                             color: indicator_color,

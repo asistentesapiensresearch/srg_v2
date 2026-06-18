@@ -3,6 +3,20 @@ import DynamicIcon from "../../../builder/helpers/DynamicIcon";
 const ResourcesNavSection = ({ resources }) => {
   if (!resources || resources.length === 0) return null;
 
+  // Ensure "Vincúlate" card is always present
+  const displayResources = [...resources];
+  const hasVinculate = displayResources.some(r => r.label && r.label.toLowerCase().includes("vincúlate"));
+  
+  if (!hasVinculate) {
+    displayResources.push({
+      icon: "Link",
+      description: "Únete a nuestra red de instituciones educativas y accede a beneficios exclusivos.",
+      url_resource: "https://www.google.com",
+      label: "Vincúlate",
+      category: "Afiliación"
+    });
+  }
+
   return (
     <section className="w-full px-4 py-12">
       {/* Header */}
@@ -24,7 +38,7 @@ const ResourcesNavSection = ({ resources }) => {
 
       {/* Cards Grid */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {resources.map((el, index) => (
+        {displayResources.map((el, index) => (
           <a
             key={`resource_${index}`}
             href={el.url_resource}
@@ -36,8 +50,13 @@ const ResourcesNavSection = ({ resources }) => {
               <DynamicIcon name={el.icon} color="currentColor" className="text-red-700 group-hover:text-white" size={20} />
             </div>
 
-            <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 group-hover:text-red-200 mb-1 transition-colors duration-300">
-              {el.category || (index === 0 ? "Informe anual" : "Recurso")}
+            <p className="text-xs font-semibold tracking-widest text-gray-400 group-hover:text-red-200 mb-1 transition-colors duration-300">
+              {el.category || (
+                index === 0 ? "Informe anual" :
+                index === 1 ? "Guía" :
+                index === 2 ? "Ranking" :
+                index === 3 ? "Análisis" : "Recurso"
+              )}
             </p>
 
             <h3 className="text-lg font-semibold text-gray-900 group-hover:text-white mb-3 leading-snug transition-colors duration-300">
