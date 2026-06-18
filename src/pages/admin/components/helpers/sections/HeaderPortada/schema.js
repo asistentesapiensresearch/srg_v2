@@ -92,10 +92,10 @@ export default {
         },
         {
             name: "shortDescription",
-            label: "Descripción corta",
+            label: "Slogan / Descripción corta",
             type: "text",
             default: "Descripción corta.....",
-            help: "Escriba la descrición corta del header...",
+            help: "En micrositios de institución este valor se guarda como slogan de la institución.",
         },
         {
             name: "itemsHighlights",

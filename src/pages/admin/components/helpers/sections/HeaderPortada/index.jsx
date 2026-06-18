@@ -9,7 +9,11 @@ import { MapPin } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { getUrl } from "aws-amplify/storage";
 
+const EMPTY_DATA = {};
+const hasText = (value) => String(value || "").trim().length > 0;
+
 const HeaderPortada = ({
+  research,
   typePage,
   excelSource,
   src = "",
@@ -48,16 +52,40 @@ const HeaderPortada = ({
 
     const { model, data } = useSelector((state) => state.sections.fetchData.databaseDownload);
     const dataExcels = useSelector((state) => state.sections.fetchData.sheets[excelSource]);
-    const fieldsDB = fieldsSection.db?.[model];
-    const fieldsExcel = fieldsSection.excel?.[excelSource];
+    const currentData = useMemo(() => research || data || EMPTY_DATA, [research, data]);
+    const currentModel = useMemo(() => {
+      const isInstitution =
+        currentData?.__typename === "Institution" ||
+        currentData?.name ||
+        currentData?.slogan ||
+        currentData?.portadaPhoto;
+
+      return isInstitution ? "Institution" : model;
+    }, [currentData, model]);
+    const fieldsDB = useMemo(() => fieldsSection.db?.[currentModel], [currentModel]);
+    const fieldsExcel = useMemo(() => fieldsSection.excel?.[excelSource], [excelSource]);
 
     const mergedData = useMemo(() => {
-      if (typePage != "investigation") {
+      const isInstitutionPage = currentModel === "Institution";
+
+      if (typePage != "investigation" || isInstitutionPage) {
         const excelData = dataExcels?.data || {};
 
-        const portadaPhoto = src || data?.[fieldsDB?.portadaPhoto] || "";
+        const dbPortadaPhoto = fieldsDB?.portadaPhoto
+          ? currentData?.[fieldsDB.portadaPhoto]
+          : currentData?.portadaPhoto;
+        const dbSlogan = fieldsDB?.slogan
+          ? currentData?.[fieldsDB.slogan]
+          : currentData?.slogan;
+        const dbName = fieldsDB?.name
+          ? currentData?.[fieldsDB.name]
+          : currentData?.name;
 
-        const slogan =  shortDescription || data?.[fieldsDB?.slogan] || "";
+        const portadaPhoto = dbPortadaPhoto || (isInstitutionPage ? "" : src) || "";
+
+        const slogan = hasText(dbSlogan)
+          ? dbSlogan
+          : (isInstitutionPage ? "" : (shortDescription || ""));
 
         const city = fieldsExcel?.ciudad
           ? String(excelData[fieldsExcel.ciudad] || "").toUpperCase()
@@ -72,7 +100,7 @@ const HeaderPortada = ({
             ? `${city}, ${dept}`
             : city;
 
-        const nameValue = data?.[fieldsDB?.name] || "";
+        const nameValue = dbName || "";
 
         const words = nameValue ? nameValue.split(" ") : [];
 
@@ -99,7 +127,7 @@ const HeaderPortada = ({
         slogan: shortDescription,
         fullLocation: country.toUpperCase(),
       };
-    }, [data, dataExcels, fieldsDB, fieldsExcel, typePage, title, subtitle, shortDescription, country, imageSrc, src ]);
+    }, [currentData, currentModel, dataExcels, fieldsDB, fieldsExcel, typePage, title, subtitle, shortDescription, country, imageSrc, src ]);
 
     const backgroundImage = useImageUrl(mergedData?.portadaPhoto || "");
 

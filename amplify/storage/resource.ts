@@ -3,7 +3,7 @@ import { defineStorage } from "@aws-amplify/backend";
 // Tu helper existente (lo dejamos igual para las otras carpetas)
 const authorizations = (allow: any) => [
     allow.groups(["Admin"]).to(["read", "write", "delete", "list", "get"]),
-    allow.groups(["Allies"]).to(["read", "write", "list", "get"]),
+    allow.groups(["Allies"]).to(["read", "write", "delete", "list", "get"]),
     allow.groups(["Viewer"]).to(["read", "list", "get"]), // Viewer aquí solo lee
     allow.guest.to(["read", "list", "get"]),
 ];

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Box, Alert, Button } from '@mui/material';
-import { LayoutDashboard } from 'lucide-react';
+import { Image, LayoutDashboard } from 'lucide-react';
 
 // Hooks
 import { useAllyInstitutions } from '../viewer/profile/hooks/useAllyInstitutions';
@@ -53,12 +53,26 @@ const AlliesDashboard = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {institutions.length > 0 ? (
                     institutions.map(inst => (
-                        <InstitutionCard
-                            key={inst.id}
-                            institution={inst}
-                            // 🔥 Solo pasamos este prop, así no se muestran los botones de admin
-                            handleClickManage={handleManage}
-                        />
+                        <Box key={inst.id} className="flex flex-col gap-3">
+                            <InstitutionCard
+                                institution={inst}
+                                isAdminView={true}
+                                handleClickEdit={handleManage}
+                            />
+                            <Button
+                                variant="contained"
+                                startIcon={<Image size={18} />}
+                                onClick={() => handleManage(inst)}
+                                sx={{
+                                    textTransform: 'none',
+                                    borderRadius: 2,
+                                    fontWeight: 700,
+                                    py: 1.2
+                                }}
+                            >
+                                Editar header del micrositio
+                            </Button>
+                        </Box>
                     ))
                 ) : (
                     <Box className="col-span-full py-16 flex flex-col items-center justify-center text-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
