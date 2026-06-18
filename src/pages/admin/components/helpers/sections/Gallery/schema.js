@@ -42,7 +42,7 @@ export default {
             name: "thumbnailBarPosition",
             label: "Posición barra miniaturas",
             type: "select",
-            default: "bottom",
+            default: "left",
             options: [
                 { label: "Inferior", value: "bottom" },
                 { label: "Superior", value: "top" },
