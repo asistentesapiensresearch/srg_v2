@@ -47,22 +47,22 @@ export const CardColSapiens = ({ props }) => {
           <div className="flex justify-end gap-2 mb-6">
             {categoria && (
               <div className="flex flex-col items-center justify-center bg-gradient-to-br from-red-600 to-red-800 text-white rounded-xl px-4 py-1.5 shadow-md border border-red-500/30">
-                <span className="text-xl lg:text-2xl font-black leading-none tracking-tight">D{categoria}</span>
+                <span className="text-xl lg:text-[25px] font-black leading-none tracking-tight">D{categoria}</span>
                 <span className="text-[9px] font-bold tracking-widest uppercase opacity-90 mt-0.5">Categoría</span>
               </div>
             )}
             
             {calificacion && (
               <div className="flex flex-col items-center justify-center bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 text-yellow-950 rounded-xl px-4 py-1.5 shadow-md border border-yellow-300/40">
-                <span className="text-xl lg:text-2xl font-black leading-none tracking-tight">{calificacion}</span>
+                <span className="text-xl lg:text-[25px] font-black leading-none tracking-tight">{calificacion}</span>
                 <span className="text-[9px] font-bold tracking-widest uppercase opacity-80 mt-0.5">Calificación</span>
               </div>
             )}
           </div>
 
-          {/* Middle Row: Stars, Name, Location */}
+            
           <div className="flex-1 flex flex-col justify-center mb-6">
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <StartSection
                 excelSource=""
                 stars={stars}
@@ -70,14 +70,14 @@ export const CardColSapiens = ({ props }) => {
                 size={24}
                 gap={4}
               />
-            </div>
+            </div> */}
             
-            <h3 className="text-white text-xl lg:text-2xl font-bold leading-tight tracking-tight mb-2 text-shadow-md">
+            <h3 className="text-white text-xl lg:text-[20px] font-bold leading-tight tracking-tight mb-2 text-shadow-md">
               {nombre}
             </h3>
             
-            <div className="flex items-center gap-1.5 text-white/80 text-sm">
-              <DynamicIcon name="MapPin" size={14} className="opacity-80" />
+            <div className="flex items-center gap-1.5 text-white/80 text-[15px]">
+              <DynamicIcon name="MapPin" size={12} className="opacity-80" />
               <span className="truncate">
                 {ciudad}{departamento ? ` - ${departamento}` : ""}
               </span>
