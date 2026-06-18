@@ -105,7 +105,7 @@ const CardsCarousel = ({
                         <SwiperSlide key={`infoCard-${idx}`} style={{height: "auto", display:"flex"}}>
                             <Box
                                 className="
-                                    h-auto
+                                    h-full
                                     rounded-r-xl
                                     hover:shadow-md
                                     transition-all duration-200
@@ -120,6 +120,8 @@ const CardsCarousel = ({
                                     shadow-sm
                                 "
                                 sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
                                     transition: "all 300ms ease-out",
                                     borderTop: "3px solid var(--color-primary)"
                                 }}
@@ -130,12 +132,14 @@ const CardsCarousel = ({
                                         {el.label}
                                     </h5>
                                 </div>
-                                <div className='mt-2'>
-                                    <p className="text-sm">
+                                <div className='mt-2 flex flex-col flex-1'>
+                                    <p className="text-sm text-justify pb-4">
                                         {el.value}
                                     </p>
                                     <span
                                         style={{
+                                            alignSelf: "flex-start",
+                                            marginTop: "auto",
                                             padding: "2px 30px",
                                             backgroundColor: "#FDEEEF",
                                             color: "var(--color-primary)",

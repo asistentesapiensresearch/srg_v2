@@ -90,7 +90,7 @@ const RectorSection = ({
                     <h4
                         className="font-bold color-primary"
                     >
-                        RECTOR {rectorData.colegio.toUpperCase()}
+                        Rector {rectorData.colegio}
                     </h4>
 
                     <div

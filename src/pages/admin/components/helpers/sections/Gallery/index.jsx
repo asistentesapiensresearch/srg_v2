@@ -111,7 +111,7 @@ const GalleryRenderer = ({
           sx={{
             width: "100%",
             height: "100%",
-            objectFit: "contain",
+            objectFit: "cover",
             display: "block",
           }}
         />
@@ -133,16 +133,19 @@ const GalleryRenderer = ({
             bottom: 0,
             color: "#fff",
             zIndex: 2,
-            bgcolor: "rgba(0,0,0,0.2)",
+            background:
+              "linear-gradient(to bottom, rgba(18, 18, 18, 0) 0%, rgb(18 18 18 / 52%) 28%, rgba(18, 18, 18, 0.72) 100%)",
+            backdropFilter: "blur(3px)",
+            pt: { xs: 2.5, md: 4 },
           }}
         >
-
-          {(item.description) && (
+          {item.description && (
             <Typography
               sx={{
-                margin: "40px 70px",
-                fontSize: { xs: "1rem", md: "2rem" },
-                opacity: 0.95,
+                margin: { xs: "10px 20px 18px", md: "14px 52px 28px" },
+                fontSize: { xs: "0.85rem", md: "1.35rem" },
+                lineHeight: 1.45,
+                opacity: 0.92,
               }}
             >
               {item.description}
@@ -197,7 +200,14 @@ const GalleryRenderer = ({
   }
 
   return (
-    <Box className="gallery-wrapper py-4" dir={RightToLeft ? "rtl" : "ltr"}>
+    <Box
+      className="gallery-wrapper py-4"
+      dir={RightToLeft ? "rtl" : "ltr"}
+      onWheelCapture={(event) => {
+        event.preventDefault();
+        window.scrollBy({ top: event.deltaY, left: 0, behavior: "auto" });
+      }}
+    >
       <ImageGallery
         items={images}
         renderItem={renderCustomItem}
@@ -209,7 +219,7 @@ const GalleryRenderer = ({
         showThumbnails={showThumbnails}
         showBullets={showBulletIndicators}
         showIndex={showSliderCounter}
-        showPlayButton={showAutoplayButton}
+        showPlayButton={false}
         showFullscreenButton={showFullscreenButton}
         infinite={InfiniteLoop}
         slideOnThumbnailOver={SlideOnThumbnailHover}

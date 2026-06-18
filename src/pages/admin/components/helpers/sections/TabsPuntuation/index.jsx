@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Atom, Globe, BookOpen, Calculator, MessageSquare } from 'lucide-react';
+import { Atom, Globe, BookOpen, Calculator, MessageSquare, Map, MapPin } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { fieldsSection } from './fields';
 
@@ -81,17 +81,18 @@ const TabsPuntuation = ({
               </div>
 
               <h3
-                className="text-center text-sm font-bold uppercase tracking-wide"
+                className="text-center text-sm font-bold tracking-wide"
                 style={{ color: textcolor }}
               >
                 {label}
               </h3>
 
-              <div className="mt-5 grid w-full grid-cols-2 gap-3">
+              <div className="mt-4 grid w-full grid-cols-2 gap-2.5">
                 <div
-                  className="flex h-[54px] items-center justify-center rounded-2xl text-2xl font-extrabold"
+                  className="flex h-11 items-center justify-center rounded-xl border text-lg font-extrabold"
                   style={{
                     backgroundColor: "#EAF3FF",
+                    borderColor: "rgba(27, 97, 165, 0.16)",
                     color: "#1B61A5",
                   }}
                 >
@@ -101,9 +102,10 @@ const TabsPuntuation = ({
                 </div>
 
                 <div
-                  className="flex h-[54px] items-center justify-center rounded-2xl text-2xl font-extrabold"
+                  className="flex h-11 items-center justify-center rounded-xl border text-lg font-extrabold"
                   style={{
                     backgroundColor: "#FDEEEF",
+                    borderColor: "rgba(193, 0, 7, 0.14)",
                     color: "var(--color-primary)",
                   }}
                 >
@@ -122,12 +124,18 @@ const TabsPuntuation = ({
   return (
     <div className=''>
       <div className=''>
-        <h3 className='font-black underline'>
+        <h3 className='font-black'>
           {titleTabsPuntuation}
         </h3>
-        <div className='mt-8 flex flex-row gap-5' style={{color: "black"}}>
-          <p> <span style={{display: "inline-block", width: "10px", height: "10px", backgroundColor: "#1B61A5", borderRadius: "50%"}}></span> Nacional</p>
-          <p> <span style={{display: "inline-block", width: "10px", height: "10px", backgroundColor: "var(--color-primary)", borderRadius: "50%"}}></span> {city}</p>
+        <div className='mt-8 flex flex-row flex-wrap gap-5 pb-4' style={{color: "black"}}>
+          <p className="flex items-center gap-2">
+            <Map size={16} color="#1B61A5" strokeWidth={2.4} />
+            Colombia
+          </p>
+          <p className="flex items-center gap-2">
+            <MapPin size={16} color="var(--color-primary)" strokeWidth={2.4} />
+            {city}
+          </p>
         </div>
       </div>
       {renderContent()}

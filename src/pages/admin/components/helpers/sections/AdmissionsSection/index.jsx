@@ -59,6 +59,7 @@ const AdmissionsSection = ({
           maxWidth: { xs: "100%", sm: 420 },
           width: "100%",
           mx: "auto",
+          mt: { xs: 0, md: "3rem" },
         }}
       >
         <Box
@@ -197,7 +198,6 @@ const AdmissionsSection = ({
               fontSize: 12,
               fontWeight: "bold",
               letterSpacing: "0.08em",
-              textTransform: "uppercase",
             }}
           >
             ● Director de admisiones
@@ -315,11 +315,10 @@ const AdmissionsSection = ({
 
           <Typography
             sx={{
-              fontSize: "0.75rem",
+              fontSize: "1rem",
               letterSpacing: "0.25em",
               fontWeight: 800,
               color: "#d90000",
-              textTransform: "uppercase",
               mb: 1.5,
             }}
           >{`Proceso de admisiones · ${new Date().getFullYear()}`}
@@ -371,7 +370,7 @@ const AdmissionsSection = ({
                   sx={{
                     color: "#dc2626",
                     fontWeight: 800,
-                    fontSize: "1.4rem",
+                    fontSize: "1.2rem",
                     mr: 2,
                     pr: 2,
                     borderRight: "1px solid #fca5a5",
@@ -393,7 +392,14 @@ const AdmissionsSection = ({
           children.filter((child) => child.type === "FormSection")
             .map((child) => (
               <Box
-                sx={{ position: "relative", zIndex: 1 }}
+                sx={{
+                  position: "relative",
+                  zIndex: 1,
+                  mt: 3,
+                  borderRadius: "24px",
+                  boxShadow: "0 14px 34px rgba(17, 24, 39, 0.1)",
+                  overflow: "hidden",
+                }}
                 key={child.id}
                 className="w-full flex flex-col"
               >
@@ -443,7 +449,7 @@ const InfoRow = ({ icon, label, value }) => {
         <Typography
           sx={{
             fontSize: 12,
-            textTransform: "uppercase",
+            textTransform: "none",
             letterSpacing: "0.06em",
             color: "#9ca3af",
             fontWeight: 700,

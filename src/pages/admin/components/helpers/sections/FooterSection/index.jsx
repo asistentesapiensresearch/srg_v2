@@ -117,7 +117,7 @@ const FooterSection = ({
                             >
                                 <Box className="flex gap-4 ">
                                     <DynamicIcon name={"MapPin"} color={"var(--color-primary)"} size={24} />
-                                    <h6 className='text-zinc-400'>COMO LLEGAR</h6>
+                                    <h6 className='text-zinc-400'>Cómo llegar</h6>
                                 </Box>
                                 {children && children.length > 0 && children?.some((child) => child.type === "EmbedContent") ?  (
                                     children.filter((child) => child.type === "EmbedContent")
