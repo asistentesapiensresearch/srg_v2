@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Avatar, Card, Tooltip, useMediaQuery } from "@mui/material";
 import { useComparison } from "../comparison/ComparisonContext";
 import { getValue } from "../results/utils";
@@ -230,6 +230,7 @@ const BadgeCalificacion = ({ qualification }: { qualification: string }) => {
 export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColProps) => {
     useCardAnimations();
 
+    const [showAllAccreditations, setShowAllAccreditations] = useState(false);
     const { selectedItems, toggleItem } = useComparison();
     const isXs = useMediaQuery("(max-width:380px)");
 
@@ -244,24 +245,24 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
     /* ── Field accessors ── */
     const getAlias = (column: keyof ItemData): unknown => item[column] ?? "";
 
-    const Vinculada         = item.Vinculada;
-    const Stars             = item.Stars;
-    const city              = (item.Ciudad as string) || "";
-    const department        = (item.Departamento as string) || "";
-    const category          = (item["Categoría"] as string) || "";
-    const qualification     = (item["Calificación"] as string) || "";
+    const Vinculada = item.Vinculada;
+    const Stars = item.Stars;
+    const city = (item.Ciudad as string) || "";
+    const department = (item.Departamento as string) || "";
+    const category = (item["Categoría"] as string) || "";
+    const qualification = (item["Calificación"] as string) || "";
     const accreditationMain = item["Siglas acreditación"];
-    const accreditationSec  = item["Siglas certificación"];
-    const link              = getValue(item, ["path"]) as string | undefined;
-    const hasLink           = isSafeUrl(link) && Vinculada === "Sí";
-    const logoColegio       = getValue(item, ["logo", "imagen_institucion"]) as string | undefined;
-    const portadaPath       = getValue(item, ["portadaPhoto", "portada"]) as string | undefined;
-    const rawLanguages      = item.languages;
-    const languages         = parseLanguages(rawLanguages);
-    const nuevo             = (item.Nuevos as string) || "";
-    const directorName      = getValue(item, ["rectorName"]) as string | undefined;
-    const directorPhoto     = getValue(item, ["director_foto", "foto_rector", "rectorPhoto"]) as string | undefined;
-    const socialRector      = item.rectorSocial;
+    const accreditationSec = item["Siglas certificación"];
+    const link = getValue(item, ["path"]) as string | undefined;
+    const hasLink = isSafeUrl(link) && Vinculada === "Sí";
+    const logoColegio = getValue(item, ["logo", "imagen_institucion"]) as string | undefined;
+    const portadaPath = getValue(item, ["portadaPhoto", "portada"]) as string | undefined;
+    const rawLanguages = item.languages;
+    const languages = parseLanguages(rawLanguages);
+    const nuevo = (item.Nuevos as string) || "";
+    const directorName = getValue(item, ["rectorName"]) as string | undefined;
+    const directorPhoto = getValue(item, ["director_foto", "foto_rector", "rectorPhoto"]) as string | undefined;
+    const socialRector = item.rectorSocial;
 
     const socialR = safeParseJson(socialRector);
     const directorWeb = socialR?.linkedin ?? (item.DirectorWeb as string | undefined);
@@ -271,24 +272,24 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
         ...splitAccreditations(accreditationSec),
     ];
 
-    const sec             = (item.Sec as string) || "";
-    const cal             = (item.Cal as string) || "";
-    const religion        = (item["Orientación religiosa"] as string) || "";
-    const genero          = (item["Género"] as string) || "";
-    const zona            = (item.Zon as string) || "";
+    const sec = (item.Sec as string) || "";
+    const cal = (item.Cal as string) || "";
+    const religion = (item["Orientación religiosa"] as string) || "";
+    const genero = (item["Género"] as string) || "";
+    const zona = (item.Zon as string) || "";
     const dobleTitulacion = item["Doble titulación"];
-    const intercambios    = item["Intercambios o salidas internacionales"];
-    const bilingue        = item["Bilingüe"];
+    const intercambios = item["Intercambios o salidas internacionales"];
+    const bilingue = item["Bilingüe"];
 
     const infoIcons: InfoIcon[] = [
-        sec      ? { icon: "Building2",     label: sec } : null,
-        cal      ? { icon: "CalendarDays",  label: `Calendario ${cal}` } : null,
-        religion ? { icon: "Church",        label: religion } : null,
-        genero   ? { icon: "Users",         label: genero } : null,
-        zona     ? { icon: "MapPinned",     label: zona } : null,
+        sec ? { icon: "Building2", label: sec } : null,
+        cal ? { icon: "CalendarDays", label: `Calendario ${cal}` } : null,
+        religion ? { icon: "Church", label: religion } : null,
+        genero ? { icon: "Users", label: genero } : null,
+        zona ? { icon: "MapPinned", label: zona } : null,
         dobleTitulacion === "Sí" ? { icon: "GraduationCap", label: "Doble Titulación" } : null,
-        intercambios    === "Sí" ? { icon: "Plane",         label: "Intercambios internacionales" } : null,
-        bilingue        === "Sí" ? { icon: "Globe",         label: "Bilingüe" } : null,
+        intercambios === "Sí" ? { icon: "Plane", label: "Intercambios internacionales" } : null,
+        bilingue === "Sí" ? { icon: "Globe", label: "Bilingüe" } : null,
     ].filter((x): x is InfoIcon => x !== null);
 
     const hasHistory = Array.isArray(item.history) && item.history.length > 0;
@@ -311,7 +312,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                     alignItems: "center",
                 }}
             >
-                {category    && <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 700 }}>D{category}</span>}
+                {category && <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 700 }}>D{category}</span>}
                 {qualification && <span style={{ fontSize: 11, color: "#9ca3af" }}>{qualification}</span>}
                 <span style={{ fontSize: 12, color: "#9ca3af" }}>{item.Nombre || item.Colegio || "Sin Nombre"}</span>
                 <span style={{ fontSize: 10, color: "#9ca3af" }}>
@@ -528,7 +529,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                         )}
                     </span>
 
-                    {/* Ubicación + banderas */}
+                    {/* Ubicación */}
                     <div
                         style={{
                             display: "flex",
@@ -552,18 +553,45 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                         >
                             {city}{department ? ` , ${department}` : ""}
                         </span>
-                        {languages.length > 0 && (
-                            <ImgFlagsCountry languages={languages} size={15} gap="3px" />
-                        )}
                     </div>
 
-                    {/* Info icons */}
-                    {infoIcons.length > 0 && (
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                            {infoIcons.map((info, i) => (
-                                <Tooltip key={i} title={info.label} arrow>
+                    {/* Info icons & Flags Row */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                        {/* Info icons */}
+                        {infoIcons.length > 0 ? (
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                                {infoIcons.map((info, i) => (
+                                    <Tooltip key={i} title={info.label} arrow>
+                                        <div
+                                            className="transition-colors duration-200"
+                                            style={{
+                                                width: 27,
+                                                height: 27,
+                                                borderRadius: "50%",
+                                                backgroundColor: "rgba(255,255,255,0.15)",
+                                                border: "1px solid rgba(255,255,255,0.28)",
+                                                backdropFilter: "blur(6px)",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                cursor: "pointer",
+                                            }}
+                                        >
+                                            <DynamicIcon name={info.icon} color="rgba(255,255,255,0.90)" size={13} />
+                                        </div>
+                                    </Tooltip>
+                                ))}
+                            </div>
+                        ) : (
+                            <div />
+                        )}
+
+                        {/* Banderas */}
+                        {languages.length > 0 && (
+                            <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                                {languages.map((lang, idx) => (
                                     <div
-                                        className="transition-colors duration-200"
+                                        key={`flag_${idx}`}
                                         style={{
                                             width: 27,
                                             height: 27,
@@ -574,15 +602,14 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "center",
-                                            cursor: "pointer",
                                         }}
                                     >
-                                        <DynamicIcon name={info.icon} color="rgba(255,255,255,0.90)" size={13} />
+                                        <ImgFlagsCountry languages={[lang]} size={14} gap="0px" />
                                     </div>
-                                </Tooltip>
-                            ))}
-                        </div>
-                    )}
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -702,8 +729,8 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                     </span>
 
                     {accreditations.length > 0 ? (
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 5px" }}>
-                            {accreditations.map((acc, i) => (
+                        <div style={{ display: "flex", flexWrap: showAllAccreditations ? "wrap" : "nowrap", overflow: "hidden", gap: "4px 5px" }}>
+                            {(showAllAccreditations ? accreditations : accreditations.slice(0, 2)).map((acc, i) => (
                                 <span
                                     key={i}
                                     style={{
@@ -717,11 +744,54 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                                         lineHeight: 1.35,
                                         whiteSpace: "nowrap",
                                         display: "inline-block",
+                                        flexShrink: 0,
                                     }}
                                 >
                                     {acc}
                                 </span>
                             ))}
+                            {!showAllAccreditations && accreditations.length > 2 && (
+                                <span
+                                    onClick={() => setShowAllAccreditations(true)}
+                                    style={{
+                                        backgroundColor: "#f3f4f6",
+                                        color: "#4b5563",
+                                        border: "1px solid #e5e7eb",
+                                        borderRadius: 6,
+                                        fontSize: isXs ? 9 : 10,
+                                        fontWeight: 700,
+                                        padding: "3px 7px",
+                                        lineHeight: 1.35,
+                                        whiteSpace: "nowrap",
+                                        display: "inline-block",
+                                        cursor: "pointer",
+                                        flexShrink: 0,
+                                    }}
+                                >
+                                    +{accreditations.length - 2}
+                                </span>
+                            )}
+                            {showAllAccreditations && accreditations.length > 2 && (
+                                <span
+                                    onClick={() => setShowAllAccreditations(false)}
+                                    style={{
+                                        backgroundColor: "#f3f4f6",
+                                        color: "#4b5563",
+                                        border: "1px solid #e5e7eb",
+                                        borderRadius: 6,
+                                        fontSize: isXs ? 9 : 10,
+                                        fontWeight: 700,
+                                        padding: "3px 7px",
+                                        lineHeight: 1.35,
+                                        whiteSpace: "nowrap",
+                                        display: "inline-block",
+                                        cursor: "pointer",
+                                        flexShrink: 0,
+                                    }}
+                                >
+                                    Menos
+                                </span>
+                            )}
                         </div>
                     ) : (
                         <span style={{ fontSize: 10, color: "#d1d5db", fontStyle: "italic" }}>—</span>

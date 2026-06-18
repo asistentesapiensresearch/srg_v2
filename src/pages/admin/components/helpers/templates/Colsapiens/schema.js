@@ -162,6 +162,13 @@ export default {
                             "description": "Espacio dedicado a explorar el impacto de las instituciones educativas en la formación, liderazgo y transformación social.",
                             "url_resource": "https://www.google.com",
                             "label": "Efecto Escuela"
+                        },
+                        {
+                            "icon": "Link",
+                            "description": "Únete a nuestra red de instituciones educativas y accede a beneficios exclusivos.",
+                            "url_resource": "https://www.google.com",
+                            "label": "Vincúlate",
+                            "category": "RECURSO"
                         }
                     ],
                     "sizeIcon": 40

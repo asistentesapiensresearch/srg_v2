@@ -10,7 +10,7 @@ import {
     useTheme,
     CircularProgress,
 } from "@mui/material";
-import { History, X } from "lucide-react";
+import { History, X, MapPin } from "lucide-react";
 import { cardByType } from "../helpers/cardsByType";
 import ChartSection from "../../ChartSection";
 
@@ -165,24 +165,58 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
                         sx={{
                             display: 'flex',
                             justifyContent: 'space-between',
-                            alignItems: 'center',
-                            pb: 1.5,
+                            alignItems: 'flex-start',
+                            pb: 2,
                             borderBottom: '1px solid #e5e7eb',
                         }}
                     >
-                        {/* <Box>
-                            <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
-                                Historial de Clasificaciones
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                                <Typography variant="h6" sx={{ fontWeight: 700, color: '#111827', lineHeight: 1.2 }}>
+                                    {item["Colegios"] || item["Nombre"] || "Sin nombre"}
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                    {item["Categoría"] && (
+                                        <Box sx={{ 
+                                            px: 1.5, py: 0.25, 
+                                            borderRadius: '999px', 
+                                            border: '1px solid #fecaca', 
+                                            bgcolor: '#fef2f2', 
+                                            color: '#991b1b', 
+                                            fontWeight: 700, 
+                                            fontSize: '0.875rem' 
+                                        }}>
+                                            D{item["Categoría"]}
+                                        </Box>
+                                    )}
+                                    {item["Calificación"] && (
+                                        <Box sx={{ 
+                                            px: 1.5, py: 0.25, 
+                                            borderRadius: '999px', 
+                                            border: '1px solid #fde68a', 
+                                            bgcolor: '#fefce8', 
+                                            color: '#92400e', 
+                                            fontWeight: 700, 
+                                            fontSize: '0.875rem' 
+                                        }}>
+                                            {item["Calificación"]}
+                                        </Box>
+                                    )}
+                                </Box>
+                            </Box>
+                            <Typography variant="body2" sx={{ color: '#4b5563', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <MapPin size={16} />
+                                {item["Ciudad"]}{item["Departamento"] ? ` - ${item["Departamento"]}` : ""}
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                                {item.history.length} registros históricos disponibles
-                            </Typography>
-                        </Box> */}
+                        </Box>
                         <IconButton
                             onClick={() => setOpenModal(false)}
                             sx={{
                                 color: 'text.secondary',
-                                '&:hover': { bgcolor: '#f3f4f6' }
+                                '&:hover': { bgcolor: '#f3f4f6' },
+                                ml: 2,
+                                mt: -0.5,
+                                mr: -0.5
                             }}
                             size="small"
                         >

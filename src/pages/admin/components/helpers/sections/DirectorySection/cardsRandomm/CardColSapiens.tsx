@@ -23,9 +23,9 @@ export const CardColSapiens = ({ props }) => {
       href={path}
       target="_blank"
       rel="noopener noreferrer"
-      className="block no-underline group"
+      className="block no-underline group h-full"
     >
-      <div className="relative w-full rounded-[24px] overflow-hidden bg-gradient-to-br from-[#710707] via-[#5c0303] to-[#3a0000] shadow-[0_12px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_20px_48px_rgba(0,0,0,0.6)] aspect-auto flex flex-col">
+      <div className="relative w-full h-full rounded-[24px] overflow-hidden bg-gradient-to-br from-[#710707] via-[#5c0303] to-[#3a0000] shadow-[0_12px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_20px_48px_rgba(0,0,0,0.6)] aspect-auto flex flex-col">
         
         {/* Background image overlay */}
         {portada && (
