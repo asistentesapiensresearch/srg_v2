@@ -2,6 +2,11 @@ import { useState } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 import PageRenderer from '../../../builder/Renderer';
 
+const capitalizeFirstLetter = (value) => {
+    const label = String(value || '').trim();
+    return label ? label.charAt(0).toLocaleUpperCase('es-CO') + label.slice(1) : label;
+};
+
 export default function TabsSection({
     background_color,
     tabs_color,
@@ -56,13 +61,16 @@ export default function TabsSection({
                     }}
                 >
                     {children.length > 0 ? (
-                        children.map((child, index) => (
-                            <Tab
-                                key={child.id}
-                                // 🔥 IMPORTANTE: Buscamos la prop "label" del hijo para el nombre
-                                label={child.props?.label || child.props?.title || `Tab ${index + 1}`}
-                            />
-                        ))
+                        children.map((child, index) => {
+                            const label = child.props?.label || child.props?.title || `Tab ${index + 1}`;
+
+                            return (
+                                <Tab
+                                    key={child.id}
+                                    label={capitalizeFirstLetter(label)}
+                                />
+                            );
+                        })
                     ) : (
                         <Tab label="Vacío" />
                     )}
