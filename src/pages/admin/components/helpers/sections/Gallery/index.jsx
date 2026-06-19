@@ -260,10 +260,6 @@ const GalleryRenderer = ({
           right: { xs: 8, md: 14 },
         },
       }}
-      onWheelCapture={(event) => {
-        event.preventDefault();
-        window.scrollBy({ top: event.deltaY, left: 0, behavior: "auto" });
-      }}
     >
       <ImageGallery
         items={images}
