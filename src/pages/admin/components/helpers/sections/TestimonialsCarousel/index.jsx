@@ -174,7 +174,7 @@ export default function TestimonialsCarousel({
                 gap: 4,
             }}
         >
-            <h3>Testimoniales</h3>
+            <h3>Testimonios</h3>
             <Box
                 sx={{
                     width: "100%",

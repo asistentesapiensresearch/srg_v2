@@ -8,6 +8,10 @@ import DynamicIcon from '../../../builder/helpers/DynamicIcon';
 import logo from "../../../../../../assets/images/logo.png";
 import { Link } from 'react-router-dom';
 
+const toTitleCase = (value = "") => value
+    .toLocaleLowerCase('es-CO')
+    .replace(/(^|[\s-])\p{L}/gu, (letter) => letter.toLocaleUpperCase('es-CO'));
+
 const FooterSection = ({
     typePage,
     navRankings,
@@ -55,6 +59,11 @@ const FooterSection = ({
                     (typePage === "micro-col" || typePage === "micro-uni") &&
                     <Box
                         className="grid grid-cols-1 md:grid-cols-2 gap-4 py-10"
+                        sx={{
+                            width: "100%",
+                            maxWidth: "1300px",
+                            margin: "0 auto",
+                        }}
                     >
                         <Box
                             className="flex flex-col gap-4"
@@ -62,7 +71,7 @@ const FooterSection = ({
                             <Box className="flex justify-center items-center md:justify-start gap-4  border-b-2 border-zinc-700 pb-5">
                                 <img src={logoUrl} alt={`Logo ${info.title}`} style={{ maxWidth: "80px" }} />
                                 <Box>
-                                    <h5 style={{color: "white"}}>{info.title}</h5>
+                                    <h5 style={{ color: "white" }}>{toTitleCase(info.title)}</h5>
                                     {/* Aqui toda obtener esos campos mientras son quemados ya que aún no estan */}
                                     <span className='text-zinc-400 text-[15px]'>{"Barranquilla, Colombia · Desde 1962"}</span>
                                 </Box>
@@ -89,7 +98,7 @@ const FooterSection = ({
                                 }
                             </Box>
                             <Box className="flex flex-col md:flex-row justify-center md:justify-start items-center gap-4">
-                                <span className='text-zinc-400 text-[12px]'>SÍGUENOS</span>
+                                <span className='text-zinc-400 text-[18px]'>Síguenos</span>
                                 {children && children.length > 0 && children?.some((child) => child.type === "DynamicSocialMedia") ?  (
                                     children.filter((child) => child.type === "DynamicSocialMedia")
                                         .map((child) => (

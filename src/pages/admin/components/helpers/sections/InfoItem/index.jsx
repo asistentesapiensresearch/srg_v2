@@ -114,7 +114,7 @@ const InfoItem = ({
                                 <span style={{
                                     fontWeight: "bold",
                                     color: colorTitle
-                                }} >{el.label.toUpperCase()}</span>
+                                }} >{el.label}</span>
                                 <p style={{color: colorText}}>{el.value}</p>
                             </div>
                         </Box>
