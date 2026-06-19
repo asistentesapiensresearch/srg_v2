@@ -48,6 +48,7 @@ export default {
             ]
         },
         { name: "style_settings", label: "🎨 ESTILO VISUAL", type: "separator" },
+        { name: "titleFontSize", label: "Tamaño del título (px)", type: "number", default: 32, min: 16, max: 64 },
         { name: "itemsPerView", label: "Testimonios visibles (PC)", type: "number", default: 3, min: 1, max: 4 },
         { name: "gap", label: "Espaciado entre testimonios", type: "number", default: 15, min: 1, max: 40 },
         { name: "autoplay", label: "Reproducción Automática", type: "checkbox", default: true },

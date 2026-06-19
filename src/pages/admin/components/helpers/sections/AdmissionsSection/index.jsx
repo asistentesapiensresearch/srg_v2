@@ -338,14 +338,14 @@ const AdmissionsSection = ({
 
           {/* Título principal */}
           <Typography
+            component="h3"
             sx={{
-              fontWeight: 800,
               color: "#111827",
-              fontSize: {
-                xs: "1.9rem",
-                md: "2.6rem",
-              },
-              lineHeight: 1.15,
+              fontFamily: '"Google Sans", sans-serif',
+              fontSize: "var(--text-2xl)",
+              fontWeight: 700,
+              lineHeight: 1.18,
+              letterSpacing: "-0.02em",
               mb: 2,
             }}
           >

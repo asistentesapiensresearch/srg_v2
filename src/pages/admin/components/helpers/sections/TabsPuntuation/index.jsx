@@ -118,13 +118,13 @@ const TabsPuntuation = ({
   return (
     <div className="">
       <div className="">
-        <h3 className="font-black">{titleTabsPuntuation}</h3>
+        <h4 className="font-black">{titleTabsPuntuation}</h4>
         <div
           className="mt-8 flex flex-row flex-wrap gap-5 pb-4"
           style={{ color: "black" }}
         >
           <p
-            className="flex items-center gap-2 h-11 justify-center rounded-xl border text-base font-bold p-3"
+            className="flex items-center gap-2 h-11 justify-center rounded-xl border text-sm font-bold p-3"
             style={{
               backgroundColor: "#EAF3FF",
               borderColor: "rgba(27, 97, 165, 0.16)",

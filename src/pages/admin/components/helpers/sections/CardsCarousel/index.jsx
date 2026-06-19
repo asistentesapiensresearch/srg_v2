@@ -11,6 +11,7 @@ import DynamicIcon from '../../../builder/helpers/DynamicIcon'
 
 const CardsCarousel = ({
     title,
+    titleFontSize = 32,
     itemsCustom,
     gap = 20,
     bgBorde = "var(--color-primary)",
@@ -198,7 +199,14 @@ const CardsCarousel = ({
                 gap: 4,
             }}
         >
-            <h3>{title}</h3>
+            <h3
+                style={{
+                    fontSize: `${Number(titleFontSize) || 32}px`,
+                    lineHeight: 1.2,
+                }}
+            >
+                {title}
+            </h3>
             {renderCarrusel()}
         </Box>
     )

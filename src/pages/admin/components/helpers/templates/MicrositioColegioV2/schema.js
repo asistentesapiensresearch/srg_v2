@@ -288,7 +288,7 @@ export default {
                     "type": "WysiwygSection",
                     "props": {
                         "className": "",
-                        "content": "<h3>Galeria de imágenes</h3>",
+                        "content": "<h3>Galería de imágenes</h3>",
                         "customCss": "",
                         "paddingY": 4
                     }
