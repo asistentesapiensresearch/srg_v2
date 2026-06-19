@@ -135,7 +135,7 @@ const TabsPuntuation = ({
             Colombia
           </p>
           <p
-            className="flex items-center gap-2  h-11 justify-center rounded-xl border text-base font-bold p-3"
+            className="flex items-center gap-2  h-11 justify-center rounded-xl border text-sm font-bold p-3"
             style={{
               backgroundColor: "#FDEEEF",
               borderColor: "rgba(193, 0, 7, 0.14)",
