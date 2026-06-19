@@ -11,8 +11,8 @@ export const fieldsSection = {
             "Género": "Gén",
             "Estudiantes": "Estudiantes",
             "Profesores": "Profesores",
-            "ICFES cat": "Nivel ICFES",
-            "ICFES ind": "Índice ICFES",
+            "Nivel ICFES": "Nivel ICFES",
+            "Índice": "Índice ICFES",
         }
     }
 }
