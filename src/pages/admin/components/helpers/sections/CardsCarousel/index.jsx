@@ -129,9 +129,9 @@ const CardsCarousel = ({
                             >
                                 <div className='flex gap-2 items-center'>
                                     <DynamicIcon name={el.icon || "Globe"} color={"var(--color-primary)"} size={20} />
-                                    <h5 className="font-semibold mb-0">
+                                    <p className="font-semibold mb-0">
                                         {el.label}
-                                    </h5>
+                                    </p>
                                 </div>
                                 <div className='mt-2 flex flex-col flex-1'>
                                     <p className="text-sm text-justify pb-4">
