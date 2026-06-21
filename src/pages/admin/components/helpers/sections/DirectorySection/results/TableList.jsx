@@ -16,6 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
+import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import Rating from "@mui/material/Rating";
 import { visuallyHidden } from "@mui/utils";
 
@@ -356,11 +357,26 @@ function Row(props) {
             >
               <Typography
                 variant="subtitle2"
-                gutterBottom
                 component="div"
-                color="primary"
-                fontWeight="bold"
+                sx={{
+                  width: "fit-content",
+                  mx: "auto",
+                  mb: 1.5,
+                  px: 2,
+                  py: 0.75,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 0.75,
+                  borderRadius: "999px",
+                  border: "1px solid rgb(254, 202, 202)",
+                  backgroundColor: "rgb(254, 242, 242)",
+                  color: "rgb(185, 28, 28)",
+                  fontWeight: 700,
+                  letterSpacing: "0.04em",
+                }}
               >
+                <HistoryRoundedIcon sx={{ fontSize: "1.1rem" }} />
                 Historial
               </Typography>
 
@@ -403,8 +419,15 @@ function Row(props) {
                             scope="row"
                             sx={{
                               fontSize: "0.8rem",
+                              textAlign: "center",
+                              verticalAlign: "middle",
                               width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                               minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
+                              "& > .MuiBox-root": {
+                                marginLeft: "auto",
+                                marginRight: "auto",
+                                alignItems: "center",
+                              },
                             }}
                           >
                             {renderCellValue(historyRow, colKey, aliases)}
