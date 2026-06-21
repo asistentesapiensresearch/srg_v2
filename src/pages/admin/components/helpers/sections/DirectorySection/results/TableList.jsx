@@ -67,6 +67,12 @@ const isCategoryColumn = (columnName) => cleanString(columnName).includes("categ
 
 const isQualificationColumn = (columnName) => cleanString(columnName).includes("calificacion");
 
+const isClassificationColumn = (columnName, aliases = {}) =>
+  isCategoryColumn(columnName) ||
+  isCategoryColumn(aliases[columnName]) ||
+  isQualificationColumn(columnName) ||
+  isQualificationColumn(aliases[columnName]);
+
 const isAccreditationColumn = (columnName) =>
   cleanString(columnName).includes("acreditacion");
 
@@ -336,7 +342,9 @@ function Row(props) {
               minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
             }}
           >
-            {renderCellValue(row, colKey, aliases)}
+            {!isLinked && isClassificationColumn(colKey, aliases)
+              ? "-"
+              : renderCellValue(row, colKey, aliases)}
           </TableCell>
         ))}
       </TableRow>
