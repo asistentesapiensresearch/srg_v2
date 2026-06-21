@@ -552,7 +552,7 @@ export default {
                                         "show_names": false,
                                         "grayscale": true,
                                         "hover_scale": true,
-                                        "background_color": "#ffffff",
+                                        "background_color": "#f8fafc",
                                         "pause_on_hover": true,
                                         "brands_list": [
                                             {
@@ -575,7 +575,7 @@ export default {
                                             }
                                         ],
                                         "layout_mode": "marquee",
-                                        "isBackground": false,
+                                        "isBackground": true,
                                         "logo_height": 30,
                                         "marquee_speed": 40
                                     }

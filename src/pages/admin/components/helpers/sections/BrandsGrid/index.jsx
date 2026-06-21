@@ -91,7 +91,9 @@ export default function BrandsGrid({
                 filter:
                   hoveredBrand === (brand.id || index)
                     ? "none"
-                    : "grayscale(100%) brightness(3)",
+                    : grayscale
+                      ? "grayscale(100%) brightness(3)"
+                      : "none",
 
                 mixBlendMode:
                   hoveredBrand === (brand.id || index)
@@ -124,8 +126,18 @@ export default function BrandsGrid({
     );
 
   return (
-        <Box sx={{ bgcolor: ((isBackground) ? background_color : 'none'), width: '100%', py: 2, overflow: 'hidden' }}>
-            <Container maxWidth="lg" className='px-[0!important]'>
+        <Box sx={{ width: '100%', py: 2, overflow: 'hidden' }}>
+            <Container
+                maxWidth="lg"
+                sx={{
+                    bgcolor: isBackground ? background_color : 'transparent',
+                    borderRadius: isBackground ? 3 : 0,
+                    px: isBackground ? { xs: 2, md: 4 } : '0 !important',
+                    py: isBackground ? { xs: 2.5, md: 3 } : 0,
+                    border: isBackground ? '1px solid rgba(15, 23, 42, 0.06)' : 'none',
+                    boxShadow: isBackground ? '0 8px 24px rgba(15, 23, 42, 0.06)' : 'none',
+                }}
+            >
                 {title && (
                     <Typography variant="h4" textAlign="center" fontWeight="bold" sx={{ mb: 6 }}>
                         {title}
@@ -137,7 +149,14 @@ export default function BrandsGrid({
                         // =========================================
                         // MODO: CARRUSEL INFINITO
                         // =========================================
-                        <Box sx={{ width: '100vw', position: 'relative', left: '50%', right: '50%', ml: '-50vw', mr: '-50vw' }}>
+                        <Box sx={{
+                            width: isBackground ? '100%' : '100vw',
+                            position: 'relative',
+                            left: isBackground ? 0 : '50%',
+                            right: isBackground ? 0 : '50%',
+                            ml: isBackground ? 0 : '-50vw',
+                            mr: isBackground ? 0 : '-50vw',
+                        }}>
                             <Marquee
                                 direction={marquee_direction}
                                 speed={marquee_speed}
