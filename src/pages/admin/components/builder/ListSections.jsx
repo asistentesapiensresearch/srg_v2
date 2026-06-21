@@ -2,7 +2,7 @@ import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Box, Button, Drawer, List, Typography } from "@mui/material";
 import { useSortableList } from "@src/hooks/useSortableList";
-import { CopyPlusIcon } from "lucide-react";
+import { CopyPlusIcon, Download, Save as SaveIcon } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 
 import { SECTION_SCHEMAS } from './sectionRegistry';
@@ -27,6 +27,24 @@ const deleteNodeFromTree = (nodes, idToDelete) => {
             ...node,
             children: node.children ? deleteNodeFromTree(node.children, idToDelete) : []
         }));
+};
+
+const renameNodeInTree = (nodes, idToRename, customName) => {
+    return nodes.map((node) => {
+        if (node.id === idToRename) {
+            const nextNode = { ...node };
+            if (customName) nextNode.customName = customName;
+            else delete nextNode.customName;
+            return nextNode;
+        }
+
+        return {
+            ...node,
+            children: node.children
+                ? renameNodeInTree(node.children, idToRename, customName)
+                : []
+        };
+    });
 };
 
 const findSectionByType = (nodes, type) => {
@@ -59,7 +77,7 @@ export default function ListSections({
     const [isSaving, setIsSaving] = useState(false);
     const [openExport, setOpenExport] = useState(false);
     const { handleSave: saveTemplate } = useTemplate();
-    const { dndContextProps, sortableContextProps, activeId, overId } = useSortableList(
+    const { dndContextProps, sortableContextProps, activeId } = useSortableList(
         sections,
         setSections,
         SECTION_SCHEMAS
@@ -143,12 +161,11 @@ export default function ListSections({
                     section={sect}
                     label={SECTION_SCHEMAS[sect.type]?.label || sect.type}
                     isSelected={selectedSectionId === sect.id}
-                    isActive={activeId === sect.id} // 🔥 Detectar si está siendo arrastrado
                     isDragging={activeId === sect.id} // 🔥 Nuevo prop
-                    isOver={overId === sect.id} // 🔥 Nuevo prop
                     onClick={() => handleSelectSection(sect.id)}
                     onDelete={handleDeleteSection}
                     onAddChild={handlePrepareAddChild}
+                    onRename={handleRenameSection}
                     depth={depth}
                 >
                     {sect.children?.length > 0 && (
@@ -163,6 +180,10 @@ export default function ListSections({
 
     const handleSelectSection = (id) => {
         setSelectedSectionId(id);
+    };
+
+    const handleRenameSection = (id, customName) => {
+        setSections((prev) => renameNodeInTree(prev, id, customName.trim()));
     };
 
     const handleDeleteSection = (e, id) => {
@@ -215,6 +236,8 @@ export default function ListSections({
               boxSizing: "border-box",
               position: "relative",
               overflow: "visible",
+              bgcolor: "#ffffff",
+              borderRight: "1px solid #e2e8f0",
               transition: isResizing ? "none" : "width 0.15s ease",
             },
           }}
@@ -236,14 +259,15 @@ export default function ListSections({
               justifyContent: "center",
 
               "&::after": {
-                content: '"⋮"',
-                fontSize: "18px",
-                color: "#9ca3af",
-                fontWeight: "bold",
+                content: '""',
+                width: 3,
+                height: 38,
+                borderRadius: 999,
+                backgroundColor: "#cbd5e1",
               },
 
               "&:hover::after": {
-                color: "#1976d2",
+                backgroundColor: "#c10007",
               },
             }}
           />
@@ -260,19 +284,21 @@ export default function ListSections({
             <Box
               sx={{
                 p: 2,
-                borderBottom: "1px solid #e0e0e0",
+                bgcolor: "#ffffff",
+                borderBottom: "1px solid #e2e8f0",
                 display: "flex",
                 flexDirection: "column",
-                gap: 1,
+                gap: 1.25,
               }}
             >
-              <Typography
-                variant="subtitle2"
-                fontWeight="bold"
-                color="text.secondary"
-              >
-                CAPAS
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#0f172a" }}>
+                  Secciones
+                </Typography>
+                <Typography variant="caption" sx={{ color: "#94a3b8" }}>
+                  {sections.length}
+                </Typography>
+              </Box>
 
               <Button
                 onClick={handlePrepareAddRoot}
@@ -280,8 +306,14 @@ export default function ListSections({
                 size="small"
                 fullWidth
                 startIcon={<CopyPlusIcon size={14} />}
+                sx={{
+                  borderRadius: 1.5,
+                  py: 0.6,
+                  textTransform: "none",
+                  fontWeight: 600,
+                }}
               >
-                Añadir a raíz
+                Añadir sección
               </Button>
             </Box>
 
@@ -331,6 +363,7 @@ export default function ListSections({
                           const activeNode = findNodeById(sections, activeId);
 
                           return (
+                            activeNode?.customName ||
                             SECTION_SCHEMAS[activeNode?.type]?.label ||
                             "Elemento"
                           );
@@ -358,31 +391,60 @@ export default function ListSections({
               )}
 
               {sections.length > 0 && (
-                <Button
-                  onClick={handleSave}
-                  variant="contained"
-                  size="small"
-                  fullWidth
-                  disabled={isSaving}
-                  color="primary"
-                  sx={{ mt: 2 }}
+                <Box
+                  sx={{
+                    position: "sticky",
+                    bottom: 0,
+                    zIndex: 5,
+                    display: "grid",
+                    gridTemplateColumns: "1.15fr 1fr",
+                    gap: 1,
+                    mt: 2,
+                    pt: 1.5,
+                    pb: 0.5,
+                    bgcolor: "#ffffff",
+                    borderTop: "1px solid #e2e8f0",
+                  }}
                 >
-                  {isSaving ? "Guardando..." : "💾 Guardar"}
-                </Button>
-              )}
+                  <Button
+                    onClick={handleSave}
+                    variant="contained"
+                    size="small"
+                    disabled={isSaving}
+                    startIcon={<SaveIcon size={15} />}
+                    disableElevation
+                    sx={{
+                      minHeight: 38,
+                      borderRadius: 1.5,
+                      textTransform: "none",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {isSaving ? "Guardando..." : "Guardar"}
+                  </Button>
 
-              {sections.length > 0 && (
-                <Button
-                  onClick={handleExport}
-                  variant="contained"
-                  size="small"
-                  fullWidth
-                  disabled={isSaving}
-                  color="primary"
-                  sx={{ mt: 2 }}
-                >
-                  Exportar
-                </Button>
+                  <Button
+                    onClick={handleExport}
+                    variant="outlined"
+                    size="small"
+                    disabled={isSaving}
+                    startIcon={<Download size={15} />}
+                    sx={{
+                      minHeight: 38,
+                      borderRadius: 1.5,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      color: "#475569",
+                      borderColor: "#cbd5e1",
+                      "&:hover": {
+                        borderColor: "#94a3b8",
+                        bgcolor: "#f8fafc",
+                      },
+                    }}
+                  >
+                    Exportar
+                  </Button>
+                </Box>
               )}
             </Box>
           </Box>
