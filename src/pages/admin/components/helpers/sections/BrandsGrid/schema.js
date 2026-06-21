@@ -68,6 +68,12 @@ export default {
             default: false,
         },
         { name: "background_color", label: "Color de Fondo", type: "color", default: "#ffffff", condition: "isBackground === true"},
+        {
+            name: "contained_card",
+            label: "Mostrar dentro de una tarjeta",
+            type: "boolean",
+            default: false,
+        },
         { name: "hover_settings", label: "✨ EFECTOS HOVER", type: "separator" },
         {
             name: "grayscale",

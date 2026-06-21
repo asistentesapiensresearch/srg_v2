@@ -576,7 +576,8 @@ export default {
                                         ],
                                         "layout_mode": "marquee",
                                         "isBackground": true,
-                                        "logo_height": 30,
+                                        "contained_card": true,
+                                        "logo_height": 50,
                                         "marquee_speed": 40
                                     }
                                 }
