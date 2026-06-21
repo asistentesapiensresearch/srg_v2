@@ -141,9 +141,9 @@ export default function TestimonialsCarousel({
                     </Avatar>
 
                     <div>
-                        <h5 className="font-semibold mb-0">
+                        <p className="font-semibold mb-0">
                             {t.name}
-                        </h5>
+                        </p>
 
                         {t.role && (
                             <p className="text-xs text-gray-500">
