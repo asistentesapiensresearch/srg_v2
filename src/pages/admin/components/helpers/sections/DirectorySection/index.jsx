@@ -88,7 +88,7 @@ const parseQuickFilters = (jsonString) => {
 
 const getInitialConfig = (jsonString) => {
     const list = parseQuickFilters(jsonString);
-    const defaultItem = list.find(p => p.label === "Todos") || list[0];
+    const defaultItem = list.find(p => p.default === true) || list.find(p => p.label === "Todos") || list[0];
     const rawFilters = defaultItem.filters || {};
     const sanitized = {};
     Object.keys(rawFilters).forEach(key => {
@@ -250,7 +250,8 @@ const DirectorySectionContent = ({
                         // Fetch BD
                         const { data: institutionsDB } = await client.models.Institution.list({
                             filter: Object.keys(filter).length > 0 ? filter : undefined,
-                            limit: 4000
+                            limit: 4000,
+                            authMode: 'apiKey',
                         });
 
                         // Crear mapa de búsqueda
@@ -358,7 +359,10 @@ const DirectorySectionContent = ({
 
                         finalGroupedData.push({
                             ...mainRecord,
-                            isLinked: isLinkedValue(mainRecord.isLinked) || isLinkedValue(mainRecord.Vinculada),
+                            isLinked:
+                                isLinkedValue(mainRecord.isLinked) ||
+                                isLinkedValue(mainRecord.Vinculada) ||
+                                isLinkedValue(mainRecord.Vin),
                             history: history,
                             _hasHistory: history.length > 0
                         });

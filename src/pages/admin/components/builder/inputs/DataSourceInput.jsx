@@ -53,23 +53,19 @@ export default function DataSourceInput({ value, onChange }) {
     // --- HELPER: BUSCAR HOJAS ---
     const fetchSheetNames = useCallback(async (fileId, authToken) => {
         if (!fileId || !authToken) return [];
-        try {
-            const response = await fetch(
-                `https://sheets.googleapis.com/v4/spreadsheets/${fileId}`,
-                {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${authToken}` }
-                }
-            );
-            
-            if (response.status === 401 || response.status === 403) throw new Error('401');
-            if (!response.ok) throw new Error(`Error ${response.status}`);
-            
-            const data = await response.json();
-            return (data.sheets || []).map(sheet => sheet.properties);
-        } catch (error) {
-            throw error;
-        }
+        const response = await fetch(
+            `https://sheets.googleapis.com/v4/spreadsheets/${fileId}`,
+            {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            }
+        );
+
+        if (response.status === 401 || response.status === 403) throw new Error('401');
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+
+        const data = await response.json();
+        return (data.sheets || []).map(sheet => sheet.properties);
     }, []);
 
     // --- HELPER: CARGAR DATOS ---
@@ -152,19 +148,20 @@ export default function DataSourceInput({ value, onChange }) {
         try {
             const file = await openPicker();
             if (file) {
-                const authToken = file.token || globalToken; 
+                const authToken = file.token || globalToken;
+                const isSameFile = file.id === localState.sheetId;
                 setAvailableSheets([]); 
                 setHeaders([]);
 
                 updateState({
                   sheetId: file.id,
                   sheetName: file.name,
-                  selectedSheet: "",
+                  selectedSheet: isSameFile ? localState.selectedSheet : "",
                   token: authToken,
-                  filters: [],
-                  columns: [],
-                  historyColumns: [],
-                  columnAliases: {},
+                  filters: isSameFile ? localState.filters : [],
+                  columns: isSameFile ? localState.columns : [],
+                  historyColumns: isSameFile ? localState.historyColumns : [],
+                  columnAliases: isSameFile ? localState.columnAliases : {},
                 });
                 setAuthError(false);
             }
@@ -178,14 +175,16 @@ export default function DataSourceInput({ value, onChange }) {
         const newSheetGid = event.target.value; // Obtenemos el GID (ID numérico de la hoja)
         
         if (!localState.sheetId) return;
+
+        const isSameSheet = String(newSheetGid) === String(localState.selectedSheet);
         
         // Actualizamos estado visual inmediatamente
         updateState({
           selectedSheet: newSheetGid,
-          filters: [],
-          columns: [],
-          historyColumns: [],
-          columnAliases: {},
+          filters: isSameSheet ? localState.filters : [],
+          columns: isSameSheet ? localState.columns : [],
+          historyColumns: isSameSheet ? localState.historyColumns : [],
+          columnAliases: isSameSheet ? localState.columnAliases : {},
         });
 
         // Cargamos los datos (headers)
@@ -461,8 +460,7 @@ export default function DataSourceInput({ value, onChange }) {
               )}
             />
 
-            {((localState.columns && localState.columns.length > 0) ||
-              (localState.filters && localState.filters.length > 0)) && (
+            {localState.columns && localState.columns.length > 0 && (
               <Box
                 sx={{
                   bgcolor: "#f5f5f5",
@@ -480,7 +478,7 @@ export default function DataSourceInput({ value, onChange }) {
                 >
                   ALIAS DE COLUMNAS
                 </Typography>
-                {[...new Set([...(localState.columns || []), ...(localState.filters || [])])].map((col) => (
+                {localState.columns.map((col) => (
                   <Box
                     key={col}
                     sx={{ display: "flex", alignItems: "center", gap: 1 }}
