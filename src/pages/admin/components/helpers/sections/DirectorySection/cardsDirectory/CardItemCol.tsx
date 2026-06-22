@@ -722,7 +722,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                             color: "#6b7280",
                             letterSpacing: "0.05em",
                             lineHeight: 1,
-                            textTransform: "uppercase",
+                            marginBottom: 5,
                         }}
                     >
                         Respaldos
@@ -807,9 +807,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                         className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-2.5 py-1.5 text-gray-400 shadow-sm transition-all duration-200 hover:border-red-300 hover:bg-red-600 hover:text-white hover:shadow-md active:scale-95"
                     >
                         <DynamicIcon name="History" color="#9ca3af" size={13} />
-                        <span style={{ fontSize: 10, fontWeight: 600, lineHeight: 1, letterSpacing: "0.04em" }}>
-                            Historial
-                        </span>
+                        
                     </button>
                 )}
             </div>

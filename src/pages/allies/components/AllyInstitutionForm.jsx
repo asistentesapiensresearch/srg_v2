@@ -158,6 +158,7 @@ export const AllyInstitutionForm = ({
 
   const [rectorName, setRectorName] = useState("");
   const [rectorLinkedin, setRectorLinkedin] = useState("");
+  const [rectorTestimonial, setRectorTestimonial] = useState("");
 
   const [socialFacebook, setSocialFacebook] = useState("");
   const [socialInstagram, setSocialInstagram] = useState("");
@@ -177,6 +178,7 @@ export const AllyInstitutionForm = ({
       setDescription(institution.description || "");
       setWebsite(institution.website || "");
       setRectorName(institution.rectorName || "");
+      setRectorTestimonial(institution.rectorTestimonial || "");
       const langs = Array.isArray(institution.languages)
         ? institution.languages.join(", ")
         : "";
@@ -300,6 +302,7 @@ export const AllyInstitutionForm = ({
             logo: finalLogoKey,
             portadaPhoto: finalPortadaKey,
             rectorName: rectorName.trim(),
+            rectorTestimonial: rectorTestimonial.trim(),
             rectorPhoto: finalRectorKey,
             rectorSocial: rectorSocialPayload,
             socialMedia: socialMediaPayload,
@@ -655,6 +658,16 @@ export const AllyInstitutionForm = ({
                     </InputAdornment>
                   ),
                 }}
+              />
+              <TextField
+                label="Testimonio"
+                fullWidth
+                multiline
+                rows={3}
+                value={rectorTestimonial}
+                onChange={(e) => setRectorTestimonial(e.target.value)}
+                size="small"
+                sx={fieldSx}
               />
             </Box>
           </Paper>
