@@ -21,7 +21,7 @@ export default function BrandsGrid({
     logo_height = 60,
     isBackground = false,
     background_color = "#ffffff",
-    grayscale = true,
+    contained_card = false,
     hover_scale = true
 }) {
     const brands = brands_list || [];
@@ -65,12 +65,20 @@ export default function BrandsGrid({
             onMouseEnter={() => setHoveredBrand(brand.id || index)}
             onMouseLeave={() => setHoveredBrand(null)}
             sx={{
-              mx: isMarquee ? 4 : 0,
+              width: contained_card ? { xs: 140, sm: 180 } : "auto",
+              height: contained_card ? { xs: 76, sm: 92 } : "auto",
+              p: contained_card ? { xs: 1.5, sm: 2 } : 0,
+              mx: contained_card ? 0 : (isMarquee ? 4 : 0),
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
+              overflow: contained_card ? "hidden" : "visible",
+              borderRadius: contained_card ? 2 : 0,
+              border: contained_card ? "1px solid rgba(15, 23, 42, 0.08)" : "none",
+              backgroundColor: contained_card ? "#ffffff" : "transparent",
+              boxShadow: contained_card ? "0 4px 12px rgba(15, 23, 42, 0.05)" : "none",
               transition: "all 0.3s ease-in-out",
               transform:
                 hoveredBrand === (brand.id || index) && hover_scale
@@ -82,10 +90,12 @@ export default function BrandsGrid({
               alt={brand.name}
               path={brand.key}
               style={{
-                height: `${logo_height}px`,
+                height: contained_card ? "100%" : `${logo_height}px`,
                 width: "100%",
                 maxWidth: "180px",
+                maxHeight: contained_card ? `${logo_height}px` : "none",
                 objectFit: "contain",
+                transform: contained_card ? "scale(0.78)" : "none",
                 opacity: hoveredBrand === (brand.id || index) ? 1 : 0.35,
                 // Si grayscale es true, lo pone gris y un poco transparente. Si no, lo deja normal.
                 filter:
@@ -124,8 +134,25 @@ export default function BrandsGrid({
     );
 
   return (
-        <Box sx={{ bgcolor: ((isBackground) ? background_color : 'none'), width: '100%', py: 2, overflow: 'hidden' }}>
-            <Container maxWidth="lg" className='px-[0!important]'>
+        <Box sx={{
+            bgcolor: !contained_card && isBackground ? background_color : 'none',
+            width: '100%',
+            py: 2,
+            overflow: 'hidden',
+        }}>
+            <Container
+                maxWidth={contained_card ? "xl" : "lg"}
+                className={contained_card ? undefined : 'px-[0!important]'}
+                sx={contained_card ? {
+                    bgcolor: isBackground ? background_color : 'transparent',
+                    borderRadius: isBackground ? 3 : 0,
+                    px: isBackground ? { xs: 2, md: 6 } : '0 !important',
+                    py: isBackground ? { xs: 3, md: 5 } : 0,
+                    minHeight: isBackground ? { xs: 140, md: 190 } : 'auto',
+                    border: isBackground ? '1px solid rgba(15, 23, 42, 0.06)' : 'none',
+                    boxShadow: isBackground ? '0 8px 24px rgba(15, 23, 42, 0.06)' : 'none',
+                } : undefined}
+            >
                 {title && (
                     <Typography variant="h4" textAlign="center" fontWeight="bold" sx={{ mb: 6 }}>
                         {title}
@@ -137,7 +164,14 @@ export default function BrandsGrid({
                         // =========================================
                         // MODO: CARRUSEL INFINITO
                         // =========================================
-                        <Box sx={{ width: '100vw', position: 'relative', left: '50%', right: '50%', ml: '-50vw', mr: '-50vw' }}>
+                        <Box sx={{
+                            width: contained_card ? '100%' : '100vw',
+                            position: 'relative',
+                            left: contained_card ? 0 : '50%',
+                            right: contained_card ? 0 : '50%',
+                            ml: contained_card ? 0 : '-50vw',
+                            mr: contained_card ? 0 : '-50vw',
+                        }}>
                             <Marquee
                                 direction={marquee_direction}
                                 speed={marquee_speed}

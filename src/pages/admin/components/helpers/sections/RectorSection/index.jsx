@@ -85,12 +85,12 @@ const RectorSection = ({
             </Box>
             <Box className="flex justify-center items-center w-full">
                 <Box sx={{ width: "100%" }}>
-                    <h2 className="font-bold">{rectorData.rectorName}</h2>
+                    <h3 className="font-bold">{rectorData.rectorName}</h3>
 
                     <h4
                         className="font-bold color-primary"
                     >
-                        RECTOR {rectorData.colegio.toUpperCase()}
+                        Rector {rectorData.colegio}
                     </h4>
 
                     <div

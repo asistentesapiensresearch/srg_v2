@@ -2,6 +2,10 @@ import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
 import { fieldsSection } from "./fields";
 
+const capitalizeFirstLetter = (value) => {
+    const text = String(value || '').trim();
+    return text ? text.charAt(0).toLocaleUpperCase('es-CO') + text.slice(1) : text;
+};
 
 const container = (key, label, tag) =>  (
     <Box
@@ -86,10 +90,10 @@ const InstitutionHighlights = ({
                         if(!labelParts) return;
                         const label = labelParts
                             .filter(Boolean)
-                            .map(v => String(v).toUpperCase())
+                            .map(v => String(v))
                             .join(" | ");
 
-                        const tag = isIcfes ? "CATEGORIA | INDICE" : key;
+                        const tag = isIcfes ? "Categoría | Índice" : capitalizeFirstLetter(key);
 
                         return container(key, label, tag);
                     })

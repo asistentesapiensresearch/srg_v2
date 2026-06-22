@@ -16,6 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
+import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import Rating from "@mui/material/Rating";
 import { visuallyHidden } from "@mui/utils";
 
@@ -65,6 +66,12 @@ const isLinkedValue = (value) => {
 const isCategoryColumn = (columnName) => cleanString(columnName).includes("categoria");
 
 const isQualificationColumn = (columnName) => cleanString(columnName).includes("calificacion");
+
+const isClassificationColumn = (columnName, aliases = {}) =>
+  isCategoryColumn(columnName) ||
+  isCategoryColumn(aliases[columnName]) ||
+  isQualificationColumn(columnName) ||
+  isQualificationColumn(aliases[columnName]);
 
 const isAccreditationColumn = (columnName) =>
   cleanString(columnName).includes("acreditacion");
@@ -145,6 +152,12 @@ const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
           backgroundColor: "rgb(239, 246, 255)",
           color: "rgb(29, 78, 216)",
         }
+      : tone === "green"
+        ? {
+            border: "1px solid rgb(187, 247, 208)",
+            backgroundColor: "rgb(240, 253, 244)",
+            color: "rgb(21, 128, 61)",
+          }
       : tone === "yellow"
         ? {
             border: "1px solid rgb(253, 230, 138)",
@@ -211,7 +224,7 @@ const renderCellValue = (row, colKey, aliases = {}) => {
           width: "100%",
         }}
       >
-        {certificationValue ? renderBadges(certificationValue, "red", true, 3) : null}
+        {certificationValue ? renderBadges(certificationValue, "green", true, 3) : null}
         {accreditationValue ? renderBadges(accreditationValue, "blue", true, 3) : null}
       </Box>
     );
@@ -254,7 +267,7 @@ const renderCellValue = (row, colKey, aliases = {}) => {
   }
 
   if (isCertificationColumn(colKey)) {
-    return renderBadges(row[colKey]);
+    return renderBadges(row[colKey], "green");
   }
 
   if (typeof row[colKey] === "object") {
@@ -329,7 +342,9 @@ function Row(props) {
               minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
             }}
           >
-            {renderCellValue(row, colKey, aliases)}
+            {!isLinked && isClassificationColumn(colKey, aliases)
+              ? "-"
+              : renderCellValue(row, colKey, aliases)}
           </TableCell>
         ))}
       </TableRow>
@@ -350,11 +365,26 @@ function Row(props) {
             >
               <Typography
                 variant="subtitle2"
-                gutterBottom
                 component="div"
-                color="primary"
-                fontWeight="bold"
+                sx={{
+                  width: "fit-content",
+                  mx: "auto",
+                  mb: 1.5,
+                  px: 2,
+                  py: 0.75,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 0.75,
+                  borderRadius: "999px",
+                  border: "1px solid rgb(254, 202, 202)",
+                  backgroundColor: "rgb(254, 242, 242)",
+                  color: "rgb(185, 28, 28)",
+                  fontWeight: 700,
+                  letterSpacing: "0.04em",
+                }}
               >
+                <HistoryRoundedIcon sx={{ fontSize: "1.1rem" }} />
                 Historial
               </Typography>
 
@@ -369,6 +399,7 @@ function Row(props) {
                           fontWeight: "bold",
                           fontSize: "0.75rem",
                           color: "#666",
+                          textAlign: "center",
                           width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                           minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                         }}
@@ -396,8 +427,15 @@ function Row(props) {
                             scope="row"
                             sx={{
                               fontSize: "0.8rem",
+                              textAlign: "center",
+                              verticalAlign: "middle",
                               width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                               minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
+                              "& > .MuiBox-root": {
+                                marginLeft: "auto",
+                                marginRight: "auto",
+                                alignItems: "center",
+                              },
                             }}
                           >
                             {renderCellValue(historyRow, colKey, aliases)}
@@ -504,6 +542,7 @@ export default function TableList({ data = [], columns = [], historyColumns = []
                   sortDirection={orderBy === colKey ? order : false}
                   sx={{
                     fontWeight: "bold",
+                    textAlign: "center",
                     width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                     minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                   }}
@@ -514,6 +553,8 @@ export default function TableList({ data = [], columns = [], historyColumns = []
                     onClick={createSortHandler(colKey)}
                     sx={{
                       gap: 0.5,
+                      justifyContent: "center",
+                      width: "100%",
                       "& .MuiTableSortLabel-icon": {
                         opacity: 1,
                         color: orderBy === colKey ? "#b91c1c !important" : "#9ca3af !important",

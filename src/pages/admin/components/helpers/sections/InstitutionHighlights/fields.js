@@ -6,13 +6,13 @@ export const fieldsSection = {
             "género": "Género",
         },
         "COL": {
-            "sector": "Sec",
-            "calendario": "Cal",
-            "género": "Gén",
-            "estudiantes": "Estudiantes",
-            "profesores": "Profesores",
-            "icfes cat": "Nivel ICFES",
-            "icfes ind": "Índice ICFES",
+            "Sector": "Sec",
+            "Calendario": "Cal",
+            "Género": "Gén",
+            "Estudiantes": "Estudiantes",
+            "Profesores": "Profesores",
+            "Nivel ICFES": "Nivel ICFES",
+            "Índice": "Índice ICFES",
         }
     }
 }

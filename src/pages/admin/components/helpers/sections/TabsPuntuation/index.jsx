@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Atom, Globe, BookOpen, Calculator, MessageSquare } from 'lucide-react';
+import { Atom, Globe, BookOpen, Calculator, MessageSquare, Map, MapPin } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { fieldsSection } from './fields';
 
@@ -55,17 +55,15 @@ const TabsPuntuation = ({
             className="group min-w-[140px] rounded-[22px] border border-gray-200 bg-white p-5 shadow-sm"
             style={{
               transition: "all 300ms ease-out",
-              borderTop: "3px solid var(--color-primary)"
+              borderTop: "3px solid var(--color-primary)",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = `translateY(-${HoverCardsPuntuation * 2}px)`;
-              e.currentTarget.style.boxShadow =
-                "0 12px 24px rgba(0,0,0,0.08)";
+              e.currentTarget.style.boxShadow = "0 12px 24px rgba(0,0,0,0.08)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow =
-                "0 1px 3px rgba(0,0,0,0.1)";
+              e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
             }}
           >
             <div className="flex flex-col items-center justify-center">
@@ -81,35 +79,33 @@ const TabsPuntuation = ({
               </div>
 
               <h3
-                className="text-center text-sm font-bold uppercase tracking-wide"
+                className="text-center font-bold tracking-wide text-base"
                 style={{ color: textcolor }}
               >
                 {label}
               </h3>
 
-              <div className="mt-5 grid w-full grid-cols-2 gap-3">
+              <div className="mt-4 grid w-full grid-cols-2 gap-2.5">
                 <div
-                  className="flex h-[54px] items-center justify-center rounded-2xl text-2xl font-extrabold"
+                  className="flex h-11 items-center justify-center rounded-xl border text-lg font-extrabold"
                   style={{
                     backgroundColor: "#EAF3FF",
+                    borderColor: "rgba(27, 97, 165, 0.16)",
                     color: "#1B61A5",
                   }}
                 >
-                  <span>
-                    {puntuations.regional ?? "-"}
-                  </span>
+                  <span>{puntuations.country ?? "-"}</span>
                 </div>
 
                 <div
-                  className="flex h-[54px] items-center justify-center rounded-2xl text-2xl font-extrabold"
+                  className="flex h-11 items-center justify-center rounded-xl border text-lg font-extrabold"
                   style={{
                     backgroundColor: "#FDEEEF",
+                    borderColor: "rgba(193, 0, 7, 0.14)",
                     color: "var(--color-primary)",
                   }}
                 >
-                  <span>
-                    {puntuations.country ?? "-"}
-                  </span>
+                  <span>{puntuations.regional ?? "-"}</span>
                 </div>
               </div>
             </div>
@@ -120,14 +116,35 @@ const TabsPuntuation = ({
   };
 
   return (
-    <div className=''>
-      <div className=''>
-        <h3 className='font-black underline'>
-          {titleTabsPuntuation}
-        </h3>
-        <div className='mt-8 flex flex-row gap-5' style={{color: "black"}}>
-          <p> <span style={{display: "inline-block", width: "10px", height: "10px", backgroundColor: "#1B61A5", borderRadius: "50%"}}></span> Nacional</p>
-          <p> <span style={{display: "inline-block", width: "10px", height: "10px", backgroundColor: "var(--color-primary)", borderRadius: "50%"}}></span> {city}</p>
+    <div className="">
+      <div className="">
+        <h4 className="font-black">{titleTabsPuntuation}</h4>
+        <div
+          className="mt-8 flex flex-row flex-wrap gap-5 pb-4"
+          style={{ color: "black" }}
+        >
+          <p
+            className="flex items-center gap-2 h-11 justify-center rounded-xl border text-sm font-bold p-3"
+            style={{
+              backgroundColor: "#EAF3FF",
+              borderColor: "rgba(27, 97, 165, 0.16)",
+              color: "#1B61A5",
+            }}
+          >
+            <Map size={16} color="#1B61A5" strokeWidth={2.4} />
+            Colombia
+          </p>
+          <p
+            className="flex items-center gap-2  h-11 justify-center rounded-xl border text-sm font-bold p-3"
+            style={{
+              backgroundColor: "#FDEEEF",
+              borderColor: "rgba(193, 0, 7, 0.14)",
+              color: "var(--color-primary)",
+            }}
+          >
+            <MapPin size={16} color="var(--color-primary)" strokeWidth={2.4} />
+            {city}
+          </p>
         </div>
       </div>
       {renderContent()}

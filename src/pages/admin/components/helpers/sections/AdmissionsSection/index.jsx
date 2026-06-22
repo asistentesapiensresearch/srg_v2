@@ -46,7 +46,7 @@ const AdmissionsSection = ({
           md: "0.5fr 1fr",
         },
         gap: 2,
-        alignItems: "start",
+        alignItems: "stretch",
       }}
     >
       <Box
@@ -59,6 +59,10 @@ const AdmissionsSection = ({
           maxWidth: { xs: "100%", sm: 420 },
           width: "100%",
           mx: "auto",
+          mt: { xs: 0, md: "3rem" },
+          height: { xs: "auto", md: "calc(100% - 3rem)" },
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <Box
@@ -181,6 +185,7 @@ const AdmissionsSection = ({
             px: 3,
             pt: 10,
             pb: 3,
+            flex: 1,
           }}
         >
           <Box
@@ -197,7 +202,6 @@ const AdmissionsSection = ({
               fontSize: 12,
               fontWeight: "bold",
               letterSpacing: "0.08em",
-              textTransform: "uppercase",
             }}
           >
             ● Director de admisiones
@@ -219,9 +223,9 @@ const AdmissionsSection = ({
           <Box
             sx={{
               borderTop: "1px solid #e5e7eb",
-              pt: 2.5,
+              pt: 4.5,
               display: "grid",
-              gap: 1.8,
+              gap: 2.8,
             }}
           >
             <InfoRow
@@ -248,7 +252,7 @@ const AdmissionsSection = ({
             sx={{
               borderTop: "1px solid #e5e7eb",
               mt: 3,
-              pt: 2.5,
+              pt: 4.5,
               display: "grid",
               gap: 1.5,
             }}
@@ -292,10 +296,18 @@ const AdmissionsSection = ({
       <Box
         sx={{
           position: "relative",
-          py: { xs: 2, md: 4 },
-          px: 0,
+          mt: { xs: 2, md: "3rem" },
+          p: { xs: 2, md: 4 },
           width: "100%",
+          height: { xs: "auto", md: "calc(100% - 3rem)" },
           overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          borderRadius: "28px",
+          backgroundColor: "#fff",
+          border: "1px solid rgba(229, 231, 235, 0.9)",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+          boxSizing: "border-box",
         }}
       >
         <Box
@@ -315,11 +327,10 @@ const AdmissionsSection = ({
 
           <Typography
             sx={{
-              fontSize: "0.75rem",
+              fontSize: "1rem",
               letterSpacing: "0.25em",
               fontWeight: 800,
               color: "#d90000",
-              textTransform: "uppercase",
               mb: 1.5,
             }}
           >{`Proceso de admisiones · ${new Date().getFullYear()}`}
@@ -327,14 +338,14 @@ const AdmissionsSection = ({
 
           {/* Título principal */}
           <Typography
+            component="h3"
             sx={{
-              fontWeight: 800,
               color: "#111827",
-              fontSize: {
-                xs: "1.9rem",
-                md: "2.6rem",
-              },
-              lineHeight: 1.15,
+              fontFamily: '"Google Sans", sans-serif',
+              fontSize: "var(--text-2xl)",
+              fontWeight: 700,
+              lineHeight: 1.18,
+              letterSpacing: "-0.02em",
               mb: 2,
             }}
           >
@@ -371,7 +382,7 @@ const AdmissionsSection = ({
                   sx={{
                     color: "#dc2626",
                     fontWeight: 800,
-                    fontSize: "1.4rem",
+                    fontSize: "1.2rem",
                     mr: 2,
                     pr: 2,
                     borderRight: "1px solid #fca5a5",
@@ -393,7 +404,14 @@ const AdmissionsSection = ({
           children.filter((child) => child.type === "FormSection")
             .map((child) => (
               <Box
-                sx={{ position: "relative", zIndex: 1 }}
+                sx={{
+                  position: "relative",
+                  zIndex: 1,
+                  mt: 3,
+                  borderRadius: "24px",
+                  boxShadow: "0 14px 34px rgba(17, 24, 39, 0.1)",
+                  overflow: "hidden",
+                }}
                 key={child.id}
                 className="w-full flex flex-col"
               >
@@ -443,7 +461,7 @@ const InfoRow = ({ icon, label, value }) => {
         <Typography
           sx={{
             fontSize: 12,
-            textTransform: "uppercase",
+            textTransform: "none",
             letterSpacing: "0.06em",
             color: "#9ca3af",
             fontWeight: 700,

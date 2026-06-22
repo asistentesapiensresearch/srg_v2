@@ -1,5 +1,5 @@
 import { SECTION_SCHEMAS } from './sectionRegistry';
-import { Box, Typography, IconButton, Collapse } from '@mui/material';
+import { Box, Typography, IconButton, Collapse, TextField } from '@mui/material';
 import {
     Type as TypeIcon,
     Image as ImageIcon,
@@ -8,7 +8,8 @@ import {
     ChevronRight,
     ChevronDown,
     Plus as PlusIcon,
-    GripVertical
+    GripVertical,
+    Pencil
 } from 'lucide-react';
 import { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
@@ -26,20 +27,21 @@ const getIconForType = (type) => {
 
 export const LayerItem = ({
     section,
-    isActive,
     isSelected,
     onClick,
     onDelete,
     onAddChild,
+    onRename,
     label,
     attributes,
     listeners,
     depth = 0,
     children,
-    isDragging = false,
-    isOver = false
+    isDragging = false
 }) => {
-    const [isExpanded, setIsExpanded] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [draftName, setDraftName] = useState(section.customName || label);
     const hasChildren = section.children && section.children.length > 0;
     const schema = SECTION_SCHEMAS[section.type];
     const isContainer = schema?.isContainer === true;
@@ -59,6 +61,17 @@ export const LayerItem = ({
         setIsExpanded(!isExpanded);
     };
 
+    const startEditing = (e) => {
+        e.stopPropagation();
+        setDraftName(section.customName || label);
+        setIsEditing(true);
+    };
+
+    const finishEditing = () => {
+        onRename(section.id, draftName);
+        setIsEditing(false);
+    };
+
     return (
       <>
         <Box
@@ -70,33 +83,33 @@ export const LayerItem = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "6px 8px",
-            pl: `${depth * 16 + 8}px`,
+            padding: "7px 8px",
+            pl: `${depth * 14 + 8}px`,
+            my: 0.15,
             cursor: isDragging ? "grabbing" : "grab",
             userSelect: "none",
             position: "relative",
             bgcolor: isSelected
-              ? "rgba(25, 118, 210, 0.08)"
+              ? "#fef2f2"
               : isOverDroppable && isContainer
                 ? "rgba(76, 175, 80, 0.1)" // Verde cuando está sobre un contenedor
                 : isOverDroppable && !isContainer
                   ? "rgba(33, 150, 243, 0.05)" // Azul claro sobre elementos normales
                   : "transparent",
             border: isSelected
-              ? "1px solid #1976d2"
+              ? "1px solid transparent"
               : isOverDroppable && isContainer
                 ? "2px dashed #4caf50" // Borde punteado verde para contenedores
                 : isOverDroppable && !isContainer
                   ? "2px dashed #2196f3" // Borde punteado azul para elementos
                   : "1px solid transparent",
-            borderRadius: "4px",
+            borderLeft: isSelected ? "3px solid #c10007" : "3px solid transparent",
+            borderRadius: "6px",
             transition: "all 0.2s ease",
             "&:hover": {
               bgcolor: isSelected
-                ? "rgba(25, 118, 210, 0.12)"
-                : isContainer
-                  ? "rgba(76, 175, 80, 0.05)"
-                  : "#f5f5f5",
+                ? "#fef2f2"
+                : "#f8fafc",
               "& .actions-group": { opacity: 1 },
             },
             opacity: isDragging ? 0.4 : 1,
@@ -149,11 +162,9 @@ export const LayerItem = ({
             {/* Icono del tipo */}
             <Box
               sx={{
-                color: isSelected ? "#1976d2" : "#5f6368",
+                color: isSelected ? "#c10007" : "#64748b",
                 display: "flex",
-                bgcolor: isContainer
-                  ? "rgba(33, 150, 243, 0.1)"
-                  : "transparent",
+                bgcolor: "transparent",
                 borderRadius: "4px",
                 padding: "2px",
               }}
@@ -162,19 +173,56 @@ export const LayerItem = ({
             </Box>
 
             {/* Nombre */}
-            <Typography
-              variant="body2"
-              sx={{
-                fontSize: "13px",
-                fontWeight: isSelected ? 500 : 400,
-                color: "#333",
-                whiteSpace: "normal",
-                overflowWrap: "anywhere",
-                flex: 1,
-              }}
-            >
-              {label}
-            </Typography>
+            {isEditing ? (
+              <TextField
+                autoFocus
+                size="small"
+                value={draftName}
+                onChange={(e) => setDraftName(e.target.value)}
+                onBlur={finishEditing}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                  if (e.key === "Enter") e.currentTarget.blur();
+                  if (e.key === "Escape") setIsEditing(false);
+                }}
+                inputProps={{ maxLength: 80, "aria-label": "Nombre de la sección" }}
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                  "& .MuiInputBase-input": {
+                    py: 0.4,
+                    px: 0.75,
+                    fontSize: "13px",
+                  },
+                }}
+              />
+            ) : (
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: "13px",
+                    fontWeight: isSelected ? 600 : 500,
+                    color: "#1e293b",
+                    whiteSpace: "normal",
+                    overflowWrap: "anywhere",
+                    lineHeight: 1.25,
+                  }}
+                >
+                  {section.customName || label}
+                </Typography>
+                {section.customName && (
+                  <Typography
+                    variant="caption"
+                    sx={{ display: "block", mt: 0.2, fontSize: "10px", color: "#94a3b8", lineHeight: 1.2 }}
+                  >
+                    {label}
+                  </Typography>
+                )}
+              </Box>
+            )}
 
             {/* Badge de contenedor */}
             {isContainer && (
@@ -182,8 +230,8 @@ export const LayerItem = ({
                 variant="caption"
                 sx={{
                   fontSize: "9px",
-                  bgcolor: "rgba(33, 150, 243, 0.15)",
-                  color: "#1976d2",
+                  bgcolor: "transparent",
+                  color: "#94a3b8",
                   px: 0.5,
                   py: 0.25,
                   borderRadius: "3px",
@@ -202,10 +250,24 @@ export const LayerItem = ({
             sx={{
               display: "flex",
               gap: 0.5,
-              opacity: 0,
+              opacity: isSelected || isEditing ? 1 : 0,
               transition: "opacity 0.2s",
             }}
           >
+            <IconButton
+              size="small"
+              onClick={startEditing}
+              onPointerDown={(e) => e.stopPropagation()}
+              sx={{
+                padding: "2px",
+                color: "#64748b",
+                "&:hover": { color: "#1976d2", bgcolor: "rgba(25, 118, 210, 0.08)" },
+              }}
+              title="Cambiar nombre"
+            >
+              <Pencil size={13} />
+            </IconButton>
+
             {/* Botón Añadir Hijo (Solo para contenedores) */}
             {isContainer && (
               <IconButton

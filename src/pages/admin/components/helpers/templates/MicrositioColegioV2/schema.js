@@ -288,7 +288,7 @@ export default {
                     "type": "WysiwygSection",
                     "props": {
                         "className": "",
-                        "content": "<h3>Galeria de imágenes</h3>",
+                        "content": "<h3>Galería de imágenes</h3>",
                         "customCss": "",
                         "paddingY": 4
                     }
@@ -552,7 +552,7 @@ export default {
                                         "show_names": false,
                                         "grayscale": true,
                                         "hover_scale": true,
-                                        "background_color": "#ffffff",
+                                        "background_color": "#f8fafc",
                                         "pause_on_hover": true,
                                         "brands_list": [
                                             {
@@ -575,8 +575,9 @@ export default {
                                             }
                                         ],
                                         "layout_mode": "marquee",
-                                        "isBackground": false,
-                                        "logo_height": 30,
+                                        "isBackground": true,
+                                        "contained_card": true,
+                                        "logo_height": 50,
                                         "marquee_speed": 40
                                     }
                                 }
@@ -623,7 +624,7 @@ export default {
                             "props": {
                                 "background_color": "transparent",
                                 "padding_y": 20,
-                                "label": "fotos",
+                                "label": "Fotos",
                                 "padding_x": 20
                             }
                         }

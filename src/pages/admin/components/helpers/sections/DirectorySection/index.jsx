@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTheme, useMediaQuery } from "@mui/material";
 import {
     Box, Container, Grid, Skeleton, Alert, Button,
@@ -81,7 +81,7 @@ const parseQuickFilters = (jsonString) => {
             list.unshift({ label: "Todos", filters: {} });
         }
         return list;
-    } catch (e) {
+    } catch {
         return [{ label: "Todos", filters: {} }];
     }
 };
@@ -169,7 +169,7 @@ const DirectorySectionContent = ({
     const [searchTerm, setSearchTerm] = useState('');
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [page, setPage] = useState(1);
-    const [order, setOrder] = useState('IDV_ascendente');
+    const [order] = useState('IDV_ascendente');
     const [viewListType, setViewListType] = useState(viewType === 'grid' ? 'grid' : 'list');
     const [adsSessionKey, setAdsSessionKey] = useState("0");
 
@@ -177,7 +177,6 @@ const DirectorySectionContent = ({
     const gridSize = Math.floor(12 / Math.max(1, itemsPerColumn));
     const isList = viewListType === 'list';
     const activeFilterCount = Object.values(activeFilters).flat().length;
-    const quickFiltersData = useMemo(() => parseQuickFilters(quickFilters), [quickFilters]);
     const columnAliases = useMemo(() => sourceConfig?.columnAliases || {}, [sourceConfig]);
 
     const theme = useTheme();
@@ -1215,9 +1214,10 @@ const DirectorySectionContent = ({
             pt: 3,
             borderTop: "1px solid #e5e7eb",
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1fr auto 1fr" },
+            gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) auto auto" },
             alignItems: "center",
-            gap: 2,
+            columnGap: { xs: 2, md: 3 },
+            rowGap: 2,
           }}
         >
           {/* Paginación izquierda */}
@@ -1225,6 +1225,7 @@ const DirectorySectionContent = ({
             sx={{
               display: "flex",
               justifyContent: { xs: "center", md: "flex-start" },
+              minWidth: 0,
             }}
           >
             {paginationTotal > itemsPerPage && (
@@ -1264,7 +1265,10 @@ const DirectorySectionContent = ({
           <Typography
             variant="body2"
             color="text.secondary"
-            sx={{ textAlign: "center" }}
+            sx={{
+              textAlign: { xs: "center", md: "right" },
+              whiteSpace: { lg: "nowrap" },
+            }}
           >
             Mostrando registros del <strong>{recordsSummary.start}</strong>{" "}
             al <strong>{recordsSummary.end}</strong> de un total de{" "}

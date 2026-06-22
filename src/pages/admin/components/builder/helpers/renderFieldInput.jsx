@@ -369,7 +369,11 @@ const renderFieldInput = (field, activeSection, onChange) => {
   // ========== Items list ===============
   if (field.type === "list") {
 
-    const items = value || [];
+    const items = Array.isArray(value)
+      ? value
+      : Array.isArray(field.default)
+        ? field.default
+        : [];
 
     const updateItem = (index, key, newValue) => {
       const updated = [...items];
@@ -442,7 +446,7 @@ const renderFieldInput = (field, activeSection, onChange) => {
             }}
             onClick={addItem}
           >
-            + Agregar item
+            + {field.addLabel || "Agregar item"}
           </Typography>
         </Box>
 

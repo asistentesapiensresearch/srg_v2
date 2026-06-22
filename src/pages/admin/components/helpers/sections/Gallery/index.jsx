@@ -31,6 +31,8 @@ const GalleryRenderer = ({
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const resolvedThumbnailPosition =
+    thumbnailBarPosition === "bottom" ? "left" : thumbnailBarPosition || "left";
 
   useEffect(() => {
     const loadGallery = async () => {
@@ -98,7 +100,7 @@ const GalleryRenderer = ({
         sx={{
           position: "relative",
           width: "100%",
-          height: { xs: 400, md: 700 },
+          height: { xs: 340, md: 520 },
           overflow: "hidden",
           borderRadius: "18px",
           backgroundColor: "#e5e7eb",
@@ -111,7 +113,7 @@ const GalleryRenderer = ({
           sx={{
             width: "100%",
             height: "100%",
-            objectFit: "contain",
+            objectFit: "cover",
             display: "block",
           }}
         />
@@ -133,20 +135,39 @@ const GalleryRenderer = ({
             bottom: 0,
             color: "#fff",
             zIndex: 2,
-            bgcolor: "rgba(0,0,0,0.2)",
+            background:
+              "linear-gradient(to bottom, rgba(18, 18, 18, 0) 0%, rgb(18 18 18 / 52%) 28%, rgba(18, 18, 18, 0.72) 100%)",
+            backdropFilter: "blur(3px)",
+            pt: { xs: 2.5, md: 4 },
           }}
         >
-
-          {(item.description) && (
-            <Typography
+          {item.description && (
+            <Box
               sx={{
-                margin: "40px 70px",
-                fontSize: { xs: "1rem", md: "2rem" },
-                opacity: 0.95,
+                width: "100%",
+                minHeight: { xs: 72, md: 94 },
+                display: "flex",
+                alignItems: "center",
+                background:
+                  "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 28%, rgba(255,246,246,0.26) 62%, rgba(192,0,2,0.2) 100%)",
+                boxShadow: "0 -10px 30px rgba(0,0,0,0.16)",
+                px: { xs: 2.2, md: 5.5 },
+                py: { xs: 1.6, md: 2 },
+                backdropFilter: "blur(12px)",
               }}
             >
-              {item.description}
-            </Typography>
+              <Typography
+                sx={{
+                  color: "#fff",
+                  fontSize: { xs: "0.82rem", md: "1.08rem" },
+                  fontWeight: 700,
+                  lineHeight: 1.45,
+                  textShadow: "0 1px 3px rgba(0,0,0,0.45)",
+                }}
+              >
+                {item.description}
+              </Typography>
+            </Box>
           )}
         </Box>
       </Box>
@@ -197,19 +218,61 @@ const GalleryRenderer = ({
   }
 
   return (
-    <Box className="gallery-wrapper py-4" dir={RightToLeft ? "rtl" : "ltr"}>
+    <Box
+      className="gallery-wrapper py-4"
+      dir={RightToLeft ? "rtl" : "ltr"}
+      sx={{
+        "& .image-gallery-left-nav, & .image-gallery-right-nav": {
+          top: "50%",
+          width: { xs: 38, md: 46 },
+          height: { xs: 54, md: 66 },
+          borderRadius: "14px",
+          backgroundColor: "rgb(189 184 184 / 48%)",
+          border: "1px solid rgba(192,0,2,0.28)",
+          boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
+          color: "#c00002",
+          padding: 0,
+          transform: "translateY(-50%)",
+          transition:
+            "background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease",
+          backdropFilter: "blur(8px)",
+          "&:hover": {
+            backgroundColor: "#c00002",
+            borderColor: "#c00002",
+            color: "#fff",
+            boxShadow: "0 14px 30px rgba(192,0,2,0.32)",
+            transform: "translateY(-50%) scale(1.04)",
+          },
+          "&:focus": {
+            outline: "none",
+          },
+          "& .image-gallery-svg": {
+            width: { xs: 24, md: 40 },
+            height: { xs: 24, md: 40 },
+            filter: "none",
+            strokeWidth: 2.4,
+          },
+        },
+        "& .image-gallery-left-nav": {
+          left: { xs: 8, md: 14 },
+        },
+        "& .image-gallery-right-nav": {
+          right: { xs: 8, md: 14 },
+        },
+      }}
+    >
       <ImageGallery
         items={images}
         renderItem={renderCustomItem}
         renderThumbInner={renderCustomThumbInner}
         slideInterval={playInterval}
         slideDuration={slideDuration}
-        thumbnailPosition={thumbnailBarPosition}
+        thumbnailPosition={resolvedThumbnailPosition}
         showNav={showArrows}
         showThumbnails={showThumbnails}
         showBullets={showBulletIndicators}
         showIndex={showSliderCounter}
-        showPlayButton={showAutoplayButton}
+        showPlayButton={false}
         showFullscreenButton={showFullscreenButton}
         infinite={InfiniteLoop}
         slideOnThumbnailOver={SlideOnThumbnailHover}

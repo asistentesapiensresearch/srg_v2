@@ -5,10 +5,27 @@ export default {
         { name: "video_settings", label: "📺 CONFIGURACIÓN DEL VIDEO", type: "separator" },
         {
             name: "url",
-            label: "URL del Video",
+            label: "URL del Video principal",
             type: "text",
             default: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            placeholder: "Pega el enlace de YouTube aquí"
+            placeholder: "Pega el enlace de YouTube aquí",
+            help: "Se usa como respaldo si no agregas videos en la lista inferior."
+        },
+        {
+            name: "videos",
+            label: "Videos del slider",
+            type: "list",
+            default: [{ url: "" }],
+            addLabel: "Agregar video",
+            fields: [
+                {
+                    name: "url",
+                    label: "Link del video",
+                    type: "text",
+                    default: "",
+                    placeholder: "https://www.youtube.com/watch?v=..."
+                }
+            ]
         },
         {
             name: "aspect_ratio",
