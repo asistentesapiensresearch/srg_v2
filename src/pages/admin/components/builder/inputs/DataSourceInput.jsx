@@ -432,7 +432,7 @@ export default function DataSourceInput({ value, onChange }) {
               )}
             />
 
-            {headers.length > 0 && (
+            {localState.columns && localState.columns.length > 0 && (
               <Box
                 sx={{
                   bgcolor: "#f5f5f5",
@@ -450,10 +450,7 @@ export default function DataSourceInput({ value, onChange }) {
                 >
                   ALIAS DE COLUMNAS
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Los alias funcionan aunque la columna no sea visible en la tabla.
-                </Typography>
-                {headers.map((col) => (
+                {localState.columns.map((col) => (
                   <Box
                     key={col}
                     sx={{ display: "flex", alignItems: "center", gap: 1 }}
