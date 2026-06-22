@@ -48,14 +48,14 @@ export const CardColSapiens = ({ props }) => {
             {categoria && (
               <div className="flex flex-col items-center justify-center bg-gradient-to-br from-red-600 to-red-800 text-white rounded-xl px-4 py-1.5 shadow-md border border-red-500/30">
                 <span className="text-xl lg:text-[25px] font-black leading-none tracking-tight">D{categoria}</span>
-                <span className="text-[9px] font-bold tracking-widest uppercase opacity-90 mt-0.5">Categoría</span>
+                <span className="text-[11px] font-black tracking-widest  opacity-90 mt-0.5">Categoría</span>
               </div>
             )}
             
             {calificacion && (
               <div className="flex flex-col items-center justify-center bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 text-yellow-950 rounded-xl px-4 py-1.5 shadow-md border border-yellow-300/40">
                 <span className="text-xl lg:text-[25px] font-black leading-none tracking-tight">{calificacion}</span>
-                <span className="text-[9px] font-bold tracking-widest uppercase opacity-80 mt-0.5">Calificación</span>
+                <span className="text-[11px] font-black tracking-widest  opacity-80 mt-0.5">Calificación</span>
               </div>
             )}
           </div>

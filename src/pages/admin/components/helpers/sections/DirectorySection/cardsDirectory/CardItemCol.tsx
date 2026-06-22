@@ -176,9 +176,8 @@ const BadgeCategoria = ({ category }: { category: string }) => {
     if (!category) return null;
     return (
         <div
-            className="flex flex-col items-center justify-center text-center text-white"
+            className="flex flex-col items-center justify-center text-center text-white bg-gradient-to-br from-red-600 to-red-800"
             style={{
-                background: "linear-gradient(135deg, #b91c1c 0%, #ef4444 50%, #b91c1c 100%)",
                 borderRadius: 10,
                 width: BADGE_W,
                 height: BADGE_H,
@@ -202,9 +201,8 @@ const BadgeCalificacion = ({ qualification }: { qualification: string }) => {
     if (!qualification) return null;
     return (
         <div
-            className="flex flex-col items-center justify-center text-center"
+            className="flex flex-col items-center justify-center text-center bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 text-yellow-950"
             style={{
-                background: "linear-gradient(135deg, #7c4a03 0%, #d4a843 45%, #f5c842 70%, #7c4a03 100%)",
                 color: "#2d1a00",
                 borderRadius: 10,
                 width: BADGE_W,
