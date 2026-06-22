@@ -4,6 +4,7 @@ import { Schema } from '../../../amplify/data/resource';
 export type IModels = keyof typeof client.models;
 
 const client = generateClient<Schema>();
+const publicAuth = { authMode: 'apiKey' as const };
 
 const getClient = (type: IModels) => {
     return client.models[type];
@@ -25,7 +26,7 @@ export const apiSyncService = {
 
             const { data, errors } = await getClient(type).list({
                 ...params,
-                authMode: 'apiKey'
+                ...publicAuth,
             });
             handleErrors(errors, type, 'fetching');
             return data;
@@ -37,7 +38,7 @@ export const apiSyncService = {
 
     async getById(type: IModels, id: string): any {
         try {
-            const { data, errors } = await getClient(type).get({ id });
+            const { data, errors } = await getClient(type).get({ id }, publicAuth);
             handleErrors(errors, type, 'fetching by ID');
             return data;
         } catch (error) {
@@ -81,7 +82,7 @@ export const apiSyncService = {
 
     async query(type: IModels, query: string, variables: any): any {
         try {
-            const result = await getClient(type)[query](variables);
+            const result = await getClient(type)[query](variables, publicAuth);
             return result;
         } catch (error) {
             console.error(`Error executing query ${query} on ${type}:`, error);
