@@ -21,7 +21,7 @@ const ResourcesNavSection = ({ resources }) => {
     <section className="w-full px-4 py-12">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
-        <p className="text-xs font-semibold tracking-widest text-red-700 uppercase flex items-center gap-2 mb-2">
+        <p className="text-xs font-semibold tracking-widest text-red-700 flex items-center gap-2 mb-2">
           <span className="inline-block w-6 h-px bg-red-700" />
           Explora
         </p>

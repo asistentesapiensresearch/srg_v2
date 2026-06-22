@@ -25,7 +25,7 @@ export const CardColSapiens = ({ props }) => {
       rel="noopener noreferrer"
       className="block no-underline group h-full"
     >
-      <div className="relative w-full h-full rounded-[24px] overflow-hidden bg-gradient-to-br from-[#710707] via-[#5c0303] to-[#3a0000] shadow-[0_12px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_20px_48px_rgba(0,0,0,0.6)] aspect-auto flex flex-col">
+      <div className="relative w-full h-full rounded-[24px] overflow-hidden bg-gradient-to-br from-gray-800 via-gray-900 to-black shadow-[0_12px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_20px_48px_rgba(0,0,0,0.6)] aspect-auto flex flex-col">
         
         {/* Background image overlay */}
         {portada && (
@@ -33,13 +33,13 @@ export const CardColSapiens = ({ props }) => {
             <img
               src={portada}
               alt={nombre}
-              className="w-full h-full object-cover opacity-20 mix-blend-overlay"
+              className="w-full h-full object-cover opacity-30 mix-blend-overlay"
             />
           </div>
         )}
         
         {/* Dark/red gradient overlay to blend image */}
-        <div className="absolute inset-0 z-1 bg-gradient-to-b from-transparent via-[#450101]/60 to-[#2e0000] pointer-events-none" />
+        <div className="absolute inset-0 z-1 bg-gradient-to-b from-transparent to-transparent pointer-events-none" />
 
         <div className="relative z-10 flex flex-col h-full p-5 lg:p-6">
           
@@ -48,14 +48,14 @@ export const CardColSapiens = ({ props }) => {
             {categoria && (
               <div className="flex flex-col items-center justify-center bg-gradient-to-br from-red-600 to-red-800 text-white rounded-xl px-4 py-1.5 shadow-md border border-red-500/30">
                 <span className="text-xl lg:text-[25px] font-black leading-none tracking-tight">D{categoria}</span>
-                <span className="text-[9px] font-bold tracking-widest uppercase opacity-90 mt-0.5">Categoría</span>
+                <span className="text-[11px] font-black tracking-widest  opacity-90 mt-0.5">Categoría</span>
               </div>
             )}
             
             {calificacion && (
               <div className="flex flex-col items-center justify-center bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 text-yellow-950 rounded-xl px-4 py-1.5 shadow-md border border-yellow-300/40">
                 <span className="text-xl lg:text-[25px] font-black leading-none tracking-tight">{calificacion}</span>
-                <span className="text-[9px] font-bold tracking-widest uppercase opacity-80 mt-0.5">Calificación</span>
+                <span className="text-[11px] font-black tracking-widest  opacity-80 mt-0.5">Calificación</span>
               </div>
             )}
           </div>
@@ -86,32 +86,34 @@ export const CardColSapiens = ({ props }) => {
 
           {/* Bottom Row: Testimonial Box */}
           <div className="mt-auto">
-            <div className="bg-[#240000]/60 backdrop-blur-md border border-white/10 rounded-2xl p-4 lg:p-5 flex items-center gap-4 shadow-inner">
+            <div className="border-[2px]  backdrop-blur-xs border-[#fff] rounded-2xl p-4 lg:p-5 flex flex-col gap-3 shadow-inner">
               
-              {/* Photo & Logo */}
-              <div className="relative shrink-0">
-                <div className="w-16 h-16 rounded-full overflow-hidden border-[3px] border-white/20 shadow-lg bg-gray-600">
-                  {rectorPhoto ? (
-                    <img src={rectorPhoto} alt={rectorName} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full bg-gray-600" />
+              {/* Top: Photo & Name */}
+              <div className="flex items-center gap-3">
+                <div className="relative shrink-0">
+                  <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden border-[3px] border-white/20 shadow-lg bg-gray-600">
+                    {rectorPhoto ? (
+                      <img src={rectorPhoto} alt={rectorName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-gray-600" />
+                    )}
+                  </div>
+                  {logo && (
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full overflow-hidden border-2 border-[#3a0000] bg-white shadow-md">
+                      <img src={logo} alt="Logo" className="w-full h-full object-cover" />
+                    </div>
                   )}
                 </div>
-                {logo && (
-                  <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full overflow-hidden border-2 border-[#3a0000] bg-white shadow-md">
-                    <img src={logo} alt="Logo" className="w-full h-full object-cover" />
-                  </div>
-                )}
+                <div className="text-white/90 text-sm lg:text-base font-semibold tracking-wide">
+                  — {rectorName}
+                </div>
               </div>
 
-              {/* Testimonial Text */}
-              <div className="flex flex-col flex-1">
-                <p className="text-white/95 text-sm lg:text-base font-medium italic leading-snug mb-2">
+              {/* Bottom: Testimonial Text */}
+              <div>
+                <p className="text-white/95 text-sm lg:text-base font-medium italic leading-snug">
                   "{rectorTestimonial}"
                 </p>
-                <div className="text-white/70 text-xs lg:text-sm font-semibold tracking-wide">
-                  - {rectorName}, <span className="font-normal opacity-80">Rectoría</span>
-                </div>
               </div>
               
             </div>

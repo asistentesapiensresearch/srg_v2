@@ -176,9 +176,8 @@ const BadgeCategoria = ({ category }: { category: string }) => {
     if (!category) return null;
     return (
         <div
-            className="flex flex-col items-center justify-center text-center text-white"
+            className="flex flex-col items-center justify-center text-center text-white bg-gradient-to-br from-red-600 to-red-800"
             style={{
-                background: "linear-gradient(135deg, #b91c1c 0%, #ef4444 50%, #b91c1c 100%)",
                 borderRadius: 10,
                 width: BADGE_W,
                 height: BADGE_H,
@@ -202,9 +201,8 @@ const BadgeCalificacion = ({ qualification }: { qualification: string }) => {
     if (!qualification) return null;
     return (
         <div
-            className="flex flex-col items-center justify-center text-center"
+            className="flex flex-col items-center justify-center text-center bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 text-yellow-950"
             style={{
-                background: "linear-gradient(135deg, #7c4a03 0%, #d4a843 45%, #f5c842 70%, #7c4a03 100%)",
                 color: "#2d1a00",
                 borderRadius: 10,
                 width: BADGE_W,
@@ -722,7 +720,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                             color: "#6b7280",
                             letterSpacing: "0.05em",
                             lineHeight: 1,
-                            textTransform: "uppercase",
+                            marginBottom: 5,
                         }}
                     >
                         Respaldos
@@ -807,9 +805,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                         className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-2.5 py-1.5 text-gray-400 shadow-sm transition-all duration-200 hover:border-red-300 hover:bg-red-600 hover:text-white hover:shadow-md active:scale-95"
                     >
                         <DynamicIcon name="History" color="#9ca3af" size={13} />
-                        <span style={{ fontSize: 10, fontWeight: 600, lineHeight: 1, letterSpacing: "0.04em" }}>
-                            Historial
-                        </span>
+                        
                     </button>
                 )}
             </div>
