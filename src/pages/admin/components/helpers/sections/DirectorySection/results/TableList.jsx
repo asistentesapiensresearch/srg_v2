@@ -21,7 +21,7 @@ import Rating from "@mui/material/Rating";
 import { visuallyHidden } from "@mui/utils";
 
 const RECOGNITIONS_COLUMN = "__reconocimientos";
-const RECOGNITIONS_COLUMN_WIDTH = 220;
+const RECOGNITIONS_COLUMN_WIDTH = 360;
 
 // --- HELPERS DE ORDENAMIENTO ---
 function descendingComparator(a, b, orderBy) {
@@ -120,14 +120,14 @@ const renderCategory = (value) => {
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        minWidth: 28,
-        px: 0.9,
-        py: 0.35,
+        minWidth: 34,
+        px: 1.25,
+        py: 0.5,
         borderRadius: "999px",
         border: "1px solid rgb(254, 202, 202)",
         backgroundColor: "rgb(254, 242, 242)",
         color: "rgb(153, 27, 27)",
-        fontSize: "0.68rem",
+        fontSize: "0.75rem",
         fontWeight: 700,
         whiteSpace: "nowrap",
       }}
@@ -177,7 +177,7 @@ const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
         gridTemplateColumns: columns > 1 ? `repeat(${columns}, minmax(0, 1fr))` : undefined,
         flexDirection: columns > 1 ? undefined : "column",
         alignItems: columns > 1 ? undefined : fullWidth ? "stretch" : "flex-start",
-        gap: 0.5,
+        gap: 0.75,
         width: fullWidth ? "100%" : "auto",
       }}
     >
@@ -186,14 +186,13 @@ const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
           key={index}
           component="span"
           sx={{
-            px: 0.8,
-            py: 0.35,
+            px: 1.5,
+            py: 0.5,
             borderRadius: "999px",
             ...badgeSx,
-            fontSize: "0.68rem",
+            fontSize: "0.75rem",
             fontWeight: 600,
-            whiteSpace: fullWidth ? "normal" : "nowrap",
-            overflowWrap: "anywhere",
+            whiteSpace: "nowrap",
             width: fullWidth ? "100%" : "auto",
             textAlign: fullWidth ? "center" : "left",
             overflow: "hidden",
@@ -219,14 +218,14 @@ const renderCellValue = (row, colKey, aliases = {}) => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "stretch",
-          gap: 0.5,
-          minWidth: 0,
+          alignItems: "flex-start",
+          gap: 0.75,
+          minWidth: RECOGNITIONS_COLUMN_WIDTH - 80,
           width: "100%",
         }}
       >
-        {certificationValue ? renderBadges(certificationValue, "green", true, 2) : null}
-        {accreditationValue ? renderBadges(accreditationValue, "blue", true, 2) : null}
+        {certificationValue ? renderBadges(certificationValue, "green", true, 3) : null}
+        {accreditationValue ? renderBadges(accreditationValue, "blue", true, 3) : null}
       </Box>
     );
   }
@@ -240,7 +239,7 @@ const renderCellValue = (row, colKey, aliases = {}) => {
         icon={<StarRoundedIcon fontSize="inherit" />}
         emptyIcon={<StarBorderRoundedIcon fontSize="inherit" />}
         sx={{
-          fontSize: "1rem",
+          fontSize: "1.25rem",
           "& .MuiRating-iconFilled": {
             color: "#facc15",
           },
@@ -305,15 +304,15 @@ function Row(props) {
           "& > *": { borderBottom: "unset" },
         }}
       >
-        <TableCell sx={{ width: 42, px: 0.5, py: 0.75, textAlign: "center" }}>
+        <TableCell width={50}>
           {hasHistory && isLinked ? (
             <IconButton
               aria-label="expand row"
               size="small"
               onClick={() => setOpen(!open)}
               sx={{
-                width: 28,
-                height: 28,
+                width: 32,
+                height: 32,
                 borderRadius: "50%",
                 backgroundColor: "#dc2626",
                 color: "#fff",
@@ -329,7 +328,7 @@ function Row(props) {
               )}
             </IconButton>
           ) : (
-            <Box sx={{ width: 28 }} />
+            <Box sx={{ width: 32 }} />
           )}
         </TableCell>
         {columns.map((colKey) => (
@@ -339,14 +338,8 @@ function Row(props) {
             scope="row"
             sx={{
               color: !hasHistory ? "#9ca3af" : "inherit",
-              px: 0.75,
-              py: 0.8,
-              fontSize: "0.75rem",
-              lineHeight: 1.3,
-              textAlign: "center",
-              overflowWrap: "anywhere",
               width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
-              minWidth: 0,
+              minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
             }}
           >
             {!isLinked && isClassificationColumn(colKey, aliases)
@@ -363,9 +356,9 @@ function Row(props) {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box
               sx={{
-                margin: { xs: 0.5, md: 1 },
+                margin: 2,
                 bgcolor: "#f8f9fa",
-                p: 1,
+                p: 2,
                 borderRadius: 2,
                 border: "1px solid #e0e0e0",
               }}
@@ -396,7 +389,7 @@ function Row(props) {
               </Typography>
 
               {/* TABLA DE HISTORIAL */}
-              <Table size="small" aria-label="history" sx={{ tableLayout: "fixed", width: "100%" }}>
+              <Table size="small" aria-label="history">
                 <TableHead>
                   <TableRow>
                     {displayHistoryColumns.map((colKey) => (
@@ -404,15 +397,11 @@ function Row(props) {
                         key={colKey}
                         sx={{
                           fontWeight: "bold",
-                          px: 0.6,
-                          py: 0.65,
-                          fontSize: "0.68rem",
-                          lineHeight: 1.2,
-                          overflowWrap: "anywhere",
+                          fontSize: "0.75rem",
                           color: "#666",
                           textAlign: "center",
                           width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
-                          minWidth: 0,
+                          minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                         }}
                       >
                         {colKey === RECOGNITIONS_COLUMN ? "Reconocimientos" : aliases[colKey] || colKey}
@@ -437,15 +426,11 @@ function Row(props) {
                             component="th"
                             scope="row"
                             sx={{
-                              px: 0.6,
-                              py: 0.65,
-                              fontSize: "0.7rem",
-                              lineHeight: 1.25,
-                              overflowWrap: "anywhere",
+                              fontSize: "0.8rem",
                               textAlign: "center",
                               verticalAlign: "middle",
                               width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
-                              minWidth: 0,
+                              minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                               "& > .MuiBox-root": {
                                 marginLeft: "auto",
                                 marginRight: "auto",
@@ -546,11 +531,11 @@ export default function TableList({ data = [], columns = [], historyColumns = []
       variant="outlined"
       sx={{ borderRadius: 4, overflow: "hidden" }}
     >
-      <TableContainer sx={{ overflowX: "hidden" }}>
-        <Table aria-label="collapsible table" size="small" sx={{ tableLayout: "fixed", width: "100%" }}>
+      <TableContainer>
+        <Table aria-label="collapsible table">
           <TableHead sx={{ bgcolor: "#f5f5f5" }}>
             <TableRow>
-              <TableCell sx={{ width: 42, p: 0.5 }} />
+              <TableCell />
               {displayColumns.map((colKey) => (
                 <TableCell
                   key={colKey}
@@ -558,13 +543,8 @@ export default function TableList({ data = [], columns = [], historyColumns = []
                   sx={{
                     fontWeight: "bold",
                     textAlign: "center",
-                    px: 0.6,
-                    py: 0.75,
-                    fontSize: "0.7rem",
-                    lineHeight: 1.2,
-                    overflowWrap: "anywhere",
                     width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
-                    minWidth: 0,
+                    minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                   }}
                 >
                   <TableSortLabel
@@ -575,8 +555,6 @@ export default function TableList({ data = [], columns = [], historyColumns = []
                       gap: 0.5,
                       justifyContent: "center",
                       width: "100%",
-                      whiteSpace: "normal",
-                      textAlign: "center",
                       "& .MuiTableSortLabel-icon": {
                         opacity: 1,
                         color: orderBy === colKey ? "#b91c1c !important" : "#9ca3af !important",
