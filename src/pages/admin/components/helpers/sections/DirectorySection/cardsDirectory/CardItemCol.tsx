@@ -801,11 +801,13 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                     <button
                         type="button"
                         onClick={onOpenHistory}
-                        title="Ver historial"
-                        className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-2.5 py-1.5 text-gray-400 shadow-sm transition-all duration-200 hover:border-red-300 hover:bg-red-600 hover:text-white hover:shadow-md active:scale-95"
+                        aria-label="Ver historial"
+                        className="group cursor-pointer absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-200/60 active:scale-95"
                     >
-                        <DynamicIcon name="History" color="#9ca3af" size={13} />
-                        
+                        <DynamicIcon name="History" color="currentColor" size={14} />
+                        <span className="pointer-events-none absolute right-full top-1/2 mr-2 min-w-[92px] -translate-y-1/2 rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-center text-[11px] font-semibold text-red-800 opacity-0 shadow-lg shadow-red-100/60 transition-all duration-200 group-hover:-translate-x-0.5 group-hover:opacity-100">
+                            Ver historial
+                        </span>
                     </button>
                 )}
             </div>
