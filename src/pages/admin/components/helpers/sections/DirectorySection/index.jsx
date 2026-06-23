@@ -682,6 +682,119 @@ const DirectorySectionContent = ({
         }));
     };
 
+    const getSelectControlSx = ({ color, softColor, borderColor, shadowColor }) => ({
+        "& .MuiInputLabel-root": {
+            color: "#6b7280",
+            fontWeight: 500,
+            letterSpacing: "-0.01em",
+        },
+        "& .MuiInputLabel-root.Mui-focused": {
+            color,
+        },
+        "& .MuiOutlinedInput-root": {
+            height: 48,
+            borderRadius: "14px",
+            bgcolor: "#fff",
+            boxShadow: `0 8px 22px ${shadowColor}`,
+            transition: "box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease",
+
+            "& fieldset": {
+                borderColor,
+            },
+
+            "&:hover": {
+                transform: "translateY(-1px)",
+                boxShadow: `0 12px 28px ${shadowColor}`,
+            },
+
+            "&:hover fieldset": {
+                borderColor,
+            },
+
+            "&.Mui-focused": {
+                boxShadow: `0 0 0 4px ${softColor}, 0 12px 28px ${shadowColor}`,
+            },
+
+            "&.Mui-focused fieldset": {
+                borderColor: color,
+                borderWidth: 1.5,
+            },
+
+            "& .MuiSelect-select": {
+                display: "flex",
+                alignItems: "center",
+                fontWeight: 700,
+                color: "#111827",
+                letterSpacing: "-0.01em",
+            },
+
+            "& .MuiSvgIcon-root": {
+                color,
+            },
+        },
+    });
+
+    const getSelectMenuProps = ({ color, softBg, selectedBg, hoverBg, borderColor }) => ({
+        PaperProps: {
+            sx: {
+                mt: 1,
+                borderRadius: "14px",
+                border: `1px solid ${borderColor}`,
+                boxShadow: "0 18px 45px rgba(15, 23, 42, 0.16)",
+                overflow: "hidden",
+                bgcolor: "#fff",
+                "& .MuiList-root": {
+                    p: 0.75,
+                },
+                "& .MuiMenuItem-root": {
+                    minHeight: 38,
+                    borderRadius: "10px",
+                    color: "#374151",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    transition: "background-color 140ms ease, color 140ms ease",
+                    "& em": {
+                        color: "#9ca3af",
+                        fontStyle: "normal",
+                        fontWeight: 600,
+                    },
+                    "&:hover": {
+                        bgcolor: softBg,
+                        color,
+                    },
+                    "&.Mui-selected": {
+                        bgcolor: selectedBg,
+                        color,
+                        fontWeight: 800,
+                    },
+                    "&.Mui-selected:hover": {
+                        bgcolor: hoverBg,
+                    },
+                },
+            },
+        },
+    });
+
+    const categorySelectTheme = {
+        color: primaryColor,
+        softColor: "rgba(193, 0, 9, 0.10)",
+        borderColor: "#fecaca",
+        shadowColor: "rgba(193, 0, 9, 0.10)",
+        softBg: "#fef2f2",
+        selectedBg: "#fee2e2",
+        hoverBg: "#fecaca",
+    };
+
+    const qualificationSelectTheme = {
+        color: "#92400e",
+        softColor: "rgba(245, 158, 11, 0.14)",
+        borderColor: "#fde68a",
+        shadowColor: "rgba(245, 158, 11, 0.13)",
+        softBg: "#fffbeb",
+        selectedBg: "#fef3c7",
+        hoverBg: "#fde68a",
+    };
+
     // Inicializar filtros rápidos
     useEffect(() => {
         const config = getInitialConfig(quickFilters);
@@ -894,46 +1007,8 @@ const DirectorySectionContent = ({
             >
               <FormControl
                 sx={{
-                  minWidth: { xs: "100%", sm: 190 },
-
-                  "& .MuiInputLabel-root": {
-                    color: "#6b7280",
-                    fontWeight: 600,
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: primaryColor,
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    height: 52,
-                    borderRadius: 3,
-                    bgcolor: "#fff",
-                    boxShadow: "0 2px 8px rgba(15, 23, 42, 0.06)",
-                    transition: "box-shadow 160ms ease, border-color 160ms ease",
-
-                    "& fieldset": {
-                      borderColor: "#d1d5db",
-                    },
-
-                    "&:hover fieldset": {
-                      borderColor: primaryColor,
-                    },
-
-                    "&.Mui-focused fieldset": {
-                      borderColor: primaryColor,
-                      borderWidth: 1.5,
-                    },
-
-                    "&.Mui-focused": {
-                      boxShadow: "0 0 0 3px rgba(193, 0, 9, 0.12)",
-                    },
-
-                    "& .MuiSelect-select": {
-                      display: "flex",
-                      alignItems: "center",
-                      fontWeight: 600,
-                      color: "#111827",
-                    },
-                  },
+                  minWidth: { xs: "100%", sm: 150 },
+                  ...getSelectControlSx(categorySelectTheme),
                 }}
               >
                 <InputLabel>Categoría</InputLabel>
@@ -942,6 +1017,7 @@ const DirectorySectionContent = ({
                   value={activeFilters["Categoría"]?.[0] || ""}
                   label="Categoría"
                   onChange={(e) => handleCategoryChange(e.target.value)}
+                  MenuProps={getSelectMenuProps(categorySelectTheme)}
                 >
                   <MenuItem value="">
                     <em>Todas</em>
@@ -957,46 +1033,8 @@ const DirectorySectionContent = ({
 
               <FormControl
                 sx={{
-                  minWidth: { xs: "100%", sm: 220 },
-
-                  "& .MuiInputLabel-root": {
-                    color: "#6b7280",
-                    fontWeight: 600,
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: primaryColor,
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    height: 52,
-                    borderRadius: 3,
-                    bgcolor: "#fff",
-                    boxShadow: "0 2px 8px rgba(15, 23, 42, 0.06)",
-                    transition: "box-shadow 160ms ease, border-color 160ms ease",
-
-                    "& fieldset": {
-                      borderColor: "#d1d5db",
-                    },
-
-                    "&:hover fieldset": {
-                      borderColor: primaryColor,
-                    },
-
-                    "&.Mui-focused fieldset": {
-                      borderColor: primaryColor,
-                      borderWidth: 1.5,
-                    },
-
-                    "&.Mui-focused": {
-                      boxShadow: "0 0 0 3px rgba(193, 0, 9, 0.12)",
-                    },
-
-                    "& .MuiSelect-select": {
-                      display: "flex",
-                      alignItems: "center",
-                      fontWeight: 600,
-                      color: "#111827",
-                    },
-                  },
+                  minWidth: { xs: "100%", sm: 150 },
+                  ...getSelectControlSx(qualificationSelectTheme),
                 }}
               >
                 <InputLabel>Calificación</InputLabel>
@@ -1005,6 +1043,7 @@ const DirectorySectionContent = ({
                   value={activeFilters["Calificación"]?.[0] || ""}
                   label="Calificación"
                   onChange={(e) => handleQualificationChange(e.target.value)}
+                  MenuProps={getSelectMenuProps(qualificationSelectTheme)}
                 >
                   <MenuItem value="">
                     <em>Todas</em>
