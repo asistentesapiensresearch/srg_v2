@@ -61,7 +61,7 @@ export const CardColSapiens = ({ props }) => {
           </div>
 
             
-          <div className="flex-1 flex flex-col justify-center mb-6">
+          <div className="flex-1 flex flex-col justify-end mb-2">
             {/* <div className="mb-3">
               <StartSection
                 excelSource=""
@@ -85,13 +85,13 @@ export const CardColSapiens = ({ props }) => {
           </div>
 
           {/* Bottom Row: Testimonial Box */}
-          <div className="mt-auto">
-            <div className="border-[2px]  backdrop-blur-xs border-[#fff] rounded-2xl p-4 lg:p-5 flex flex-col gap-3 shadow-inner">
+          <div className="mt-auto pt-8 lg:pt-10">
+            <div className="relative border-[2px] backdrop-blur-xs border-[#fff] rounded-2xl px-4 pb-4 pt-10 lg:px-5 lg:pb-5 lg:pt-12 flex flex-col shadow-inner">
               
-              {/* Top: Photo & Name */}
-              <div className="flex items-center gap-3">
+              {/* Top: Photo & Name (Overlapping border) */}
+              <div className="absolute -top-8 lg:-top-10 left-0 lg:left-1 flex items-center gap-3">
                 <div className="relative shrink-0">
-                  <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden border-[3px] border-white/20 shadow-lg bg-gray-600">
+                  <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden border-[3px] border-white/20 shadow-lg bg-gray-600">
                     {rectorPhoto ? (
                       <img src={rectorPhoto} alt={rectorName} className="w-full h-full object-cover" />
                     ) : (
@@ -99,23 +99,26 @@ export const CardColSapiens = ({ props }) => {
                     )}
                   </div>
                   {logo && (
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full overflow-hidden border-2 border-[#3a0000] bg-white shadow-md">
+                    <div className="absolute -bottom-1 -right-1 w-7 h-7 lg:w-8 lg:h-8 rounded-full overflow-hidden border-2 border-[#3a0000] bg-white shadow-md">
                       <img src={logo} alt="Logo" className="w-full h-full object-cover" />
                     </div>
                   )}
                 </div>
-                <div className="text-white/90 text-sm lg:text-base font-semibold tracking-wide">
+                {/* Name */}
+                <div className="text-white text-sm lg:text-base font-semibold tracking-wide drop-shadow-md mt-8 lg:mt-12">
                   — {rectorName}
                 </div>
               </div>
 
-              {/* Bottom: Testimonial Text */}
-              <div>
-                <p className="text-white/95 text-sm lg:text-base font-medium italic leading-snug">
-                  "{rectorTestimonial}"
-                </p>
+              {/* Testimonial Container */}
+              <div className="flex flex-col">
+                {/* Testimonial Text */}
+                <div>
+                  <p className="text-white/95 text-[15px] lg:text-[17px] font-medium italic leading-snug">
+                    "{rectorTestimonial}"
+                  </p>
+                </div>
               </div>
-              
             </div>
           </div>
 
