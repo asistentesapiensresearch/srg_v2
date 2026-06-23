@@ -813,48 +813,57 @@ export function InstitutionForm({ onClose, institution, store }) {
                         ].map((lang) => {
                             const isActive = languages.includes(lang.name);
                             return (
-                                <div 
-                                    key={lang.name}
-                                    onClick={() => setLanguages((prev) => prev.includes(lang.name) ? prev.filter((l) => l !== lang.name) : [...prev, lang.name])}
-                                    className={`relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                                        isActive 
-                                            ? 'border-blue-500 bg-blue-50 shadow-md' 
-                                            : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm'
-                                    }`}
-                                >
-                                    {/* Top Blue Border if active */}
-                                    {isActive && (
-                                        <div className="absolute top-[-2px] left-[-2px] right-[-2px] h-[5px] bg-blue-500 rounded-t-xl" />
-                                    )}
+                              <div
+                                key={lang.name}
+                                onClick={() =>
+                                  setLanguages((prev) =>
+                                    prev.includes(lang.name)
+                                      ? prev.filter((l) => l !== lang.name)
+                                      : [...prev, lang.name],
+                                  )
+                                }
+                                className={`relative flex items-center gap-2 px-2.5 py-2 rounded-lg border cursor-pointer transition-all min-h-[54px] ${
+                                  isActive
+                                    ? "border-blue-500 bg-blue-50 shadow-sm"
+                                    : "border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm"
+                                }`}
+                              >
+                                {isActive && (
+                                  <div className="absolute left-0 top-1 bottom-1 w-1 bg-blue-500 rounded-r-full" />
+                                )}
 
-                                    {/* Status tag */}
-                                    <div className="absolute top-2 right-2">
-                                        {isActive ? (
-                                            <span className="text-[9px] font-bold text-green-700 bg-green-100 px-1.5 py-0.5 rounded-full border border-green-300 flex items-center gap-1 shadow-sm">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-green-500" /> Activo
-                                            </span>
-                                        ) : (
-                                            <span className="text-[9px] font-bold text-orange-700 bg-orange-100 px-1.5 py-0.5 rounded-full border border-orange-300 flex items-center gap-1 shadow-sm">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500" /> Inactivo
-                                            </span>
-                                        )}
-                                    </div>
-                                    
-                                    {/* Flag Image */}
-                                    <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center mb-2 shadow-inner bg-gray-50 border border-gray-100 mt-2">
-                                        <img 
-                                            src={`https://flagcdn.com/w80/${lang.code}.png`} 
-                                            alt={lang.name} 
-                                            className="w-full h-full object-cover"
-                                            loading="lazy"
-                                        />
-                                    </div>
-
-                                    {/* Name */}
-                                    <span className="font-semibold text-gray-700 text-sm text-center">
-                                        {lang.name}
-                                    </span>
+                                <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 border border-gray-100">
+                                  <img
+                                    src={`https://flagcdn.com/w80/${lang.code}.png`}
+                                    alt={lang.name}
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                  />
                                 </div>
+
+                                <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
+                                  <span className="font-semibold text-gray-700 text-xs truncate">
+                                    {lang.name}
+                                  </span>
+
+                                  <span
+                                    className={`shrink-0 inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${
+                                      isActive
+                                        ? "text-green-700 bg-green-100 border-green-300"
+                                        : "text-orange-700 bg-orange-100 border-orange-300"
+                                    }`}
+                                  >
+                                    <span
+                                      className={`w-1.5 h-1.5 rounded-full ${
+                                        isActive
+                                          ? "bg-green-500"
+                                          : "bg-orange-500"
+                                      }`}
+                                    />
+                                    {isActive ? "Activo" : "Inactivo"}
+                                  </span>
+                                </div>
+                              </div>
                             );
                         })}
                     </div>
