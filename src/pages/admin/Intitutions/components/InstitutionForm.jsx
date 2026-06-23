@@ -62,7 +62,8 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [socialInstagram, setSocialInstagram] = useState("");
     const [socialTwitter, setSocialTwitter] = useState("");
     const [socialYoutube, setSocialYoutube] = useState("");
-    const [languagesStr, setLanguagesStr] = useState("");
+    const [languages, setLanguages] = useState([]);
+    const [showAllLanguages, setShowAllLanguages] = useState(false);
 
     // Estados para contenidos embebidos
     const [embedFacebook, setEmbedFacebook] = useState("");
@@ -172,8 +173,8 @@ export function InstitutionForm({ onClose, institution, store }) {
                     getUrl({ path: admisiones.audio }).then((res) => setAudioAdmisionesPreview(res.url.toString())).catch(() => { });
                 }
 
-                const langs = Array.isArray(institution.languages) ? institution.languages.join(", ") : "";
-                setLanguagesStr(langs);
+                const langs = Array.isArray(institution.languages) ? institution.languages : [];
+                setLanguages(langs);
             } catch (e) { console.error(e); }
 
             if (institution.logo) {
@@ -328,7 +329,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                 photo: currentPhotoAdmisionesKey,
                 audio: currentAudioAdmisionesKey
             });
-            const languagesArray = languagesStr.split(",").map(s => s.trim()).filter(Boolean);
+            const languagesArray = languages;
 
             // 4. Enviar al Store
             const { institution: instDB, errors: apiErrors } = await store({
@@ -770,13 +771,103 @@ export function InstitutionForm({ onClose, institution, store }) {
                     />
                 </div>
 
-                <TextField
-                    label="Idiomas (separados por coma)"
-                    value={languagesStr}
-                    onChange={(e) => setLanguagesStr(e.target.value)}
-                    fullWidth
-                    helperText="Ej: Español, Inglés-A, Inglés-B, Francés, Alemán, Portugués, Italiano, Mandarín"
-                />
+                <div className="col-span-1 md:col-span-3 mt-4">
+                    <div className="flex justify-between items-center mb-4">
+                        <p className="text-sm text-gray-600 font-medium">Seleccione los idiomas ofrecidos:</p>
+                        <Button 
+                            variant="text" 
+                            size="small" 
+                            onClick={() => setShowAllLanguages(!showAllLanguages)}
+                        >
+                            {showAllLanguages ? "Ver menos" : "Ver todos los idiomas"}
+                        </Button>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {[
+                            { name: "Español", code: "es" },
+                            { name: "Inglés-A", code: "us" },
+                            { name: "Inglés-B", code: "gb" },
+                            { name: "Francés", code: "fr" },
+                            { name: "Alemán", code: "de" },
+                            { name: "Portugués", code: "br" },
+                            { name: "Italiano", code: "it" },
+                            { name: "Mandarín", code: "cn" },
+                            ...(showAllLanguages ? [
+                                { name: "Ruso", code: "ru" },
+                                { name: "Japonés", code: "jp" },
+                                { name: "Coreano", code: "kr" },
+                                { name: "Holandés", code: "nl" },
+                                { name: "Árabe", code: "sa" },
+                                { name: "Sueco", code: "se" },
+                                { name: "Noruego", code: "no" },
+                                { name: "Danés", code: "dk" },
+                                { name: "Turco", code: "tr" },
+                                { name: "Polaco", code: "pl" },
+                                { name: "Checo", code: "cz" },
+                                { name: "Hindú", code: "in" },
+                                { name: "Vietnamita", code: "vn" },
+                                { name: "Ucraniano", code: "ua" },
+                                { name: "Rumano", code: "ro" },
+                                { name: "Griego", code: "gr" }
+                            ] : [])
+                        ].map((lang) => {
+                            const isActive = languages.includes(lang.name);
+                            return (
+                              <div
+                                key={lang.name}
+                                onClick={() =>
+                                  setLanguages((prev) =>
+                                    prev.includes(lang.name)
+                                      ? prev.filter((l) => l !== lang.name)
+                                      : [...prev, lang.name],
+                                  )
+                                }
+                                className={`relative flex items-center gap-2 px-2.5 py-2 rounded-lg border cursor-pointer transition-all min-h-[54px] ${
+                                  isActive
+                                    ? "border-blue-500 bg-blue-50 shadow-sm"
+                                    : "border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm"
+                                }`}
+                              >
+                                {isActive && (
+                                  <div className="absolute left-0 top-1 bottom-1 w-1 bg-blue-500 rounded-r-full" />
+                                )}
+
+                                <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 border border-gray-100">
+                                  <img
+                                    src={`https://flagcdn.com/w80/${lang.code}.png`}
+                                    alt={lang.name}
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                  />
+                                </div>
+
+                                <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
+                                  <span className="font-semibold text-gray-700 text-xs truncate">
+                                    {lang.name}
+                                  </span>
+
+                                  <span
+                                    className={`shrink-0 inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${
+                                      isActive
+                                        ? "text-green-700 bg-green-100 border-green-300"
+                                        : "text-orange-700 bg-orange-100 border-orange-300"
+                                    }`}
+                                  >
+                                    <span
+                                      className={`w-1.5 h-1.5 rounded-full ${
+                                        isActive
+                                          ? "bg-green-500"
+                                          : "bg-orange-500"
+                                      }`}
+                                    />
+                                    {isActive ? "Activo" : "Inactivo"}
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                        })}
+                    </div>
+                </div>
 
                 <h3 className="font-bold text-gray-700 mt-2 border-b">Redes y ubicación Embebida</h3>
 

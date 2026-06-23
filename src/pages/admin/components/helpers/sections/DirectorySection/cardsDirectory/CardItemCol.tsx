@@ -322,493 +322,558 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
 
     /* ── LINKED ── */
     return (
-        <Card
-            sx={{
-                borderRadius: "16px",
-                overflow: "hidden",
-                border: isSelected ? `2px solid ${RED}` : "1px solid #e5e7eb",
-                boxShadow: isSelected ? `0 0 0 3px ${RED}22` : "0 3px 12px rgba(0,0,0,0.08)",
-                transition: "all 0.25s ease",
-                "&:hover": {
-                    boxShadow: "0 10px 28px rgba(0,0,0,0.13)",
-                    transform: "translateY(-2px)",
-                },
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "#fff",
-                width: "100%",
-            }}
+      <Card
+        sx={{
+          borderRadius: "16px",
+          overflow: "hidden",
+          border: isSelected ? `2px solid ${RED}` : "1px solid #e5e7eb",
+          boxShadow: isSelected
+            ? `0 0 0 3px ${RED}22`
+            : "0 3px 12px rgba(0,0,0,0.08)",
+          transition: "all 0.25s ease",
+          "&:hover": {
+            boxShadow: "0 10px 28px rgba(0,0,0,0.13)",
+            transform: "translateY(-2px)",
+          },
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#fff",
+          width: "100%",
+        }}
+      >
+        {/* ══ IMAGE ZONE ══ */}
+        <div
+          style={{
+            position: "relative",
+            overflow: "hidden",
+            minHeight: isXs ? 178 : 202,
+            background: `linear-gradient(160deg, rgba(15,10,30,0.92) 0%, rgba(${hexToRgb(RED)},0.55) 50%, rgba(10,8,20,0.97) 100%)`,
+          }}
         >
-            {/* ══ IMAGE ZONE ══ */}
-            <div style={{ position: "relative", overflow: "hidden", minHeight: isXs ? 195 : 220 }}>
+          {/* Red glow top-left */}
+          <div
+            style={{
+              position: "absolute",
+              top: -30,
+              left: -30,
+              width: 140,
+              height: 140,
+              borderRadius: "50%",
+              background: `radial-gradient(circle, ${RED}55 0%, transparent 68%)`,
+              zIndex: 2,
+              pointerEvents: "none",
+            }}
+          />
 
-                {/* Red glow top-left */}
-                <div
-                    style={{
-                        position: "absolute",
-                        top: -30,
-                        left: -30,
-                        width: 140,
-                        height: 140,
-                        borderRadius: "50%",
-                        background: `radial-gradient(circle, ${RED}55 0%, transparent 68%)`,
-                        zIndex: 2,
-                        pointerEvents: "none",
-                    }}
-                />
-
-                {/* Portada / gradient bg */}
-                {portadaPath ? (
-                    <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-                        <StorageImage
-                            alt={item.Nombre || item.Colegio || "portada"}
-                            path={portadaPath}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                filter: "brightness(0.65) saturate(1.1)",
-                            }}
-                        />
-                    </div>
-                ) : (
-                    <div
-                        style={{
-                            position: "absolute",
-                            inset: 0,
-                            zIndex: 0,
-                            background: `linear-gradient(160deg, rgba(15,10,30,0.92) 0%, rgba(${hexToRgb(RED)},0.55) 50%, rgba(10,8,20,0.97) 100%)`,
-                        }}
-                    />
-                )}
-
-                {/* Dark overlay */}
-                <div
-                    style={{
-                        position: "absolute",
-                        inset: 0,
-                        zIndex: 1,
-                        background:
-                            "linear-gradient(to bottom, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.16) 38%, rgba(0,0,0,0.80) 100%)",
-                    }}
-                />
-
-                {/* ── TOP ROW ── */}
-                <div
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        zIndex: 3,
-                        padding: "10px 10px 0",
-                        display: "flex",
-                        alignItems: "flex-start",
-                        justifyContent: "space-between",
-                        gap: 6,
-                    }}
-                >
-                    {/* Left: Comparar + Micrositio */}
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                        <button
-                            type="button"
-                            onClick={() => toggleItem(item)}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 4,
-                                backgroundColor: isSelected ? `${RED}cc` : "rgba(255,255,255,0.18)",
-                                color: "#fff",
-                                fontSize: isXs ? 9 : 10,
-                                padding: "4px 9px",
-                                borderRadius: 999,
-                                border: "1px solid rgba(255,255,255,0.35)",
-                                backdropFilter: "blur(6px)",
-                                cursor: "pointer",
-                                lineHeight: 1,
-                                fontWeight: 600,
-                                flexShrink: 0,
-                            }}
-                        >
-                            <DynamicIcon name="AlignJustify" color="#fff" size={9} />
-                            Comparar
-                        </button>
-
-                        {hasLink && link && (
-                            <a
-                                href={link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 4,
-                                    backgroundColor: "rgba(255,255,255,0.18)",
-                                    color: "#fff",
-                                    fontSize: isXs ? 9 : 10,
-                                    padding: "4px 9px",
-                                    borderRadius: 999,
-                                    border: "1px solid rgba(255,255,255,0.35)",
-                                    backdropFilter: "blur(6px)",
-                                    lineHeight: 1,
-                                    fontWeight: 600,
-                                    flexShrink: 0,
-                                    textDecoration: "none",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                <DynamicIcon name="ExternalLink" color="#fff" size={9} />
-                                Micrositio
-                            </a>
-                        )}
-                    </div>
-
-                    {/* Right: Badges */}
-                    <div className="flex flex-col gap-1 items-end flex-shrink-0">
-                        <BadgeCategoria category={category} />
-                        <BadgeCalificacion qualification={qualification} />
-                    </div>
-                </div>
-
-                {/* ── BOTTOM CONTENT ── */}
-                <div
-                    style={{
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        zIndex: 3,
-                        padding: "0 10px 12px",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 8,
-                    }}
-                >
-                    {/* Stars */}
-                    <div className="star-shine" style={{ display: "inline-flex" }}>
-                        <StartSection
-                            excelSource=""
-                            stars={Stars}
-                            typePage="admin"
-                            size={isXs ? 14 : 17}
-                            gap={3}
-                        />
-                    </div>
-
-                    {/* School name */}
-                    <span
-                        onClick={() => hasLink && link && openWindow(link)}
-                        style={{
-                            fontSize: isXs ? "0.95rem" : "1.05rem",
-                            fontWeight: 800,
-                            color: "#fff",
-                            lineHeight: 1.2,
-                            letterSpacing: "-0.01em",
-                            cursor: hasLink ? "pointer" : "default",
-                            display: "block",
-                        }}
-                    >
-                        {item.Nombre || item.Colegio || "Sin Nombre"}
-                        {nuevo && (
-                            <span
-                                style={{
-                                    marginLeft: 6,
-                                    backgroundColor: RED,
-                                    color: "#fff",
-                                    fontSize: 8,
-                                    fontWeight: 700,
-                                    padding: "2px 5px",
-                                    borderRadius: 6,
-                                    verticalAlign: "middle",
-                                }}
-                            >
-                                {nuevo}
-                            </span>
-                        )}
-                    </span>
-
-                    {/* Ubicación */}
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 4,
-                            minWidth: 0,
-                            flexWrap: "nowrap",
-                        }}
-                    >
-                        <DynamicIcon name="MapPin" color="rgba(255,255,255,0.70)" size={11} />
-                        <span
-                            style={{
-                                fontSize: 11,
-                                color: "rgba(255,255,255,0.75)",
-                                lineHeight: 1,
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                flexShrink: 1,
-                            }}
-                        >
-                            {city}{department ? ` , ${department}` : ""}
-                        </span>
-                    </div>
-
-                    {/* Info icons & Flags Row */}
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-                        {/* Info icons */}
-                        {infoIcons.length > 0 ? (
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                                {infoIcons.map((info, i) => (
-                                    <Tooltip key={i} title={info.label} arrow>
-                                        <div
-                                            className="transition-colors duration-200"
-                                            style={{
-                                                width: 27,
-                                                height: 27,
-                                                borderRadius: "50%",
-                                                backgroundColor: "rgba(255,255,255,0.15)",
-                                                border: "1px solid rgba(255,255,255,0.28)",
-                                                backdropFilter: "blur(6px)",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            <DynamicIcon name={info.icon} color="rgba(255,255,255,0.90)" size={13} />
-                                        </div>
-                                    </Tooltip>
-                                ))}
-                            </div>
-                        ) : (
-                            <div />
-                        )}
-
-                        {/* Banderas */}
-                        {languages.length > 0 && (
-                            <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                                {languages.map((lang, idx) => (
-                                    <div
-                                        key={`flag_${idx}`}
-                                        style={{
-                                            width: 27,
-                                            height: 27,
-                                            borderRadius: "50%",
-                                            backgroundColor: "rgba(255,255,255,0.15)",
-                                            border: "1px solid rgba(255,255,255,0.28)",
-                                            backdropFilter: "blur(6px)",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                        }}
-                                    >
-                                        <ImgFlagsCountry languages={[lang]} size={14} gap="0px" />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* ══ BOTTOM — rector / respaldos ══ */}
-            <div
+          {/* Portada / gradient bg */}
+          {portadaPath ? (
+            <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+              <StorageImage
+                alt={item.Nombre || item.Colegio || "portada"}
+                path={portadaPath}
                 style={{
-                    backgroundColor: "#fff",
-                    padding: "12px",
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1px 1fr",
-                    gap: "0 10px",
-                    alignItems: "start",
-                    position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  filter: "brightness(0.65) saturate(1.1)",
                 }}
-            >
-                {/* ── Rector ── */}
-                <div className="flex flex-col items-center gap-1">
-                    <div style={{ position: "relative" }}>
-                        {directorPhoto ? (
-                            <div
-                                style={{
-                                    width: photoSize,
-                                    height: photoSize,
-                                    borderRadius: "50%",
-                                    overflow: "hidden",
-                                    border: `2px solid ${RED}44`,
-                                    boxShadow: "0 3px 10px rgba(0,0,0,0.11)",
-                                }}
-                            >
-                                <StorageImage
-                                    alt={directorName ?? "Rector"}
-                                    path={directorPhoto}
-                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                />
-                            </div>
-                        ) : (
-                            <Avatar sx={{ width: photoSize, height: photoSize, border: `2px solid ${RED}44` }} />
-                        )}
-
-                        {logoColegio && (
-                            <div
-                                style={{
-                                    position: "absolute",
-                                    bottom: -3,
-                                    right: -3,
-                                    width: 20,
-                                    height: 20,
-                                    borderRadius: "50%",
-                                    overflow: "hidden",
-                                    border: "2px solid #fff",
-                                    backgroundColor: "#fff",
-                                    boxShadow: "0 2px 6px rgba(0,0,0,0.14)",
-                                }}
-                            >
-                                <StorageImage
-                                    alt="logo"
-                                    path={logoColegio}
-                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                    <span
-                        style={{
-                            fontSize: 9,
-                            color: "#9ca3af",
-                            fontWeight: 500,
-                            letterSpacing: "0.04em",
-                            lineHeight: 1,
-                        }}
-                    >
-                        Rectoría
-                    </span>
-
-                    {directorName && (
-                        <a
-                            href={isSafeUrl(directorWeb) ? directorWeb : "#"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                                fontSize: isXs ? 10 : 11,
-                                fontWeight: 700,
-                                color: "#1f2937",
-                                textDecoration: "none",
-                                textAlign: "center",
-                                lineHeight: 1.25,
-                                cursor: "pointer",
-                            }}
-                            onMouseEnter={(e) => { e.currentTarget.style.textDecoration = "underline"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.textDecoration = "none"; }}
-                        >
-                            {directorName}
-                        </a>
-                    )}
-                </div>
-
-                {/* ── Divider vertical ── */}
-                <div style={{ background: "#f0f0f0", alignSelf: "stretch" }} />
-
-                {/* ── Respaldos ── */}
-                <div
-                    className="flex flex-col"
-                    style={{ gap: 6, paddingBottom: onOpenHistory && hasHistory ? 32 : 4 }}
-                >
-                    <span
-                        style={{
-                            fontSize: 11,
-                            fontWeight: 600,
-                            color: "#6b7280",
-                            letterSpacing: "0.05em",
-                            lineHeight: 1,
-                            marginBottom: 5,
-                        }}
-                    >
-                        Respaldos
-                    </span>
-
-                    {accreditations.length > 0 ? (
-                        <div style={{ display: "flex", flexWrap: showAllAccreditations ? "wrap" : "nowrap", overflow: "hidden", gap: "4px 5px" }}>
-                            {(showAllAccreditations ? accreditations : accreditations.slice(0, 2)).map((acc, i) => (
-                                <span
-                                    key={i}
-                                    style={{
-                                        backgroundColor: "#fef2f2",
-                                        color: "#991b1b",
-                                        border: "1px solid #fecaca",
-                                        borderRadius: 6,
-                                        fontSize: isXs ? 9 : 10,
-                                        fontWeight: 600,
-                                        padding: "3px 7px",
-                                        lineHeight: 1.35,
-                                        whiteSpace: "nowrap",
-                                        display: "inline-block",
-                                        flexShrink: 0,
-                                    }}
-                                >
-                                    {acc}
-                                </span>
-                            ))}
-                            {!showAllAccreditations && accreditations.length > 2 && (
-                                <span
-                                    onClick={() => setShowAllAccreditations(true)}
-                                    style={{
-                                        backgroundColor: "#f3f4f6",
-                                        color: "#4b5563",
-                                        border: "1px solid #e5e7eb",
-                                        borderRadius: 6,
-                                        fontSize: isXs ? 9 : 10,
-                                        fontWeight: 700,
-                                        padding: "3px 7px",
-                                        lineHeight: 1.35,
-                                        whiteSpace: "nowrap",
-                                        display: "inline-block",
-                                        cursor: "pointer",
-                                        flexShrink: 0,
-                                    }}
-                                >
-                                    +{accreditations.length - 2}
-                                </span>
-                            )}
-                            {showAllAccreditations && accreditations.length > 2 && (
-                                <span
-                                    onClick={() => setShowAllAccreditations(false)}
-                                    style={{
-                                        backgroundColor: "#f3f4f6",
-                                        color: "#4b5563",
-                                        border: "1px solid #e5e7eb",
-                                        borderRadius: 6,
-                                        fontSize: isXs ? 9 : 10,
-                                        fontWeight: 700,
-                                        padding: "3px 7px",
-                                        lineHeight: 1.35,
-                                        whiteSpace: "nowrap",
-                                        display: "inline-block",
-                                        cursor: "pointer",
-                                        flexShrink: 0,
-                                    }}
-                                >
-                                    Menos
-                                </span>
-                            )}
-                        </div>
-                    ) : (
-                        <span style={{ fontSize: 10, color: "#d1d5db", fontStyle: "italic" }}>—</span>
-                    )}
-                </div>
-
-                {/* ── Botón historial ── */}
-                {onOpenHistory && hasHistory && (
-                    <button
-                        type="button"
-                        onClick={onOpenHistory}
-                        title="Ver historial"
-                        className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-2.5 py-1.5 text-gray-400 shadow-sm transition-all duration-200 hover:border-red-300 hover:bg-red-600 hover:text-white hover:shadow-md active:scale-95"
-                    >
-                        <DynamicIcon name="History" color="#9ca3af" size={13} />
-                        
-                    </button>
-                )}
+              />
             </div>
-        </Card>
+          ) : (
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 0,
+                background: `linear-gradient(160deg, rgba(15,10,30,0.92) 0%, rgba(${hexToRgb(RED)},0.55) 50%, rgba(10,8,20,0.97) 100%)`,
+              }}
+            />
+          )}
+
+          {/* Dark overlay */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 1,
+              background:
+                "linear-gradient(to bottom, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.16) 38%, rgba(0,0,0,0.80) 100%)",
+            }}
+          />
+
+          {/* ── TOP ROW ── */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 3,
+              padding: "10px 10px 0",
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              gap: 6,
+            }}
+          >
+            {/* Left: Comparar + Micrositio */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <button
+                type="button"
+                onClick={() => toggleItem(item)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                  backgroundColor: isSelected
+                    ? `${RED}cc`
+                    : "rgba(255,255,255,0.18)",
+                  color: "#fff",
+                  fontSize: isXs ? 9 : 10,
+                  padding: "4px 9px",
+                  borderRadius: 999,
+                  border: "1px solid rgba(255,255,255,0.35)",
+                  backdropFilter: "blur(6px)",
+                  cursor: "pointer",
+                  lineHeight: 1,
+                  fontWeight: 600,
+                  flexShrink: 0,
+                }}
+              >
+                <DynamicIcon name="AlignJustify" color="#fff" size={9} />
+                Comparar
+              </button>
+
+              {hasLink && link && (
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    backgroundColor: "rgba(255,255,255,0.18)",
+                    color: "#fff",
+                    fontSize: isXs ? 9 : 10,
+                    padding: "4px 9px",
+                    borderRadius: 999,
+                    border: "1px solid rgba(255,255,255,0.35)",
+                    backdropFilter: "blur(6px)",
+                    lineHeight: 1,
+                    fontWeight: 600,
+                    flexShrink: 0,
+                    textDecoration: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  <DynamicIcon name="ExternalLink" color="#fff" size={9} />
+                  Micrositio
+                </a>
+              )}
+            </div>
+
+            {/* Right: Badges */}
+            <div className="flex flex-col gap-1 items-end flex-shrink-0">
+              <BadgeCategoria category={category} />
+              <BadgeCalificacion qualification={qualification} />
+            </div>
+          </div>
+
+          {/* ── BOTTOM CONTENT ── */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 3,
+              padding: "0 10px 12px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
+            {/* Stars */}
+            <div className="star-shine" style={{ display: "inline-flex" }}>
+              <StartSection
+                excelSource=""
+                stars={Stars}
+                typePage="admin"
+                size={isXs ? 14 : 17}
+                gap={3}
+              />
+            </div>
+
+            {/* School name */}
+            <span
+              onClick={() => hasLink && link && openWindow(link)}
+              style={{
+                fontSize: isXs ? "0.95rem" : "1.05rem",
+                fontWeight: 800,
+                color: "#fff",
+                lineHeight: 1.2,
+                letterSpacing: "-0.01em",
+                cursor: hasLink ? "pointer" : "default",
+                display: "block",
+              }}
+            >
+              {item.Nombre || item.Colegio || "Sin Nombre"}
+              {nuevo && (
+                <span
+                  style={{
+                    marginLeft: 6,
+                    backgroundColor: RED,
+                    color: "#fff",
+                    fontSize: 8,
+                    fontWeight: 700,
+                    padding: "2px 5px",
+                    borderRadius: 6,
+                    verticalAlign: "middle",
+                  }}
+                >
+                  {nuevo}
+                </span>
+              )}
+            </span>
+
+            {/* Ubicación */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                minWidth: 0,
+                flexWrap: "nowrap",
+              }}
+            >
+              <DynamicIcon
+                name="MapPin"
+                color="rgba(255,255,255,0.70)"
+                size={11}
+              />
+              <span
+                style={{
+                  fontSize: 11,
+                  color: "rgba(255,255,255,0.75)",
+                  lineHeight: 1,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  flexShrink: 1,
+                }}
+              >
+                {city}
+                {department ? ` , ${department}` : ""}
+              </span>
+            </div>
+
+            {/* Info icons & Flags Row */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 10,
+                flexWrap: "wrap",
+              }}
+            >
+              {/* Info icons */}
+              {infoIcons.length > 0 ? (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {infoIcons.map((info, i) => (
+                    <Tooltip key={i} title={info.label} arrow>
+                      <div
+                        className="transition-colors duration-200"
+                        style={{
+                          width: 27,
+                          height: 27,
+                          borderRadius: "50%",
+                          backgroundColor: "rgba(255,255,255,0.15)",
+                          border: "1px solid rgba(255,255,255,0.28)",
+                          backdropFilter: "blur(6px)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <DynamicIcon
+                          name={info.icon}
+                          color="rgba(255,255,255,0.90)"
+                          size={13}
+                        />
+                      </div>
+                    </Tooltip>
+                  ))}
+                </div>
+              ) : (
+                <div />
+              )}
+
+              {/* Banderas */}
+              {languages.length > 0 && (
+                <div className="flex items-center justify-end gap-2 flex-wrap">
+                  <DynamicIcon
+                    name="Languages"
+                    color="rgba(255,255,255,0.70)"
+                    size={14}
+                  />
+                  {languages.map((lang, idx) => (
+                    <div
+                      key={`flag_${idx}`}
+                      className="flex h-[27px] w-[27px] items-center justify-center overflow-hidden rounded-full border border-white/35 bg-white/10 shadow-sm shadow-black/10 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:scale-110 hover:border-white/70 hover:shadow-md hover:shadow-black/20"
+                    >
+                      <div className="scale-[1.55]">
+                        <ImgFlagsCountry
+                          languages={[lang]}
+                          size={21}
+                          gap="0px"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ══ BOTTOM — rector / respaldos ══ */}
+        <div
+          style={{
+            backgroundColor: "#fff",
+            padding: "12px",
+            display: "grid",
+            gridTemplateColumns: "1fr 1px 1fr",
+            gap: "0 10px",
+            alignItems: "start",
+            position: "relative",
+          }}
+        >
+          {/* ── Rector ── */}
+          <div className="flex flex-col items-center gap-1">
+            <div style={{ position: "relative" }}>
+              {directorPhoto ? (
+                <div
+                  style={{
+                    width: photoSize,
+                    height: photoSize,
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    border: `2px solid ${RED}44`,
+                    boxShadow: "0 3px 10px rgba(0,0,0,0.11)",
+                  }}
+                >
+                  <StorageImage
+                    alt={directorName ?? "Rector"}
+                    path={directorPhoto}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+              ) : (
+                <Avatar
+                  sx={{
+                    width: photoSize,
+                    height: photoSize,
+                    border: `2px solid ${RED}44`,
+                  }}
+                />
+              )}
+
+              {logoColegio && (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: -3,
+                    right: -3,
+                    width: 20,
+                    height: 20,
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    border: "2px solid #fff",
+                    backgroundColor: "#fff",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.14)",
+                  }}
+                >
+                  <StorageImage
+                    alt="logo"
+                    path={logoColegio}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
+            <span
+              style={{
+                fontSize: 9,
+                color: "#9ca3af",
+                fontWeight: 500,
+                letterSpacing: "0.04em",
+                lineHeight: 1,
+              }}
+            >
+              Rectoría
+            </span>
+
+            {directorName && (
+              <a
+                href={isSafeUrl(directorWeb) ? directorWeb : "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: isXs ? 10 : 11,
+                  fontWeight: 700,
+                  color: "#1f2937",
+                  textDecoration: "none",
+                  textAlign: "center",
+                  lineHeight: 1.25,
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.textDecoration = "underline";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.textDecoration = "none";
+                }}
+              >
+                {directorName}
+              </a>
+            )}
+          </div>
+
+          {/* ── Divider vertical ── */}
+          <div style={{ background: "#f0f0f0", alignSelf: "stretch" }} />
+
+          {/* ── Respaldos ── */}
+          <div
+            className="flex flex-col"
+            style={{
+              gap: 6,
+              paddingBottom: onOpenHistory && hasHistory ? 32 : 4,
+            }}
+          >
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: "#6b7280",
+                letterSpacing: "0.05em",
+                lineHeight: 1,
+                marginBottom: 5,
+              }}
+            >
+              Respaldos
+            </span>
+
+            {accreditations.length > 0 ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: showAllAccreditations ? "wrap" : "nowrap",
+                  overflow: "hidden",
+                  gap: "4px 5px",
+                }}
+              >
+                {(showAllAccreditations
+                  ? accreditations
+                  : accreditations.slice(0, 2)
+                ).map((acc, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      backgroundColor: "#fef2f2",
+                      color: "#991b1b",
+                      border: "1px solid #fecaca",
+                      borderRadius: 6,
+                      fontSize: isXs ? 9 : 10,
+                      fontWeight: 600,
+                      padding: "3px 7px",
+                      lineHeight: 1.35,
+                      whiteSpace: "nowrap",
+                      display: "inline-block",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {acc}
+                  </span>
+                ))}
+                {!showAllAccreditations && accreditations.length > 2 && (
+                  <span
+                    onClick={() => setShowAllAccreditations(true)}
+                    style={{
+                      backgroundColor: "#f3f4f6",
+                      color: "#4b5563",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: 6,
+                      fontSize: isXs ? 9 : 10,
+                      fontWeight: 700,
+                      padding: "3px 7px",
+                      lineHeight: 1.35,
+                      whiteSpace: "nowrap",
+                      display: "inline-block",
+                      cursor: "pointer",
+                      flexShrink: 0,
+                    }}
+                  >
+                    +{accreditations.length - 2}
+                  </span>
+                )}
+                {showAllAccreditations && accreditations.length > 2 && (
+                  <span
+                    onClick={() => setShowAllAccreditations(false)}
+                    style={{
+                      backgroundColor: "#f3f4f6",
+                      color: "#4b5563",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: 6,
+                      fontSize: isXs ? 9 : 10,
+                      fontWeight: 700,
+                      padding: "3px 7px",
+                      lineHeight: 1.35,
+                      whiteSpace: "nowrap",
+                      display: "inline-block",
+                      cursor: "pointer",
+                      flexShrink: 0,
+                    }}
+                  >
+                    —
+                  </span>
+                )}
+              </div>
+            ) : (
+              <span
+                style={{ fontSize: 10, color: "#d1d5db", fontStyle: "italic" }}
+              >
+                —
+              </span>
+            )}
+          </div>
+
+          {/* ── Botón historial ── */}
+          {onOpenHistory && hasHistory && (
+            <button
+              type="button"
+              onClick={onOpenHistory}
+              aria-label="Ver historial"
+              className="group cursor-pointer absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-200/60 active:scale-95"
+            >
+              <DynamicIcon name="History" color="currentColor" size={14} />
+              <span className="pointer-events-none absolute right-full top-1/2 mr-2 min-w-[92px] -translate-y-1/2 rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-center text-[11px] font-semibold text-red-800 opacity-0 shadow-lg shadow-red-100/60 transition-all duration-200 group-hover:-translate-x-0.5 group-hover:opacity-100">
+                Ver historial
+              </span>
+            </button>
+          )}
+        </div>
+      </Card>
     );
 };
