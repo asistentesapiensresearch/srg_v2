@@ -21,12 +21,44 @@ import Rating from "@mui/material/Rating";
 import { visuallyHidden } from "@mui/utils";
 
 const RECOGNITIONS_COLUMN = "__reconocimientos";
-const RECOGNITIONS_COLUMN_WIDTH = 360;
+const LOCATION_COLUMN = "__ubicacion";
+const RECOGNITIONS_COLUMN_WIDTH = 280;
+
+const getRecognitionColumnSx = () => ({
+  width: { xs: 160, sm: 220, md: RECOGNITIONS_COLUMN_WIDTH },
+  maxWidth: { xs: 160, sm: 220, md: RECOGNITIONS_COLUMN_WIDTH },
+});
+
+const getTableCellSx = (colKey) => ({
+  ...(colKey === RECOGNITIONS_COLUMN ? getRecognitionColumnSx() : {}),
+  maxWidth: colKey === RECOGNITIONS_COLUMN ? undefined : { xs: 96, sm: 130, md: 170 },
+  px: { xs: 0.75, sm: 1.25 },
+  py: 1,
+  textAlign: isSchoolNameColumn(colKey) ? "left" : "center",
+  verticalAlign: "middle",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "normal",
+  overflowWrap: "anywhere",
+  "& > .MuiBox-root": {
+    marginLeft: isSchoolNameColumn(colKey) ? 0 : "auto",
+    marginRight: isSchoolNameColumn(colKey) ? 0 : "auto",
+    alignItems: "center",
+  },
+});
 
 // --- HELPERS DE ORDENAMIENTO ---
+const getSortValue = (row, orderBy) => {
+  if (orderBy === LOCATION_COLUMN) return getLocationValue(row);
+  return row?.[orderBy];
+};
+
 function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) return -1;
-  if (b[orderBy] > a[orderBy]) return 1;
+  const valueA = getSortValue(a, orderBy);
+  const valueB = getSortValue(b, orderBy);
+
+  if (valueB < valueA) return -1;
+  if (valueB > valueA) return 1;
   return 0;
 }
 
@@ -67,6 +99,17 @@ const isCategoryColumn = (columnName) => cleanString(columnName).includes("categ
 
 const isQualificationColumn = (columnName) => cleanString(columnName).includes("calificacion");
 
+const isSchoolNameColumn = (columnName) => {
+  const normalized = cleanString(columnName);
+  return ["colegios", "colegio", "nombre"].includes(normalized);
+};
+
+const cleanSchoolName = (value) => String(value || "").replace(/^\++\s*/, "");
+
+const isCityColumn = (columnName) => cleanString(columnName).includes("ciudad");
+
+const isDepartmentColumn = (columnName) => cleanString(columnName).includes("departamento");
+
 const isClassificationColumn = (columnName, aliases = {}) =>
   isCategoryColumn(columnName) ||
   isCategoryColumn(aliases[columnName]) ||
@@ -87,11 +130,49 @@ const getFirstColumnValue = (row, predicate) => {
   return key ? row[key] : "";
 };
 
+const getLocationValue = (row) => {
+  const city = row?.Ciudad ?? getFirstColumnValue(row, isCityColumn);
+  const department = row?.Departamento ?? getFirstColumnValue(row, isDepartmentColumn);
+
+  return [city, department]
+    .map((value) => String(value || "").trim())
+    .filter(Boolean)
+    .join(", ");
+};
+
+const getColumnLabel = (colKey, aliases = {}) => {
+  if (colKey === RECOGNITIONS_COLUMN) return "Reconocimientos";
+  if (colKey === LOCATION_COLUMN) return "Ubicación";
+  return aliases[colKey] || colKey;
+};
+
+const mergeLocationColumns = (cols) => {
+  const hasCity = (cols || []).some(isCityColumn);
+  const hasDepartment = (cols || []).some(isDepartmentColumn);
+
+  if (!hasCity && !hasDepartment) return cols || [];
+
+  let locationInserted = false;
+
+  return (cols || []).reduce((result, col) => {
+    if (isCityColumn(col) || isDepartmentColumn(col)) {
+      if (!locationInserted) {
+        result.push(LOCATION_COLUMN);
+        locationInserted = true;
+      }
+      return result;
+    }
+
+    result.push(col);
+    return result;
+  }, []);
+};
+
 const mergeRecognitionColumns = (cols, options = {}) => {
   const { hideYear = false } = options;
-  const filteredCols = hideYear
+  const filteredCols = mergeLocationColumns(hideYear
     ? (cols || []).filter((col) => col !== "Año")
-    : (cols || []);
+    : (cols || []));
   const firstRecognitionIndex = filteredCols.findIndex(isRecognitionSourceColumn);
 
   if (firstRecognitionIndex === -1) return filteredCols;
@@ -176,7 +257,7 @@ const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
         display: columns > 1 ? "grid" : "flex",
         gridTemplateColumns: columns > 1 ? `repeat(${columns}, minmax(0, 1fr))` : undefined,
         flexDirection: columns > 1 ? undefined : "column",
-        alignItems: columns > 1 ? undefined : fullWidth ? "stretch" : "flex-start",
+        alignItems: columns > 1 ? undefined : fullWidth ? "stretch" : "center",
         gap: 0.75,
         width: fullWidth ? "100%" : "auto",
       }}
@@ -192,11 +273,12 @@ const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
             ...badgeSx,
             fontSize: "0.75rem",
             fontWeight: 600,
-            whiteSpace: "nowrap",
+            whiteSpace: "normal",
             width: fullWidth ? "100%" : "auto",
-            textAlign: fullWidth ? "center" : "left",
+            textAlign: "center",
             overflow: "hidden",
             textOverflow: "ellipsis",
+            overflowWrap: "anywhere",
           }}
         >
           {item}
@@ -207,6 +289,10 @@ const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
 };
 
 const renderCellValue = (row, colKey, aliases = {}) => {
+  if (colKey === LOCATION_COLUMN) {
+    return getLocationValue(row) || "-";
+  }
+
   if (colKey === RECOGNITIONS_COLUMN) {
     const certificationValue = getFirstColumnValue(row, isCertificationColumn);
     const accreditationValue = getFirstColumnValue(row, isAccreditationColumn);
@@ -218,9 +304,9 @@ const renderCellValue = (row, colKey, aliases = {}) => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "flex-start",
+          alignItems: "center",
           gap: 0.75,
-          minWidth: RECOGNITIONS_COLUMN_WIDTH - 80,
+          minWidth: 0,
           width: "100%",
         }}
       >
@@ -270,6 +356,10 @@ const renderCellValue = (row, colKey, aliases = {}) => {
     return renderBadges(row[colKey], "green");
   }
 
+  if (isSchoolNameColumn(colKey) || isSchoolNameColumn(aliases[colKey])) {
+    return cleanSchoolName(row[colKey]) || "-";
+  }
+
   if (typeof row[colKey] === "object") {
     return JSON.stringify(row[colKey]);
   }
@@ -304,20 +394,24 @@ function Row(props) {
           "& > *": { borderBottom: "unset" },
         }}
       >
-        <TableCell width={50}>
+        <TableCell sx={{ width: 42, maxWidth: 42, pl: 1.5, pr: 0.5, py: 1 }}>
           {hasHistory && isLinked ? (
             <IconButton
               aria-label="expand row"
               size="small"
               onClick={() => setOpen(!open)}
               sx={{
-                width: 32,
-                height: 32,
+                width: 24,
+                height: 24,
                 borderRadius: "50%",
                 backgroundColor: "#dc2626",
                 color: "#fff",
+                p: 0,
                 "&:hover": {
                   backgroundColor: "#b91c1c",
+                },
+                "& .MuiSvgIcon-root": {
+                  fontSize: "1rem",
                 },
               }}
             >
@@ -328,7 +422,7 @@ function Row(props) {
               )}
             </IconButton>
           ) : (
-            <Box sx={{ width: 32 }} />
+            <Box sx={{ width: 24 }} />
           )}
         </TableCell>
         {columns.map((colKey) => (
@@ -337,9 +431,8 @@ function Row(props) {
             component="th"
             scope="row"
             sx={{
+              ...getTableCellSx(colKey),
               color: !hasHistory ? "#9ca3af" : "inherit",
-              width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
-              minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
             }}
           >
             {!isLinked && isClassificationColumn(colKey, aliases)
@@ -389,22 +482,21 @@ function Row(props) {
               </Typography>
 
               {/* TABLA DE HISTORIAL */}
-              <Table size="small" aria-label="history">
+              <Table size="small" aria-label="history" sx={{ tableLayout: "fixed", width: "100%" }}>
                 <TableHead>
                   <TableRow>
                     {displayHistoryColumns.map((colKey) => (
                       <TableCell
                         key={colKey}
                         sx={{
+                          ...getTableCellSx(colKey),
                           fontWeight: "bold",
                           fontSize: "0.75rem",
                           color: "#666",
                           textAlign: "center",
-                          width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
-                          minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                         }}
                       >
-                        {colKey === RECOGNITIONS_COLUMN ? "Reconocimientos" : aliases[colKey] || colKey}
+                        {getColumnLabel(colKey, aliases)}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -426,11 +518,10 @@ function Row(props) {
                             component="th"
                             scope="row"
                             sx={{
+                              ...getTableCellSx(colKey),
                               fontSize: "0.8rem",
                               textAlign: "center",
                               verticalAlign: "middle",
-                              width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
-                              minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
                               "& > .MuiBox-root": {
                                 marginLeft: "auto",
                                 marginRight: "auto",
@@ -531,20 +622,21 @@ export default function TableList({ data = [], columns = [], historyColumns = []
       variant="outlined"
       sx={{ borderRadius: 4, overflow: "hidden" }}
     >
-      <TableContainer>
-        <Table aria-label="collapsible table">
+      <TableContainer sx={{ width: "100%", overflowX: "hidden" }}>
+        <Table aria-label="collapsible table" sx={{ tableLayout: "fixed", width: "100%" }}>
           <TableHead sx={{ bgcolor: "#f5f5f5" }}>
             <TableRow>
-              <TableCell />
+              <TableCell sx={{ width: 42, maxWidth: 42, pl: 1.5, pr: 0.5 }} />
               {displayColumns.map((colKey) => (
                 <TableCell
                   key={colKey}
                   sortDirection={orderBy === colKey ? order : false}
                   sx={{
+                    ...getTableCellSx(colKey),
                     fontWeight: "bold",
+                    fontSize: { xs: "0.72rem", sm: "0.8rem" },
                     textAlign: "center",
-                    width: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
-                    minWidth: colKey === RECOGNITIONS_COLUMN ? RECOGNITIONS_COLUMN_WIDTH : "auto",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   <TableSortLabel
@@ -555,6 +647,10 @@ export default function TableList({ data = [], columns = [], historyColumns = []
                       gap: 0.5,
                       justifyContent: "center",
                       width: "100%",
+                      minWidth: 0,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                       "& .MuiTableSortLabel-icon": {
                         opacity: 1,
                         color: orderBy === colKey ? "#b91c1c !important" : "#9ca3af !important",
@@ -565,7 +661,7 @@ export default function TableList({ data = [], columns = [], historyColumns = []
                       },
                     }}
                   >
-                    {colKey === RECOGNITIONS_COLUMN ? "Reconocimientos" : aliases[colKey] || colKey}
+                    {getColumnLabel(colKey, aliases)}
                     {orderBy === colKey ? (
                       <Box component="span" sx={visuallyHidden}>
                         {order === "desc"
