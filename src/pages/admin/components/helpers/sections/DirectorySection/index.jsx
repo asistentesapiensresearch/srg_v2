@@ -634,14 +634,14 @@ const DirectorySectionContent = ({
         
       //filtrar para que se muestre una sola card en los colegios random,"es el colegio palmas"
 
-        const aliados = masterData.filter( el => {
-            const str = JSON.stringify(el).toLowerCase();
-            return str.includes("palmas");
-        });
-        console.log("Card Palmas filtrada: ", aliados);
+        // const aliados = masterData.filter( el => {
+        //     const str = JSON.stringify(el).toLowerCase();
+        //     return str.includes("palmas");
+        // });
+        // console.log("Card Palmas filtrada: ", aliados);
 
         //se comenta la linea 641 para usar la linea 638
-        // const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
+        const aliados = masterData.filter( el => el["Vinculada"] === "Sí");
 
         const count = isMobile ? 1 : 3;
 
