@@ -20,7 +20,6 @@ const GalleryRenderer = ({
   showThumbnails = true,
   showBulletIndicators = true,
   showSliderCounter = false,
-  showAutoplayButton = true,
   showFullscreenButton = true,
   InfiniteLoop = true,
   SlideOnThumbnailHover = false,
@@ -100,10 +99,10 @@ const GalleryRenderer = ({
         sx={{
           position: "relative",
           width: "100%",
-          height: { xs: 340, md: 520 },
+          height: { xs: 340, md: 500 },
           overflow: "hidden",
           borderRadius: "18px",
-          backgroundColor: "#e5e7eb",
+          backgroundColor: "#111827",
         }}
       >
         <Box
@@ -179,7 +178,7 @@ const GalleryRenderer = ({
       <Box
         sx={{
           width: "100%",
-          height: 64,
+          height: { xs: 76, md: 118 },
           overflow: "hidden",
           borderRadius: "10px",
         }}
@@ -259,6 +258,44 @@ const GalleryRenderer = ({
         "& .image-gallery-right-nav": {
           right: { xs: 8, md: 14 },
         },
+        "& .image-gallery-content.image-gallery-thumbnails-left": {
+          display: "flex",
+          alignItems: "stretch",
+          gap: { xs: 1.5, md: 2.25 },
+        },
+        "& .image-gallery-slide-wrapper.image-gallery-thumbnails-left": {
+          width: { xs: "calc(100% - 140px)", md: "calc(78% - 12px)" },
+          flex: { xs: "1 1 auto", md: "0 0 calc(78% - 12px)" },
+        },
+        "& .image-gallery-thumbnails-wrapper.image-gallery-thumbnails-left": {
+          width: { xs: 126, md: "22%" },
+          flex: { xs: "0 0 auto", md: "0 0 22%" },
+        },
+        "& .image-gallery-thumbnails-wrapper.image-gallery-thumbnails-left .image-gallery-thumbnails":
+          {
+            height: { xs: 340, md: 500 },
+            padding: "0 !important",
+          },
+        "& .image-gallery-thumbnails-wrapper.image-gallery-thumbnails-left .image-gallery-thumbnails-container":
+          {
+            display: "flex",
+            flexDirection: "column",
+            gap: { xs: 1, md: 1.4 },
+          },
+        "& .image-gallery-thumbnail": {
+          width: "100% !important",
+          border: "2px solid transparent",
+          borderRadius: "12px",
+          overflow: "hidden",
+          transition:
+            "border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease",
+        },
+        "& .image-gallery-thumbnail:hover, & .image-gallery-thumbnail.active, & .image-gallery-thumbnail:focus":
+          {
+            border: "2px solid #c00002",
+            transform: "translateX(2px)",
+            boxShadow: "0 10px 24px rgba(15, 23, 42, 0.18)",
+          },
       }}
     >
       <ImageGallery
