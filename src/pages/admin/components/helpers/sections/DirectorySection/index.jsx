@@ -6,7 +6,7 @@ import {
     FormControl, InputLabel, Select, MenuItem,
     Pagination, Stack, Chip, Typography
 } from "@mui/material";
-import { LayoutGridIcon, LayoutListIcon, Search, SlidersHorizontal } from "lucide-react";
+import { ChevronDown, LayoutGridIcon, LayoutListIcon, Search, SlidersHorizontal } from "lucide-react";
 
 import { generateClient } from "aws-amplify/data";
 import { DirectoryCard } from './results/DirectoryCard';
@@ -682,19 +682,25 @@ const DirectorySectionContent = ({
         }));
     };
 
-    const getSelectControlSx = ({ color, softColor, borderColor, shadowColor }) => ({
+    const getSelectControlSx = ({ color, softColor, softBg, borderColor, shadowColor }) => ({
         "& .MuiInputLabel-root": {
-            color: "#6b7280",
+            color,
+            fontSize: "1rem",
             fontWeight: 500,
             letterSpacing: "-0.01em",
+            transform: "translate(14px, 13px) scale(1)",
         },
         "& .MuiInputLabel-root.Mui-focused": {
             color,
         },
+        "& .MuiInputLabel-root.MuiInputLabel-shrink": {
+            transform: "translate(14px, -9px) scale(0.75)",
+        },
         "& .MuiOutlinedInput-root": {
             height: 48,
             borderRadius: "14px",
-            bgcolor: "#fff",
+            bgcolor: softBg,
+            color,
             boxShadow: `0 8px 22px ${shadowColor}`,
             transition: "box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease",
 
@@ -720,16 +726,28 @@ const DirectorySectionContent = ({
                 borderWidth: 1.5,
             },
 
-            "& .MuiSelect-select": {
+            "& .MuiSelect-select.MuiSelect-outlined.MuiInputBase-input": {
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                fontSize: "1rem",
                 fontWeight: 700,
-                color: "#111827",
+                color,
                 letterSpacing: "-0.01em",
+                minHeight: "unset",
+                height: "100%",
+                padding: "0 34px 0 14px !important",
+                lineHeight: 1,
             },
 
-            "& .MuiSvgIcon-root": {
+            "& .MuiSelect-icon": {
                 color,
+                right: 16,
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: 18,
+                height: 18,
             },
         },
     });
@@ -776,23 +794,25 @@ const DirectorySectionContent = ({
     });
 
     const categorySelectTheme = {
-        color: primaryColor,
+        color: "#991b1b",
         softColor: "rgba(193, 0, 9, 0.10)",
         borderColor: "#fecaca",
         shadowColor: "rgba(193, 0, 9, 0.10)",
         softBg: "#fef2f2",
         selectedBg: "#fee2e2",
-        hoverBg: "#fecaca",
+      hoverBg: "#fecaca",
+        fontSize: "1rem",
     };
 
     const qualificationSelectTheme = {
-        color: "#92400e",
+        color: "#a16207",
         softColor: "rgba(245, 158, 11, 0.14)",
         borderColor: "#fde68a",
         shadowColor: "rgba(245, 158, 11, 0.13)",
-        softBg: "#fffbeb",
+        softBg: "#fefce8",
         selectedBg: "#fef3c7",
-        hoverBg: "#fde68a",
+      hoverBg: "#fde68a",
+        fontSize: "1rem",
     };
 
     // Inicializar filtros rápidos
@@ -888,12 +908,13 @@ const DirectorySectionContent = ({
             variant="outlined"
             onClick={() => setViewListType(isList ? "grid" : "list")}
             sx={{
-              height: 56,
+              height: 48,
               borderRadius: 3,
               px: 3,
               borderColor: "#e0e0e0",
               color: "text.primary",
               textTransform: "none",
+              fontSize: "1rem",
             }}
             className="hidden md:flex"
           >
@@ -911,13 +932,14 @@ const DirectorySectionContent = ({
               variant={activeFilterCount > 0 ? "contained" : "outlined"}
               onClick={() => setIsDrawerOpen(true)}
               sx={{
-                height: 56,
+                height: 48,
                 borderRadius: 3,
                 px: 3,
                 borderColor: activeFilterCount > 0 ? primaryColor : "#e0e0e0",
                 bgcolor: activeFilterCount > 0 ? primaryColor : "white",
                 color: activeFilterCount > 0 ? "white" : "text.primary",
                 textTransform: "none",
+                fontSize: "1rem",
               }}
             >
               <SlidersHorizontal
@@ -974,11 +996,13 @@ const DirectorySectionContent = ({
                   onClick={() => handleApplyPreset(preset)}
                   variant={active ? "contained" : "outlined"}
                   sx={{
-                    height: 56,
-                    px: 3,
+                    height: 48,
+                    minWidth: { xs: "100%", sm: 110 },
+                    px: 2,
                     borderRadius: 3,
                     textTransform: "none",
                     fontWeight: 400,
+                    fontSize: "1rem",
                     borderColor: active ? primaryColor : "#e0e0e0",
                     bgcolor: active ? primaryColor : "#fff",
                     color: active ? "#fff" : "text.primary",
@@ -1018,6 +1042,7 @@ const DirectorySectionContent = ({
                   label="Categoría"
                   onChange={(e) => handleCategoryChange(e.target.value)}
                   MenuProps={getSelectMenuProps(categorySelectTheme)}
+                  IconComponent={ChevronDown}
                 >
                   <MenuItem value="">
                     <em>Todas</em>
@@ -1044,6 +1069,7 @@ const DirectorySectionContent = ({
                   label="Calificación"
                   onChange={(e) => handleQualificationChange(e.target.value)}
                   MenuProps={getSelectMenuProps(qualificationSelectTheme)}
+                  IconComponent={ChevronDown}
                 >
                   <MenuItem value="">
                     <em>Todas</em>
