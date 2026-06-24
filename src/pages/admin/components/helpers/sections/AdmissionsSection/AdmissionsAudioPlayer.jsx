@@ -14,6 +14,7 @@ export default function AdmissionsAudioPlayer({ audioUrl }) {
   const audioRef = useRef(null);
   const progressBarRef = useRef(null);
 
+  const hasAudio = Boolean(audioUrl);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -22,7 +23,7 @@ export default function AdmissionsAudioPlayer({ audioUrl }) {
 
   const togglePlay = async () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !hasAudio) return;
 
     try {
       if (isPlaying) {
@@ -39,7 +40,7 @@ export default function AdmissionsAudioPlayer({ audioUrl }) {
     const audio = audioRef.current;
     const progressBar = progressBarRef.current;
 
-    if (!audio || !progressBar || !duration) return;
+    if (!audio || !progressBar || !duration || !hasAudio) return;
 
     const rect = progressBar.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
@@ -83,11 +84,9 @@ export default function AdmissionsAudioPlayer({ audioUrl }) {
     };
   }, []);
 
-  if (!audioUrl) return null;
-
   return (
     <>
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      {hasAudio && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
 
       <Box
         sx={{
@@ -105,27 +104,35 @@ export default function AdmissionsAudioPlayer({ audioUrl }) {
         <Box
           component="button"
           onClick={togglePlay}
+          disabled={!hasAudio}
+          aria-label={
+            hasAudio
+              ? "Reproducir mensaje del Director de Admisiones"
+              : "Audio no disponible"
+          }
           sx={{
             width: 42,
             height: 42,
             minWidth: 42,
             borderRadius: "50%",
             border: "none",
-            backgroundColor: "#d90000",
+            backgroundColor: hasAudio ? "#d90000" : "#e5e7eb",
             color: "#fff",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            cursor: "pointer",
-            boxShadow: "0 6px 14px rgba(217,0,0,0.25)",
+            cursor: hasAudio ? "pointer" : "not-allowed",
+            boxShadow: hasAudio
+              ? "0 6px 14px rgba(217,0,0,0.25)"
+              : "none",
             transition: "transform 0.2s ease",
             fontSize: "1rem",
             "&:hover": {
-              transform: "scale(1.05)",
+              transform: hasAudio ? "scale(1.05)" : "none",
             },
           }}
         >
-          {isPlaying ? "❚❚" : "▶"}
+          {hasAudio ? (isPlaying ? "❚❚" : "▶") : "🔒"}
         </Box>
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -147,17 +154,17 @@ export default function AdmissionsAudioPlayer({ audioUrl }) {
             sx={{
               height: 6,
               borderRadius: 999,
-              backgroundColor: "#dddddd",
+              backgroundColor: hasAudio ? "#dddddd" : "#e5e7eb",
               overflow: "hidden",
               mb: 0.5,
-              cursor: "pointer",
+              cursor: hasAudio ? "pointer" : "not-allowed",
             }}
           >
             <Box
               sx={{
                 width: progress,
                 height: "100%",
-                backgroundColor: "#d90000",
+                backgroundColor: hasAudio ? "#d90000" : "#cbd5e1",
                 borderRadius: 999,
                 transition: "width 0.1s linear",
               }}
@@ -170,7 +177,9 @@ export default function AdmissionsAudioPlayer({ audioUrl }) {
               color: "#9ca3af",
             }}
           >
-            {formatTime(currentTime)} / {formatTime(duration)}
+            {hasAudio
+              ? `${formatTime(currentTime)} / ${formatTime(duration)}`
+              : "Audio no disponible"}
           </Typography>
         </Box>
 
@@ -184,7 +193,7 @@ export default function AdmissionsAudioPlayer({ audioUrl }) {
             minWidth: 20,
           }}
         >
-          🔊
+          {hasAudio ? "🔊" : "🔇"}
         </Box>
       </Box>
     </>

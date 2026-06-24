@@ -258,11 +258,7 @@ const AdmissionsSection = ({
             }}
           >
             {/* Creo componente interno para el audio */}
-            {
-              audioAdmisiones.length > 0 ? (
-                <AdmissionsAudioPlayer audioUrl={audioAdmisiones} />
-              ) : <p>No tiene audio de admisiones, cargué el audio...</p>
-            }
+            <AdmissionsAudioPlayer audioUrl={audioAdmisiones} />
 
             <Button
               variant="outlined"
