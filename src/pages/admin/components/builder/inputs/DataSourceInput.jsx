@@ -4,6 +4,8 @@ import { FileSpreadsheet, X, ArrowRight, RefreshCw, AlertCircle } from 'lucide-r
 import { useDrivePicker } from '@src/hooks/useDrivePicker';
 import { fetchSheet } from '@src/pages/admin/components/helpers/sections/DirectorySection/fetchSheet';
 
+const RECOGNITIONS_COLUMN = "__reconocimientos";
+
 export default function DataSourceInput({ value, onChange }) {
 
     // Inicialización del estado local
@@ -221,6 +223,29 @@ export default function DataSourceInput({ value, onChange }) {
         const newAliases = { ...localState.columnAliases, [originalColumn]: newAlias };
         updateState({ columnAliases: newAliases });
     };
+
+    const cleanString = (val) => {
+        if (val === null || val === undefined) return "";
+        return String(val)
+            .toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9+]/g, "")
+            .trim();
+    };
+
+    const isRecognitionColumn = (columnName) => {
+        const normalized = cleanString(columnName);
+        return normalized.includes("certificacion") || normalized.includes("acreditacion");
+    };
+
+    const showRecognitionsAlias = [
+        ...(localState.columns || []),
+        ...(localState.historyColumns || []),
+    ].some(isRecognitionColumn);
+
+    const aliasColumns = showRecognitionsAlias
+        ? [...(localState.columns || []), RECOGNITIONS_COLUMN]
+        : localState.columns || [];
 
     return (
       <Box
@@ -460,7 +485,7 @@ export default function DataSourceInput({ value, onChange }) {
               )}
             />
 
-            {localState.columns && localState.columns.length > 0 && (
+            {aliasColumns.length > 0 && (
               <Box
                 sx={{
                   bgcolor: "#f5f5f5",
@@ -478,7 +503,7 @@ export default function DataSourceInput({ value, onChange }) {
                 >
                   ALIAS DE COLUMNAS
                 </Typography>
-                {localState.columns.map((col) => (
+                {aliasColumns.map((col) => (
                   <Box
                     key={col}
                     sx={{ display: "flex", alignItems: "center", gap: 1 }}
@@ -496,9 +521,9 @@ export default function DataSourceInput({ value, onChange }) {
                         variant="body2"
                         fontWeight={500}
                         noWrap
-                        title={col}
+                        title={col === RECOGNITIONS_COLUMN ? "Respaldos" : col}
                       >
-                        {col}
+                        {col === RECOGNITIONS_COLUMN ? "Respaldos" : col}
                       </Typography>
                     </Box>
                     <ArrowRight size={16} color="#999" />
@@ -506,7 +531,7 @@ export default function DataSourceInput({ value, onChange }) {
                       size="small"
                       fullWidth
                       variant="outlined"
-                      placeholder="Alias"
+                      placeholder={col === RECOGNITIONS_COLUMN ? "Respaldos" : "Alias"}
                       value={localState.columnAliases?.[col] || ""}
                       onChange={(e) => handleAliasChange(col, e.target.value)}
                       sx={{ bgcolor: "white" }}
