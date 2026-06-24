@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Container, IconButton } from '@mui/material';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Box, Container, Typography } from '@mui/material';
 
 const getYouTubeVideoId = (videoUrl) => {
     if (!videoUrl) return null;
@@ -72,7 +71,6 @@ export default function YouTubeVideo({
     padding_y = 4,
     background_color = "transparent"
 }) {
-
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const videoUrls = useMemo(() => {
@@ -97,54 +95,13 @@ export default function YouTubeVideo({
 
     const hasMultipleVideos = videoUrls.length > 1;
 
-    const goToPrev = () => {
-        setCurrentIndex((prev) => (prev === 0 ? videoUrls.length - 1 : prev - 1));
-    };
+    const currentVideo = videoUrls[currentIndex];
+    const currentVideoId = getYouTubeVideoId(currentVideo);
 
-    const goToNext = () => {
-        setCurrentIndex((prev) => (prev === videoUrls.length - 1 ? 0 : prev + 1));
+    const getThumbnailUrl = (videoUrl) => {
+        const id = getYouTubeVideoId(videoUrl);
+        return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : "";
     };
-
-    const arrowStyles = {
-        position: 'absolute',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        zIndex: 30,
-        display: 'inline-flex',
-        visibility: 'visible',
-        opacity: 1,
-        width: { xs: 40, md: 48 },
-        height: { xs: 54, md: 64 },
-        borderRadius: '14px',
-        color: '#c00002',
-        backgroundColor: 'rgba(255,255,255,0.9)',
-        border: '1px solid rgba(192,0,2,0.28)',
-        boxShadow: '0 12px 28px rgba(0,0,0,0.2)',
-        backdropFilter: 'blur(8px)',
-        transition: 'all 180ms ease',
-        '& svg': {
-            display: 'block',
-            flexShrink: 0,
-            stroke: 'currentColor',
-        },
-        '&:hover': {
-            color: '#fff',
-            backgroundColor: '#c00002',
-            borderColor: '#c00002',
-            boxShadow: '0 16px 32px rgba(192,0,2,0.32)',
-        }
-    };
-
-    const dotStyles = (active) => ({
-        width: active ? 22 : 8,
-        height: 8,
-        borderRadius: 999,
-        border: 0,
-        cursor: 'pointer',
-        backgroundColor: active ? '#c00002' : 'rgba(255,255,255,0.68)',
-        transition: 'all 180ms ease',
-        boxShadow: active ? '0 4px 10px rgba(192,0,2,0.3)' : 'none',
-    });
 
     // 2. Construir la URL del Embed con los parámetros
     const embedUrl = useMemo(() => {
@@ -178,23 +135,138 @@ export default function YouTubeVideo({
 
     return (
         <Box sx={{ bgcolor: background_color, py: padding_y }}>
-            <Container maxWidth={container_width || false} disableGutters={!container_width}>
+            <Container
+                maxWidth={hasMultipleVideos ? false : (container_width || false)}
+                disableGutters={hasMultipleVideos || !container_width}
+                sx={{
+                    maxWidth: hasMultipleVideos ? '100% !important' : undefined,
+                    px: hasMultipleVideos ? 0 : undefined,
+                }}
+            >
                 <Box
                     sx={{
-                        position: 'relative',
                         width: '100%',
-                        px: hasMultipleVideos ? { xs: 7, md: 1 } : 0,
+                        display: 'grid',
+                        gridTemplateColumns: {
+                            xs: '1fr',
+                            md: hasMultipleVideos ? '22% 78%' : '1fr',
+                        },
+                        gap: { xs: 2, md: 2.25 },
+                        alignItems: 'stretch',
                     }}
                 >
+                    {hasMultipleVideos && (
+                        <Box
+                            sx={{
+                                order: { xs: 2, md: 1 },
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: { xs: 1, md: 1.4 },
+                                height: { xs: 'auto', md: 500 },
+                                overflowY: { md: 'auto' },
+                                pr: { md: 0.5 },
+                            }}
+                        >
+                            {videoUrls.map((videoUrl, index) => {
+                                const thumbnailUrl = getThumbnailUrl(videoUrl);
+                                const isActive = index === currentIndex;
+                                const thumbId = getYouTubeVideoId(videoUrl);
+
+                                return (
+                                    <Box
+                                        key={`${thumbId || index}-${index}`}
+                                        component="button"
+                                        type="button"
+                                        onClick={() => setCurrentIndex(index)}
+                                        sx={{
+                                            width: '100%',
+                                            display: 'block',
+                                            p: 0.5,
+                                            flex: { md: 1 },
+                                            minHeight: { md: 112 },
+                                            borderRadius: '14px',
+                                            border: isActive ? '2px solid #c00002' : '1px solid #e5e7eb',
+                                            backgroundColor: isActive ? '#fff5f5' : '#fff',
+                                            boxShadow: isActive
+                                                ? '0 10px 24px rgba(192,0,2,0.14)'
+                                                : '0 6px 18px rgba(15,23,42,0.07)',
+                                            cursor: 'pointer',
+                                            transition: 'all 180ms ease',
+                                            '&:hover': {
+                                                borderColor: '#c00002',
+                                                transform: 'translateX(2px)',
+                                            },
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                position: 'relative',
+                                                width: '100%',
+                                                height: { xs: 'auto', md: '100%' },
+                                                minHeight: { xs: 0, md: 112 },
+                                                aspectRatio: { xs: '16 / 9', md: 'auto' },
+                                                borderRadius: '10px',
+                                                overflow: 'hidden',
+                                                backgroundColor: '#111827',
+                                            }}
+                                        >
+                                            <Box
+                                                component="img"
+                                                src={thumbnailUrl}
+                                                alt={`Vista previa del video ${index + 1}`}
+                                                sx={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
+                                                }}
+                                            />
+
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    inset: 0,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    background: 'linear-gradient(to bottom, rgba(17,24,39,0.08), rgba(17,24,39,0.34))',
+                                                }}
+                                            >
+                                                <Box
+                                                    sx={{
+                                                        width: 34,
+                                                        height: 34,
+                                                        borderRadius: '50%',
+                                                        backgroundColor: 'rgba(255,255,255,0.94)',
+                                                        color: '#c00002',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontSize: '0.95rem',
+                                                        fontWeight: 700,
+                                                        boxShadow: '0 8px 18px rgba(0,0,0,0.18)',
+                                                    }}
+                                                >
+                                                    ▶
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                );
+                            })}
+                        </Box>
+                    )}
+
                     <Box
                         sx={{
+                            order: { xs: 1, md: 2 },
                             position: 'relative',
                             width: '100%',
                             aspectRatio: aspect_ratio,
                             overflow: 'hidden',
                             borderRadius: `${border_radius}px`,
                             boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-                            bgcolor: 'black'
+                            bgcolor: 'black',
+                            minHeight: { xs: 280, md: 500 },
                         }}
                     >
                         <iframe
@@ -215,63 +287,45 @@ export default function YouTubeVideo({
                             }}
                         ></iframe>
 
-                        {hasMultipleVideos && (
+                        {hasMultipleVideos && currentVideoId && (
                             <Box
                                 sx={{
                                     position: 'absolute',
-                                    left: '50%',
+                                    left: 16,
                                     bottom: 16,
-                                    transform: 'translateX(-50%)',
                                     zIndex: 20,
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: 1,
-                                    px: 1.2,
-                                    py: 0.8,
-                                    borderRadius: 999,
+                                    gap: 0.8,
+                                    px: 1.4,
+                                    py: 0.95,
+                                    borderRadius: '999px',
                                     backgroundColor: 'rgba(15,23,42,0.44)',
                                     backdropFilter: 'blur(8px)',
                                 }}
                             >
-                                {videoUrls.map((_, index) => (
-                                    <Box
-                                        key={index}
-                                        component="button"
-                                        type="button"
-                                        aria-label={`Ver video ${index + 1}`}
-                                        onClick={() => setCurrentIndex(index)}
-                                        sx={dotStyles(index === currentIndex)}
-                                    />
-                                ))}
+                                <Box
+                                    sx={{
+                                        width: 10,
+                                        height: 10,
+                                        borderRadius: '50%',
+                                        backgroundColor: '#ef4444',
+                                        boxShadow: '0 0 0 4px rgba(239,68,68,0.16)',
+                                    }}
+                                />
+                                <Typography
+                                    sx={{
+                                        color: '#fff',
+                                        fontSize: '0.82rem',
+                                        fontWeight: 700,
+                                        letterSpacing: '0.02em',
+                                    }}
+                                >
+                                    {`Video ${currentIndex + 1} de ${videoUrls.length}`}
+                                </Typography>
                             </Box>
                         )}
                     </Box>
-
-                    {hasMultipleVideos && (
-                        <>
-                            <IconButton
-                                aria-label="Video anterior"
-                                onClick={goToPrev}
-                                sx={{
-                                    ...arrowStyles,
-                                    left: { xs: 0, md: -65 },
-                                }}
-                            >
-                                <ChevronLeft aria-hidden="true" size={30} strokeWidth={2.5} />
-                            </IconButton>
-
-                            <IconButton
-                                aria-label="Video siguiente"
-                                onClick={goToNext}
-                                sx={{
-                                    ...arrowStyles,
-                                    right: { xs: 0, md: -65 },
-                                }}
-                            >
-                                <ChevronRight aria-hidden="true" size={30} strokeWidth={2.5} />
-                            </IconButton>
-                        </>
-                    )}
                 </Box>
             </Container>
         </Box>
