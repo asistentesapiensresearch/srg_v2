@@ -2,6 +2,7 @@ import { Box, Drawer, IconButton, Typography } from "@mui/material";
 import renderFieldInput from './helpers/renderFieldInput';
 import { SECTION_SCHEMAS } from './sectionRegistry';
 import { X as CloseIcon } from "lucide-react";
+import { useEffect } from "react";
 
 const updateNodeProps = (nodes, id, fieldName, value) => {
     return nodes.map(node => {
@@ -11,6 +12,39 @@ const updateNodeProps = (nodes, id, fieldName, value) => {
         if (node.children) {
             return { ...node, children: updateNodeProps(node.children, id, fieldName, value) };
         }
+        return node;
+    });
+};
+
+const cloneDefaultValue = (value) => {
+    if (Array.isArray(value) || (value && typeof value === "object")) {
+        return JSON.parse(JSON.stringify(value));
+    }
+
+    return value;
+};
+
+const hydrateNodeDefaultProps = (nodes, id, schema) => {
+    return nodes.map((node) => {
+        if (node.id === id) {
+            const nextProps = { ...node.props };
+
+            schema.fields.forEach((field) => {
+                if (field.default !== undefined && nextProps[field.name] === undefined) {
+                    nextProps[field.name] = cloneDefaultValue(field.default);
+                }
+            });
+
+            return { ...node, props: nextProps };
+        }
+
+        if (node.children) {
+            return {
+                ...node,
+                children: hydrateNodeDefaultProps(node.children, id, schema),
+            };
+        }
+
         return node;
     });
 };
@@ -29,6 +63,20 @@ export default function EditSection({
     const handleFieldChange = (field, value) => {
         setSections(prev => updateNodeProps(prev, activeSection.id, field, value));
     };
+
+    useEffect(() => {
+        if (!activeSection || !activeSchema) return;
+
+        const hasMissingDefaults = activeSchema.fields.some((field) =>
+            field.default !== undefined && activeSection.props?.[field.name] === undefined
+        );
+
+        if (!hasMissingDefaults) return;
+
+        setSections((prev) =>
+            hydrateNodeDefaultProps(prev, activeSection.id, activeSchema)
+        );
+    }, [activeSection, activeSchema, setSections]);
 
     return (
         <>

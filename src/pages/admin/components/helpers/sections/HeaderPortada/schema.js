@@ -101,15 +101,16 @@ export default {
             name: "itemsHighlights",
             label: "Items para el detallado de Highlights. Se recomienda no poner más de 8 items, si pone más de 8 que sea un número par, ejemplo 10,12,14 .... items",
             type: "list",
+
             fields: [
                 {
                     name: "label",
-                    label: "Título",
+                    label: "Valor destacado",
                     type: "text"
                 },
                 {
                     name: "value",
-                    label: "Texto",
+                    label: "Etiqueta",
                     type: "text"
                 }
             ],

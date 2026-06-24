@@ -48,6 +48,7 @@ const InstitutionHighlights = ({
     const dataExcels = useSelector((state) => state.sections.fetchData.sheets[excelSource]);
 
     const fields = fieldsSection.excel[excelSource];
+    const hasCustomHighlights = Array.isArray(itemsHighlights) && itemsHighlights.length > 0;
 
     if (fields) fieldsKeys = Object.keys(fields);
 
@@ -57,7 +58,9 @@ const InstitutionHighlights = ({
         : [];
 
     const total =
-    typePage === "investigation"
+    hasCustomHighlights
+        ? itemsHighlights.length
+        : typePage === "investigation"
         ? itemsHighlights?.length ?? 0
         : renderFieldsKeys.length;
 
@@ -80,7 +83,12 @@ const InstitutionHighlights = ({
                 }}
             >
                 {
-                    typePage != "investigation" && dataExcels && fieldsKeys && fieldsKeys.length > 0 && fieldsKeys.map((key) => {
+                    hasCustomHighlights && itemsHighlights.map((el) => {
+                        return container(`${el.label}-${el.value}`, el.label, el.value);
+                    })
+                }
+                {
+                    !hasCustomHighlights && typePage != "investigation" && dataExcels && fieldsKeys && fieldsKeys.length > 0 && fieldsKeys.map((key) => {
                         if (key === 'icfes ind') return null;
                         const isIcfes = key === 'icfes cat' || key === 'icfes';
                         const labelParts = [
@@ -99,7 +107,7 @@ const InstitutionHighlights = ({
                     })
                 }
                 {
-                    typePage == "investigation"  && itemsHighlights && itemsHighlights.length > 0 && itemsHighlights.map((el) => {
+                    !hasCustomHighlights && typePage == "investigation"  && itemsHighlights && itemsHighlights.length > 0 && itemsHighlights.map((el) => {
                         return container(`${el.label}-${el.value}`, el.label, el.value);
                     })
                 }

@@ -53,7 +53,7 @@ const renderFieldInput = (field, activeSection, onChange) => {
         <TextField
           fullWidth
           size="small"
-          value={value || field.default || ''}
+          value={value ?? field.default ?? ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder || field.default}
           helperText={field.help}
@@ -121,7 +121,7 @@ const renderFieldInput = (field, activeSection, onChange) => {
           multiline
           rows={4}
           size="small"
-          value={value || field.default || ''}
+          value={value ?? field.default ?? ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder || field.default}
           helperText={field.help}

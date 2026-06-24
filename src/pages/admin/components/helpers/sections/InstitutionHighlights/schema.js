@@ -49,16 +49,15 @@ export default {
             fields: [
                 {
                     name: "label",
-                    label: "Título",
+                    label: "Valor destacado",
                     type: "text"
                 },
                 {
                     name: "value",
-                    label: "Texto",
+                    label: "Etiqueta",
                     type: "text"
                 }
             ],
-            condition: "typePage === 'investigation'"
         },
     ]
 }
