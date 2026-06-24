@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Box, Stack, IconButton, Tooltip, CircularProgress } from '@mui/material';
-import { Facebook, Instagram, Linkedin, Twitter, Youtube, Globe, Link as LinkIcon, FileSpreadsheet } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, X, Youtube, Globe, Link as LinkIcon, FileSpreadsheet } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
 export default function DynamicSocialMedia({
@@ -72,11 +72,27 @@ export default function DynamicSocialMedia({
             case 'facebook': return <Facebook {...props} />;
             case 'instagram': return <Instagram {...props} />;
             case 'linkedin': return <Linkedin {...props} />;
-            case 'twitter': case 'x': return <Twitter {...props} />;
+            case 'twitter': case 'x': return <X {...props} />;
             case 'youtube': return <Youtube {...props} />;
             case 'website': return <Globe {...props} />;
             case 'cvlac': return <FileSpreadsheet {...props} />;
             default: return <LinkIcon {...props} />;
+        }
+    };
+
+    const getNetworkLabel = (networkName) => {
+        const normalizedName = networkName.toLowerCase();
+
+        switch (normalizedName) {
+            case 'twitter':
+            case 'x':
+                return 'X';
+            case 'website':
+                return 'Sitio web';
+            case 'cvlac':
+                return 'CvLAC';
+            default:
+                return normalizedName.charAt(0).toUpperCase() + normalizedName.slice(1);
         }
     };
 
@@ -89,7 +105,7 @@ export default function DynamicSocialMedia({
             ) : activeLinks.length > 0 ? (
                 <Stack direction="row" spacing={gap} alignItems="center">
                     {activeLinks.map((link, index) => (
-                        <Tooltip key={index} title={link.network.charAt(0).toUpperCase() + link.network.slice(1)} arrow>
+                        <Tooltip key={index} title={getNetworkLabel(link.network)} arrow>
                             <IconButton
                                 component="a"
                                 href={link.url}

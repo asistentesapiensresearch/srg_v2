@@ -771,7 +771,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                         fullWidth
                     />
                     <TextField
-                        label="Twitter"
+                        label="X"
                         value={socialTwitter}
                         onChange={(e) => setSocialTwitter(e.target.value)}
                         fullWidth
