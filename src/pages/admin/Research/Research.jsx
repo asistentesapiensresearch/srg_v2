@@ -105,10 +105,10 @@ const Research = () => {
             <div className="flex items-center justify-between mb-8 gap-4 px-2">
                 <div>
                     <Typography variant="h5" fontWeight="bold" className="text-gray-800">
-                        Investigaciones
+                        Rankings
                     </Typography>
                     <Typography variant="body2" className="text-gray-500 mt-1">
-                        Gestiona y ordena los proyectos de investigación publicados
+                        Gestiona y ordena los rankings de investigación publicados
                     </Typography>
                 </div>
                 <Button
@@ -118,7 +118,7 @@ const Research = () => {
                     sx={{ borderRadius: 2, paddingX: 3, textTransform: 'none', fontWeight: 600 }}
                     startIcon={<PlusIcon size={18} />}
                 >
-                    Nueva Investigación
+                    Nuevo Ranking
                 </Button>
             </div>
 

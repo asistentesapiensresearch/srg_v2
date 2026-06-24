@@ -8,7 +8,7 @@ import PageRenderer from './Renderer';
 
 // Hooks
 import { useEditor } from '@src/hooks/builder/useEditor';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { TemplateAmplifyRepository } from '@core/infrastructure/repositories/TemplateAmplifyRepository';
 
 // Hooks de Entidades
@@ -72,7 +72,15 @@ const getPublicPath = (type, path) => {
 
 export default function Builder() {
 
-    const { id: dataID, type } = useParams();
+    const location = useLocation();
+    const { id: dataID, type: routeType } = useParams();
+    const isMicrositeRoute = location.pathname.startsWith('/admin/micrositio/');
+    const type = isMicrositeRoute || routeType === 'micrositio' ? 'institution' : routeType;
+    const entityLabel =
+        type === 'institution' ? 'Micrositio' :
+        type === 'page' ? 'Página' :
+        type === 'article' ? 'Artículo' :
+        'Investigación';
     
     // 🔥 3. Incluir páginas en la selección dinámica de hooks
     const {
@@ -176,7 +184,7 @@ export default function Builder() {
     if (!currentData) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 2 }}>
-                <Typography variant="h6" color="error">❌ {type === 'page' ? 'Página' : 'Investigación'} no encontrada</Typography>
+                <Typography variant="h6" color="error">❌ {entityLabel} no encontrado</Typography>
                 <Typography variant="body2" color="text.secondary">ID: {dataID}</Typography>
             </Box>
         );

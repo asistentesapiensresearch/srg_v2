@@ -19,7 +19,31 @@ const MigrationDashboard = lazy(() => import("../pages/admin/migration/Migration
 export const AdminRoutes = [
     // 1. Ruta del Builder (Sin Layout General, ocupa toda la pantalla)
     {
-        path: ':type/:id',
+        path: 'micrositio/:id',
+        element: (
+            <SuspenseLoader>
+                <Builder />
+            </SuspenseLoader>
+        )
+    },
+    {
+        path: 'research/:id',
+        element: (
+            <SuspenseLoader>
+                <Builder />
+            </SuspenseLoader>
+        )
+    },
+    {
+        path: 'article/:id',
+        element: (
+            <SuspenseLoader>
+                <Builder />
+            </SuspenseLoader>
+        )
+    },
+    {
+        path: 'page/:id',
         element: (
             <SuspenseLoader>
                 <Builder />

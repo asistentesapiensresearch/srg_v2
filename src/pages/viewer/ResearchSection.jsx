@@ -133,7 +133,7 @@ export const ResearchSection = () => {
         return (
             <Box className="flex justify-center items-center p-8 max-w-[1200px] mx-auto my-8">
                 <Typography variant="h6" color="text.secondary">
-                    No hay investigaciones disponibles
+                    No hay rankings disponibles
                 </Typography>
             </Box>
         );

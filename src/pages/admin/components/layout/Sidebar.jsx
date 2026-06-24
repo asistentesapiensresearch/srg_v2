@@ -34,16 +34,16 @@ export const Sidebar = ({
     const [itemsOpen, setItemsOpen] = useState([]);
     const Menu = [
         {
-            label: 'Investigaciones',
+            label: 'Rankings',
             items: [
                 {
                     path: 'research',
-                    label: 'Investigación',
+                    label: 'Rankings',
                     icon: <LayoutDashboard size={20} />,
                 },
                 {
                     path: 'brands',
-                    label: 'Marcas',
+                    label: 'Logos',
                     icon: <LayoutDashboard size={20} />,
                 }
             ]
@@ -53,7 +53,12 @@ export const Sidebar = ({
             items: [
                 {
                     path: 'institutions',
-                    label: 'Lista instituciones',
+                    label: 'Micrositios',
+                    icon: <Building2Icon size={20} />
+                },
+                                {
+                    path: 'universities',
+                    label: 'Universidades',
                     icon: <Building2Icon size={20} />
                 }
             ]
