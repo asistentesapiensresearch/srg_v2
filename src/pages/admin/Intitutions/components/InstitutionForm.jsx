@@ -17,6 +17,7 @@ import {
 import { Preloader } from "@src/components/preloader";
 import { processTempFile } from "../../helpers/proccessTempFile";
 import { InstitutionType, InstitutionSubtype } from "@core/domain/types/InstitutionTypes";
+import { ExternalLink } from "lucide-react";
 
 // ... (CONSTANTES DE LABELS IGUAL) ...
 const TYPE_LABELS = {
@@ -32,6 +33,17 @@ const SUBTYPE_LABELS = {
     [InstitutionSubtype.Governmental]: "Gubernamental",
     [InstitutionSubtype.Private]: "Privada",
     [InstitutionSubtype.Public]: "Pública"
+};
+
+const getInstitutionMicrositePath = (path) => {
+    const cleanPath = (path || "").trim().replace(/^\/+|\/+$/g, "");
+
+    if (!cleanPath) return "";
+    if (cleanPath.startsWith("colegio/") || cleanPath.startsWith("colegios/")) {
+        return `/${cleanPath}`;
+    }
+
+    return `/colegio/${cleanPath}`;
 };
 
 export function InstitutionForm({ onClose, institution, store }) {
@@ -109,6 +121,7 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [uploading, setUploading] = useState(false);
     const [tempKeys, setTempKeys] = useState([]);
     const [errors, setErrors] = useState({});
+    const micrositePath = institution?.id ? getInstitutionMicrositePath(path) : "";
 
     const TEMP_FOLDER = "institutions/temp/";
 
@@ -893,7 +906,24 @@ export function InstitutionForm({ onClose, institution, store }) {
                 </div>
 
 
-                <div className="flex justify-end gap-2 mt-4">
+                <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-2 mt-4">
+                    {micrositePath ? (
+                        <Button
+                            variant="outlined"
+                            color="inherit"
+                            href={micrositePath}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            startIcon={<ExternalLink size={16} />}
+                            sx={{ textTransform: "none" }}
+                        >
+                            Ver micrositio
+                        </Button>
+                    ) : (
+                        <span />
+                    )}
+
+                    <div className="flex justify-end gap-2">
                     <Button variant="outlined" color="error" onClick={handleCancel}>
                         Cancelar
                     </Button>
@@ -905,6 +935,7 @@ export function InstitutionForm({ onClose, institution, store }) {
                     >
                         Guardar
                     </Button>
+                    </div>
                 </div>
             </FormGroup>
         </Dialog>

@@ -17,7 +17,7 @@ import {
     FormHelperText,
     InputAdornment
 } from "@mui/material";
-import { Camera, Save, X, Link as LinkIcon, Image as ImageIcon } from "lucide-react";
+import { Camera, Save, X, Link as LinkIcon, Image as ImageIcon, ExternalLink } from "lucide-react";
 import RichTextEditorInpt from "@src/components/forms/RichTextEditor";
 import { Preloader } from "@src/components/preloader";
 import { moveIconToDefinitiveFolder } from "../../helpers/moveIconToDefinitiveFolder";
@@ -47,6 +47,11 @@ const generatePath = (title) => {
         .replace(/\s+/g, "-");
 };
 
+const getResearchPublicPath = (path) => {
+    const cleanPath = (path || "").trim().replace(/^\/+|\/+$/g, "");
+    return cleanPath ? `/${cleanPath}` : "";
+};
+
 export function ResearchForm({ research, onClose, store }) {
     const rteRefDesc = useRef(null);
     const [form, setForm] = useState(INITIAL_FORM_STATE);
@@ -55,6 +60,7 @@ export function ResearchForm({ research, onClose, store }) {
     const [errors, setErrors] = useState({});
     const [isInitialized, setIsInitialized] = useState(false);
     const [availableResearches, setAvailableResearches] = useState([]);
+    const publicPath = research?.id ? getResearchPublicPath(form.path) : "";
 
     const getCurrentDescription = useCallback(() => {
         return rteRefDesc.current?.editor?.getHTML() || "";
@@ -294,16 +300,42 @@ export function ResearchForm({ research, onClose, store }) {
                 </Box>
             </DialogContent>
 
-            <DialogActions sx={{ p: 3, borderTop: '1px solid #f0f0f0' }}>
-                <Button onClick={() => onClose()} color="inherit">Cancelar</Button>
-                <Button
-                    variant="contained"
-                    onClick={handleSave}
-                    disabled={uploading}
-                    startIcon={uploading ? <Preloader size={16} /> : <Save size={18} />}
+            <DialogActions
+                sx={{
+                    p: 3,
+                    borderTop: '1px solid #f0f0f0',
+                    justifyContent: 'space-between',
+                    gap: 2,
+                    flexWrap: 'wrap'
+                }}
+            >
+                {publicPath ? (
+                    <Button
+                        variant="outlined"
+                        color="inherit"
+                        href={publicPath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        startIcon={<ExternalLink size={16} />}
+                        sx={{ textTransform: 'none' }}
+                    >
+                        Ver investigación
+                    </Button>
+                ) : (
+                    <Box />
+                )}
+
+                <Box display="flex" gap={1}>
+                    <Button onClick={() => onClose()} color="inherit">Cancelar</Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleSave}
+                        disabled={uploading}
+                        startIcon={uploading ? <Preloader size={16} /> : <Save size={18} />}
                 >
-                    {uploading ? "Guardando..." : "Guardar Investigación"}
-                </Button>
+                        {uploading ? "Guardando..." : "Guardar Investigación"}
+                    </Button>
+                </Box>
             </DialogActions>
         </Dialog>
     );

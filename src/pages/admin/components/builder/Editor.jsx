@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, memo, lazy, Suspense } from 'react';
 import { Box, Typography, Chip, Button } from '@mui/material';
-import { Code } from 'lucide-react';
+import { Code, ExternalLink } from 'lucide-react';
 
 // Componentes Internos
 import Navigation from '@src/components/navigation';
@@ -50,6 +50,22 @@ const findNodeById = (nodes, id) => {
     return null;
 };
 
+const getPublicPath = (type, path) => {
+    const cleanPath = (path || '').trim().replace(/^\/+|\/+$/g, '');
+
+    if (!cleanPath) return '';
+
+    if (type === 'institution') {
+        if (cleanPath.startsWith('colegio/') || cleanPath.startsWith('colegios/')) {
+            return `/${cleanPath}`;
+        }
+
+        return `/colegio/${cleanPath}`;
+    }
+
+    return `/${cleanPath}`;
+};
+
 // ==========================================
 // COMPONENTE PRINCIPAL
 // ==========================================
@@ -89,6 +105,7 @@ export default function Builder() {
     const [currentData, setCurrentData] = useState(null);
     const [currentTemplate, setCurrentTemplate] = useState(null);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const publicPath = getPublicPath(type, currentData?.path);
 
     // ========== CARGAR DATOS Y TEMPLATE ==========
     useEffect(() => {
@@ -181,7 +198,7 @@ export default function Builder() {
             }}>
                 <Box display="flex" alignItems="center" gap={2}>
                     <Typography variant="subtitle1" fontWeight="bold">
-                        📝 Editando: {currentData.title}
+                        📝 Editando: {currentData.title || currentData.name}
                     </Typography>
                     <Chip
                         label={currentTemplate ? '✅ Template existente' : '🆕 Nuevo template'}
@@ -190,19 +207,40 @@ export default function Builder() {
                     />
                 </Box>
 
-                <Button
-                    variant="contained"
-                    size="small"
-                    startIcon={<Code size={16} />}
-                    onClick={() => setIsExportModalOpen(true)}
-                    sx={{
-                        bgcolor: 'rgba(0,0,0,0.3)',
-                        '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' },
-                        boxShadow: 'none'
-                    }}
-                >
-                    Exportar Template
-                </Button>
+                <Box display="flex" alignItems="center" gap={1}>
+                    {publicPath && (
+                        <Button
+                            variant="contained"
+                            size="small"
+                            href={publicPath}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            startIcon={<ExternalLink size={16} />}
+                            sx={{
+                                bgcolor: 'rgba(255,255,255,0.18)',
+                                '&:hover': { bgcolor: 'rgba(255,255,255,0.28)' },
+                                boxShadow: 'none',
+                                textTransform: 'none'
+                            }}
+                        >
+                            {type === 'institution' ? 'Ver micrositio' : 'Ver investigación'}
+                        </Button>
+                    )}
+
+                    <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<Code size={16} />}
+                        onClick={() => setIsExportModalOpen(true)}
+                        sx={{
+                            bgcolor: 'rgba(0,0,0,0.3)',
+                            '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' },
+                            boxShadow: 'none'
+                        }}
+                    >
+                        Exportar Template
+                    </Button>
+                </Box>
             </Box>
 
             <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
