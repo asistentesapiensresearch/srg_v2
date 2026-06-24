@@ -1,185 +1,251 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import {
-    Box,
-    Container,
-    Typography,
-    Chip,
-    Button
-} from '@mui/material';
-import { useResearchs } from '@src/pages/admin/Research/hooks/useResearchs';
-import PageRenderer from '@src/pages/admin/components/builder/Renderer';
-import { Preloader } from '@src/components/preloader';
-import { useInstitutions } from '../admin/Intitutions/hooks/useInstitutions';
-import NotFoundPage from './NotFoundPage';
-import { ArrowLeft, Home } from 'lucide-react';
-import { useArticle } from '../admin/Articles/hooks/useArticle';
-import { generateClient } from 'aws-amplify/data';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Box, Container, Typography } from "@mui/material";
+import PageRenderer from "@src/pages/admin/components/builder/Renderer";
+import { Preloader } from "@src/components/preloader";
+import NotFoundPage from "./NotFoundPage";
+import { ResearchAmplifyRepository } from "@core/infrastructure/repositories/ResearchAmplifyRepository";
+import { InstitutionAmplifyRepository } from "@core/infrastructure/repositories/InstitutionAmplifyRepository";
+import { ArticleAmplifyRepository } from "@core/infrastructure/repositories/ArticleAmplifyRepository";
+import { TemplateAmplifyRepository } from "@core/infrastructure/repositories/TemplateAmplifyRepository";
+import { generateClient } from "aws-amplify/data";
 
+const researchRepository = new ResearchAmplifyRepository();
+const institutionRepository = new InstitutionAmplifyRepository();
+const articleRepository = new ArticleAmplifyRepository();
+const templateRepository = new TemplateAmplifyRepository();
 const client = generateClient();
 
+const getInstitutionPathCandidates = (path) => {
+  const candidates = [
+    path,
+    path.replace(/^colegio\//, ""),
+    path.replace(/^colegios\//, ""),
+  ];
+
+  return [...new Set(candidates.filter(Boolean))];
+};
+
+const normalizePath = (path) => (path || "").replace(/^\/+|\/+$/g, "");
+
+const resolveByListFallback = async (cleanPath) => {
+  const [researchs, institutions, articles] = await Promise.all([
+    researchRepository.get().catch(() => []),
+    institutionRepository.list().catch(() => []),
+    articleRepository.get().catch(() => []),
+  ]);
+
+  const foundResearch = researchs.find(
+    (research) => normalizePath(research.path) === cleanPath,
+  );
+
+  if (foundResearch) {
+    return { data: foundResearch, dataType: "research" };
+  }
+
+  const institutionPathCandidates = getInstitutionPathCandidates(cleanPath);
+  const foundInstitution = institutions.find((institution) =>
+    institutionPathCandidates.includes(normalizePath(institution.path)),
+  );
+
+  if (foundInstitution) {
+    const { data: currentInstitution } = await client.models.Institution.get(
+      { id: foundInstitution.id },
+      { authMode: "apiKey" },
+    );
+
+    return {
+      data: currentInstitution || foundInstitution,
+      dataType: "institution",
+    };
+  }
+
+  const foundArticle = articles.find(
+    (article) => normalizePath(article.slug) === cleanPath,
+  );
+
+  if (foundArticle) {
+    return { data: foundArticle, dataType: "article" };
+  }
+
+  return null;
+};
+
 const TemplateDetail = () => {
-    const navigate = useNavigate();
+  const params = useParams();
+  const fullPath = params["*"];
 
-    const params = useParams();
-    const fullPath = params["*"];
+  const [data, setData] = useState(null);
+  const [dataType, setDataType] = useState(null);
+  const [error, setError] = useState(null);
+  const [resolvingData, setResolvingData] = useState(true);
 
-    const { researchs, loading: loadingResearch, getTemplate: fetchTemplateResearch } = useResearchs();
-    const { institutions, loading: loadingInstitution, getTemplate: fetchTemplateInstitution } = useInstitutions();
-    const { articles, loading: loadingArticle, getTemplate: fetchTemplateArticle } = useArticle();
+  const [templateSections, setTemplateSections] = useState([]);
+  const [templateLoading, setTemplateLoading] = useState(false);
 
-    const [data, setData] = useState(null);
-    const [dataType, setDataType] = useState(null);
-    const [error, setError] = useState(null);
+  /* ================= 1. BUSCAR PATH COMPLETO ================= */
+  useEffect(() => {
+    let isMounted = true;
 
-    const [templateSections, setTemplateSections] = useState([]);
-    const [templateLoading, setTemplateLoading] = useState(false);
+    const resolveData = async () => {
+      if (!fullPath) {
+        if (isMounted) setResolvingData(false);
+        return;
+      }
 
-    /* ================= 1. BUSCAR PATH COMPLETO ================= */
-    useEffect(() => {
-        let isMounted = true;
+      if (isMounted) {
+        setResolvingData(true);
+        setError(null);
+      }
 
-        const resolveData = async () => {
-        if (loadingResearch || loadingInstitution) return;
-        if (!fullPath) return;
+      // Limpiamos el path por si acaso (quitamos slashes al inicio o final si la DB no los tiene)
+      // Esto asegura que "colegios/mi-colegio" coincida con "colegios/mi-colegio"
+      const cleanPath = normalizePath(fullPath);
+      const institutionPathCandidates = getInstitutionPathCandidates(cleanPath);
 
-        // Limpiamos el path por si acaso (quitamos slashes al inicio o final si la DB no los tiene)
-        // Esto asegura que "colegios/mi-colegio" coincida con "colegios/mi-colegio"
-        const cleanPath = fullPath.replace(/^\/+|\/+$/g, '');
+      const [foundResearch, foundInstitutionResults, foundArticle] =
+        await Promise.all([
+          researchRepository.findByPath(cleanPath),
+          Promise.all(
+            institutionPathCandidates.map((candidate) =>
+              institutionRepository.findByPath(candidate),
+            ),
+          ),
+          articleRepository.findBySlug(cleanPath),
+        ]);
+      const foundInstitution = foundInstitutionResults.find(Boolean);
 
-        // 1. Buscar en Research
-        const foundResearch = researchs.find(r => {
-            // Normalizamos también el path de la DB para asegurar coincidencia
-            const dbPath = (r.path || '').replace(/^\/+|\/+$/g, '');
-            return dbPath === cleanPath;
-        });
-
-        if (foundResearch) {
-            if (!isMounted) return;
-            setData(foundResearch);
-            setDataType('research');
-            setError(null);
-            return;
-        }
-
-        // 2. Buscar en Institutions
-        const foundInstitution = institutions.find(i => {
-            const dbPath = (i.path || '').replace(/^\/+|\/+$/g, '');
-            return dbPath === cleanPath;
-        });
-
-        if (foundInstitution) {
-            const { data: currentInstitution } = await client.models.Institution.get({
-                id: foundInstitution.id
-            }, {
-                authMode: 'apiKey'
-            });
-
-            if (!isMounted) return;
-            setData(currentInstitution || foundInstitution);
-            setDataType('institution');
-            setError(null);
-            return;
-        }
-
-        // 3. Buscar en Artículos
-        const foundArticle = articles.find(i => {
-            const dbSlug = (i.slug || '').replace(/^\/+|\/+$/g, '');
-            return dbSlug === cleanPath;
-        });
-
-        if (foundArticle) {
-            if (!isMounted) return;
-            setData(foundArticle);
-            setDataType('article');
-            setError(null);
-            return;
-        }
-
-        // 3. No encontrado
+      if (foundResearch) {
         if (!isMounted) return;
-        setData(null);
-        setDataType(null);
-        setError('Página no encontrada');
-        };
+        setData(foundResearch);
+        setDataType("research");
+        setError(null);
+        setResolvingData(false);
+        return;
+      }
 
-        resolveData().catch((error) => {
-            console.error('Error resolving template data', error);
-            if (!isMounted) return;
-            setData(null);
-            setDataType(null);
-            setError('Página no encontrada');
-        });
-
-        return () => { isMounted = false; };
-    }, [fullPath, researchs, institutions, articles, loadingResearch, loadingInstitution]);
-
-
-    /* ================= 2. CARGAR TEMPLATE ================= */
-    useEffect(() => {
-        let isMounted = true;
-
-        const loadTemplate = async () => {
-            if (!data?.id || !dataType) {
-                setTemplateSections([]);
-                return;
-            }
-
-            setTemplateLoading(true);
-
-            try {
-                let template = null;
-
-                if (dataType === 'research') {
-                    template = await fetchTemplateResearch(data.id);
-                } else if (dataType === 'institution') {
-                    template = await fetchTemplateInstitution(data.id);
-                } else if (dataType === 'article') {
-                    template = await fetchTemplateArticle(data.id);
-                }
-
-                if (!template?.themeSettings) {
-                    if (isMounted) setTemplateSections([]);
-                    return;
-                }
-
-                const parsed = JSON.parse(template.themeSettings);
-
-                if (isMounted) {
-                    setTemplateSections(Array.isArray(parsed) ? parsed : []);
-                }
-            } catch (e) {
-                console.error('Error loading template', e);
-                if (isMounted) setTemplateSections([]);
-            } finally {
-                if (isMounted) setTemplateLoading(false);
-            }
-        };
-
-        loadTemplate();
-
-        return () => { isMounted = false; };
-    }, [data, dataType]);
-
-
-    /* ================= RENDERIZADO ================= */
-    if (loadingInstitution || loadingResearch) {
-        return (
-            <Box className="flex justify-center items-center min-h-screen">
-                <Preloader />
-            </Box>
+      if (foundInstitution) {
+        const { data: currentInstitution } = await client.models.Institution.get(
+          { id: foundInstitution.id },
+          { authMode: "apiKey" },
         );
-    }
 
-    if (error || !data) {
-        return <NotFoundPage />;
-    }
+        if (!isMounted) return;
+        setData(currentInstitution || foundInstitution);
+        setDataType("institution");
+        setError(null);
+        setResolvingData(false);
+        return;
+      }
 
-    // 🟢 RENDER DE CONTENIDO
+      if (foundArticle) {
+        if (!isMounted) return;
+        setData(foundArticle);
+        setDataType("article");
+        setError(null);
+        setResolvingData(false);
+        return;
+      }
+
+      const fallbackResult = await resolveByListFallback(cleanPath);
+
+      if (fallbackResult) {
+        if (!isMounted) return;
+        setData(fallbackResult.data);
+        setDataType(fallbackResult.dataType);
+        setError(null);
+        setResolvingData(false);
+        return;
+      }
+
+      // 3. No encontrado
+      if (!isMounted) return;
+      setData(null);
+      setDataType(null);
+      setError("Página no encontrada");
+      setResolvingData(false);
+    };
+
+    resolveData().catch((error) => {
+      console.error("Error resolving template data", error);
+      if (!isMounted) return;
+      setData(null);
+      setDataType(null);
+      setError("Página no encontrada");
+      setResolvingData(false);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [fullPath]);
+
+  /* ================= 2. CARGAR TEMPLATE ================= */
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadTemplate = async () => {
+      if (!data?.id || !dataType) {
+        setTemplateSections([]);
+        return;
+      }
+
+      setTemplateLoading(true);
+
+      try {
+        let template = null;
+
+        if (dataType === "research") {
+          template = await templateRepository.getByResearchId(data.id);
+        } else if (dataType === "institution") {
+          template = await templateRepository.getByInstitutionId(data.id);
+        } else if (dataType === "article") {
+          template = await templateRepository.getByArticlenId(data.id);
+        }
+
+        if (!template?.themeSettings) {
+          if (isMounted) setTemplateSections([]);
+          return;
+        }
+
+        const parsed = JSON.parse(template.themeSettings);
+
+        if (isMounted) {
+          setTemplateSections(Array.isArray(parsed) ? parsed : []);
+        }
+      } catch (e) {
+        console.error("Error loading template", e);
+        if (isMounted) setTemplateSections([]);
+      } finally {
+        if (isMounted) setTemplateLoading(false);
+      }
+    };
+
+    loadTemplate();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [data, dataType]);
+
+  /* ================= RENDERIZADO ================= */
+  if (resolvingData) {
     return (
-        <Container maxWidth={false} disableGutters className="">
-            {/* Header */}
-            {/* <Box className="md:flex items-center gap-6 mb-4">
+      <Box className="flex justify-center items-center min-h-screen">
+        <Preloader />
+      </Box>
+    );
+  }
+
+  if (error || !data) {
+    return <NotFoundPage />;
+  }
+
+  // 🟢 RENDER DE CONTENIDO
+  return (
+    <Container maxWidth={false} disableGutters className="">
+      {/* Header */}
+      {/* <Box className="md:flex items-center gap-6 mb-4">
                 <Box className="flex items-center gap-2">
                     <Typography variant="h4" className="font-bold text-red-700">
                         {data.title || data.name}
@@ -194,28 +260,28 @@ const TemplateDetail = () => {
                 </Box>
             </Box> */}
 
-            {/* Template / Builder */}
-            {templateLoading && (
-                <Box className="flex justify-center my-6">
-                    <Preloader />
-                </Box>
-            )}
+      {/* Template / Builder */}
+      {templateLoading && (
+        <Box className="flex justify-center my-6">
+          <Preloader />
+        </Box>
+      )}
 
-            {!templateLoading && templateSections.length > 0 ? (
-                // Asegúrate que tu PageRenderer acepte "research" (por legacy) o "data"
-                // Si tu componente interno espera 'research', le pasamos 'data' en ese prop
-                <PageRenderer sections={templateSections} research={data} />
-            ) : (
-                !templateLoading && (
-                    <Box className="py-10 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 text-center">
-                        <Typography color="text.secondary">
-                            Este sitio existe pero aún no tiene diseño configurado.
-                        </Typography>
-                    </Box>
-                )
-            )}
+      {!templateLoading && templateSections.length > 0 ? (
+        // Asegúrate que tu PageRenderer acepte "research" (por legacy) o "data"
+        // Si tu componente interno espera 'research', le pasamos 'data' en ese prop
+        <PageRenderer sections={templateSections} research={data} />
+      ) : (
+        !templateLoading && (
+          <Box className="py-10 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 text-center">
+            <Typography color="text.secondary">
+              Este sitio existe pero aún no tiene diseño configurado.
+            </Typography>
+          </Box>
+        )
+      )}
 
-            {/* <Box className='mt-3' sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center' }}>
+      {/* <Box className='mt-3' sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center' }}>
                 <Button
                     variant="outlined"
                     size="large"
@@ -248,9 +314,8 @@ const TemplateDetail = () => {
                     Ir al Inicio
                 </Button>
             </Box> */}
-            
-        </Container>
-    );
+    </Container>
+  );
 };
 
 export default TemplateDetail;
