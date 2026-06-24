@@ -141,7 +141,7 @@ const getLocationValue = (row) => {
 };
 
 const getColumnLabel = (colKey, aliases = {}) => {
-  if (colKey === RECOGNITIONS_COLUMN) return "Reconocimientos";
+  if (colKey === RECOGNITIONS_COLUMN) return aliases[RECOGNITIONS_COLUMN] || "Respaldos";
   if (colKey === LOCATION_COLUMN) return "Ubicación";
   return aliases[colKey] || colKey;
 };
@@ -218,6 +218,12 @@ const renderCategory = (value) => {
   );
 };
 
+const formatCategoryText = (value) => {
+  if (!value) return "-";
+  const text = String(value).trim();
+  return text.toLowerCase().startsWith("d") ? text : `D${text}`;
+};
+
 const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
   if (!value) return "-";
 
@@ -288,7 +294,9 @@ const renderBadges = (value, tone = "red", fullWidth = false, columns = 1) => {
   );
 };
 
-const renderCellValue = (row, colKey, aliases = {}) => {
+const renderCellValue = (row, colKey, aliases = {}, options = {}) => {
+  const { plainClassification = false } = options;
+
   if (colKey === LOCATION_COLUMN) {
     return getLocationValue(row) || "-";
   }
@@ -341,11 +349,15 @@ const renderCellValue = (row, colKey, aliases = {}) => {
   }
 
   if (isCategoryColumn(colKey) || isCategoryColumn(aliases[colKey])) {
-    return renderCategory(row[colKey] ?? getFirstColumnValue(row, isCategoryColumn));
+    const value = row[colKey] ?? getFirstColumnValue(row, isCategoryColumn);
+    if (plainClassification) return formatCategoryText(value);
+    return renderCategory(value);
   }
 
   if (isQualificationColumn(colKey) || isQualificationColumn(aliases[colKey])) {
-    return renderBadges(row[colKey] ?? getFirstColumnValue(row, isQualificationColumn), "yellow");
+    const value = row[colKey] ?? getFirstColumnValue(row, isQualificationColumn);
+    if (plainClassification) return value || "-";
+    return renderBadges(value, "yellow");
   }
 
   if (isAccreditationColumn(colKey)) {
@@ -435,9 +447,9 @@ function Row(props) {
               color: !hasHistory ? "#9ca3af" : "inherit",
             }}
           >
-            {!isLinked && isClassificationColumn(colKey, aliases)
-              ? "-"
-              : renderCellValue(row, colKey, aliases)}
+            {renderCellValue(row, colKey, aliases, {
+              plainClassification: !isLinked && isClassificationColumn(colKey, aliases),
+            })}
           </TableCell>
         ))}
       </TableRow>
