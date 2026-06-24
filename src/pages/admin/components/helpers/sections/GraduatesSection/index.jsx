@@ -117,8 +117,6 @@ const GraduatesSection = ({
             <table className="h-full w-full border-collapse text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/80 text-xs tracking-[0.12em] text-gray-500">
-                  <th className="px-3 py-2 text-left font-bold">País</th>
-                  <th className="px-3 py-2 text-right font-bold">Egresados</th>
                 </tr>
               </thead>
 
