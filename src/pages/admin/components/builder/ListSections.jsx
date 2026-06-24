@@ -1,8 +1,8 @@
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { Box, Button, Drawer, List, Typography } from "@mui/material";
+import { Box, Button, Drawer, InputAdornment, List, TextField, Typography } from "@mui/material";
 import { useSortableList } from "@src/hooks/useSortableList";
-import { CopyPlusIcon, Download, Save as SaveIcon } from "lucide-react";
+import { CopyPlusIcon, Download, Save as SaveIcon, Search } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 
 import { SECTION_SCHEMAS } from './sectionRegistry';
@@ -58,6 +58,38 @@ const findSectionByType = (nodes, type) => {
     return null;
 };
 
+const filterSectionTree = (nodes, query) => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (!normalizedQuery) return nodes;
+
+    return nodes.reduce((acc, node) => {
+        const schema = SECTION_SCHEMAS[node.type] || {};
+        const label = node.customName || schema.label || node.type;
+        const searchableText = [
+            label,
+            node.type,
+            schema.label,
+            schema.icon,
+        ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+        const filteredChildren = node.children?.length
+            ? filterSectionTree(node.children, normalizedQuery)
+            : [];
+
+        if (searchableText.includes(normalizedQuery) || filteredChildren.length > 0) {
+            acc.push({
+                ...node,
+                children: filteredChildren,
+            });
+        }
+
+        return acc;
+    }, []);
+};
+
 export default function ListSections({
     sections,
     dataID,
@@ -84,6 +116,9 @@ export default function ListSections({
     );
     const [drawerWidth, setDrawerWidth] = useState(320);
     const [isResizing, setIsResizing] = useState(false);
+    const [sectionSearch, setSectionSearch] = useState("");
+    const filteredSections = filterSectionTree(sections, sectionSearch);
+    const isSearchingSections = sectionSearch.trim().length > 0;
 
     console.log("Dbg - temporal para ver los componentes y sus hijos ->",{sections});
 
@@ -315,6 +350,32 @@ export default function ListSections({
               >
                 Añadir sección
               </Button>
+
+              <TextField
+                value={sectionSearch}
+                onChange={(event) => setSectionSearch(event.target.value)}
+                size="small"
+                fullWidth
+                placeholder="Buscar sección..."
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search size={16} color="#94a3b8" />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: 36,
+                    borderRadius: 1.5,
+                    bgcolor: "#f8fafc",
+                    fontSize: 13,
+                  },
+                  "& input": {
+                    py: 0.75,
+                  },
+                }}
+              />
             </Box>
 
             <Box
@@ -343,7 +404,7 @@ export default function ListSections({
             >
               <DndContext {...dndContextProps}>
                 <SortableContext {...sortableContextProps}>
-                  <List disablePadding>{renderLayerTree(sections)}</List>
+                  <List disablePadding>{renderLayerTree(filteredSections)}</List>
                 </SortableContext>
 
                 <DragOverlay>
@@ -387,6 +448,20 @@ export default function ListSections({
                   No hay secciones.
                   <br />
                   Añade una para comenzar.
+                </Typography>
+              )}
+
+              {sections.length > 0 && isSearchingSections && filteredSections.length === 0 && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "block",
+                    textAlign: "center",
+                    mt: 4,
+                    color: "text.secondary",
+                  }}
+                >
+                  No hay secciones que coincidan con la búsqueda.
                 </Typography>
               )}
 
