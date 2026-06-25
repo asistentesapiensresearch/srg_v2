@@ -245,6 +245,10 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
 
     const Vinculada = item.Vinculada;
     const Stars = item.Stars;
+    const schoolName = (
+        getValue(item, ["Colegios", "Nombre", "Colegio", "name"]) ||
+        "Sin Nombre"
+    ) as string;
     const city = (item.Ciudad as string) || "";
     const department = (item.Departamento as string) || "";
     const category = (item["Categoría"] as string) || "";
@@ -312,7 +316,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
             >
                 {category && <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 700 }}>D{category}</span>}
                 {qualification && <span style={{ fontSize: 11, color: "#9ca3af" }}>{qualification}</span>}
-                <span style={{ fontSize: 12, color: "#9ca3af" }}>{item.Nombre || item.Colegio || "Sin Nombre"}</span>
+                <span style={{ fontSize: 12, color: "#9ca3af" }}>{schoolName}</span>
                 <span style={{ fontSize: 10, color: "#9ca3af" }}>
                     {city}{department ? `, ${department}` : ""}
                 </span>
@@ -369,7 +373,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
           {portadaPath ? (
             <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
               <StorageImage
-                alt={item.Nombre || item.Colegio || "portada"}
+                alt={schoolName || "portada"}
                 path={portadaPath}
                 style={{
                   width: "100%",
@@ -545,7 +549,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                 display: "block",
               }}
             >
-              {item.Nombre || item.Colegio || "Sin Nombre"}
+              {schoolName}
             </span>
 
             {/* Ubicación */}
