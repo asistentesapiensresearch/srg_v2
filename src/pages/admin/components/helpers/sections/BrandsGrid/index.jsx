@@ -96,19 +96,13 @@ export default function BrandsGrid({
                 maxHeight: contained_card ? `${logo_height}px` : "none",
                 objectFit: "contain",
                 transform: contained_card ? "scale(0.78)" : "none",
-                opacity: hoveredBrand === (brand.id || index) ? 1 : 0.35,
-                // Si grayscale es true, lo pone gris y un poco transparente. Si no, lo deja normal.
+                opacity: hoveredBrand === (brand.id || index) ? 1 : 0.5,
                 filter:
                   hoveredBrand === (brand.id || index)
                     ? "none"
-                    : "grayscale(100%) brightness(3)",
+                    : "grayscale(100%)",
 
-                mixBlendMode:
-                  hoveredBrand === (brand.id || index)
-                    ? "normal"
-                    : !isBackground
-                      ? "multiply"
-                      : "normal",
+                mixBlendMode: "normal",
 
                 transition: "all 0.4s ease",
               }}
