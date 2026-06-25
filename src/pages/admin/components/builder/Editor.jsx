@@ -73,9 +73,14 @@ const getPublicPath = (type, path) => {
 export default function Builder() {
 
     const location = useLocation();
-    const { id: dataID, type: routeType } = useParams();
-    const isMicrositeRoute = location.pathname.startsWith('/admin/micrositio/');
-    const type = isMicrositeRoute || routeType === 'micrositio' ? 'institution' : routeType;
+    const { id: dataID } = useParams();
+    const pathname = location.pathname;
+    const type =
+        pathname.startsWith('/admin/micrositio/') ? 'institution' :
+        pathname.startsWith('/admin/research/') ? 'research' :
+        pathname.startsWith('/admin/article/') ? 'article' :
+        pathname.startsWith('/admin/page/') ? 'page' :
+        'research';
     const entityLabel =
         type === 'institution' ? 'Micrositio' :
         type === 'page' ? 'Página' :
