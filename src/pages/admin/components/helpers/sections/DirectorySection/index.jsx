@@ -649,7 +649,7 @@ const DirectorySectionContent = ({
 
         const interval = setInterval(() => {
             setRandomItems(getRandomItems(aliados, count));
-        }, 10000);
+        }, 15000);
 
         return () => clearInterval(interval);
     }, [masterData, isMobile]);

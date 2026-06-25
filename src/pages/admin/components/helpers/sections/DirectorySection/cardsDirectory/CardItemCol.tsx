@@ -471,6 +471,33 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                   Micrositio
                 </a>
               )}
+              <button
+                type="button"
+                onClick={() => toggleItem(item)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                  backgroundColor: isSelected
+                    ? `${RED}cc`
+                    : "rgba(255,255,255,0.18)",
+                  color: "#fff",
+                  fontSize: isXs ? 9 : 10,
+                  padding: "4px 9px",
+                  borderRadius: 999,
+                  border: "1px solid rgba(255,255,255,0.35)",
+                  backdropFilter: "blur(6px)",
+                  cursor: "pointer",
+                  lineHeight: 1,
+                  fontWeight: 600,
+                  flexShrink: 0,
+                }}
+              >
+                <DynamicIcon name="CalendarClock" color="#fff" size={9} />
+                1980
+              </button>
+
+              
             </div>
 
             {/* Right: Badges */}
@@ -519,22 +546,6 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
               }}
             >
               {item.Nombre || item.Colegio || "Sin Nombre"}
-              {nuevo && (
-                <span
-                  style={{
-                    marginLeft: 6,
-                    backgroundColor: RED,
-                    color: "#fff",
-                    fontSize: 8,
-                    fontWeight: 700,
-                    padding: "2px 5px",
-                    borderRadius: 6,
-                    verticalAlign: "middle",
-                  }}
-                >
-                  {nuevo}
-                </span>
-              )}
             </span>
 
             {/* Ubicación */}
@@ -647,7 +658,7 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
             display: "grid",
             gridTemplateColumns: "1fr 1px 1fr",
             gap: "0 10px",
-            alignItems: "start",
+            alignItems: "stretch",
             position: "relative",
           }}
         >
@@ -759,7 +770,8 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
             className="flex flex-col"
             style={{
               gap: 6,
-              paddingBottom: onOpenHistory && hasHistory ? 32 : 4,
+              paddingBottom: (nuevo || (onOpenHistory && hasHistory)) ? 32 : 4,
+              position: "relative",
             }}
           >
             <span
@@ -856,6 +868,25 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
               >
                 —
               </span>
+            )}
+
+            {nuevo && (
+              <div style={{ position: "absolute", bottom: 2, left: 0 }}>
+                <span
+                  style={{
+                    backgroundColor: RED,
+                    color: "#fff",
+                    fontSize: 9,
+                    fontWeight: 700,
+                    padding: "4px 8px",
+                    borderRadius: 6,
+                    lineHeight: 1.2,
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
+                  }}
+                >
+                  {nuevo}
+                </span>
+              </div>
             )}
           </div>
 
