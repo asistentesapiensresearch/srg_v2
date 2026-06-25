@@ -624,21 +624,21 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
 
               {/* Banderas */}
               {languages.length > 0 && (
-                <div className="flex items-center justify-end gap-2 flex-wrap">
+                <div className="flex items-center justify-end gap-1.5 flex-wrap">
                   <DynamicIcon
                     name="Languages"
                     color="rgba(255,255,255,0.70)"
-                    size={14}
+                    size={13}
                   />
                   {languages.map((lang, idx) => (
                     <div
                       key={`flag_${idx}`}
-                      className="flex h-[27px] w-[27px] items-center justify-center overflow-hidden rounded-full border border-white/35 bg-white/10 shadow-sm shadow-black/10 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:scale-110 hover:border-white/70 hover:shadow-md hover:shadow-black/20"
+                      className="flex h-[24px] w-[24px] items-center justify-center overflow-hidden rounded-full border border-white/35 bg-white/10 shadow-sm shadow-black/10 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:scale-110 hover:border-white/70 hover:shadow-md hover:shadow-black/20"
                     >
-                      <div className="scale-[1.55]">
+                      <div className="scale-[1.75]">
                         <ImgFlagsCountry
                           languages={[lang]}
-                          size={21}
+                          size={18}
                           gap="0px"
                         />
                       </div>

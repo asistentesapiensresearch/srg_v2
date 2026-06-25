@@ -131,7 +131,7 @@ export const CardColSapiens = ({ props }) => {
               <div className="flex flex-col">
                 {/* Testimonial Text */}
                 <div>
-                  <p className="text-white/95 text-[17px] lg:text-[15px] font-medium leading-snug">
+                  <p className="text-white/95 text-[15px] lg:text-[17px] font-medium leading-snug">
                     “ {rectorTestimonial}”.
                   </p>
                 </div>
