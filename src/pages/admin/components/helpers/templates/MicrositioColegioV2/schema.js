@@ -290,7 +290,7 @@ export default {
                         "className": "",
                         "content": "<h3>Galería de imágenes</h3>",
                         "customCss": "",
-                        "paddingY": 4
+                        "paddingY": 0
                     }
                 },
                 {

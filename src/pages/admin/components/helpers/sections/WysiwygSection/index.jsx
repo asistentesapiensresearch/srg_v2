@@ -11,6 +11,11 @@ const WysiwygSection = ({
     // React.useId devuelve strings tipo ":r1:", los dos puntos (:) dan problemas en CSS,
     // así que los eliminamos con .replace
     const uniqueId = `section-${useId().replace(/:/g, "")}`;
+    const isGalleryTitle = String(content || "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase() === "<h3>galería de imágenes</h3>";
+    const resolvedPaddingY = isGalleryTitle ? 0 : paddingY;
 
     return (
         // 3. Asignamos el ID al contenedor padre
@@ -28,7 +33,7 @@ const WysiwygSection = ({
 
             <Box
                 sx={{
-                    py: paddingY,
+                    py: resolvedPaddingY,
                     "& .ProseMirror": { outline: 'none' },
                     "& h1": { fontSize: '2.5rem', mb: 2 },
                     "& h2": { fontSize: '2rem', mb: 2 },
