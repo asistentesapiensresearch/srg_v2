@@ -42,41 +42,45 @@ export const CardColSapiens = ({ props }) => {
 
         <div className="relative z-10 flex flex-col h-full p-5 lg:p-6">
           {/* Top Row: Badges */}
-          <div className="flex justify-end gap-2 mb-6">
-            {categoria && (
-              <div className="flex flex-col items-center justify-center bg-linear-to-br from-red-600 to-red-800 text-white rounded-xl px-4 py-1.5 shadow-md border border-red-500/30">
-                <span className="text-xl lg:text-[22px] font-black leading-none tracking-tight">
-                  D{categoria}
-                </span>
-                <span className="text-[11px] tracking-widest opacity-90 mt-0.5 font-semibold">
-                  Categoría
-                </span>
-              </div>
-            )}
+          <div className="flex items-center justify-between gap-3 mb-6">
+            <div className="min-h-12 flex items-center">
+              {stars ? (
+                <StartSection
+                  excelSource=""
+                  stars={stars}
+                  typePage="admin"
+                  size={21}
+                  gap={3}
+                />
+              ) : null}
+            </div>
 
-            {calificacion && (
-              <div className="flex flex-col items-center justify-center bg-linear-to-br from-yellow-500 via-yellow-400 to-yellow-600 text-yellow-950 rounded-xl px-4 py-1.5 shadow-md border border-yellow-300/40">
-                <span className="text-xl lg:text-[22px] font-black leading-none tracking-tight">
-                  {calificacion}
-                </span>
-                <span className="text-[11px] tracking-widest opacity-80 mt-0.5 font-semibold">
-                  Calificación
-                </span>
-              </div> 
-            )}
+            <div className="flex justify-end gap-2">
+              {categoria && (
+                <div className="flex flex-col items-center justify-center bg-linear-to-br from-red-600 to-red-800 text-white rounded-xl px-4 py-1.5 shadow-md border border-red-500/30">
+                  <span className="text-xl lg:text-[20px] font-black leading-none tracking-tight">
+                    D{categoria}
+                  </span>
+                  <span className="text-[11px] tracking-widest opacity-90 mt-0.5 font-semibold">
+                    Categoría
+                  </span>
+                </div>
+              )}
+
+              {calificacion && (
+                <div className="flex flex-col items-center justify-center bg-linear-to-br from-yellow-500 via-yellow-400 to-yellow-600 text-yellow-950 rounded-xl px-4 py-1.5 shadow-md border border-yellow-300/40">
+                  <span className="text-xl lg:text-[20px] font-black leading-none tracking-tight">
+                    {calificacion}
+                  </span>
+                  <span className="text-[11px] tracking-widest opacity-80 mt-0.5 font-semibold">
+                    Calificación
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex-1 flex flex-col justify-end mb-2">
-            {/* <div className="mb-3">
-              <StartSection
-                excelSource=""
-                stars={stars}
-                typePage="admin"
-                size={24}
-                gap={4}
-              />
-            </div> */}
-
             <h3 className="text-white text-xl lg:text-[20px] font-bold leading-tight tracking-tight text-shadow-md">
               {nombre}
             </h3>
@@ -127,8 +131,8 @@ export const CardColSapiens = ({ props }) => {
               <div className="flex flex-col">
                 {/* Testimonial Text */}
                 <div>
-                  <p className="text-white/95 text-[15px] lg:text-[15px] font-medium leading-snug">
-                    "{rectorTestimonial}"
+                  <p className="text-white/95 text-[17px] lg:text-[15px] font-medium leading-snug">
+                    “ {rectorTestimonial}”.
                   </p>
                 </div>
               </div>
