@@ -72,6 +72,7 @@ export function InstitutionForm({ onClose, institution, store }) {
     const [rectorTestimonial, setRectorTestimonial] = useState(institution?.dane || "");
     const [socialFacebook, setSocialFacebook] = useState("");
     const [socialInstagram, setSocialInstagram] = useState("");
+    const [socialLinkedin, setSocialLinkedin] = useState("");
     const [socialTwitter, setSocialTwitter] = useState("");
     const [socialYoutube, setSocialYoutube] = useState("");
     const [languages, setLanguages] = useState([]);
@@ -80,6 +81,8 @@ export function InstitutionForm({ onClose, institution, store }) {
     // Estados para contenidos embebidos
     const [embedFacebook, setEmbedFacebook] = useState("");
     const [embedInstagram, setEmbedInstagram] = useState("");
+    const [embedLinkedin, setEmbedLinkedin] = useState("");
+    const [embedTwitter, setEmbedTwitter] = useState("");
     const [embedGoogleMap, setEmbedGoogleMap] = useState("");
 
     // Estados para sección de admisiones
@@ -156,12 +159,15 @@ export function InstitutionForm({ onClose, institution, store }) {
                 const iSocial = typeof institution.socialMedia === 'string' ? JSON.parse(institution.socialMedia) : institution.socialMedia || {};
                 setSocialFacebook(iSocial.facebook || "");
                 setSocialInstagram(iSocial.instagram || "");
+                setSocialLinkedin(iSocial.linkedin || "");
                 setSocialTwitter(iSocial.twitter || "");
                 setSocialYoutube(iSocial.youtube || "");
                
                 const embed = typeof institution.embed === 'string' ? JSON.parse(institution.embed) : institution.embed || {};
                 setEmbedFacebook(embed.facebook || "");
                 setEmbedInstagram(embed.instagram || "");
+                setEmbedLinkedin(embed.linkedin || "");
+                setEmbedTwitter(embed.twitter || "");
                 setEmbedGoogleMap(embed.googleMap || "");
 
                 const admisiones = typeof institution.admisiones === 'string' ? JSON.parse(institution.admisiones) : institution.admisiones || {};
@@ -320,6 +326,7 @@ export function InstitutionForm({ onClose, institution, store }) {
             const socialMediaPayload = JSON.stringify({
                 facebook: socialFacebook,
                 instagram: socialInstagram,
+                linkedin: socialLinkedin,
                 twitter: socialTwitter,
                 youtube: socialYoutube
             });
@@ -327,6 +334,8 @@ export function InstitutionForm({ onClose, institution, store }) {
             const embedPayload = JSON.stringify({
                 facebook: embedFacebook,
                 instagram: embedInstagram,
+                linkedin: embedLinkedin,
+                twitter: embedTwitter,
                 googleMap: embedGoogleMap
             });
             // Para admisiones
@@ -771,6 +780,12 @@ export function InstitutionForm({ onClose, institution, store }) {
                         fullWidth
                     />
                     <TextField
+                        label="LinkedIn"
+                        value={socialLinkedin}
+                        onChange={(e) => setSocialLinkedin(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
                         label="X"
                         value={socialTwitter}
                         onChange={(e) => setSocialTwitter(e.target.value)}
@@ -895,6 +910,18 @@ export function InstitutionForm({ onClose, institution, store }) {
                         label="Instagram"
                         value={embedInstagram}
                         onChange={(e) => setEmbedInstagram(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        label="LinkedIn"
+                        value={embedLinkedin}
+                        onChange={(e) => setEmbedLinkedin(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        label="X"
+                        value={embedTwitter}
+                        onChange={(e) => setEmbedTwitter(e.target.value)}
                         fullWidth
                     />
                     <TextField
