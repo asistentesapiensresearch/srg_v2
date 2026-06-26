@@ -41,6 +41,7 @@ export const Institution = a.model({
         // 🔥 Importante para buscar por URL rápida
         index('path').queryField('listInstitutionByPath'),
         index('adminEmail').queryField('listInstitutionsByAdmin'),
+        index('dane').queryField('listInstitutionByDane'),
     ])
     .authorization(allow => [
         allow.publicApiKey().to(['read']),
