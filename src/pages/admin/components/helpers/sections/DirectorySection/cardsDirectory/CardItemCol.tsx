@@ -471,31 +471,28 @@ export const CardItemCol = ({ item, primaryColor, onOpenHistory }: CardItemColPr
                   Micrositio
                 </a>
               )}
-              <button
-                type="button"
-                onClick={() => toggleItem(item)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 4,
-                  backgroundColor: isSelected
-                    ? `${RED}cc`
-                    : "rgba(255,255,255,0.18)",
-                  color: "#fff",
-                  fontSize: isXs ? 9 : 10,
-                  padding: "4px 9px",
-                  borderRadius: 999,
-                  border: "1px solid rgba(255,255,255,0.35)",
-                  backdropFilter: "blur(6px)",
-                  cursor: "pointer",
-                  lineHeight: 1,
-                  fontWeight: 600,
-                  flexShrink: 0,
-                }}
-              >
-                <DynamicIcon name="CalendarClock" color="#fff" size={9} />
-                1980
-              </button>
+              {item["Aniversario"] && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    backgroundColor: "rgba(255,255,255,0.18)",
+                    color: "#fff",
+                    fontSize: isXs ? 9 : 10,
+                    padding: "4px 9px",
+                    borderRadius: 999,
+                    border: "1px solid rgba(255,255,255,0.35)",
+                    backdropFilter: "blur(6px)",
+                    lineHeight: 1,
+                    fontWeight: 600,
+                    flexShrink: 0,
+                  }}
+                >
+                  <DynamicIcon name="CalendarClock" color="#fff" size={9} />
+                  {item["Aniversario"] as React.ReactNode}
+                </div>
+              )}
 
               
             </div>

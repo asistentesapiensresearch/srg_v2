@@ -126,12 +126,162 @@ const CHART_MANAGER_CONFIG = {
     "token": ""
 };
 
-export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPreset }) => {
+export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPreset, chartManager: customChartManager, versionColumn }) => {
     const [openModal, setOpenModal] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const chartManager = useMemo(() => CHART_MANAGER_CONFIG, []);
+    const chartManager = useMemo(() => customChartManager?.fileId ? customChartManager : CHART_MANAGER_CONFIG, [customChartManager]);
+
+    const getHistoryOptions = useMemo(() => {
+        if (!item) return null;
+        
+        // Combinar el registro principal con su historial
+        const allRecords = [item, ...(item.history || [])];
+        
+        // Encontrar la columna de versión
+        const vCol = versionColumn || "Año";
+        
+        // Ordenar cronológicamente (ascendente)
+        allRecords.sort((a, b) => {
+            const valA = String(a[vCol] || a["Año"] || a["Versión"] || "");
+            const valB = String(b[vCol] || b["Año"] || b["Versión"] || "");
+            const numA = parseInt(valA.replace(/\D/g, ''), 10);
+            const numB = parseInt(valB.replace(/\D/g, ''), 10);
+            if (!isNaN(numA) && !isNaN(numB) && numA !== numB) return numA - numB;
+            return valA.localeCompare(valB, undefined, { numeric: true });
+        });
+
+        const parsedData = allRecords.map(row => {
+            let yearLabel = String(row[vCol] || row["Año"] || row["Versión"] || '').trim();
+            if (/^\d{4}$/.test(yearLabel)) {
+                const startYear = parseInt(yearLabel, 10);
+                yearLabel = `${startYear}-${startYear + 1}`;
+            }
+
+            const catStr = String(row['Categoría'] || '').trim();
+            const catMatch = catStr.match(/\d+/);
+            const catVal = catMatch ? parseInt(catMatch[0], 10) : 0;
+
+            const califStr = String(row['Calificación'] || '').trim();
+
+            return {
+                name: yearLabel,
+                y: catVal,
+                categoryName: catVal > 0 ? `D${catVal}` : '-',
+                calificacion: califStr && califStr !== '-' ? califStr : '-'
+            };
+        }).filter(d => d.name);
+
+        const categories = parsedData.map(d => d.name);
+
+        return {
+            chart: {
+                type: 'column',
+                backgroundColor: 'transparent'
+            },
+            title: { text: null },
+            xAxis: {
+                categories,
+                crosshair: true,
+                lineColor: '#e0e0e0',
+                labels: {
+                    rotation: 0,
+                    autoRotation: false,
+                    style: { fontSize: '11px', fontFamily: 'inherit' }
+                }
+            },
+            yAxis: {
+                reversed: true,
+                categories: ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10'],
+                title: {
+                    text: 'Categoría',
+                    style: { fontWeight: 'bold', fontSize: '12px', color: '#666' }
+                },
+                gridLineColor: '#f0f0f0',
+                labels: { style: { fontSize: '11px', fontWeight: 'bold', color: '#555' } },
+                min: 0,
+                max: 10
+            },
+            plotOptions: {
+                column: {
+                    borderRadius: 4,
+                    groupPadding: 0.2,
+                    pointPadding: 0.1,
+                    point: {
+                        events: {
+                            mouseOver: function () { if (this.dataLabel) this.dataLabel.hide(); },
+                            mouseOut: function () { if (this.dataLabel) this.dataLabel.show(); }
+                        }
+                    }
+                }
+            },
+            tooltip: {
+                useHTML: true,
+                outside: true,
+                shared: false,
+                backgroundColor: '#ffffff',
+                borderWidth: 1,
+                borderColor: '#dddddd',
+                borderRadius: 8,
+                shadow: true,
+                padding: 8,
+                distance: 25,
+                formatter: function () {
+                    const point = this.point;
+                    return `
+                        <table style="border-collapse: collapse; font-family: sans-serif; font-size: 13px; color: #333; line-height: 1.4;">
+                            <tr>
+                                <td style="padding: 2px 16px 2px 0; color: #666; font-weight: normal;">Categoría:</td>
+                                <td style="padding: 2px 0; text-align: right; font-weight: bold; color: #111;">${point.categoryName}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 2px 16px 2px 0; color: #666; font-weight: normal;">Calificación:</td>
+                                <td style="padding: 2px 0; text-align: right; font-weight: bold; color: #111;">${point.calificacion}</td>
+                            </tr>
+                        </table>
+                    `;
+                }
+            },
+            series: [{
+                name: 'Categoría y calificación',
+                color: '#3b82f6',
+                data: parsedData,
+                dataLabels: {
+                    enabled: true,
+                    inside: false,
+                    crop: false,
+                    overflow: 'none',
+                    useHTML: true,
+                    verticalAlign: 'top',
+                    formatter: function () {
+                        const point = this.point;
+                        return `<div style="text-align: center; line-height: 1.3; font-family: sans-serif; font-size: 11px; font-weight: bold; color: #000;">
+                            ${point.categoryName}<br/>
+                            ${point.calificacion}
+                        </div>`;
+                    }
+                }
+            }],
+            credits: { enabled: false }
+        };
+    }, [item, versionColumn]);
+
+    const finalChartManager = useMemo(() => {
+        if (!chartManager || !chartManager.charts) return chartManager;
+        
+        const newCharts = chartManager.charts.map(c => {
+            if (c.alias === "Resultados históricos por categorías y calificaciones" || c.type === "col_sapiens") {
+                return {
+                    ...c,
+                    overrideOptions: getHistoryOptions
+                };
+            }
+            return c;
+        });
+
+        return { ...chartManager, charts: newCharts };
+    }, [chartManager, getHistoryOptions]);
 
     const Vinculada = item.isLinked;
     const isCompactMode = selectedPreset === "Todos";
@@ -229,12 +379,13 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
                             p: { xs: 1.5, sm: 3 },
                             maxHeight: 'calc(90vh - 120px)',
                             overflowY: 'auto',
+                            overflowX: 'hidden'
                         }}
                     >
                         <ChartSection
                             sectionTitle={null}
-                            chartManager={chartManager}
-                            height={450}
+                            chartManager={finalChartManager}
+                            height={550}
                             thumbnailsMode="never"
                         />
                     </DialogContent>
