@@ -462,92 +462,107 @@ function Row(props) {
             <Box
               sx={{
                 margin: 2,
-                bgcolor: "#f8f9fa",
-                p: 2,
-                borderRadius: 2,
-                border: "1px solid #e0e0e0",
               }}
             >
-              <Typography
-                variant="subtitle2"
-                component="div"
+              <Box
                 sx={{
-                  width: "fit-content",
-                  mx: "auto",
-                  mb: 1.5,
-                  px: 2,
-                  py: 0.75,
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: 0.75,
-                  borderRadius: "999px",
-                  border: "1px solid rgb(254, 202, 202)",
-                  backgroundColor: "rgb(254, 242, 242)",
-                  color: "rgb(185, 28, 28)",
-                  fontWeight: 700,
-                  letterSpacing: "0.04em",
+                  gap: 0.5,
+                  mb: 1.5,
                 }}
               >
-                <HistoryRoundedIcon sx={{ fontSize: "1.1rem" }} />
-                Historial
-              </Typography>
+                <Typography
+                  variant="subtitle2"
+                  component="div"
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 0.75,
+                    color: "rgb(185, 28, 28)",
+                    fontWeight: 700,
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  <HistoryRoundedIcon sx={{ fontSize: "1.1rem" }} />
+                  Historial
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="center"
+                >
+                  Consulta los registros anteriores asociados a este resultado.
+                </Typography>
+              </Box>
 
               {/* TABLA DE HISTORIAL */}
-              <Table size="small" aria-label="history" sx={{ tableLayout: "fixed", width: "100%" }}>
-                <TableHead>
-                  <TableRow>
-                    {displayHistoryColumns.map((colKey) => (
-                      <TableCell
-                        key={colKey}
-                        sx={{
-                          ...getTableCellSx(colKey),
-                          fontWeight: "bold",
-                          fontSize: "0.75rem",
-                          color: "#666",
-                          textAlign: "center",
-                        }}
-                      >
-                        {getColumnLabel(colKey, aliases)}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.history &&
-                    row.history.map((historyRow, index) => (
-                      <TableRow
-                        key={index}
-                        sx={{
-                          backgroundColor:
-                            index % 2 === 0 ? "#ffffff" : "#f5f5f5",
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        {displayHistoryColumns.map((colKey) => (
-                          <TableCell
-                            key={colKey}
-                            component="th"
-                            scope="row"
-                            sx={{
-                              ...getTableCellSx(colKey),
-                              fontSize: "0.8rem",
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              "& > .MuiBox-root": {
-                                marginLeft: "auto",
-                                marginRight: "auto",
-                                alignItems: "center",
-                              },
-                            }}
-                          >
-                            {renderCellValue(historyRow, colKey, aliases)}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
+              <Box
+                sx={{
+                  bgcolor: "#f8f9fa",
+                  p: 2,
+                  borderRadius: 2,
+                  border: "1px solid #e0e0e0",
+                }}
+              >
+                <Table size="small" aria-label="history" sx={{ tableLayout: "fixed", width: "100%" }}>
+                  <TableHead>
+                    <TableRow>
+                      {displayHistoryColumns.map((colKey) => (
+                        <TableCell
+                          key={colKey}
+                          sx={{
+                            ...getTableCellSx(colKey),
+                            fontWeight: "bold",
+                            fontSize: "0.75rem",
+                            color: "#666",
+                            textAlign: "center",
+                          }}
+                        >
+                          {getColumnLabel(colKey, aliases)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {row.history &&
+                      row.history.map((historyRow, index) => (
+                        <TableRow
+                          key={index}
+                          sx={{
+                            backgroundColor:
+                              index % 2 === 0 ? "#ffffff" : "#f5f5f5",
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                        >
+                          {displayHistoryColumns.map((colKey) => (
+                            <TableCell
+                              key={colKey}
+                              component="th"
+                              scope="row"
+                              sx={{
+                                ...getTableCellSx(colKey),
+                                fontSize: "0.8rem",
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                "& > .MuiBox-root": {
+                                  marginLeft: "auto",
+                                  marginRight: "auto",
+                                  alignItems: "center",
+                                },
+                              }}
+                            >
+                              {renderCellValue(historyRow, colKey, aliases)}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </Box>
             </Box>
           </Collapse>
         </TableCell>
