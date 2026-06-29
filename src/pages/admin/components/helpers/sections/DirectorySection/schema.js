@@ -138,6 +138,24 @@ export default {
             default: ""
         },
 
+        // CONFIGURACIÓN DE GRÁFICOS (MODAL)
+        {
+            name: "chart_settings",
+            label: "Configuración de Gráficos (Modal Historial)",
+            type: "separator"
+        },
+        {
+            name: "chartManager",
+            label: "Gestión de Gráficos",
+            type: "chart_manager_input",
+            default: {
+                fileId: "",
+                fileName: "",
+                token: "",
+                charts: []
+            }
+        },
+
         // OPCIONES VISUALES
         { name: "itemsPerColumn", label: "Items por fila", type: "number", default: 3 },
         { name: "showAds", label: "Activar Publicidad Inmersa", type: "switch", default: true },

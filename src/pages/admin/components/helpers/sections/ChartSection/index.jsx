@@ -199,6 +199,8 @@ export default function ChartSection({
 
     // 4. OPCIONES
     const getChartOptions = (chartConfig, data, isThumbnail = false) => {
+        if (chartConfig?.overrideOptions) return chartConfig.overrideOptions;
+
         if (!data || data.length === 0 || !chartConfig) return null;
 
         let { type, xAxis, series: seriesCols } = chartConfig;

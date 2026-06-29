@@ -143,7 +143,8 @@ const DirectorySectionContent = ({
     enableEnrichment = false,
     enrichmentKey = "",   // Se espera el ALIAS aquí
     enrichmentType = "",
-    enrichmentSubtype = ""
+    enrichmentSubtype = "",
+    chartManager = null
 }) => {
 
 
@@ -1192,6 +1193,8 @@ const DirectorySectionContent = ({
                           research={research}
                           type={identifier}
                           selectedPreset={selectedPreset}
+                          chartManager={chartManager}
+                          versionColumn={versionColumn}
                         />
                       );
                     })}
@@ -1264,6 +1267,8 @@ const DirectorySectionContent = ({
                             research={research}
                             type={identifier}
                             selectedPreset={selectedPreset}
+                            chartManager={chartManager}
+                            versionColumn={versionColumn}
                           />
                         </Grid>
                       );
