@@ -299,7 +299,7 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
                 <Dialog
                     open={openModal}
                     onClose={() => setOpenModal(false)}
-                    maxWidth="md"
+                    maxWidth={false}
                     fullWidth
                     BackdropProps={{
                         className: "backdrop-blur-md bg-black/30"
@@ -307,6 +307,7 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
                     PaperProps={{
                         sx: {
                             borderRadius: 2,
+                            maxWidth: "70rem",
                             maxHeight: '90vh',
                         }
                     }}
