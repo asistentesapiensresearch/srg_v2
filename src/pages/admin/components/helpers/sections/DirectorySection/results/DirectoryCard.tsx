@@ -157,6 +157,9 @@ export const DirectoryCard = ({ item, primaryColor = '#337ab7', type, selectedPr
             if (/^\d{4}$/.test(yearLabel)) {
                 const startYear = parseInt(yearLabel, 10);
                 yearLabel = `${startYear}-${startYear + 1}`;
+            }   else if (/^\d{4}-\d{4}$/.test(yearLabel)) {
+                const parts = yearLabel.split('-');
+                yearLabel = `${parts[0]}-${parts[1].slice(-2)}`;
             }
 
             const catStr = String(row['Categoría'] || '').trim();
