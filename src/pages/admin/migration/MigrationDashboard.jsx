@@ -27,7 +27,7 @@ export default function MigrationDashboard({ type = 'article' }) {
         savePage,
         saveTemplate,
         refreshTemplates
-    } = useMigration();
+    } = useMigration(type);
 
     const [actionLoading, setActionLoading] = useState(null);
     const [currentTab, setCurrentTab] = useState(0);

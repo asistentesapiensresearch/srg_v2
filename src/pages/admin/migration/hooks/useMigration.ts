@@ -7,6 +7,7 @@ import { usePage } from '../../Pages/hooks/usePage';
 import { useTemplate } from '../../components/builder/hooks/useTemplate';
 
 export const useMigration = (type = 'article') => {
+    console.log('type',type)
     const { articles, loading: loadingArticles, handleSave: saveArticle } = useArticle();
     const { pages, loading: loadingPages, handleSave: savePage } = usePage();
     const { templates, loading: loadingTemplates, handleSave: saveTemplate, setRefresh: setRefreshTemplates } = useTemplate();
