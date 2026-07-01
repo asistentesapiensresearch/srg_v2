@@ -42,7 +42,7 @@ export const CardColSapiens = ({ props }) => {
 
         <div className="relative z-10 flex flex-col h-full p-5 lg:p-6">
           {/* Top Row: Badges */}
-          <div className="flex items-center justify-between gap-3 mb-6">
+          <div className="flex items-center justify-between gap-3 mb-6 w-full">
             <div className="min-h-12 flex items-center">
               {stars ? (
                 <StartSection
@@ -57,23 +57,23 @@ export const CardColSapiens = ({ props }) => {
 
             <div className="flex justify-end gap-2">
               {categoria && (
-                <div className="flex flex-col items-center justify-center bg-linear-to-br from-red-600 to-red-800 text-white rounded-xl px-4 py-1.5 shadow-md border border-red-500/30">
+                <div className="flex flex-col items-center justify-center bg-linear-to-br from-red-600 to-red-800 text-white rounded-xl px-4 h-[54px] min-w-[76px] shadow-md border border-red-500/30">
                   <span className="text-xl lg:text-[20px] font-black leading-none tracking-tight">
                     D{categoria}
                   </span>
                   <span className="text-[11px] tracking-widest opacity-90 mt-0.5 font-semibold">
-                    Categoría
+                    categoría
                   </span>
                 </div>
               )}
 
               {calificacion && (
-                <div className="flex flex-col items-center justify-center bg-linear-to-br from-yellow-500 via-yellow-400 to-yellow-600 text-yellow-950 rounded-xl px-4 py-1.5 shadow-md border border-yellow-300/40">
+                <div className="flex flex-col items-center justify-center bg-linear-to-br from-yellow-500 via-yellow-400 to-yellow-600 text-yellow-950 rounded-xl px-4 h-[54px] min-w-[76px] shadow-md border border-yellow-300/40">
                   <span className="text-xl lg:text-[20px] font-black leading-none tracking-tight">
                     {calificacion}
                   </span>
                   <span className="text-[11px] tracking-widest opacity-80 mt-0.5 font-semibold">
-                    Calificación
+                    calificación
                   </span>
                 </div>
               )}
@@ -95,12 +95,12 @@ export const CardColSapiens = ({ props }) => {
           </div>
 
           {/* Bottom Row: Testimonial Box */}
-          <div className="mt-auto pt-8 lg:pt-10">
-            <div className="relative border-2 backdrop-blur-xs border-[#ffffff85] rounded-2xl px-4 pb-4 pt-10 lg:px-5 lg:pb-5 lg:pt-12 flex flex-col shadow-inner">
+          <div className="mt-auto pt-8 lg:pt-10 w-full">
+            <div className="relative w-full border-2 backdrop-blur-xs border-[#ffffff85] rounded-2xl px-4 pb-4 pt-10 lg:px-5 lg:pb-5 lg:pt-12 flex flex-col shadow-inner">
               {/* Top: Photo & Name (Overlapping border) */}
               <div className="absolute -top-8 lg:-top-10 left-0 lg:left-1 flex items-center gap-3">
                 <div className="relative shrink-0">
-                  <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden border-[3px] border-white/20 shadow-lg bg-gray-600">
+                  <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden border-2 border-[#ffffff85] shadow-lg bg-gray-600">
                     {rectorPhoto ? (
                       <img
                         src={rectorPhoto}
@@ -112,7 +112,7 @@ export const CardColSapiens = ({ props }) => {
                     )}
                   </div>
                   {logo && (
-                    <div className="absolute -bottom-1 -right-1 w-7 h-7 lg:w-8 lg:h-8 rounded-full overflow-hidden border-2 border-[#3a0000] bg-white shadow-md">
+                    <div className="absolute -bottom-1 -right-1 w-7 h-7 lg:w-8 lg:h-8 rounded-full overflow-hidden bg-white shadow-md">
                       <img
                         src={logo}
                         alt="Logo"
@@ -131,8 +131,8 @@ export const CardColSapiens = ({ props }) => {
               <div className="flex flex-col">
                 {/* Testimonial Text */}
                 <div>
-                  <p className="text-white/95 text-[15px] lg:text-[17px] font-medium leading-snug">
-                    “ {rectorTestimonial}”.
+                  <p className="text-white/95 text-[15px] lg:text-[17px] font-medium leading-snug text-justify">
+                    “{rectorTestimonial}”.
                   </p>
                 </div>
               </div>
